@@ -7,7 +7,8 @@ import { JobManagement } from "@/components/JobManagement";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
 const Index = () => {
-  const { selectedView } = useTimeTracking();
+  const timeTracking = useTimeTracking();
+  const { selectedView } = timeTracking;
 
   const renderView = () => {
     switch (selectedView) {
@@ -26,7 +27,7 @@ const Index = () => {
     }
   };
 
-  return <Layout>{renderView()}</Layout>;
+  return <Layout timeTracking={timeTracking}>{renderView()}</Layout>;
 };
 
 export default Index;
