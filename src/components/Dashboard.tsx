@@ -31,12 +31,12 @@ export function Dashboard() {
     timeEntries,
     hourTypes,
     provinces,
-    getTimeEntrySummaries,
-    getSummaryByTitleAndJob,
+    timeEntrySummaries,
+    summaryByTitleAndJob,
   } = useTimeTracking();
 
-  const summaries = getTimeEntrySummaries();
-  const titleJobSummaries = getSummaryByTitleAndJob();
+  const summaries = timeEntrySummaries;
+  const titleJobSummaries = summaryByTitleAndJob;
 
   // Calculate statistics
   const totalHours = summaries.reduce((sum, summary) => sum + summary.hours, 0);

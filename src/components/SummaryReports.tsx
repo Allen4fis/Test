@@ -56,9 +56,20 @@ export function SummaryReports() {
   const [jobFilter, setJobFilter] = useState("");
   const [provinceFilter, setProvinceFilter] = useState("");
 
-  const summaries = getTimeEntrySummaries();
-  const titleJobSummaries = getSummaryByTitleAndJob();
-  const dateNameSummaries = getSummaryByDateAndName();
+  const {
+    employees,
+    jobs,
+    hourTypes,
+    provinces,
+    timeEntries,
+    timeEntrySummaries,
+    summaryByTitleAndJob,
+    summaryByDateAndName,
+  } = useTimeTracking();
+
+  const summaries = timeEntrySummaries;
+  const titleJobSummaries = summaryByTitleAndJob;
+  const dateNameSummaries = summaryByDateAndName;
 
   // Apply filters
   const filteredSummaries = summaries.filter((summary) => {

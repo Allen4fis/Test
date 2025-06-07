@@ -290,9 +290,9 @@ export function useTimeTracking() {
     deleteTimeEntry,
 
     // Summaries
-    getTimeEntrySummaries,
-    getSummaryByTitleAndJob,
-    getSummaryByDateAndName,
+    timeEntrySummaries,
+    summaryByTitleAndJob,
+    summaryByDateAndName,
 
     // Utility
     resetData: () => setAppData(getDefaultAppData()),
