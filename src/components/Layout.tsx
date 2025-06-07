@@ -14,11 +14,12 @@ import { useTimeTracking } from "@/hooks/useTimeTracking";
 
 interface LayoutProps {
   children: ReactNode;
+  timeTracking: ReturnType<typeof useTimeTracking>;
 }
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children, timeTracking }: LayoutProps) {
   const { selectedView, setSelectedView, employees, jobs, timeEntries } =
-    useTimeTracking();
+    timeTracking;
 
   const navigationItems = [
     {
