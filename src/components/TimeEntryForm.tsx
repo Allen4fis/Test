@@ -37,7 +37,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Calendar } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Plus, Trash2, Calendar, AlertCircle } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TimeEntry } from "@/types";
 
@@ -62,6 +63,8 @@ export function TimeEntryForm() {
     description: "",
   });
 
+  const [formError, setFormError] = useState("");
+
   const resetForm = () => {
     setFormData({
       employeeId: "",
@@ -72,11 +75,14 @@ export function TimeEntryForm() {
       hours: "",
       description: "",
     });
+    setFormError("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError("");
 
+    // Validation
     if (
       !formData.employeeId ||
       !formData.jobId ||
@@ -85,29 +91,45 @@ export function TimeEntryForm() {
       !formData.date ||
       !formData.hours
     ) {
+      setFormError("Please fill in all required fields.");
       return;
     }
 
     const hours = parseFloat(formData.hours);
     if (isNaN(hours) || hours <= 0) {
+      setFormError("Please enter a valid number of hours greater than 0.");
       return;
     }
 
-    addTimeEntry({
-      employeeId: formData.employeeId,
-      jobId: formData.jobId,
-      hourTypeId: formData.hourTypeId,
-      provinceId: formData.provinceId,
-      date: formData.date,
-      hours: hours,
-      description: formData.description,
-    });
+    if (hours > 24) {
+      setFormError("Hours cannot exceed 24 for a single day.");
+      return;
+    }
 
-    resetForm();
+    try {
+      addTimeEntry({
+        employeeId: formData.employeeId,
+        jobId: formData.jobId,
+        hourTypeId: formData.hourTypeId,
+        provinceId: formData.provinceId,
+        date: formData.date,
+        hours: hours,
+        description: formData.description,
+      });
+
+      resetForm();
+    } catch (error) {
+      setFormError("Error adding time entry. Please try again.");
+      console.error("Error adding time entry:", error);
+    }
   };
 
   const handleDelete = (entry: TimeEntry) => {
-    deleteTimeEntry(entry.id);
+    try {
+      deleteTimeEntry(entry.id);
+    } catch (error) {
+      console.error("Error deleting time entry:", error);
+    }
   };
 
   const getEmployeeName = (employeeId: string) => {
@@ -142,6 +164,11 @@ export function TimeEntryForm() {
 
   const activeJobs = jobs.filter((job) => job.isActive);
 
+  // Check if we have the necessary data to create time entries
+  const hasEmployees = employees.length > 0;
+  const hasActiveJobs = activeJobs.length > 0;
+  const canCreateEntry = hasEmployees && hasActiveJobs;
+
   return (
     <div className="space-y-6">
       <Card>
@@ -153,18 +180,51 @@ export function TimeEntryForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {!canCreateEntry && (
+            <Alert className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                {!hasEmployees &&
+                  !hasActiveJobs &&
+                  "You need to add employees and jobs before creating time entries. "}
+                {!hasEmployees &&
+                  hasActiveJobs &&
+                  "You need to add employees before creating time entries. "}
+                {hasEmployees &&
+                  !hasActiveJobs &&
+                  "You need to add active jobs before creating time entries. "}
+                Go to the {!hasEmployees ? "Employees" : "Jobs"} section to get
+                started.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {formError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{formError}</AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="employee">Employee</Label>
+                <Label htmlFor="employee">Employee *</Label>
                 <Select
                   value={formData.employeeId}
                   onValueChange={(value) =>
                     setFormData({ ...formData, employeeId: value })
                   }
+                  disabled={!hasEmployees}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select employee" />
+                    <SelectValue
+                      placeholder={
+                        hasEmployees
+                          ? "Select employee"
+                          : "No employees available"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {employees.map((employee) => (
@@ -177,15 +237,22 @@ export function TimeEntryForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="job">Job</Label>
+                <Label htmlFor="job">Job *</Label>
                 <Select
                   value={formData.jobId}
                   onValueChange={(value) =>
                     setFormData({ ...formData, jobId: value })
                   }
+                  disabled={!hasActiveJobs}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select job" />
+                    <SelectValue
+                      placeholder={
+                        hasActiveJobs
+                          ? "Select job"
+                          : "No active jobs available"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {activeJobs.map((job) => (
@@ -198,7 +265,7 @@ export function TimeEntryForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="hourType">Hour Type</Label>
+                <Label htmlFor="hourType">Hour Type *</Label>
                 <Select
                   value={formData.hourTypeId}
                   onValueChange={(value) =>
@@ -219,7 +286,7 @@ export function TimeEntryForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="province">Province</Label>
+                <Label htmlFor="province">Province *</Label>
                 <Select
                   value={formData.provinceId}
                   onValueChange={(value) =>
@@ -242,7 +309,7 @@ export function TimeEntryForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">Date *</Label>
                 <Input
                   id="date"
                   type="date"
@@ -255,12 +322,13 @@ export function TimeEntryForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="hours">Hours</Label>
+                <Label htmlFor="hours">Hours *</Label>
                 <Input
                   id="hours"
                   type="number"
                   step="0.25"
                   min="0"
+                  max="24"
                   value={formData.hours}
                   onChange={(e) =>
                     setFormData({ ...formData, hours: e.target.value })
@@ -284,10 +352,22 @@ export function TimeEntryForm() {
               />
             </div>
 
-            <Button type="submit" className="w-full md:w-auto">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Time Entry
-            </Button>
+            <div className="flex gap-2">
+              <Button type="submit" disabled={!canCreateEntry}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Time Entry
+              </Button>
+              {formData.employeeId ||
+              formData.jobId ||
+              formData.hourTypeId ||
+              formData.provinceId ||
+              formData.hours ||
+              formData.description ? (
+                <Button type="button" variant="outline" onClick={resetForm}>
+                  Clear Form
+                </Button>
+              ) : null}
+            </div>
           </form>
         </CardContent>
       </Card>
