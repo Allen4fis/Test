@@ -268,7 +268,11 @@ export function useTimeTracking() {
 
   return {
     // Data
-    ...appData,
+    employees: appData.employees,
+    jobs: appData.jobs,
+    hourTypes: appData.hourTypes,
+    provinces: appData.provinces,
+    timeEntries: appData.timeEntries,
 
     // View management
     selectedView,
