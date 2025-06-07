@@ -160,7 +160,7 @@ export function useTimeTracking() {
   };
 
   // Summary calculations
-  const getTimeEntrySummaries = useMemo((): TimeEntrySummary[] => {
+  const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
     return appData.timeEntries.map((entry) => {
       const employee = appData.employees.find(
         (emp) => emp.id === entry.employeeId,
@@ -185,7 +185,7 @@ export function useTimeTracking() {
     });
   }, [appData]);
 
-  const getSummaryByTitleAndJob = useMemo((): SummaryByTitleAndJob[] => {
+  const summaryByTitleAndJob = useMemo((): SummaryByTitleAndJob[] => {
     const grouped = appData.timeEntries.reduce(
       (acc, entry) => {
         const employee = appData.employees.find(
@@ -225,7 +225,7 @@ export function useTimeTracking() {
     );
   }, [appData]);
 
-  const getSummaryByDateAndName = useMemo((): SummaryByDateAndName[] => {
+  const summaryByDateAndName = useMemo((): SummaryByDateAndName[] => {
     const grouped = appData.timeEntries.reduce(
       (acc, entry) => {
         const employee = appData.employees.find(
