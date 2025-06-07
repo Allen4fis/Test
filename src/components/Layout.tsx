@@ -91,7 +91,10 @@ export function Layout({ children }: LayoutProps) {
                       key={item.id}
                       variant={isActive ? "default" : "ghost"}
                       className="w-full justify-start gap-3 h-auto p-3"
-                      onClick={() => setSelectedView(item.id)}
+                      onClick={() => {
+                        console.log("Navigating to:", item.id);
+                        setSelectedView(item.id);
+                      }}
                     >
                       <Icon className="h-4 w-4" />
                       <div className="flex-1 text-left">
