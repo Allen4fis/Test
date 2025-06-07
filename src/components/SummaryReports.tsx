@@ -43,9 +43,9 @@ export function SummaryReports() {
     hourTypes,
     provinces,
     timeEntries,
-    getTimeEntrySummaries,
-    getSummaryByTitleAndJob,
-    getSummaryByDateAndName,
+    timeEntrySummaries,
+    summaryByTitleAndJob,
+    summaryByDateAndName,
   } = useTimeTracking();
 
   const [dateFilter, setDateFilter] = useState({
