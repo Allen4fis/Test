@@ -56,17 +56,6 @@ export function SummaryReports() {
   const [jobFilter, setJobFilter] = useState("");
   const [provinceFilter, setProvinceFilter] = useState("");
 
-  const {
-    employees,
-    jobs,
-    hourTypes,
-    provinces,
-    timeEntries,
-    timeEntrySummaries,
-    summaryByTitleAndJob,
-    summaryByDateAndName,
-  } = useTimeTracking();
-
   const summaries = timeEntrySummaries;
   const titleJobSummaries = summaryByTitleAndJob;
   const dateNameSummaries = summaryByDateAndName;
