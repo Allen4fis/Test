@@ -33,6 +33,7 @@ export function Dashboard() {
     provinces,
     timeEntrySummaries,
     summaryByTitleAndJob,
+    resetData,
   } = useTimeTracking();
 
   const summaries = timeEntrySummaries;
@@ -190,6 +191,57 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Data Management */}
+      {hourTypes.length > 5 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Data Management</CardTitle>
+            <CardDescription>
+              You have old hour types data. Reset to use the new simplified hour
+              types.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <p className="text-sm text-gray-600">
+                  Current hour types: {hourTypes.length} (Expected: 5)
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Reset will clear all data and apply the new simplified hour
+                  types: Regular Time, Overtime, Double Time, Travel Hours, and
+                  LOA.
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline">
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Reset Data
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reset All Data?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all employees, jobs, and time
+                      entries, and apply the new simplified hour types. This
+                      action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={resetData}>
+                      Reset Data
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Employees This Month */}
