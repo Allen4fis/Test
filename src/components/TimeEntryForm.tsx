@@ -38,7 +38,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Plus, Trash2, Calendar, AlertCircle } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Calendar,
+  AlertCircle,
+  Edit,
+  Save,
+  X,
+} from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TimeEntry } from "@/types";
 
@@ -58,6 +66,7 @@ export function TimeEntryForm() {
     provinces,
     timeEntries,
     addTimeEntry,
+    updateTimeEntry,
     deleteTimeEntry,
   } = useTimeTracking();
 
@@ -72,6 +81,7 @@ export function TimeEntryForm() {
   });
 
   const [formError, setFormError] = useState("");
+  const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
 
   const resetForm = () => {
     setFormData({
@@ -84,6 +94,7 @@ export function TimeEntryForm() {
       description: "",
     });
     setFormError("");
+    setEditingEntry(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -115,7 +126,7 @@ export function TimeEntryForm() {
     }
 
     try {
-      addTimeEntry({
+      const entryData = {
         employeeId: formData.employeeId,
         jobId: formData.jobId,
         hourTypeId: formData.hourTypeId,
@@ -123,18 +134,52 @@ export function TimeEntryForm() {
         date: formData.date,
         hours: hours,
         description: formData.description,
-      });
+      };
+
+      if (editingEntry) {
+        updateTimeEntry(editingEntry.id, entryData);
+      } else {
+        addTimeEntry(entryData);
+      }
 
       resetForm();
     } catch (error) {
-      setFormError("Error adding time entry. Please try again.");
-      console.error("Error adding time entry:", error);
+      setFormError("Error saving time entry. Please try again.");
+      console.error("Error saving time entry:", error);
     }
+  };
+
+  const handleEdit = (entry: TimeEntry) => {
+    setEditingEntry(entry);
+    setFormData({
+      employeeId: entry.employeeId,
+      jobId: entry.jobId,
+      hourTypeId: entry.hourTypeId,
+      provinceId: entry.provinceId,
+      date: entry.date,
+      hours: entry.hours.toString(),
+      description: entry.description || "",
+    });
+    setFormError("");
+
+    // Scroll to form
+    const formElement = document.getElementById("time-entry-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
   };
 
   const handleDelete = (entry: TimeEntry) => {
     try {
       deleteTimeEntry(entry.id);
+      // If we're editing this entry, cancel the edit
+      if (editingEntry && editingEntry.id === entry.id) {
+        resetForm();
+      }
     } catch (error) {
       console.error("Error deleting time entry:", error);
     }
@@ -179,12 +224,15 @@ export function TimeEntryForm() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card id="time-entry-form">
         <CardHeader>
-          <CardTitle>Log Time Entry</CardTitle>
+          <CardTitle>
+            {editingEntry ? "Edit Time Entry" : "Log Time Entry"}
+          </CardTitle>
           <CardDescription>
-            Record hours worked for employees across different jobs and
-            provinces
+            {editingEntry
+              ? "Update the time entry details below"
+              : "Record hours worked for employees across different jobs and provinces"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -211,6 +259,17 @@ export function TimeEntryForm() {
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{formError}</AlertDescription>
+            </Alert>
+          )}
+
+          {editingEntry && (
+            <Alert className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                You are editing a time entry from{" "}
+                {new Date(editingEntry.date).toLocaleDateString()}. Make your
+                changes and click "Update Entry" to save.
+              </AlertDescription>
             </Alert>
           )}
 
@@ -362,19 +421,41 @@ export function TimeEntryForm() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={!canCreateEntry}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Time Entry
+                {editingEntry ? (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Update Entry
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Time Entry
+                  </>
+                )}
               </Button>
-              {formData.employeeId ||
-              formData.jobId ||
-              formData.hourTypeId ||
-              formData.provinceId ||
-              formData.hours ||
-              formData.description ? (
-                <Button type="button" variant="outline" onClick={resetForm}>
-                  Clear Form
+
+              {editingEntry && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancelEdit}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel Edit
                 </Button>
-              ) : null}
+              )}
+
+              {!editingEntry &&
+                (formData.employeeId ||
+                  formData.jobId ||
+                  formData.hourTypeId ||
+                  formData.provinceId ||
+                  formData.hours ||
+                  formData.description) && (
+                  <Button type="button" variant="outline" onClick={resetForm}>
+                    Clear Form
+                  </Button>
+                )}
             </div>
           </form>
         </CardContent>
@@ -383,7 +464,9 @@ export function TimeEntryForm() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Time Entries</CardTitle>
-          <CardDescription>Latest 20 time entries</CardDescription>
+          <CardDescription>
+            Latest 20 time entries - click edit to modify or delete to remove
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {recentEntries.length === 0 ? (
@@ -406,7 +489,14 @@ export function TimeEntryForm() {
               </TableHeader>
               <TableBody>
                 {recentEntries.map((entry) => (
-                  <TableRow key={entry.id}>
+                  <TableRow
+                    key={entry.id}
+                    className={
+                      editingEntry && editingEntry.id === entry.id
+                        ? "bg-blue-50"
+                        : ""
+                    }
+                  >
                     <TableCell className="font-medium">
                       {getEmployeeName(entry.employeeId)}
                     </TableCell>
@@ -430,30 +520,42 @@ export function TimeEntryForm() {
                       ).toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete this time entry. This
-                              action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(entry)}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(entry)}
+                          disabled={editingEntry?.id === entry.id}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete this time entry for{" "}
+                                {getEmployeeName(entry.employeeId)} on{" "}
+                                {new Date(entry.date).toLocaleDateString()}.
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(entry)}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
