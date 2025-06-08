@@ -215,6 +215,7 @@ export function useTimeTracking() {
   const [selectedView, setSelectedView] = useState<
     | "dashboard"
     | "timeEntry"
+    | "viewer"
     | "employees"
     | "jobs"
     | "reports"
