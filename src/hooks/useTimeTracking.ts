@@ -312,8 +312,14 @@ export function useTimeTracking() {
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
       const effectiveHours = entry.hours * (hourType?.multiplier || 1);
-      const hourlyWage = employee?.hourlyWage || 0;
-      const totalCost = effectiveHours * hourlyWage;
+      let adjustedHourlyWage = employee?.hourlyWage || 0;
+
+      // Add $3 to base wage for NS hour types
+      if (hourType?.name.startsWith("NS ")) {
+        adjustedHourlyWage += 3;
+      }
+
+      const totalCost = effectiveHours * adjustedHourlyWage;
 
       return {
         employeeName: employee?.name || "Unknown Employee",
@@ -346,7 +352,14 @@ export function useTimeTracking() {
 
         const key = `${employee.title}-${job.jobNumber}`;
         const effectiveHours = entry.hours * hourType.multiplier;
-        const cost = effectiveHours * (employee.hourlyWage || 0);
+        let adjustedHourlyWage = employee.hourlyWage || 0;
+
+        // Add $3 to base wage for NS hour types
+        if (hourType.name.startsWith("NS ")) {
+          adjustedHourlyWage += 3;
+        }
+
+        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[key]) {
           acc[key] = {
@@ -389,7 +402,14 @@ export function useTimeTracking() {
 
         const key = `${entry.date}-${employee.name}`;
         const effectiveHours = entry.hours * hourType.multiplier;
-        const cost = effectiveHours * (employee.hourlyWage || 0);
+        let adjustedHourlyWage = employee.hourlyWage || 0;
+
+        // Add $3 to base wage for NS hour types
+        if (hourType.name.startsWith("NS ")) {
+          adjustedHourlyWage += 3;
+        }
+
+        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[key]) {
           acc[key] = {
@@ -434,7 +454,14 @@ export function useTimeTracking() {
         if (!employee || !hourType) return acc;
 
         const effectiveHours = entry.hours * hourType.multiplier;
-        const cost = effectiveHours * (employee.hourlyWage || 0);
+        let adjustedHourlyWage = employee.hourlyWage || 0;
+
+        // Add $3 to base wage for NS hour types
+        if (hourType.name.startsWith("NS ")) {
+          adjustedHourlyWage += 3;
+        }
+
+        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[employee.id]) {
           acc[employee.id] = {
@@ -477,7 +504,14 @@ export function useTimeTracking() {
         if (!employee || !job || !hourType) return acc;
 
         const effectiveHours = entry.hours * hourType.multiplier;
-        const cost = effectiveHours * (employee.hourlyWage || 0);
+        let adjustedHourlyWage = employee.hourlyWage || 0;
+
+        // Add $3 to base wage for NS hour types
+        if (hourType.name.startsWith("NS ")) {
+          adjustedHourlyWage += 3;
+        }
+
+        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[job.id]) {
           acc[job.id] = {
