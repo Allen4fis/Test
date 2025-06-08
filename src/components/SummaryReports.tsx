@@ -70,14 +70,23 @@ export function SummaryReports() {
     summaryByDateAndName,
   } = useTimeTracking();
 
-  const [dateFilter, setDateFilter] = useState({
-    startDate: "",
-    endDate: "",
-  });
+  // Initialize with last 30 days
+  const getInitialDateFilter = () => {
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+
+    return {
+      startDate: thirtyDaysAgo.toISOString().split("T")[0],
+      endDate: today.toISOString().split("T")[0],
+    };
+  };
+
+  const [dateFilter, setDateFilter] = useState(getInitialDateFilter());
   const [employeeFilter, setEmployeeFilter] = useState("");
   const [jobFilter, setJobFilter] = useState("");
   const [provinceFilter, setProvinceFilter] = useState("");
-  const [periodFilter, setPeriodFilter] = useState("all"); // New quick period filter
+  const [periodFilter, setPeriodFilter] = useState("month"); // Default to last 30 days
 
   // Quick period filters
   const setQuickPeriod = (period: string) => {
@@ -357,11 +366,11 @@ export function SummaryReports() {
   );
 
   const clearFilters = () => {
-    setDateFilter({ startDate: "", endDate: "" });
+    setDateFilter(getInitialDateFilter());
     setEmployeeFilter("");
     setJobFilter("");
     setProvinceFilter("");
-    setPeriodFilter("all");
+    setPeriodFilter("month");
   };
 
   const uniqueProvinceNames = [
@@ -404,11 +413,11 @@ export function SummaryReports() {
               <Label>Quick Time Periods</Label>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  variant={periodFilter === "all" ? "default" : "outline"}
+                  variant={periodFilter === "month" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setQuickPeriod("all")}
+                  onClick={() => setQuickPeriod("month")}
                 >
-                  All Time
+                  Last 30 Days
                 </Button>
                 <Button
                   variant={periodFilter === "today" ? "default" : "outline"}
@@ -425,11 +434,11 @@ export function SummaryReports() {
                   Last 7 Days
                 </Button>
                 <Button
-                  variant={periodFilter === "month" ? "default" : "outline"}
+                  variant={periodFilter === "all" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setQuickPeriod("month")}
+                  onClick={() => setQuickPeriod("all")}
                 >
-                  Last 30 Days
+                  All Time
                 </Button>
                 <Button
                   variant={periodFilter === "quarter" ? "default" : "outline"}
