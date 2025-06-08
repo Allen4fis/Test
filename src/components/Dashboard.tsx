@@ -49,7 +49,6 @@ export function Dashboard() {
     provinces,
     timeEntrySummaries,
     summaryByTitleAndJob,
-    resetData,
   } = useTimeTracking();
 
   const summaries = timeEntrySummaries;
