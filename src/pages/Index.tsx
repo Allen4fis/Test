@@ -53,7 +53,11 @@ const Index = () => {
 
   // Check for database errors
   const hasError =
-    timeTracking.error && timeTracking.error.includes("ConstraintError");
+    timeTracking.error &&
+    (timeTracking.error.includes("ConstraintError") ||
+      timeTracking.error.includes("subscribe") ||
+      timeTracking.error.includes("blocked") ||
+      timeTracking.error.includes("Database"));
 
   const handleRetry = () => {
     setRetryKey((prev) => prev + 1);
