@@ -672,13 +672,16 @@ export function TimeEntryForm() {
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Delete Time Entry
+                                  <AlertDialogTitle className="text-red-600">
+                                    ⚠️ Delete Time Entry
                                   </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete this time
-                                    entry for {employee?.name} on {entry.date}?
-                                    This action cannot be undone.
+                                  <AlertDialogDescription className="text-lg font-semibold text-red-700">
+                                    If Deleted, This Time Entry Will Be Gone
+                                    FOREVER AND EVER AND EVER!
+                                  </AlertDialogDescription>
+                                  <AlertDialogDescription className="text-sm text-gray-600 mt-2">
+                                    Time entry for {employee?.name} on{" "}
+                                    {entry.date} - {entry.hours} hours
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
