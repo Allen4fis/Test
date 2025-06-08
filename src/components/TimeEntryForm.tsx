@@ -47,6 +47,8 @@ import {
   Save,
   X,
   User,
+  Banknote,
+  DollarSign,
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
@@ -80,13 +82,15 @@ export function TimeEntryForm() {
     date: getLocalDateString(),
     hours: "",
     title: "",
+    billableWageUsed: "",
+    costWageUsed: "",
     description: "",
   });
 
   const [formError, setFormError] = useState("");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
 
-  // Update title when employee is selected
+  // Update title and wages when employee is selected
   useEffect(() => {
     if (formData.employeeId && !editingEntry) {
       const selectedEmployee = employees.find(
@@ -96,6 +100,8 @@ export function TimeEntryForm() {
         setFormData((prev) => ({
           ...prev,
           title: selectedEmployee.title,
+          billableWageUsed: selectedEmployee.billableWage.toString(),
+          costWageUsed: selectedEmployee.costWage.toString(),
         }));
       }
     }
@@ -110,6 +116,8 @@ export function TimeEntryForm() {
       date: getLocalDateString(),
       hours: "",
       title: "",
+      billableWageUsed: "",
+      costWageUsed: "",
       description: "",
     });
     setFormError("");
@@ -128,13 +136,18 @@ export function TimeEntryForm() {
       !formData.provinceId ||
       !formData.date ||
       !formData.hours ||
-      !formData.title
+      !formData.title ||
+      !formData.billableWageUsed ||
+      !formData.costWageUsed
     ) {
       setFormError("Please fill in all required fields.");
       return;
     }
 
     const hours = parseFloat(formData.hours);
+    const billableWageUsed = parseFloat(formData.billableWageUsed);
+    const costWageUsed = parseFloat(formData.costWageUsed);
+
     if (isNaN(hours) || hours <= 0) {
       setFormError("Please enter a valid number of hours greater than 0.");
       return;
@@ -142,6 +155,16 @@ export function TimeEntryForm() {
 
     if (hours > 24) {
       setFormError("Hours cannot exceed 24 for a single day.");
+      return;
+    }
+
+    if (isNaN(billableWageUsed) || billableWageUsed < 0) {
+      setFormError("Please enter a valid billable wage.");
+      return;
+    }
+
+    if (isNaN(costWageUsed) || costWageUsed < 0) {
+      setFormError("Please enter a valid cost wage.");
       return;
     }
 
@@ -154,6 +177,8 @@ export function TimeEntryForm() {
         date: formData.date,
         hours: hours,
         title: formData.title,
+        billableWageUsed: billableWageUsed,
+        costWageUsed: costWageUsed,
         description: formData.description,
       };
 
@@ -179,7 +204,9 @@ export function TimeEntryForm() {
       provinceId: entry.provinceId,
       date: entry.date,
       hours: entry.hours.toString(),
-      title: entry.title || "", // Use title from the time entry
+      title: entry.title || "",
+      billableWageUsed: entry.billableWageUsed?.toString() || "0",
+      costWageUsed: entry.costWageUsed?.toString() || "0",
       description: entry.description || "",
     });
     setFormError("");
@@ -230,7 +257,7 @@ export function TimeEntryForm() {
           <CardDescription>
             {editingEntry
               ? "Update the time entry details"
-              : "Record hours worked for an employee"}
+              : "Record hours worked for an employee with custom wage rates"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -404,6 +431,74 @@ export function TimeEntryForm() {
                   required
                 />
               </div>
+
+              {/* Billable Wage */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="billableWageUsed"
+                  className="text-sm font-medium"
+                >
+                  Billable Rate *
+                </Label>
+                <div className="relative">
+                  <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
+                  <Input
+                    id="billableWageUsed"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.billableWageUsed}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        billableWageUsed: e.target.value,
+                      })
+                    }
+                    className="pl-10"
+                    placeholder="45.00"
+                    required
+                  />
+                </div>
+                {selectedEmployee &&
+                  selectedEmployee.billableWage !==
+                    parseFloat(formData.billableWageUsed) &&
+                  formData.billableWageUsed && (
+                    <p className="text-xs text-green-600">
+                      Default: ${selectedEmployee.billableWage.toFixed(2)}/hr
+                    </p>
+                  )}
+              </div>
+
+              {/* Cost Wage */}
+              <div className="space-y-2">
+                <Label htmlFor="costWageUsed" className="text-sm font-medium">
+                  Cost Rate *
+                </Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
+                  <Input
+                    id="costWageUsed"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.costWageUsed}
+                    onChange={(e) =>
+                      setFormData({ ...formData, costWageUsed: e.target.value })
+                    }
+                    className="pl-10"
+                    placeholder="25.00"
+                    required
+                  />
+                </div>
+                {selectedEmployee &&
+                  selectedEmployee.costWage !==
+                    parseFloat(formData.costWageUsed) &&
+                  formData.costWageUsed && (
+                    <p className="text-xs text-red-600">
+                      Default: ${selectedEmployee.costWage.toFixed(2)}/hr
+                    </p>
+                  )}
+              </div>
             </div>
 
             {/* Description */}
@@ -471,6 +566,8 @@ export function TimeEntryForm() {
                     <TableHead>Job</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Hours</TableHead>
+                    <TableHead>Billable</TableHead>
+                    <TableHead>Cost</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -486,6 +583,12 @@ export function TimeEntryForm() {
                     const province = provinces.find(
                       (p) => p.id === entry.provinceId,
                     );
+
+                    const billableWageChanged =
+                      employee &&
+                      entry.billableWageUsed !== employee.billableWage;
+                    const costWageChanged =
+                      employee && entry.costWageUsed !== employee.costWage;
 
                     return (
                       <TableRow
@@ -521,6 +624,30 @@ export function TimeEntryForm() {
                           </Badge>
                         </TableCell>
                         <TableCell>{entry.hours}h</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <span className="text-green-600 font-medium">
+                              ${entry.billableWageUsed?.toFixed(2) || "0.00"}
+                            </span>
+                            {billableWageChanged && (
+                              <Badge variant="outline" className="text-xs">
+                                Modified
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <span className="text-red-600 font-medium">
+                              ${entry.costWageUsed?.toFixed(2) || "0.00"}
+                            </span>
+                            {costWageChanged && (
+                              <Badge variant="outline" className="text-xs">
+                                Modified
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Button
