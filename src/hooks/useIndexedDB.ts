@@ -36,7 +36,36 @@ class TimeTrackingDB extends Dexie {
   }
 }
 
-const db = new TimeTrackingDB();
+// Create database instance with error handling
+let db: TimeTrackingDB;
+
+const initializeDB = async (): Promise<TimeTrackingDB> => {
+  try {
+    db = new TimeTrackingDB();
+    await db.open();
+    return db;
+  } catch (error) {
+    console.error("Failed to initialize database:", error);
+
+    // If there's a schema conflict, try to delete and recreate the database
+    if (error instanceof Error && error.message.includes("ConstraintError")) {
+      console.log("Attempting to reset database due to schema conflict...");
+      try {
+        await Dexie.delete("TimeTrackingDB");
+        db = new TimeTrackingDB();
+        await db.open();
+        return db;
+      } catch (resetError) {
+        console.error("Failed to reset database:", resetError);
+        throw resetError;
+      }
+    }
+    throw error;
+  }
+};
+
+// Initialize the database
+db = new TimeTrackingDB();
 
 interface PaginationOptions {
   page: number;
