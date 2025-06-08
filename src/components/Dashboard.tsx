@@ -257,66 +257,6 @@ export function Dashboard() {
         />
       </div>
 
-      {/* Data Management */}
-      {hourTypes.length > 5 && (
-        <Card className="modern-card border-amber-200 bg-amber-50/50 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-amber-800 flex items-center gap-2">
-              <RotateCcw className="h-5 w-5" />
-              Data Management
-            </CardTitle>
-            <CardDescription className="text-amber-700">
-              You have old hour types data. Reset to use the new simplified hour
-              types.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <p className="text-sm text-amber-800 font-medium">
-                  Current hour types: {hourTypes.length} (Expected: 5)
-                </p>
-                <p className="text-xs text-amber-700 mt-1">
-                  Reset will clear all data and apply the new simplified hour
-                  types: Regular Time, Overtime, Double Time, Travel Hours, and
-                  LOA.
-                </p>
-              </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="border-amber-300 text-amber-800 hover:bg-amber-100"
-                  >
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    Reset Data
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Reset All Data?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete all employees, jobs, and time
-                      entries, and apply the new simplified hour types. This
-                      action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={resetData}
-                      className="bg-destructive text-destructive-foreground"
-                    >
-                      Reset Data
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Employees This Month */}
         <Card className="modern-card border-border shadow-lg">
