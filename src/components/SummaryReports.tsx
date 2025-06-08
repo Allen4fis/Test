@@ -954,6 +954,130 @@ export function SummaryReports() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="rentals">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rental Summary</CardTitle>
+              <CardDescription>
+                Equipment and item rentals with costs for selected period
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {filteredRentalSummaries.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No rental data matches the current filters for the selected
+                  time period.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Rental Summary Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-orange-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-orange-700">
+                        <Briefcase className="h-5 w-5" />
+                        <span className="font-medium">Total Rentals</span>
+                      </div>
+                      <p className="text-2xl font-bold text-orange-900">
+                        {filteredRentalSummaries.length}
+                      </p>
+                    </div>
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-blue-700">
+                        <Calendar className="h-5 w-5" />
+                        <span className="font-medium">Total Duration</span>
+                      </div>
+                      <p className="text-2xl font-bold text-blue-900">
+                        {filteredRentalSummaries.reduce(
+                          (sum, rental) => sum + rental.duration,
+                          0,
+                        )}{" "}
+                        days
+                      </p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <DollarSign className="h-5 w-5" />
+                        <span className="font-medium">Total Rental Cost</span>
+                      </div>
+                      <p className="text-2xl font-bold text-green-900">
+                        ${totalRentalCost.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Rental Entries Table */}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Item</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Job</TableHead>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Rate</TableHead>
+                        <TableHead>Total Cost</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredRentalSummaries.map((rental, index) => (
+                        <TableRow key={`${rental.id}-${index}`}>
+                          <TableCell>
+                            <div className="text-sm">
+                              <div>{rental.startDate}</div>
+                              {rental.startDate !== rental.endDate && (
+                                <div className="text-gray-500">
+                                  to {rental.endDate}
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {rental.rentalItemName}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{rental.category}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">
+                                {rental.jobNumber}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {rental.jobName}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>{rental.employeeName}</TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              <div>
+                                {rental.duration} {rental.billingUnit}
+                                {rental.duration !== 1 ? "s" : ""}
+                              </div>
+                              {rental.quantity > 1 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  x{rental.quantity}
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            ${rental.rateUsed.toFixed(2)}/{rental.billingUnit}
+                          </TableCell>
+                          <TableCell className="font-medium text-green-600">
+                            ${rental.totalCost.toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="detailed">
           <Card>
             <CardHeader>
