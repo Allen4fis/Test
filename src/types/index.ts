@@ -103,10 +103,52 @@ export interface CostSummaryByJob {
   entries: TimeEntry[];
 }
 
+export interface RentalItem {
+  id: string;
+  name: string;
+  description?: string;
+  category: string; // e.g., "Equipment", "Tools", "Vehicles", "Materials"
+  dailyRate: number;
+  hourlyRate?: number;
+  unit: "day" | "hour" | "week" | "month"; // Primary billing unit
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface RentalEntry {
+  id: string;
+  rentalItemId: string;
+  jobId: string;
+  employeeId?: string; // Who rented/used the item
+  startDate: string; // YYYY-MM-DD format
+  endDate: string; // YYYY-MM-DD format
+  quantity: number; // Number of items rented
+  billingUnit: "day" | "hour" | "week" | "month";
+  rateUsed: number; // Rate that was used for this rental (in case rates change)
+  description?: string;
+  createdAt: string;
+}
+
+export interface RentalSummary {
+  rentalItemName: string;
+  category: string;
+  jobNumber: string;
+  jobName: string;
+  employeeName?: string;
+  startDate: string;
+  endDate: string;
+  duration: number; // Calculated duration in billing units
+  quantity: number;
+  rateUsed: number;
+  totalCost: number;
+}
+
 export interface AppData {
   employees: Employee[];
   jobs: Job[];
   hourTypes: HourType[];
   provinces: Province[];
   timeEntries: TimeEntry[];
+  rentalItems: RentalItem[];
+  rentalEntries: RentalEntry[];
 }
