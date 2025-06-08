@@ -101,6 +101,21 @@ export function useIndexedDB() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Wrapper function to handle database errors consistently
+  const handleDatabaseError = useCallback((operation: string, error: any) => {
+    console.error(`Database operation "${operation}" failed:`, error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    if (
+      errorMessage.includes("subscribe") ||
+      errorMessage.includes("blocked")
+    ) {
+      setError(`Database connection error: ${errorMessage}`);
+    } else {
+      setError(`${operation} failed: ${errorMessage}`);
+    }
+  }, []);
+
   // Initialize database with default data
   const initializeDatabase = useCallback(async () => {
     try {
