@@ -787,6 +787,7 @@ export function useTimeTracking() {
 
     // Summaries
     timeEntrySummaries,
+    rentalSummaries,
     summaryByTitleAndJob,
     summaryByDateAndName,
     costSummaryByEmployee,
