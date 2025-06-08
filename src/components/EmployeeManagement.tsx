@@ -137,7 +137,7 @@ export function EmployeeManagement() {
                 Add Employee
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle>
                   {editingEmployee ? "Edit Employee" : "Add New Employee"}
@@ -148,110 +148,140 @@ export function EmployeeManagement() {
                     : "Enter the details for the new employee including their billable and cost wage rates."}
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      className="col-span-3"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="title" className="text-right">
-                      Title *
-                    </Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
-                      }
-                      className="col-span-3"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="email" className="text-right">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="billableWage" className="text-right">
-                      Billable Rate *
-                    </Label>
-                    <div className="col-span-3 relative">
-                      <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
-                      <Input
-                        id="billableWage"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={formData.billableWage}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            billableWage: e.target.value,
-                          })
-                        }
-                        className="pl-10"
-                        placeholder="45.00"
-                        required
-                      />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-6">
+                  {/* Basic Information */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Basic Information
+                    </h4>
+                    <div className="grid gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className="text-sm font-medium">
+                          Name *
+                        </Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          placeholder="Enter full name"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="title" className="text-sm font-medium">
+                          Job Title *
+                        </Label>
+                        <Input
+                          id="title"
+                          value={formData.title}
+                          onChange={(e) =>
+                            setFormData({ ...formData, title: e.target.value })
+                          }
+                          placeholder="e.g., Project Manager, Electrician"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-sm font-medium">
+                          Email Address
+                        </Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
+                          placeholder="employee@company.com"
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="costWage" className="text-right">
-                      Cost Rate *
-                    </Label>
-                    <div className="col-span-3 relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
-                      <Input
-                        id="costWage"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={formData.costWage}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            costWage: e.target.value,
-                          })
-                        }
-                        className="pl-10"
-                        placeholder="25.00"
-                        required
-                      />
+
+                  {/* Wage Information */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Wage Information
+                    </h4>
+                    <div className="grid gap-3">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="billableWage"
+                          className="text-sm font-medium text-green-700"
+                        >
+                          Billable Rate * (What you charge clients)
+                        </Label>
+                        <div className="relative">
+                          <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
+                          <Input
+                            id="billableWage"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={formData.billableWage}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                billableWage: e.target.value,
+                              })
+                            }
+                            className="pl-10"
+                            placeholder="45.00"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="costWage"
+                          className="text-sm font-medium text-red-700"
+                        >
+                          Cost Rate * (What you pay employee)
+                        </Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
+                          <Input
+                            id="costWage"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={formData.costWage}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                costWage: e.target.value,
+                              })
+                            }
+                            className="pl-10"
+                            placeholder="25.00"
+                            required
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-span-4 text-xs text-gray-500 px-4">
-                    <p>
-                      <strong>Billable Rate:</strong> What you charge clients
-                      for this employee's time
-                    </p>
-                    <p>
-                      <strong>Cost Rate:</strong> Internal cost/what you pay
-                      this employee
-                    </p>
+                    <div className="bg-blue-50 p-3 rounded-md">
+                      <p className="text-xs text-blue-800">
+                        <strong>Billable Rate:</strong> The hourly rate you
+                        charge clients for this employee's work.
+                        <br />
+                        <strong>Cost Rate:</strong> Your internal cost - what
+                        you actually pay this employee per hour.
+                      </p>
+                    </div>
                   </div>
                 </div>
+
                 <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
                   <Button type="submit">
                     {editingEmployee ? "Update Employee" : "Add Employee"}
                   </Button>
@@ -267,73 +297,93 @@ export function EmployeeManagement() {
             No employees found. Add your first employee to get started.
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Billable Rate</TableHead>
-                <TableHead>Cost Rate</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {employees.map((employee) => (
-                <TableRow key={employee.id}>
-                  <TableCell className="font-medium">{employee.name}</TableCell>
-                  <TableCell>{employee.title}</TableCell>
-                  <TableCell>{employee.email || "—"}</TableCell>
-                  <TableCell className="font-medium text-green-600">
-                    ${employee.billableWage?.toFixed(2) || "0.00"}/hr
-                  </TableCell>
-                  <TableCell className="font-medium text-red-600">
-                    ${employee.costWage?.toFixed(2) || "0.00"}/hr
-                  </TableCell>
-                  <TableCell>
-                    {new Date(employee.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(employee)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete {employee.name} and
-                              all their time entries. This action cannot be
-                              undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(employee)}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Billable Rate</TableHead>
+                  <TableHead>Cost Rate</TableHead>
+                  <TableHead>Profit Margin</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {employees.map((employee) => {
+                  const profitMargin =
+                    employee.billableWage > 0
+                      ? ((employee.billableWage - employee.costWage) /
+                          employee.billableWage) *
+                        100
+                      : 0;
+                  return (
+                    <TableRow key={employee.id}>
+                      <TableCell className="font-medium">
+                        {employee.name}
+                      </TableCell>
+                      <TableCell>{employee.title}</TableCell>
+                      <TableCell>{employee.email || "—"}</TableCell>
+                      <TableCell className="font-medium text-green-600">
+                        ${employee.billableWage?.toFixed(2) || "0.00"}/hr
+                      </TableCell>
+                      <TableCell className="font-medium text-red-600">
+                        ${employee.costWage?.toFixed(2) || "0.00"}/hr
+                      </TableCell>
+                      <TableCell
+                        className={`font-medium ${profitMargin >= 0 ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {profitMargin.toFixed(1)}%
+                      </TableCell>
+                      <TableCell>
+                        {new Date(employee.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(employee)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete {employee.name}{" "}
+                                  and all their time entries. This action cannot
+                                  be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(employee)}
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>
