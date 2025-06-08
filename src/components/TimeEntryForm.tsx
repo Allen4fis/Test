@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,7 +46,9 @@ import {
   Edit,
   Save,
   X,
+  User,
 } from "lucide-react";
+
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TimeEntry } from "@/types";
 
@@ -77,11 +79,27 @@ export function TimeEntryForm() {
     provinceId: "",
     date: getLocalDateString(),
     hours: "",
+    title: "",
     description: "",
   });
 
   const [formError, setFormError] = useState("");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+
+  // Update title when employee is selected
+  useEffect(() => {
+    if (formData.employeeId && !editingEntry) {
+      const selectedEmployee = employees.find(
+        (emp) => emp.id === formData.employeeId,
+      );
+      if (selectedEmployee) {
+        setFormData((prev) => ({
+          ...prev,
+          title: selectedEmployee.title,
+        }));
+      }
+    }
+  }, [formData.employeeId, employees, editingEntry]);
 
   const resetForm = () => {
     setFormData({
@@ -91,6 +109,7 @@ export function TimeEntryForm() {
       provinceId: "",
       date: getLocalDateString(),
       hours: "",
+      title: "",
       description: "",
     });
     setFormError("");
@@ -108,7 +127,8 @@ export function TimeEntryForm() {
       !formData.hourTypeId ||
       !formData.provinceId ||
       !formData.date ||
-      !formData.hours
+      !formData.hours ||
+      !formData.title
     ) {
       setFormError("Please fill in all required fields.");
       return;
@@ -133,6 +153,7 @@ export function TimeEntryForm() {
         provinceId: formData.provinceId,
         date: formData.date,
         hours: hours,
+        title: formData.title,
         description: formData.description,
       };
 
@@ -158,6 +179,7 @@ export function TimeEntryForm() {
       provinceId: entry.provinceId,
       date: entry.date,
       hours: entry.hours.toString(),
+      title: entry.title || "", // Use title from the time entry
       description: entry.description || "",
     });
     setFormError("");
@@ -173,125 +195,67 @@ export function TimeEntryForm() {
     resetForm();
   };
 
-  const handleDelete = (entry: TimeEntry) => {
+  const handleDelete = async (entry: TimeEntry) => {
     try {
-      deleteTimeEntry(entry.id);
-      // If we're editing this entry, cancel the edit
-      if (editingEntry && editingEntry.id === entry.id) {
-        resetForm();
-      }
+      await deleteTimeEntry(entry.id);
     } catch (error) {
       console.error("Error deleting time entry:", error);
     }
   };
 
-  const getEmployeeName = (employeeId: string) => {
-    const employee = employees.find((emp) => emp.id === employeeId);
-    return employee ? employee.name : "Unknown Employee";
-  };
+  // Get recent time entries (last 10)
+  const recentEntries = timeEntries
+    .slice()
+    .sort((a, b) => {
+      // Sort by date (descending) then by creation time (descending)
+      const dateComparison = b.date.localeCompare(a.date);
+      if (dateComparison !== 0) return dateComparison;
+      return b.createdAt.localeCompare(a.createdAt);
+    })
+    .slice(0, 10);
 
-  const getJobNumber = (jobId: string) => {
-    const job = jobs.find((j) => j.id === jobId);
-    return job ? job.jobNumber : "Unknown Job";
-  };
-
-  const getHourTypeName = (hourTypeId: string) => {
-    const hourType = hourTypes.find((ht) => ht.id === hourTypeId);
-    return hourType ? hourType.name : "Unknown Type";
-  };
-
-  const getProvinceName = (provinceId: string) => {
-    const province = provinces.find((p) => p.id === provinceId);
-    return province ? province.code : "Unknown Province";
-  };
-
-  const getHourTypeMultiplier = (hourTypeId: string) => {
-    const hourType = hourTypes.find((ht) => ht.id === hourTypeId);
-    return hourType ? hourType.multiplier : 1;
-  };
-
-  // Get recent time entries (last 20)
-  const recentEntries = [...timeEntries]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, 20);
-
-  const activeJobs = jobs.filter((job) => job.isActive);
-
-  // Check if we have the necessary data to create time entries
-  const hasEmployees = employees.length > 0;
-  const hasActiveJobs = activeJobs.length > 0;
-  const canCreateEntry = hasEmployees && hasActiveJobs;
+  const selectedEmployee = employees.find(
+    (emp) => emp.id === formData.employeeId,
+  );
 
   return (
     <div className="space-y-6">
+      {/* Time Entry Form */}
       <Card id="time-entry-form">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
             {editingEntry ? "Edit Time Entry" : "Log Time Entry"}
           </CardTitle>
           <CardDescription>
             {editingEntry
-              ? "Update the time entry details below"
-              : "Record hours worked for employees across different jobs and provinces"}
+              ? "Update the time entry details"
+              : "Record hours worked for an employee"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!canCreateEntry && (
-            <Alert className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                {!hasEmployees &&
-                  !hasActiveJobs &&
-                  "You need to add employees and jobs before creating time entries. "}
-                {!hasEmployees &&
-                  hasActiveJobs &&
-                  "You need to add employees before creating time entries. "}
-                {hasEmployees &&
-                  !hasActiveJobs &&
-                  "You need to add active jobs before creating time entries. "}
-                Go to the {!hasEmployees ? "Employees" : "Jobs"} section to get
-                started.
-              </AlertDescription>
-            </Alert>
-          )}
-
           {formError && (
-            <Alert variant="destructive" className="mb-4">
+            <Alert className="mb-4" variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{formError}</AlertDescription>
             </Alert>
           )}
 
-          {editingEntry && (
-            <Alert className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                You are editing a time entry from{" "}
-                {new Date(editingEntry.date).toLocaleDateString()}. Make your
-                changes and click "Update Entry" to save.
-              </AlertDescription>
-            </Alert>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Employee Selection */}
               <div className="space-y-2">
-                <Label htmlFor="employee">Employee *</Label>
+                <Label htmlFor="employee" className="text-sm font-medium">
+                  Employee *
+                </Label>
                 <Select
                   value={formData.employeeId}
                   onValueChange={(value) =>
                     setFormData({ ...formData, employeeId: value })
                   }
-                  disabled={!hasEmployees}
                 >
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        hasEmployees
-                          ? "Select employee"
-                          : "No employees available"
-                      }
-                    />
+                    <SelectValue placeholder="Select employee" />
                   </SelectTrigger>
                   <SelectContent>
                     {employees.map((employee) => (
@@ -303,36 +267,65 @@ export function TimeEntryForm() {
                 </Select>
               </div>
 
+              {/* Employee Title */}
               <div className="space-y-2">
-                <Label htmlFor="job">Job *</Label>
+                <Label
+                  htmlFor="title"
+                  className="text-sm font-medium flex items-center gap-1"
+                >
+                  <User className="h-4 w-4" />
+                  Title *
+                </Label>
+                <Input
+                  id="title"
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  placeholder="Enter title for this entry"
+                  required
+                />
+                {selectedEmployee &&
+                  selectedEmployee.title !== formData.title &&
+                  formData.title && (
+                    <p className="text-xs text-blue-600">
+                      Default title: {selectedEmployee.title}
+                    </p>
+                  )}
+              </div>
+
+              {/* Job Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="job" className="text-sm font-medium">
+                  Job *
+                </Label>
                 <Select
                   value={formData.jobId}
                   onValueChange={(value) =>
                     setFormData({ ...formData, jobId: value })
                   }
-                  disabled={!hasActiveJobs}
                 >
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        hasActiveJobs
-                          ? "Select job"
-                          : "No active jobs available"
-                      }
-                    />
+                    <SelectValue placeholder="Select job" />
                   </SelectTrigger>
                   <SelectContent>
-                    {activeJobs.map((job) => (
-                      <SelectItem key={job.id} value={job.id}>
-                        {job.jobNumber} - {job.name}
-                      </SelectItem>
-                    ))}
+                    {jobs
+                      .filter((job) => job.isActive)
+                      .map((job) => (
+                        <SelectItem key={job.id} value={job.id}>
+                          {job.jobNumber} - {job.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
 
+              {/* Hour Type Selection */}
               <div className="space-y-2">
-                <Label htmlFor="hourType">Hour Type *</Label>
+                <Label htmlFor="hourType" className="text-sm font-medium">
+                  Hour Type *
+                </Label>
                 <Select
                   value={formData.hourTypeId}
                   onValueChange={(value) =>
@@ -345,15 +338,18 @@ export function TimeEntryForm() {
                   <SelectContent>
                     {hourTypes.map((hourType) => (
                       <SelectItem key={hourType.id} value={hourType.id}>
-                        {hourType.name} ({hourType.multiplier}x)
+                        {hourType.name} (x{hourType.multiplier})
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
+              {/* Province Selection */}
               <div className="space-y-2">
-                <Label htmlFor="province">Province *</Label>
+                <Label htmlFor="province" className="text-sm font-medium">
+                  Province *
+                </Label>
                 <Select
                   value={formData.provinceId}
                   onValueChange={(value) =>
@@ -372,11 +368,12 @@ export function TimeEntryForm() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Date */}
               <div className="space-y-2">
-                <Label htmlFor="date">Date *</Label>
+                <Label htmlFor="date" className="text-sm font-medium">
+                  Date *
+                </Label>
                 <Input
                   id="date"
                   type="date"
@@ -388,8 +385,11 @@ export function TimeEntryForm() {
                 />
               </div>
 
+              {/* Hours */}
               <div className="space-y-2">
-                <Label htmlFor="hours">Hours *</Label>
+                <Label htmlFor="hours" className="text-sm font-medium">
+                  Hours *
+                </Label>
                 <Input
                   id="hours"
                   type="number"
@@ -400,167 +400,179 @@ export function TimeEntryForm() {
                   onChange={(e) =>
                     setFormData({ ...formData, hours: e.target.value })
                   }
-                  placeholder="8.00"
+                  placeholder="8.0"
                   required
                 />
               </div>
             </div>
 
+            {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description (Optional)</Label>
+              <Label htmlFor="description" className="text-sm font-medium">
+                Description (Optional)
+              </Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="Additional notes about the work performed..."
-                rows={2}
+                placeholder="Brief description of work performed..."
+                rows={3}
               />
             </div>
 
-            <div className="flex gap-2">
-              <Button type="submit" disabled={!canCreateEntry}>
-                {editingEntry ? (
-                  <>
-                    <Save className="h-4 w-4 mr-2" />
-                    Update Entry
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Time Entry
-                  </>
-                )}
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-4">
+              <Button type="submit" className="flex-1">
+                <Save className="h-4 w-4 mr-2" />
+                {editingEntry ? "Update Entry" : "Log Time"}
               </Button>
-
               {editingEntry && (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancelEdit}
+                  className="flex-1"
                 >
                   <X className="h-4 w-4 mr-2" />
                   Cancel Edit
                 </Button>
               )}
-
-              {!editingEntry &&
-                (formData.employeeId ||
-                  formData.jobId ||
-                  formData.hourTypeId ||
-                  formData.provinceId ||
-                  formData.hours ||
-                  formData.description) && (
-                  <Button type="button" variant="outline" onClick={resetForm}>
-                    Clear Form
-                  </Button>
-                )}
             </div>
           </form>
         </CardContent>
       </Card>
 
+      {/* Recent Time Entries */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Time Entries</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Recent Time Entries
+          </CardTitle>
           <CardDescription>
-            Latest 20 time entries - click edit to modify or delete to remove
+            Your last 10 time entries. Click on an entry to edit.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {recentEntries.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No time entries found. Add your first entry above.
-            </div>
+            <p className="text-gray-500 text-center py-4">
+              No time entries yet. Log your first entry above!
+            </p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Job</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Province</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Hours</TableHead>
-                  <TableHead>Effective</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentEntries.map((entry) => (
-                  <TableRow
-                    key={entry.id}
-                    className={
-                      editingEntry && editingEntry.id === entry.id
-                        ? "bg-blue-50"
-                        : ""
-                    }
-                  >
-                    <TableCell className="font-medium">
-                      {getEmployeeName(entry.employeeId)}
-                    </TableCell>
-                    <TableCell>{getJobNumber(entry.jobId)}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {getHourTypeName(entry.hourTypeId)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{getProvinceName(entry.provinceId)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(entry.date).toLocaleDateString()}
-                      </div>
-                    </TableCell>
-                    <TableCell>{entry.hours.toFixed(2)}</TableCell>
-                    <TableCell>
-                      {(
-                        entry.hours * getHourTypeMultiplier(entry.hourTypeId)
-                      ).toFixed(2)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(entry)}
-                          disabled={editingEntry?.id === entry.id}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will permanently delete this time entry for{" "}
-                                {getEmployeeName(entry.employeeId)} on{" "}
-                                {new Date(entry.date).toLocaleDateString()}.
-                                This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(entry)}
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Employee</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Job</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Hours</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {recentEntries.map((entry) => {
+                    const employee = employees.find(
+                      (emp) => emp.id === entry.employeeId,
+                    );
+                    const job = jobs.find((j) => j.id === entry.jobId);
+                    const hourType = hourTypes.find(
+                      (ht) => ht.id === entry.hourTypeId,
+                    );
+                    const province = provinces.find(
+                      (p) => p.id === entry.provinceId,
+                    );
+
+                    return (
+                      <TableRow
+                        key={entry.id}
+                        className={`cursor-pointer hover:bg-gray-50 ${
+                          editingEntry?.id === entry.id
+                            ? "bg-blue-50 border-l-4 border-l-blue-500"
+                            : ""
+                        }`}
+                        onClick={() => handleEdit(entry)}
+                      >
+                        <TableCell>{entry.date}</TableCell>
+                        <TableCell>{employee?.name || "Unknown"}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <span>
+                              {entry.title || employee?.title || "Unknown"}
+                            </span>
+                            {entry.title && entry.title !== employee?.title && (
+                              <Badge variant="outline" className="text-xs">
+                                Modified
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {job?.jobNumber || "Unknown"} -{" "}
+                          {job?.name || "Unknown"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">
+                            {hourType?.name || "Unknown"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{entry.hours}h</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(entry);
+                              }}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Delete Time Entry
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete this time
+                                    entry for {employee?.name} on {entry.date}?
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(entry)}
+                                    className="bg-red-500 hover:bg-red-600"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
