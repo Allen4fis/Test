@@ -1238,6 +1238,14 @@ export function SummaryReports() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Print Footer - Only visible when printing */}
+      <div className="print-only print-footer">
+        <p>
+          4Front Trackity-doo Time Tracking Report | Generated:{" "}
+          {new Date().toLocaleDateString()} | Page {"{page}"}
+        </p>
+      </div>
     </div>
   );
 }
