@@ -75,7 +75,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-sidebar-foreground">
-                    TimeTracker Pro
+                    4Front Trackity-doo
                   </h1>
                   <p className="text-xs text-sidebar-foreground/70">
                     Professional Time Management
