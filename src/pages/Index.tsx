@@ -18,6 +18,11 @@ import {
   PerformanceMonitor,
 } from "@/utils/performanceConfig";
 
+// Import database cleanup utilities for development
+if (process.env.NODE_ENV === "development") {
+  import("@/utils/databaseCleanup");
+}
+
 const Index = () => {
   const regularTimeTracking = useTimeTracking();
   const optimizedTimeTracking = useOptimizedTimeTracking();
