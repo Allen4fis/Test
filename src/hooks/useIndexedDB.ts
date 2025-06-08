@@ -18,7 +18,7 @@ class TimeTrackingDB extends Dexie {
       employees: "id, name, title, email, hourlyWage, createdAt",
       jobs: "id, jobNumber, name, description, isActive, createdAt",
       timeEntries:
-        "id, employeeId, jobId, hourTypeId, provinceId, date, hours, createdAt",
+        "id, employeeId, jobId, hourTypeId, provinceId, date, hours, title, createdAt",
       hourTypes: "id, name, description, multiplier",
       provinces: "id, name, code",
     });
