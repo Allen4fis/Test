@@ -13,24 +13,15 @@ class TimeTrackingDB extends Dexie {
   constructor() {
     super("TimeTrackingDB");
 
+    // Use a single version with all required indexes
     this.version(1).stores({
       employees: "id, name, title, email, hourlyWage, createdAt",
       jobs: "id, jobNumber, name, description, isActive, createdAt",
-      timeEntries:
-        "id, employeeId, jobId, hourTypeId, provinceId, date, hours, createdAt",
+      timeEntries: "id, employeeId, jobId, hourTypeId, provinceId, date, hours, createdAt",
       hourTypes: "id, name, description, multiplier",
-      provinces: "id, name, code",
+      provinces: "id, name, code"
     });
-
-    // Add indexes for common queries
-    this.version(2).stores({
-      employees: "id, name, title, email, hourlyWage, createdAt, *name",
-      jobs: "id, jobNumber, name, description, isActive, createdAt, *jobNumber, *name",
-      timeEntries:
-        "id, employeeId, jobId, hourTypeId, provinceId, date, hours, createdAt, [employeeId+date], [jobId+date], [date+employeeId]",
-      hourTypes: "id, name, description, multiplier",
-      provinces: "id, name, code",
-    });
+  }
   }
 }
 
