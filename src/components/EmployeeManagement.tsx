@@ -168,10 +168,24 @@ export function EmployeeManagement() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="hourlyWage" className="text-right">
+                      Hourly Wage
+                    </Label>
+                    <Input
+                      id="hourlyWage"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.hourlyWage}
+                      onChange={(e) => setFormData({ ...formData, hourlyWage: e.target.value })}
+                      className="col-span-3"
+                      placeholder="25.00"
+                      required
                     />
                   </div>
                 </div>
@@ -197,6 +211,7 @@ export function EmployeeManagement() {
                 <TableHead>Name</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Hourly Wage</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -206,11 +221,13 @@ export function EmployeeManagement() {
                 <TableRow key={employee.id}>
                   <TableCell className="font-medium">{employee.name}</TableCell>
                   <TableCell>{employee.title}</TableCell>
-                  <TableCell>{employee.email || "—"}</TableCell>
-                  <TableCell>
-                    {new Date(employee.createdAt).toLocaleDateString()}
+                  <TableCell>{employee.email || '—'}</TableCell>
+                  <TableCell className="font-medium">
+                    ${employee.hourlyWage?.toFixed(2) || '0.00'}/hr
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
+                    {new Date(employee.createdAt).toLocaleDateDate()}
+                  </TableCell>
                     <div className="flex items-center justify-end gap-2">
                       <Button
                         variant="outline"
