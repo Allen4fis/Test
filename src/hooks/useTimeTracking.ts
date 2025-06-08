@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo } from 'react';
 import { useLocalStorage } from "./useLocalStorage";
 import {
   AppData,
@@ -64,7 +64,39 @@ const getDefaultAppData = (): AppData => ({
 });
 
 export function useTimeTracking() {
-  const [appData, setAppData] = useLocalStorage<AppData>(
+  const [rawAppData, setRawAppData] = useLocalStorage<AppData>('timeTrackingApp', getDefaultAppData());
+
+  // Ensure backward compatibility - add invoicedDates to existing jobs that don't have it
+  const appData = useMemo(() => ({
+    ...rawAppData,
+    jobs: rawAppData.jobs.map(job => ({
+      ...job,
+      invoicedDates: job.invoicedDates || []
+    }))
+  }), [rawAppData]);
+
+  const setAppData = (data: AppData | ((prev: AppData) => AppData)) => {
+    if (typeof data === 'function') {
+      setRawAppData(prev => {
+        const result = data(prev);
+        return {
+          ...result,
+          jobs: result.jobs.map(job => ({
+            ...job,
+            invoicedDates: job.invoicedDates || []
+          }))
+        };
+      });
+    } else {
+      setRawAppData({
+        ...data,
+        jobs: data.jobs.map(job => ({
+          ...job,
+          invoicedDates: job.invoicedDates || []
+        }))
+      });
+    }
+  };
     "timeTrackingApp",
     getDefaultAppData(),
   );
