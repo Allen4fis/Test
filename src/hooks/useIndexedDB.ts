@@ -36,19 +36,44 @@ const initializeDB = async (): Promise<TimeTrackingDB> => {
   } catch (error) {
     console.error("Failed to initialize database:", error);
 
-    // If there's a schema conflict, try to delete and recreate the database
-    if (error instanceof Error && error.message.includes("ConstraintError")) {
-      console.log("Attempting to reset database due to schema conflict...");
+    // Handle different types of database errors
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    // If there's a schema conflict or subscription error, try to reset the database
+    if (
+      errorMessage.includes("ConstraintError") ||
+      errorMessage.includes("subscribe") ||
+      errorMessage.includes("blocked")
+    ) {
+      console.log(
+        "Attempting to reset database due to initialization error...",
+      );
       try {
+        // First try to close any existing connections
+        if (db) {
+          db.close();
+        }
+
+        // Delete the database completely
         await Dexie.delete("TimeTrackingDB");
+
+        // Wait a moment for cleanup
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Create a fresh instance
         db = new TimeTrackingDB();
         await db.open();
+
+        console.log("✅ Database reset successfully");
         return db;
       } catch (resetError) {
-        console.error("Failed to reset database:", resetError);
-        throw resetError;
+        console.error("❌ Failed to reset database:", resetError);
+        throw new Error(
+          `Database initialization failed: ${errorMessage}. Reset also failed: ${resetError}`,
+        );
       }
     }
+
     throw error;
   }
 };
