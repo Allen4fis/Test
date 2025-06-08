@@ -3,6 +3,7 @@ import { Dashboard } from "@/components/Dashboard";
 import { TimeEntryForm } from "@/components/TimeEntryForm";
 import { SummaryReports } from "@/components/SummaryReports";
 import { CostReports } from "@/components/CostReports";
+import { InvoiceManagement } from "@/components/InvoiceManagement";
 import { EmployeeManagement } from "@/components/EmployeeManagement";
 import { JobManagement } from "@/components/JobManagement";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
@@ -21,6 +22,8 @@ const Index = () => {
         return <SummaryReports />;
       case "costs":
         return <CostReports />;
+      case "invoices":
+        return <InvoiceManagement />;
       case "employees":
         return <EmployeeManagement />;
       case "jobs":

@@ -47,6 +47,12 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       description: "Labor cost analysis",
     },
     {
+      id: "invoices" as const,
+      label: "Invoices",
+      icon: Receipt,
+      description: "Manage invoiced dates",
+    },
+    {
       id: "employees" as const,
       label: "Employees",
       icon: Users,
