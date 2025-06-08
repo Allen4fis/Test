@@ -368,7 +368,7 @@ export function useTimeTracking() {
     };
     setAppData((prev) => ({
       ...prev,
-      rentalEntries: [...prev.rentalEntries, newEntry],
+      rentalEntries: [...(prev.rentalEntries || []), newEntry],
     }));
   };
 
