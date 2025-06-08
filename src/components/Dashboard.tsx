@@ -55,12 +55,13 @@ export function Dashboard() {
   const summaries = timeEntrySummaries;
   const titleJobSummaries = summaryByTitleAndJob;
 
-  // Calculate statistics
-  const totalHours = summaries.reduce((sum, summary) => sum + summary.hours, 0);
-  const totalEffectiveHours = summaries.reduce(
-    (sum, summary) => sum + summary.effectiveHours,
-    0,
-  );
+  // Calculate statistics (excluding LOA from hours totals)
+  const totalHours = summaries
+    .filter((summary) => summary.hourTypeName !== "LOA")
+    .reduce((sum, summary) => sum + summary.hours, 0);
+  const totalEffectiveHours = summaries
+    .filter((summary) => summary.hourTypeName !== "LOA")
+    .reduce((sum, summary) => sum + summary.effectiveHours, 0);
   const totalCost = summaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
