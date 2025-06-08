@@ -60,6 +60,13 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       count: employees.length,
     },
     {
+      id: "employees" as const,
+      label: "Employees",
+      icon: Users,
+      description: "Manage staff",
+      count: employees.length,
+    },
+    {
       id: "jobs" as const,
       label: "Jobs",
       icon: Briefcase,
