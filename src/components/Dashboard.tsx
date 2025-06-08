@@ -63,9 +63,9 @@ export function Dashboard() {
   // Recent activity (last 3 days)
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-  const recentEntries = timeEntries.filter(entry =>
-    new Date(entry.date) >= threeDaysAgo
-  ).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  const recentEntries = timeEntries
+    .filter((entry) => new Date(entry.date) >= threeDaysAgo)
+    .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 10);
 
   // Top employees by hours this month
