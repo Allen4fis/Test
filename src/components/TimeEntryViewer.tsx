@@ -10,6 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -37,6 +44,9 @@ import {
   Clock,
   Users,
   DollarSign,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
@@ -50,6 +60,9 @@ const getLocalDateString = (date: Date = new Date()) => {
   return `${year}-${month}-${day}`;
 };
 
+type SortField = "date" | "employee" | "job" | "hours" | "title" | "hourType";
+type SortDirection = "asc" | "desc";
+
 export function TimeEntryViewer() {
   const {
     employees,
@@ -60,9 +73,15 @@ export function TimeEntryViewer() {
     deleteTimeEntry,
   } = useTimeTracking();
 
-  // Date filter states
+  // Filter states
   const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [dateRange, setDateRange] = useState("today");
+  const [employeeFilter, setEmployeeFilter] = useState("");
+  const [jobFilter, setJobFilter] = useState("");
+
+  // Sorting states
+  const [sortField, setSortField] = useState<SortField>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // Calculate date ranges
   const getDateRange = (range: string) => {
@@ -109,32 +128,128 @@ export function TimeEntryViewer() {
     return { startDate, endDate };
   };
 
-  // Filtered time entries based on selected date range
-  const filteredEntries = useMemo(() => {
+  // Handle sorting
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  // Get sort icon for column headers
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-4 w-4 text-gray-400" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="h-4 w-4 text-blue-600" />
+    ) : (
+      <ArrowDown className="h-4 w-4 text-blue-600" />
+    );
+  };
+
+  // Filtered and sorted time entries
+  const filteredAndSortedEntries = useMemo(() => {
     const { startDate, endDate } = getDateRange(dateRange);
 
-    return timeEntries
-      .filter((entry) => {
-        if (dateRange === "custom") {
-          return entry.date === selectedDate;
-        }
-        return entry.date >= startDate && entry.date <= endDate;
-      })
-      .sort((a, b) => {
-        // Sort by date (most recent first) then by creation time (most recent first)
-        const dateComparison = b.date.localeCompare(a.date);
-        if (dateComparison !== 0) return dateComparison;
-        return b.createdAt.localeCompare(a.createdAt);
-      });
-  }, [timeEntries, dateRange, selectedDate]);
+    // First, filter the entries
+    let filtered = timeEntries.filter((entry) => {
+      // Date filter
+      const matchesDate =
+        dateRange === "custom"
+          ? entry.date === selectedDate
+          : entry.date >= startDate && entry.date <= endDate;
+
+      // Employee filter
+      const employee = employees.find((emp) => emp.id === entry.employeeId);
+      const matchesEmployee =
+        !employeeFilter ||
+        employee?.name.toLowerCase().includes(employeeFilter.toLowerCase());
+
+      // Job filter
+      const job = jobs.find((j) => j.id === entry.jobId);
+      const matchesJob =
+        !jobFilter ||
+        job?.jobNumber.toLowerCase().includes(jobFilter.toLowerCase()) ||
+        job?.name.toLowerCase().includes(jobFilter.toLowerCase());
+
+      return matchesDate && matchesEmployee && matchesJob;
+    });
+
+    // Then, sort the filtered results
+    filtered.sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortField) {
+        case "date":
+          aValue = a.date;
+          bValue = b.date;
+          break;
+        case "employee":
+          const aEmployee = employees.find((emp) => emp.id === a.employeeId);
+          const bEmployee = employees.find((emp) => emp.id === b.employeeId);
+          aValue = aEmployee?.name || "";
+          bValue = bEmployee?.name || "";
+          break;
+        case "job":
+          const aJob = jobs.find((j) => j.id === a.jobId);
+          const bJob = jobs.find((j) => j.id === b.jobId);
+          aValue = aJob?.jobNumber || "";
+          bValue = bJob?.jobNumber || "";
+          break;
+        case "hours":
+          aValue = a.hours;
+          bValue = b.hours;
+          break;
+        case "title":
+          aValue = a.title || "";
+          bValue = b.title || "";
+          break;
+        case "hourType":
+          const aHourType = hourTypes.find((ht) => ht.id === a.hourTypeId);
+          const bHourType = hourTypes.find((ht) => ht.id === b.hourTypeId);
+          aValue = aHourType?.name || "";
+          bValue = bHourType?.name || "";
+          break;
+        default:
+          aValue = a.date;
+          bValue = b.date;
+      }
+
+      // Handle string vs number comparison
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        const comparison = aValue.localeCompare(bValue);
+        return sortDirection === "asc" ? comparison : -comparison;
+      } else {
+        const comparison = Number(aValue) - Number(bValue);
+        return sortDirection === "asc" ? comparison : -comparison;
+      }
+    });
+
+    return filtered;
+  }, [
+    timeEntries,
+    dateRange,
+    selectedDate,
+    employeeFilter,
+    jobFilter,
+    sortField,
+    sortDirection,
+    employees,
+    jobs,
+    hourTypes,
+  ]);
 
   // Calculate summary statistics
-  const totalEntries = filteredEntries.length;
-  const totalHours = filteredEntries.reduce(
+  const totalEntries = filteredAndSortedEntries.length;
+  const totalHours = filteredAndSortedEntries.reduce(
     (sum, entry) => sum + entry.hours,
     0,
   );
-  const totalBillableAmount = filteredEntries.reduce((sum, entry) => {
+  const totalBillableAmount = filteredAndSortedEntries.reduce((sum, entry) => {
     const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
     const effectiveHours = entry.hours * (hourType?.multiplier || 1);
     let adjustedBillableWage = entry.billableWageUsed || 0;
@@ -149,7 +264,7 @@ export function TimeEntryViewer() {
       : sum + effectiveHours * adjustedBillableWage;
   }, 0);
 
-  const totalCost = filteredEntries.reduce((sum, entry) => {
+  const totalCost = filteredAndSortedEntries.reduce((sum, entry) => {
     const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
     const effectiveHours = entry.hours * (hourType?.multiplier || 1);
     let adjustedCostWage = entry.costWageUsed || 0;
@@ -179,6 +294,15 @@ export function TimeEntryViewer() {
     }
   };
 
+  const clearFilters = () => {
+    setEmployeeFilter("");
+    setJobFilter("");
+    setDateRange("today");
+    setSelectedDate(getLocalDateString());
+    setSortField("date");
+    setSortDirection("desc");
+  };
+
   const getDateRangeLabel = () => {
     const { startDate, endDate } = getDateRange(dateRange);
     if (dateRange === "today") return "Today";
@@ -191,24 +315,33 @@ export function TimeEntryViewer() {
     return `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`;
   };
 
+  // Get unique employee and job lists for filter dropdowns
+  const uniqueEmployees = [...new Set(employees.map((emp) => emp.name))].sort();
+  const uniqueJobs = [
+    ...new Set(jobs.map((job) => `${job.jobNumber} - ${job.name}`)),
+  ].sort();
+
   return (
     <div className="space-y-6">
-      {/* Date Range Filters */}
+      {/* Enhanced Filters and Sorting */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Time Entry Viewer
+            Time Entry Viewer & Manager
           </CardTitle>
           <CardDescription>
-            View and manage time entries by date range
+            View, filter, sort, and manage time entries with comprehensive
+            controls
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {/* Quick Date Range Buttons */}
-            <div className="space-y-2">
-              <Label>Date Range</Label>
+          <div className="space-y-6">
+            {/* Date Range Filters */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">
+                Date Range Selection
+              </Label>
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant={dateRange === "today" ? "default" : "outline"}
@@ -256,8 +389,8 @@ export function TimeEntryViewer() {
               </div>
             </div>
 
-            {/* Custom Date Picker */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Advanced Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="customDate">Custom Date</Label>
                 <Input
@@ -270,8 +403,46 @@ export function TimeEntryViewer() {
                   }}
                 />
               </div>
+
               <div className="space-y-2">
-                <Label>Current Filter</Label>
+                <Label htmlFor="employeeFilter">Filter by Employee</Label>
+                <Select
+                  value={employeeFilter}
+                  onValueChange={setEmployeeFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All employees" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Employees</SelectItem>
+                    {uniqueEmployees.map((employee) => (
+                      <SelectItem key={employee} value={employee}>
+                        {employee}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="jobFilter">Filter by Job</Label>
+                <Select value={jobFilter} onValueChange={setJobFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All jobs" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Jobs</SelectItem>
+                    {uniqueJobs.map((job) => (
+                      <SelectItem key={job} value={job.split(" - ")[0]}>
+                        {job}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Current View</Label>
                 <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-md">
                   <Eye className="h-4 w-4 text-blue-600" />
                   <span className="text-sm font-medium text-blue-800">
@@ -279,6 +450,73 @@ export function TimeEntryViewer() {
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Sorting Controls */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Sorting Options</Label>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+                <Button
+                  variant={sortField === "date" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSort("date")}
+                  className="justify-between"
+                >
+                  Date
+                  {getSortIcon("date")}
+                </Button>
+                <Button
+                  variant={sortField === "employee" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSort("employee")}
+                  className="justify-between"
+                >
+                  Employee
+                  {getSortIcon("employee")}
+                </Button>
+                <Button
+                  variant={sortField === "job" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSort("job")}
+                  className="justify-between"
+                >
+                  Job #{getSortIcon("job")}
+                </Button>
+                <Button
+                  variant={sortField === "title" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSort("title")}
+                  className="justify-between"
+                >
+                  Title
+                  {getSortIcon("title")}
+                </Button>
+                <Button
+                  variant={sortField === "hourType" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSort("hourType")}
+                  className="justify-between"
+                >
+                  Hour Type
+                  {getSortIcon("hourType")}
+                </Button>
+                <Button
+                  variant={sortField === "hours" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleSort("hours")}
+                  className="justify-between"
+                >
+                  Hours
+                  {getSortIcon("hours")}
+                </Button>
+              </div>
+            </div>
+
+            {/* Clear Filters Button */}
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={clearFilters}>
+                Clear All Filters & Sorting
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -348,16 +586,25 @@ export function TimeEntryViewer() {
             Time Entries ({getDateRangeLabel()})
           </CardTitle>
           <CardDescription>
-            {totalEntries} entries found for the selected date range
+            {totalEntries} entries found • Sorted by {sortField} (
+            {sortDirection === "asc" ? "ascending" : "descending"})
+            {(employeeFilter || jobFilter) && (
+              <span>
+                {" "}
+                • Filtered by {employeeFilter && `Employee: ${employeeFilter}`}
+                {employeeFilter && jobFilter && ", "}
+                {jobFilter && `Job: ${jobFilter}`}
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {filteredEntries.length === 0 ? (
+          {filteredAndSortedEntries.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <p className="text-lg font-medium">No time entries found</p>
               <p className="text-sm">
-                No entries exist for the selected date range.
+                No entries match your current filters and date range.
               </p>
             </div>
           ) : (
@@ -365,13 +612,61 @@ export function TimeEntryViewer() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Job</TableHead>
-                    <TableHead>Hour Type</TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("date")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Date
+                        {getSortIcon("date")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("employee")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Employee
+                        {getSortIcon("employee")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("title")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Title
+                        {getSortIcon("title")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("job")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Job
+                        {getSortIcon("job")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("hourType")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Hour Type
+                        {getSortIcon("hourType")}
+                      </div>
+                    </TableHead>
                     <TableHead>Province</TableHead>
-                    <TableHead>Hours</TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("hours")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Hours
+                        {getSortIcon("hours")}
+                      </div>
+                    </TableHead>
                     <TableHead>Billable Rate</TableHead>
                     <TableHead>Cost Rate</TableHead>
                     <TableHead>Description</TableHead>
@@ -379,7 +674,7 @@ export function TimeEntryViewer() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEntries.map((entry) => {
+                  {filteredAndSortedEntries.map((entry) => {
                     const employee = employees.find(
                       (emp) => emp.id === entry.employeeId,
                     );
