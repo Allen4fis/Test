@@ -32,17 +32,22 @@ export function CostReports() {
     rentalSummaries,
   } = useTimeTracking();
 
-  // Calculate total costs
-  const totalCost = timeEntrySummaries.reduce(
+  // Calculate total costs including rentals
+  const totalLaborCost = timeEntrySummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
   );
+  const totalRentalCost = rentalSummaries.reduce(
+    (sum, summary) => sum + summary.totalCost,
+    0,
+  );
+  const totalCost = totalLaborCost + totalRentalCost;
   const totalEffectiveHours = timeEntrySummaries.reduce(
     (sum, summary) => sum + summary.effectiveHours,
     0,
   );
   const averageHourlyRate =
-    totalEffectiveHours > 0 ? totalCost / totalEffectiveHours : 0;
+    totalEffectiveHours > 0 ? totalLaborCost / totalEffectiveHours : 0;
 
   return (
     <div className="space-y-6">
