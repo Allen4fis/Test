@@ -75,22 +75,36 @@ export function DatabaseErrorHandler({
           <p className="text-sm text-red-800 font-mono break-all">{error}</p>
         </div>
 
-        {isSchemaError && (
+        {(isSchemaError || isSubscriptionError) && (
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
             <div className="flex items-start gap-2">
               <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">Schema Conflict Detected</p>
-                <p>
-                  This error typically occurs when there are conflicting
-                  database schemas. This can happen during development or when
-                  updating the application.
-                </p>
+                {isSubscriptionError ? (
+                  <>
+                    <p className="font-medium mb-1">
+                      Database Connection Issue
+                    </p>
+                    <p>
+                      This error occurs when the database event system cannot
+                      initialize properly. This is typically a temporary issue
+                      that can be resolved by resetting the database.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium mb-1">Schema Conflict Detected</p>
+                    <p>
+                      This error typically occurs when there are conflicting
+                      database schemas. This can happen during development or
+                      when updating the application.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
         )}
-
         <div className="flex flex-col sm:flex-row gap-3">
           <Button
             onClick={handleRetry}
