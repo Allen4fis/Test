@@ -361,15 +361,13 @@ export function SummaryReports() {
     return createHourTypeBreakdown(filteredSummaries);
   }, [filteredSummaries]);
 
-  // Calculate totals for filtered data
-  const totalHours = filteredSummaries.reduce(
-    (sum, summary) => sum + summary.hours,
-    0,
-  );
-  const totalEffectiveHours = filteredSummaries.reduce(
-    (sum, summary) => sum + summary.effectiveHours,
-    0,
-  );
+  // Calculate totals for filtered data (excluding LOA from hours totals)
+  const totalHours = filteredSummaries
+    .filter((summary) => summary.hourTypeName !== "LOA")
+    .reduce((sum, summary) => sum + summary.hours, 0);
+  const totalEffectiveHours = filteredSummaries
+    .filter((summary) => summary.hourTypeName !== "LOA")
+    .reduce((sum, summary) => sum + summary.effectiveHours, 0);
   const totalCost = filteredSummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
