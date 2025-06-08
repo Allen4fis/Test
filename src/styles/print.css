@@ -103,9 +103,20 @@
     margin: 0 2px !important;
   }
 
-  /* Tab content - show all active content */
-  .tab-content {
+  /* Tab content - show all content when printing */
+  [data-state="inactive"] {
     display: block !important;
+  }
+
+  .tab-content,
+  [role="tabpanel"] {
+    display: block !important;
+  }
+
+  /* Add spacing between sections when all are visible */
+  [role="tabpanel"]:not(:last-child) {
+    margin-bottom: 2rem !important;
+    page-break-after: always;
   }
 
   /* Badges and small elements */
@@ -148,11 +159,25 @@
   /* Footer for each page */
   .print-footer {
     position: fixed;
-    bottom: 0;
-    width: 100%;
+    bottom: 0.25in;
+    left: 0;
+    right: 0;
     text-align: center;
     font-size: 9pt;
     color: #666;
+    border-top: 1px solid #ddd;
+    padding-top: 4px;
+    background: white;
+  }
+
+  /* Section headers for printed report */
+  .print-section-header {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1px solid #ddd !important;
   }
 }
 
