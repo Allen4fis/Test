@@ -33,6 +33,22 @@ interface SearchFilters {
 export function useOptimizedTimeTracking() {
   const indexedDB = useIndexedDB();
 
+  // Handle database errors by wrapping operations
+  const safeExecute = async <T>(
+    operation: () => Promise<T>,
+    fallback?: T,
+  ): Promise<T> => {
+    try {
+      return await operation();
+    } catch (error) {
+      console.error("Database operation failed:", error);
+      if (fallback !== undefined) {
+        return fallback;
+      }
+      throw error;
+    }
+  };
+
   // View state
   const [selectedView, setSelectedView] = useState<
     | "dashboard"
