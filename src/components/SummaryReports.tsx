@@ -38,6 +38,7 @@ import {
   RotateCcw,
   Truck,
   Receipt,
+  Printer,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -389,6 +390,36 @@ export function SummaryReports() {
     setIncludeInvoiced(true);
   };
 
+  const handlePrint = () => {
+    // Add print-specific class to body for styling
+    document.body.classList.add("printing");
+
+    // Trigger print dialog
+    window.print();
+
+    // Remove print class after printing
+    setTimeout(() => {
+      document.body.classList.remove("printing");
+    }, 1000);
+  };
+
+  // Format current filters for print header
+  const getFilterSummaryForPrint = () => {
+    const filters = [];
+    if (dateFilter.startDate)
+      filters.push(
+        `From: ${new Date(dateFilter.startDate).toLocaleDateString()}`,
+      );
+    if (dateFilter.endDate)
+      filters.push(`To: ${new Date(dateFilter.endDate).toLocaleDateString()}`);
+    if (employeeFilter) filters.push(`Employee: ${employeeFilter}`);
+    if (jobFilter) filters.push(`Job: ${jobFilter}`);
+    if (provinceFilter && provinceFilter !== "all-provinces")
+      filters.push(`Province: ${provinceFilter}`);
+    if (!includeInvoiced) filters.push(`Excluding invoiced entries`);
+    return filters.length > 0 ? filters.join(" | ") : "All data";
+  };
+
   const uniqueProvinceNames = [
     ...new Set(timeEntrySummaries.map((s) => s.provinceName)),
   ].sort();
@@ -411,6 +442,21 @@ export function SummaryReports() {
 
   return (
     <div className="space-y-6">
+      {/* Print Header - Only visible when printing */}
+      <div className="print-only">
+        <div className="text-center border-b-2 border-gray-300 pb-4 mb-6">
+          <h1 className="text-2xl font-bold">4Front Trackity-doo</h1>
+          <h2 className="text-xl">Time Tracking Summary Report</h2>
+          <p className="text-sm text-gray-600 mt-2">
+            Generated on {new Date().toLocaleDateString()} at{" "}
+            {new Date().toLocaleTimeString()}
+          </p>
+          <p className="text-sm text-gray-600">
+            Filters: {getFilterSummaryForPrint()}
+          </p>
+        </div>
+      </div>
+
       {/* Enhanced Filters */}
       <Card>
         <CardHeader>
@@ -563,8 +609,12 @@ export function SummaryReports() {
               </div>
             </div>
 
-            {/* Clear Filters Button */}
-            <div className="flex justify-end">
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={handlePrint}>
+                <Printer className="h-4 w-4 mr-2" />
+                Print Report
+              </Button>
               <Button variant="outline" onClick={clearFilters}>
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Clear All Filters
