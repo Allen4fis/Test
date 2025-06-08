@@ -313,13 +313,18 @@ export function useTimeTracking() {
 
       const effectiveHours = entry.hours * (hourType?.multiplier || 1);
       let adjustedHourlyWage = employee?.hourlyWage || 0;
+      let totalCost = 0;
 
-      // Add $3 to base wage for NS hour types
-      if (hourType?.name.startsWith("NS ")) {
-        adjustedHourlyWage += 3;
+      // LOA has fixed $200 cost regardless of hours
+      if (hourType?.name === "LOA") {
+        totalCost = 200;
+      } else {
+        // Add $3 to base wage for NS hour types
+        if (hourType?.name.startsWith("NS ")) {
+          adjustedHourlyWage += 3;
+        }
+        totalCost = effectiveHours * adjustedHourlyWage;
       }
-
-      const totalCost = effectiveHours * adjustedHourlyWage;
 
       return {
         employeeName: employee?.name || "Unknown Employee",
@@ -353,13 +358,18 @@ export function useTimeTracking() {
         const key = `${employee.title}-${job.jobNumber}`;
         const effectiveHours = entry.hours * hourType.multiplier;
         let adjustedHourlyWage = employee.hourlyWage || 0;
+        let cost = 0;
 
-        // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
-          adjustedHourlyWage += 3;
+        // LOA has fixed $200 cost regardless of hours
+        if (hourType.name === "LOA") {
+          cost = 200;
+        } else {
+          // Add $3 to base wage for NS hour types
+          if (hourType.name.startsWith("NS ")) {
+            adjustedHourlyWage += 3;
+          }
+          cost = effectiveHours * adjustedHourlyWage;
         }
-
-        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[key]) {
           acc[key] = {
@@ -403,13 +413,18 @@ export function useTimeTracking() {
         const key = `${entry.date}-${employee.name}`;
         const effectiveHours = entry.hours * hourType.multiplier;
         let adjustedHourlyWage = employee.hourlyWage || 0;
+        let cost = 0;
 
-        // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
-          adjustedHourlyWage += 3;
+        // LOA has fixed $200 cost regardless of hours
+        if (hourType.name === "LOA") {
+          cost = 200;
+        } else {
+          // Add $3 to base wage for NS hour types
+          if (hourType.name.startsWith("NS ")) {
+            adjustedHourlyWage += 3;
+          }
+          cost = effectiveHours * adjustedHourlyWage;
         }
-
-        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[key]) {
           acc[key] = {
@@ -455,13 +470,18 @@ export function useTimeTracking() {
 
         const effectiveHours = entry.hours * hourType.multiplier;
         let adjustedHourlyWage = employee.hourlyWage || 0;
+        let cost = 0;
 
-        // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
-          adjustedHourlyWage += 3;
+        // LOA has fixed $200 cost regardless of hours
+        if (hourType.name === "LOA") {
+          cost = 200;
+        } else {
+          // Add $3 to base wage for NS hour types
+          if (hourType.name.startsWith("NS ")) {
+            adjustedHourlyWage += 3;
+          }
+          cost = effectiveHours * adjustedHourlyWage;
         }
-
-        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[employee.id]) {
           acc[employee.id] = {
@@ -505,13 +525,18 @@ export function useTimeTracking() {
 
         const effectiveHours = entry.hours * hourType.multiplier;
         let adjustedHourlyWage = employee.hourlyWage || 0;
+        let cost = 0;
 
-        // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
-          adjustedHourlyWage += 3;
+        // LOA has fixed $200 cost regardless of hours
+        if (hourType.name === "LOA") {
+          cost = 200;
+        } else {
+          // Add $3 to base wage for NS hour types
+          if (hourType.name.startsWith("NS ")) {
+            adjustedHourlyWage += 3;
+          }
+          cost = effectiveHours * adjustedHourlyWage;
         }
-
-        const cost = effectiveHours * adjustedHourlyWage;
 
         if (!acc[job.id]) {
           acc[job.id] = {
