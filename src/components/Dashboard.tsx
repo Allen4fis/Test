@@ -215,7 +215,7 @@ export function Dashboard() {
         <StatCard
           icon={Users}
           title="Total Employees"
-          value={0}
+          value={employees.length}
           description="Active team members"
           gradient="bg-gradient-to-br from-blue-500 to-blue-600"
           iconColor="text-white"
@@ -223,7 +223,7 @@ export function Dashboard() {
         <StatCard
           icon={Briefcase}
           title="Active Jobs"
-          value={0}
+          value={activeJobs.length}
           description="Current projects"
           gradient="bg-gradient-to-br from-green-500 to-green-600"
           iconColor="text-white"
