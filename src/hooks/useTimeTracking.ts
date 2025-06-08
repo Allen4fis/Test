@@ -7,6 +7,8 @@ import {
   HourType,
   Province,
   TimeEntry,
+  RentalItem,
+  RentalEntry,
   SummaryByTitleAndJob,
   SummaryByDateAndName,
   TimeEntrySummary,
