@@ -55,6 +55,13 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       description: "Manage invoiced dates",
     },
     {
+      id: "rentals" as const,
+      label: "Rentals",
+      icon: Truck,
+      description: "Equipment & item rentals",
+      count: rentalItems.filter((item) => item.isActive).length,
+    },
+    {
       id: "employees" as const,
       label: "Employees",
       icon: Users,
