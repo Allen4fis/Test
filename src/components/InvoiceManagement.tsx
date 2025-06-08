@@ -379,7 +379,13 @@ export function InvoiceManagement() {
                                       <TableCell>
                                         {dateInfo.totalHours.toFixed(2)}
                                       </TableCell>
-                                      <TableCell className="font-medium text-primary">
+                                      <TableCell className="font-medium text-blue-600">
+                                        ${dateInfo.laborCost.toFixed(2)}
+                                      </TableCell>
+                                      <TableCell className="font-medium text-orange-600">
+                                        ${dateInfo.rentalCost.toFixed(2)}
+                                      </TableCell>
+                                      <TableCell className="font-medium text-green-600">
                                         ${dateInfo.totalCost.toFixed(2)}
                                       </TableCell>
                                       <TableCell>
