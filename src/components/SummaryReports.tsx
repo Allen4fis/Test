@@ -291,6 +291,7 @@ export function SummaryReports() {
                       <TableHead>Job Name</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
+                      <TableHead>Total Cost</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -307,6 +308,9 @@ export function SummaryReports() {
                         <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
                         <TableCell>
                           {summary.totalEffectiveHours.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="font-medium text-green-600">
+                          ${summary.totalCost.toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
@@ -343,6 +347,7 @@ export function SummaryReports() {
                       <TableHead>Employee Name</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
+                      <TableHead>Total Cost</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -363,6 +368,9 @@ export function SummaryReports() {
                         <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
                         <TableCell>
                           {summary.totalEffectiveHours.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="font-medium text-green-600">
+                          ${summary.totalCost.toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
@@ -403,6 +411,7 @@ export function SummaryReports() {
                       <TableHead>Province</TableHead>
                       <TableHead>Hours</TableHead>
                       <TableHead>Effective</TableHead>
+                      <TableHead>Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -430,6 +439,9 @@ export function SummaryReports() {
                         <TableCell>{summary.hours.toFixed(2)}</TableCell>
                         <TableCell>
                           {summary.effectiveHours.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="font-medium text-green-600">
+                          ${summary.totalCost.toFixed(2)}
                         </TableCell>
                       </TableRow>
                     ))}
