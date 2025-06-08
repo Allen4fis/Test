@@ -355,7 +355,8 @@ export function useTimeTracking() {
 
         if (!employee || !job || !hourType) return acc;
 
-        const key = `${employee.title}-${job.jobNumber}`;
+        const entryTitle = entry.title || employee.title;
+        const key = `${entryTitle}-${job.jobNumber}`;
         const effectiveHours = entry.hours * hourType.multiplier;
         let adjustedHourlyWage = employee.hourlyWage || 0;
         let cost = 0;
@@ -373,7 +374,7 @@ export function useTimeTracking() {
 
         if (!acc[key]) {
           acc[key] = {
-            title: employee.title,
+            title: entryTitle,
             jobNumber: job.jobNumber,
             jobName: job.name,
             totalHours: 0,
