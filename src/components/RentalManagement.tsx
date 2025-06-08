@@ -285,32 +285,45 @@ export function RentalManagement() {
     }
   };
 
-  // Calculate rental summaries
-  const rentalSummaries = rentalEntries.map((entry) => {
-    const item = rentalItems.find((item) => item.id === entry.rentalItemId);
-    const job = jobs.find((job) => job.id === entry.jobId);
-    const employee = entry.employeeId
-      ? employees.find((emp) => emp.id === entry.employeeId)
-      : null;
+  // Calculate rental summaries with invoiced filtering
+  const rentalSummaries = rentalEntries
+    .map((entry) => {
+      const item = rentalItems.find((item) => item.id === entry.rentalItemId);
+      const job = jobs.find((job) => job.id === entry.jobId);
+      const employee = entry.employeeId
+        ? employees.find((emp) => emp.id === entry.employeeId)
+        : null;
 
-    const duration = calculateDuration(
-      entry.startDate,
-      entry.endDate,
-      entry.billingUnit,
-    );
-    const totalCost = duration * entry.quantity * entry.rateUsed;
+      const duration = calculateDuration(
+        entry.startDate,
+        entry.endDate,
+        entry.billingUnit,
+      );
+      const totalCost = duration * entry.quantity * entry.rateUsed;
 
-    return {
-      ...entry,
-      itemName: item?.name || "Unknown Item",
-      category: item?.category || "Unknown",
-      jobNumber: job?.jobNumber || "Unknown",
-      jobName: job?.name || "Unknown Job",
-      employeeName: employee?.name || "Unassigned",
-      duration,
-      totalCost,
-    };
-  });
+      return {
+        ...entry,
+        itemName: item?.name || "Unknown Item",
+        category: item?.category || "Unknown",
+        jobNumber: job?.jobNumber || "Unknown",
+        jobName: job?.name || "Unknown Job",
+        employeeName: employee?.name || "Unassigned",
+        duration,
+        totalCost,
+        job: job, // Include job reference for filtering
+      };
+    })
+    .filter((summary) => {
+      // Filter out invoiced entries if toggle is off
+      if (!includeInvoicedEntries && summary.job) {
+        // Check if the rental entry's start date is in the job's invoiced dates
+        const isInvoiced = summary.job.invoicedDates.includes(
+          summary.startDate,
+        );
+        return !isInvoiced; // Only show non-invoiced entries when toggle is off
+      }
+      return true; // Show all entries when toggle is on
+    });
 
   const totalRentalCost = rentalSummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
