@@ -34,6 +34,9 @@ import {
   TrendingUp,
   MapPin,
   RotateCcw,
+  Award,
+  Target,
+  Zap,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -56,6 +59,10 @@ export function Dashboard() {
   const totalHours = summaries.reduce((sum, summary) => sum + summary.hours, 0);
   const totalEffectiveHours = summaries.reduce(
     (sum, summary) => sum + summary.effectiveHours,
+    0,
+  );
+  const totalCost = summaries.reduce(
+    (sum, summary) => sum + summary.totalCost,
     0,
   );
   const activeJobs = jobs.filter((job) => job.isActive);
@@ -83,15 +90,23 @@ export function Dashboard() {
           title: summary.employeeTitle,
           hours: 0,
           effectiveHours: 0,
+          cost: 0,
         };
       }
       acc[summary.employeeName].hours += summary.hours;
       acc[summary.employeeName].effectiveHours += summary.effectiveHours;
+      acc[summary.employeeName].cost += summary.totalCost;
       return acc;
     },
     {} as Record<
       string,
-      { name: string; title: string; hours: number; effectiveHours: number }
+      {
+        name: string;
+        title: string;
+        hours: number;
+        effectiveHours: number;
+        cost: number;
+      }
     >,
   );
 
@@ -108,10 +123,12 @@ export function Dashboard() {
           jobName: summary.jobName,
           hours: 0,
           effectiveHours: 0,
+          cost: 0,
         };
       }
       acc[summary.jobNumber].hours += summary.hours;
       acc[summary.jobNumber].effectiveHours += summary.effectiveHours;
+      acc[summary.jobNumber].cost += summary.totalCost;
       return acc;
     },
     {} as Record<
@@ -121,6 +138,7 @@ export function Dashboard() {
         jobName: string;
         hours: number;
         effectiveHours: number;
+        cost: number;
       }
     >,
   );
@@ -149,68 +167,98 @@ export function Dashboard() {
     return province ? province.code : "Unknown";
   };
 
+  const StatCard = ({
+    icon: Icon,
+    title,
+    value,
+    description,
+    gradient,
+    iconColor,
+  }: {
+    icon: any;
+    title: string;
+    value: string | number;
+    description: string;
+    gradient: string;
+    iconColor: string;
+  }) => (
+    <Card className="modern-card border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden group">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-4">
+          <div
+            className={`p-3 rounded-xl ${gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}
+          >
+            <Icon className={`h-6 w-6 ${iconColor}`} />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-muted-foreground mb-1">
+              {title}
+            </p>
+            <p className="text-2xl font-bold text-foreground">{value}</p>
+            <p className="text-xs text-muted-foreground mt-1">{description}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-foreground">
+          Dashboard Overview
+        </h1>
+        <p className="text-muted-foreground">
+          Monitor your team's productivity and project performance
+        </p>
+      </div>
+
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Employees
-                </p>
-                <p className="text-2xl font-bold">{employees.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-green-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-600">Active Jobs</p>
-                <p className="text-2xl font-bold">{activeJobs.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-orange-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Hours</p>
-                <p className="text-2xl font-bold">{totalHours.toFixed(0)}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-purple-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Effective Hours
-                </p>
-                <p className="text-2xl font-bold">
-                  {totalEffectiveHours.toFixed(0)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          icon={Users}
+          title="Total Employees"
+          value={employees.length}
+          description="Active team members"
+          gradient="bg-gradient-to-br from-blue-500 to-blue-600"
+          iconColor="text-white"
+        />
+        <StatCard
+          icon={Briefcase}
+          title="Active Jobs"
+          value={activeJobs.length}
+          description="Current projects"
+          gradient="bg-gradient-to-br from-green-500 to-green-600"
+          iconColor="text-white"
+        />
+        <StatCard
+          icon={Clock}
+          title="Total Hours"
+          value={totalHours.toFixed(0)}
+          description="Hours logged"
+          gradient="orange-gradient"
+          iconColor="text-white"
+        />
+        <StatCard
+          icon={TrendingUp}
+          title="Total Cost"
+          value={`$${totalCost.toFixed(0)}`}
+          description="Labor expenses"
+          gradient="dark-gradient"
+          iconColor="text-white"
+        />
       </div>
 
       {/* Data Management */}
       {hourTypes.length > 5 && (
-        <Card>
+        <Card className="modern-card border-amber-200 bg-amber-50/50 shadow-lg">
           <CardHeader>
-            <CardTitle>Data Management</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-amber-800 flex items-center gap-2">
+              <RotateCcw className="h-5 w-5" />
+              Data Management
+            </CardTitle>
+            <CardDescription className="text-amber-700">
               You have old hour types data. Reset to use the new simplified hour
               types.
             </CardDescription>
@@ -218,10 +266,10 @@ export function Dashboard() {
           <CardContent>
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-amber-800 font-medium">
                   Current hour types: {hourTypes.length} (Expected: 5)
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-amber-700 mt-1">
                   Reset will clear all data and apply the new simplified hour
                   types: Regular Time, Overtime, Double Time, Travel Hours, and
                   LOA.
@@ -229,7 +277,10 @@ export function Dashboard() {
               </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button
+                    variant="outline"
+                    className="border-amber-300 text-amber-800 hover:bg-amber-100"
+                  >
                     <RotateCcw className="h-4 w-4 mr-2" />
                     Reset Data
                   </Button>
@@ -245,7 +296,10 @@ export function Dashboard() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={resetData}>
+                    <AlertDialogAction
+                      onClick={resetData}
+                      className="bg-destructive text-destructive-foreground"
+                    >
                       Reset Data
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -256,16 +310,19 @@ export function Dashboard() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Employees This Month */}
-        <Card>
+        <Card className="modern-card border-border shadow-lg">
           <CardHeader>
-            <CardTitle>Top Employees This Month</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Award className="h-5 w-5 text-primary" />
+              Top Employees This Month
+            </CardTitle>
             <CardDescription>Ranked by effective hours worked</CardDescription>
           </CardHeader>
           <CardContent>
             {topEmployees.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 No time entries this month.
               </div>
             ) : (
@@ -275,34 +332,46 @@ export function Dashboard() {
                     <TableHead>Employee</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Hours</TableHead>
-                    <TableHead>Effective</TableHead>
+                    <TableHead>Cost</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {topEmployees.map((employee, index) => (
-                    <TableRow key={employee.name}>
+                    <TableRow
+                      key={employee.name}
+                      className="hover:bg-muted/50 transition-colors"
+                    >
                       <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                           <span
-                            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                               index === 0
-                                ? "bg-yellow-100 text-yellow-800"
+                                ? "bg-gradient-to-br from-yellow-400 to-yellow-500 text-yellow-900"
                                 : index === 1
-                                  ? "bg-gray-100 text-gray-800"
+                                  ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800"
                                   : index === 2
-                                    ? "bg-orange-100 text-orange-800"
-                                    : "bg-blue-100 text-blue-800"
-                            }`}
+                                    ? "bg-gradient-to-br from-orange-400 to-orange-500 text-orange-900"
+                                    : "bg-gradient-to-br from-blue-400 to-blue-500 text-blue-900"
+                            } shadow-md`}
                           >
                             {index + 1}
                           </span>
-                          {employee.name}
+                          <span>{employee.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{employee.title}</TableCell>
-                      <TableCell>{employee.hours.toFixed(1)}</TableCell>
                       <TableCell>
+                        <Badge
+                          variant="secondary"
+                          className="bg-muted text-muted-foreground"
+                        >
+                          {employee.title}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">
                         {employee.effectiveHours.toFixed(1)}
+                      </TableCell>
+                      <TableCell className="font-bold text-primary">
+                        ${employee.cost.toFixed(0)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -313,14 +382,17 @@ export function Dashboard() {
         </Card>
 
         {/* Top Jobs This Month */}
-        <Card>
+        <Card className="modern-card border-border shadow-lg">
           <CardHeader>
-            <CardTitle>Top Jobs This Month</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Target className="h-5 w-5 text-primary" />
+              Top Jobs This Month
+            </CardTitle>
             <CardDescription>Ranked by effective hours worked</CardDescription>
           </CardHeader>
           <CardContent>
             {topJobs.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 No time entries this month.
               </div>
             ) : (
@@ -330,33 +402,44 @@ export function Dashboard() {
                     <TableHead>Job Number</TableHead>
                     <TableHead>Job Name</TableHead>
                     <TableHead>Hours</TableHead>
-                    <TableHead>Effective</TableHead>
+                    <TableHead>Cost</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {topJobs.map((job, index) => (
-                    <TableRow key={job.jobNumber}>
+                    <TableRow
+                      key={job.jobNumber}
+                      className="hover:bg-muted/50 transition-colors"
+                    >
                       <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                           <span
-                            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                               index === 0
-                                ? "bg-yellow-100 text-yellow-800"
+                                ? "bg-gradient-to-br from-yellow-400 to-yellow-500 text-yellow-900"
                                 : index === 1
-                                  ? "bg-gray-100 text-gray-800"
+                                  ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800"
                                   : index === 2
-                                    ? "bg-orange-100 text-orange-800"
-                                    : "bg-blue-100 text-blue-800"
-                            }`}
+                                    ? "bg-gradient-to-br from-orange-400 to-orange-500 text-orange-900"
+                                    : "bg-gradient-to-br from-blue-400 to-blue-500 text-blue-900"
+                            } shadow-md`}
                           >
                             {index + 1}
                           </span>
-                          {job.jobNumber}
+                          <span>{job.jobNumber}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{job.jobName}</TableCell>
-                      <TableCell>{job.hours.toFixed(1)}</TableCell>
-                      <TableCell>{job.effectiveHours.toFixed(1)}</TableCell>
+                      <TableCell>
+                        <span className="font-medium text-foreground">
+                          {job.jobName}
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {job.effectiveHours.toFixed(1)}
+                      </TableCell>
+                      <TableCell className="font-bold text-primary">
+                        ${job.cost.toFixed(0)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -367,16 +450,19 @@ export function Dashboard() {
       </div>
 
       {/* Recent Activity */}
-      <Card>
+      <Card className="modern-card border-border shadow-lg">
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Zap className="h-5 w-5 text-primary" />
+            Recent Activity
+          </CardTitle>
           <CardDescription>
             Latest time entries from the past 3 days
           </CardDescription>
         </CardHeader>
         <CardContent>
           {recentEntries.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               No recent activity in the past 3 days.
             </div>
           ) : (
@@ -393,29 +479,46 @@ export function Dashboard() {
               </TableHeader>
               <TableBody>
                 {recentEntries.map((entry) => (
-                  <TableRow key={entry.id}>
+                  <TableRow
+                    key={entry.id}
+                    className="hover:bg-muted/50 transition-colors"
+                  >
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(entry.date).toLocaleDateString()}
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">
+                          {new Date(entry.date).toLocaleDateString()}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium text-foreground">
                       {getEmployeeName(entry.employeeId)}
                     </TableCell>
-                    <TableCell>{getJobNumber(entry.jobId)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">
+                      <Badge
+                        variant="outline"
+                        className="border-primary/20 text-primary"
+                      >
+                        {getJobNumber(entry.jobId)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className="bg-muted text-muted-foreground"
+                      >
                         {getHourTypeName(entry.hourTypeId)}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {getProvinceName(entry.provinceId)}
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span>{getProvinceName(entry.provinceId)}</span>
                       </div>
                     </TableCell>
-                    <TableCell>{entry.hours.toFixed(2)}</TableCell>
+                    <TableCell className="font-bold text-primary">
+                      {entry.hours.toFixed(2)}h
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
