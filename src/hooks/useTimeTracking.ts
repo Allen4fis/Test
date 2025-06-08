@@ -560,8 +560,11 @@ export function useTimeTracking() {
           };
         }
 
-        acc[job.id].totalHours += entry.hours;
-        acc[job.id].totalEffectiveHours += effectiveHours;
+        // Don't include LOA hours in total hours calculations
+        if (hourType.name !== "LOA") {
+          acc[job.id].totalHours += entry.hours;
+          acc[job.id].totalEffectiveHours += effectiveHours;
+        }
         acc[job.id].totalCost += cost;
         acc[job.id].entries.push(entry);
 
@@ -570,14 +573,17 @@ export function useTimeTracking() {
           (emp) => emp.employeeName === employee.name,
         );
         if (existingEmployee) {
-          existingEmployee.hours += entry.hours;
-          existingEmployee.effectiveHours += effectiveHours;
+          // Don't include LOA hours in employee breakdown hours
+          if (hourType.name !== "LOA") {
+            existingEmployee.hours += entry.hours;
+            existingEmployee.effectiveHours += effectiveHours;
+          }
           existingEmployee.cost += cost;
         } else {
           acc[job.id].employees.push({
             employeeName: employee.name,
-            hours: entry.hours,
-            effectiveHours: effectiveHours,
+            hours: hourType.name !== "LOA" ? entry.hours : 0,
+            effectiveHours: hourType.name !== "LOA" ? effectiveHours : 0,
             cost: cost,
           });
         }
