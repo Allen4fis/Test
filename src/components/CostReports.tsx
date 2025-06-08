@@ -344,6 +344,154 @@ export function CostReports() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="rentals">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rental Costs Analysis</CardTitle>
+              <CardDescription>
+                Equipment and item rental costs by job and category
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {rentalSummaries.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No rental cost data available. Add rental entries to see
+                  rental costs.
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Rental Cost Summary by Job */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">
+                      Rental Costs by Job
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Object.entries(
+                        rentalSummaries.reduce(
+                          (acc, rental) => {
+                            const key = rental.jobNumber;
+                            if (!acc[key]) {
+                              acc[key] = {
+                                jobNumber: rental.jobNumber,
+                                jobName: rental.jobName,
+                                totalCost: 0,
+                                rentalCount: 0,
+                              };
+                            }
+                            acc[key].totalCost += rental.totalCost;
+                            acc[key].rentalCount += 1;
+                            return acc;
+                          },
+                          {} as Record<string, any>,
+                        ),
+                      )
+                        .sort(([, a], [, b]) => b.totalCost - a.totalCost)
+                        .map(([key, summary]) => (
+                          <Card key={key}>
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h4 className="font-medium">
+                                    {summary.jobNumber}
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    {summary.jobName}
+                                  </p>
+                                  <p className="text-xs text-gray-400">
+                                    {summary.rentalCount} rentals
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-xl font-bold text-orange-600">
+                                    ${summary.totalCost.toFixed(2)}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Rental Cost Summary by Category */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">
+                      Rental Costs by Category
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Object.entries(
+                        rentalSummaries.reduce(
+                          (acc, rental) => {
+                            const key = rental.category;
+                            if (!acc[key]) {
+                              acc[key] = {
+                                category: rental.category,
+                                totalCost: 0,
+                                rentalCount: 0,
+                              };
+                            }
+                            acc[key].totalCost += rental.totalCost;
+                            acc[key].rentalCount += 1;
+                            return acc;
+                          },
+                          {} as Record<string, any>,
+                        ),
+                      )
+                        .sort(([, a], [, b]) => b.totalCost - a.totalCost)
+                        .map(([key, summary]) => (
+                          <Card key={key}>
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h4 className="font-medium">
+                                    {summary.category}
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    {summary.rentalCount} rentals
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-xl font-bold text-orange-600">
+                                    ${summary.totalCost.toFixed(2)}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Total Summary */}
+                  <Card className="bg-orange-50 border-orange-200">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold text-orange-800">
+                            Total Rental Costs
+                          </h3>
+                          <p className="text-sm text-orange-600">
+                            {rentalSummaries.length} total rental entries
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-3xl font-bold text-orange-600">
+                            ${totalRentalCost.toFixed(2)}
+                          </div>
+                          <div className="text-sm text-orange-500">
+                            {((totalRentalCost / totalCost) * 100).toFixed(1)}%
+                            of total costs
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
