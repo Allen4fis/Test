@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Dashboard } from "@/components/Dashboard";
 import { TimeEntryForm } from "@/components/TimeEntryForm";
@@ -9,6 +9,7 @@ import { EmployeeManagement } from "@/components/EmployeeManagement";
 import { JobManagement } from "@/components/JobManagement";
 import { OptimizedEmployeeManagement } from "@/components/OptimizedEmployeeManagement";
 import { OptimizedJobManagement } from "@/components/OptimizedJobManagement";
+import { DatabaseErrorHandler } from "@/components/DatabaseErrorHandler";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 import {
@@ -20,6 +21,7 @@ import {
 const Index = () => {
   const regularTimeTracking = useTimeTracking();
   const optimizedTimeTracking = useOptimizedTimeTracking();
+  const [retryKey, setRetryKey] = useState(0);
 
   // Determine which components to use based on data size
   const dataMetrics: DataMetrics = useMemo(
@@ -44,6 +46,28 @@ const Index = () => {
   // Performance monitoring
   const performanceMonitor = PerformanceMonitor.getInstance();
 
+  // Check for database errors
+  const hasError =
+    timeTracking.error && timeTracking.error.includes("ConstraintError");
+
+  const handleRetry = () => {
+    setRetryKey((prev) => prev + 1);
+  };
+
+  // If there's a database error, show the error handler
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-2xl mx-auto">
+          <DatabaseErrorHandler
+            error={timeTracking.error || ""}
+            onRetry={handleRetry}
+          />
+        </div>
+      </div>
+    );
+  }
+
   const renderView = () => {
     const timingId = performanceMonitor.startTiming("render-view");
 
@@ -66,14 +90,14 @@ const Index = () => {
         break;
       case "employees":
         component = useOptimized ? (
-          <OptimizedEmployeeManagement />
+          <OptimizedEmployeeManagement key={retryKey} />
         ) : (
           <EmployeeManagement />
         );
         break;
       case "jobs":
         component = useOptimized ? (
-          <OptimizedJobManagement />
+          <OptimizedJobManagement key={retryKey} />
         ) : (
           <JobManagement />
         );
@@ -96,7 +120,7 @@ const Index = () => {
   return (
     <Layout timeTracking={timeTracking}>
       {/* Performance indicator for large datasets */}
-      {useOptimized && (
+      {useOptimized && !hasError && (
         <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-4">
           <div className="flex items-center">
             <div className="ml-3">
