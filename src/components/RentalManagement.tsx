@@ -902,16 +902,27 @@ export function RentalManagement() {
                     Track rental usage and billing to jobs
                   </CardDescription>
                 </div>
-                <Dialog
-                  open={isAddEntryDialogOpen}
-                  onOpenChange={setIsAddEntryDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button disabled={activeItems.length === 0}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Rental
-                    </Button>
-                  </DialogTrigger>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="include-invoiced" className="text-sm font-medium">
+                      Include invoiced entries
+                    </Label>
+                    <Switch
+                      id="include-invoiced"
+                      checked={includeInvoicedEntries}
+                      onCheckedChange={setIncludeInvoicedEntries}
+                    />
+                  </div>
+                  <Dialog
+                    open={isAddEntryDialogOpen}
+                    onOpenChange={setIsAddEntryDialogOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button disabled={activeItems.length === 0}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Rental
+                      </Button>
+                    </DialogTrigger>
                   <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
                       <DialogTitle>Add New Rental Entry</DialogTitle>
