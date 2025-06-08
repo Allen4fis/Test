@@ -69,8 +69,9 @@ export function useTimeTracking() {
     getDefaultAppData(),
   );
   const [selectedView, setSelectedView] = useState<
-    "dashboard" | "timeEntry" | "employees" | "jobs" | "reports"
+    "dashboard" | "timeEntry" | "employees" | "jobs" | "reports" | "costs"
   >("dashboard");
+  "dashboard" | "timeEntry" | "employees" | "jobs" | ("reports" > "dashboard");
 
   // Employee operations
   const addEmployee = (employee: Omit<Employee, "id" | "createdAt">) => {

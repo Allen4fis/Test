@@ -41,6 +41,12 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       description: "Summary reports",
     },
     {
+      id: "costs" as const,
+      label: "Cost Reports",
+      icon: FileText,
+      description: "Labor cost analysis",
+    },
+    {
       id: "employees" as const,
       label: "Employees",
       icon: Users,
