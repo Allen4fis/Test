@@ -207,12 +207,8 @@ export function RentalManagement() {
     });
   };
 
-  const handleDeleteItem = async (item: RentalItem) => {
-    try {
-      await deleteRentalItem(item.id);
-    } catch (error) {
-      console.error("Failed to delete rental item:", error);
-    }
+  const handleDeleteItem = (item: RentalItem) => {
+    deleteRentalItem(item.id);
   };
 
   // Handle rental entry operations
@@ -225,12 +221,12 @@ export function RentalManagement() {
       employeeId:
         entryFormData.employeeId === "unassigned"
           ? undefined
-          : entryFormData.employeeId || undefined,
+          : entryFormData.employeeId,
       startDate: entryFormData.startDate,
       endDate: entryFormData.endDate,
-      quantity: parseInt(entryFormData.quantity) || 1,
+      quantity: parseInt(entryFormData.quantity),
       billingUnit: entryFormData.billingUnit,
-      rateUsed: parseFloat(entryFormData.rateUsed) || 0,
+      rateUsed: parseFloat(entryFormData.rateUsed),
       description: entryFormData.description || undefined,
     };
 
@@ -244,7 +240,7 @@ export function RentalManagement() {
     resetEntryForm();
   };
 
-  const handleEditEntry = (entry: RentalEntry) => {
+  const handleEditEntry = (entry: any) => {
     setEditingEntry(entry);
     setEntryFormData({
       rentalItemId: entry.rentalItemId,
@@ -259,23 +255,16 @@ export function RentalManagement() {
     });
   };
 
-  const handleDeleteEntry = async (entry: RentalEntry) => {
-    try {
-      await deleteRentalEntry(entry.id);
-    } catch (error) {
-      console.error("Failed to delete rental entry:", error);
-    }
+  const handleDeleteEntry = (entry: any) => {
+    deleteRentalEntry(entry.id);
   };
 
-  // Auto-populate rate when rental item is selected
-  const handleRentalItemChange = (rentalItemId: string) => {
-    setEntryFormData({ ...entryFormData, rentalItemId });
-
-    const selectedItem = rentalItems.find((item) => item.id === rentalItemId);
+  const handleRentalItemChange = (itemId: string) => {
+    const selectedItem = rentalItems.find((item) => item.id === itemId);
     if (selectedItem) {
       setEntryFormData((prev) => ({
         ...prev,
-        rentalItemId,
+        rentalItemId: itemId,
         billingUnit: selectedItem.unit,
         rateUsed:
           selectedItem.unit === "hour" && selectedItem.hourlyRate
@@ -364,13 +353,13 @@ export function RentalManagement() {
                 <span className="font-medium">Active Rentals</span>
               </div>
               <p className="text-2xl font-bold text-green-900">
-                {rentalEntries.length}
+                {rentalSummaries.length}
               </p>
             </div>
             <div className="bg-orange-50 rounded-lg p-4">
               <div className="flex items-center gap-2 text-orange-700">
                 <DollarSign className="h-5 w-5" />
-                <span className="font-medium">Total Rental Cost</span>
+                <span className="font-medium">Total Revenue</span>
               </div>
               <p className="text-2xl font-bold text-orange-900">
                 ${totalRentalCost.toFixed(2)}
@@ -381,8 +370,8 @@ export function RentalManagement() {
       </Card>
 
       {/* Tabs for Items and Entries */}
-      <Tabs defaultValue="items" className="space-y-4">
-        <TabsList>
+      <Tabs defaultValue="items" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="items">Rental Items</TabsTrigger>
           <TabsTrigger value="entries">Rental Entries</TabsTrigger>
         </TabsList>
@@ -395,7 +384,7 @@ export function RentalManagement() {
                 <div>
                   <CardTitle>Rental Items</CardTitle>
                   <CardDescription>
-                    Manage your rental equipment and pricing
+                    Manage available rental equipment and items
                   </CardDescription>
                 </div>
                 <Dialog
@@ -412,7 +401,7 @@ export function RentalManagement() {
                     <DialogHeader>
                       <DialogTitle>Add New Rental Item</DialogTitle>
                       <DialogDescription>
-                        Create a new rental item with pricing information.
+                        Create a new rental item for your inventory.
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleItemSubmit}>
@@ -431,7 +420,6 @@ export function RentalManagement() {
                               })
                             }
                             className="col-span-3"
-                            placeholder="e.g., Excavator, Drill, Generator"
                             required
                           />
                         </div>
@@ -508,7 +496,6 @@ export function RentalManagement() {
                                 })
                               }
                               className="pl-10"
-                              placeholder="0.00"
                               required
                             />
                           </div>
@@ -532,7 +519,6 @@ export function RentalManagement() {
                                   })
                                 }
                                 className="pl-10"
-                                placeholder="0.00"
                               />
                             </div>
                           </div>
@@ -598,8 +584,7 @@ export function RentalManagement() {
             <CardContent>
               {rentalItems.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">
-                  No rental items yet. Add your first rental item to get
-                  started!
+                  No rental items yet. Add your first item to get started!
                 </p>
               ) : (
                 <div className="overflow-x-auto">
@@ -608,7 +593,7 @@ export function RentalManagement() {
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Category</TableHead>
-                        <TableHead>Daily Rate</TableHead>
+                        <TableHead>Rate</TableHead>
                         <TableHead>Unit</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
@@ -910,7 +895,10 @@ export function RentalManagement() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Label htmlFor="include-invoiced" className="text-sm font-medium">
+                    <Label
+                      htmlFor="include-invoiced"
+                      className="text-sm font-medium"
+                    >
                       Include invoiced entries
                     </Label>
                     <Switch
@@ -929,228 +917,233 @@ export function RentalManagement() {
                         Add Rental
                       </Button>
                     </DialogTrigger>
-                  <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                      <DialogTitle>Add New Rental Entry</DialogTitle>
-                      <DialogDescription>
-                        Record rental usage for billing to a job.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleEntrySubmit}>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="rentalItem" className="text-right">
-                            Rental Item *
-                          </Label>
-                          <Select
-                            value={entryFormData.rentalItemId}
-                            onValueChange={handleRentalItemChange}
-                          >
-                            <SelectTrigger className="col-span-3">
-                              <SelectValue placeholder="Select rental item" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {activeItems.map((item) => (
-                                <SelectItem key={item.id} value={item.id}>
-                                  {item.name} - ${item.dailyRate}/day
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="job" className="text-right">
-                            Job *
-                          </Label>
-                          <Select
-                            value={entryFormData.jobId}
-                            onValueChange={(value) =>
-                              setEntryFormData({
-                                ...entryFormData,
-                                jobId: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger className="col-span-3">
-                              <SelectValue placeholder="Select job" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {jobs
-                                .filter((job) => job.isActive)
-                                .map((job) => (
-                                  <SelectItem key={job.id} value={job.id}>
-                                    {job.jobNumber} - {job.name}
-                                  </SelectItem>
-                                ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="employee" className="text-right">
-                            Employee
-                          </Label>
-                          <Select
-                            value={entryFormData.employeeId}
-                            onValueChange={(value) =>
-                              setEntryFormData({
-                                ...entryFormData,
-                                employeeId: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger className="col-span-3">
-                              <SelectValue placeholder="Select employee (optional)" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="unassigned">
-                                Unassigned
-                              </SelectItem>
-                              {employees.map((employee) => (
-                                <SelectItem
-                                  key={employee.id}
-                                  value={employee.id}
-                                >
-                                  {employee.name} - {employee.title}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="startDate">Start Date *</Label>
-                            <Input
-                              id="startDate"
-                              type="date"
-                              value={entryFormData.startDate}
-                              onChange={(e) =>
-                                setEntryFormData({
-                                  ...entryFormData,
-                                  startDate: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="endDate">End Date *</Label>
-                            <Input
-                              id="endDate"
-                              type="date"
-                              value={entryFormData.endDate}
-                              onChange={(e) =>
-                                setEntryFormData({
-                                  ...entryFormData,
-                                  endDate: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="quantity">Quantity *</Label>
-                            <Input
-                              id="quantity"
-                              type="number"
-                              min="1"
-                              value={entryFormData.quantity}
-                              onChange={(e) =>
-                                setEntryFormData({
-                                  ...entryFormData,
-                                  quantity: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="billingUnit">Billing Unit *</Label>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>Add New Rental Entry</DialogTitle>
+                        <DialogDescription>
+                          Record rental usage for billing to a job.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleEntrySubmit}>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="rentalItem" className="text-right">
+                              Rental Item *
+                            </Label>
                             <Select
-                              value={entryFormData.billingUnit}
-                              onValueChange={(
-                                value: "day" | "hour" | "week" | "month",
-                              ) =>
-                                setEntryFormData({
-                                  ...entryFormData,
-                                  billingUnit: value,
-                                })
-                              }
+                              value={entryFormData.rentalItemId}
+                              onValueChange={handleRentalItemChange}
                             >
-                              <SelectTrigger>
-                                <SelectValue />
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select rental item" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="hour">Per Hour</SelectItem>
-                                <SelectItem value="day">Per Day</SelectItem>
-                                <SelectItem value="week">Per Week</SelectItem>
-                                <SelectItem value="month">Per Month</SelectItem>
+                                {activeItems.map((item) => (
+                                  <SelectItem key={item.id} value={item.id}>
+                                    {item.name} - ${item.dailyRate}/day
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           </div>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="rateUsed" className="text-right">
-                            Rate Used *
-                          </Label>
-                          <div className="col-span-3 relative">
-                            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="rateUsed"
-                              type="number"
-                              step="0.01"
-                              value={entryFormData.rateUsed}
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="job" className="text-right">
+                              Job *
+                            </Label>
+                            <Select
+                              value={entryFormData.jobId}
+                              onValueChange={(value) =>
+                                setEntryFormData({
+                                  ...entryFormData,
+                                  jobId: value,
+                                })
+                              }
+                            >
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select job" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {jobs
+                                  .filter((job) => job.isActive)
+                                  .map((job) => (
+                                    <SelectItem key={job.id} value={job.id}>
+                                      {job.jobNumber} - {job.name}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="employee" className="text-right">
+                              Employee
+                            </Label>
+                            <Select
+                              value={entryFormData.employeeId}
+                              onValueChange={(value) =>
+                                setEntryFormData({
+                                  ...entryFormData,
+                                  employeeId: value,
+                                })
+                              }
+                            >
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select employee (optional)" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="unassigned">
+                                  Unassigned
+                                </SelectItem>
+                                {employees.map((employee) => (
+                                  <SelectItem
+                                    key={employee.id}
+                                    value={employee.id}
+                                  >
+                                    {employee.name} - {employee.title}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="startDate">Start Date *</Label>
+                              <Input
+                                id="startDate"
+                                type="date"
+                                value={entryFormData.startDate}
+                                onChange={(e) =>
+                                  setEntryFormData({
+                                    ...entryFormData,
+                                    startDate: e.target.value,
+                                  })
+                                }
+                                required
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="endDate">End Date *</Label>
+                              <Input
+                                id="endDate"
+                                type="date"
+                                value={entryFormData.endDate}
+                                onChange={(e) =>
+                                  setEntryFormData({
+                                    ...entryFormData,
+                                    endDate: e.target.value,
+                                  })
+                                }
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="quantity">Quantity *</Label>
+                              <Input
+                                id="quantity"
+                                type="number"
+                                min="1"
+                                value={entryFormData.quantity}
+                                onChange={(e) =>
+                                  setEntryFormData({
+                                    ...entryFormData,
+                                    quantity: e.target.value,
+                                  })
+                                }
+                                required
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="billingUnit">
+                                Billing Unit *
+                              </Label>
+                              <Select
+                                value={entryFormData.billingUnit}
+                                onValueChange={(
+                                  value: "day" | "hour" | "week" | "month",
+                                ) =>
+                                  setEntryFormData({
+                                    ...entryFormData,
+                                    billingUnit: value,
+                                  })
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="hour">Per Hour</SelectItem>
+                                  <SelectItem value="day">Per Day</SelectItem>
+                                  <SelectItem value="week">Per Week</SelectItem>
+                                  <SelectItem value="month">
+                                    Per Month
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="rateUsed" className="text-right">
+                              Rate Used *
+                            </Label>
+                            <div className="col-span-3 relative">
+                              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              <Input
+                                id="rateUsed"
+                                type="number"
+                                step="0.01"
+                                value={entryFormData.rateUsed}
+                                onChange={(e) =>
+                                  setEntryFormData({
+                                    ...entryFormData,
+                                    rateUsed: e.target.value,
+                                  })
+                                }
+                                className="pl-10"
+                                placeholder="0.00"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                              htmlFor="entry-description"
+                              className="text-right"
+                            >
+                              Description
+                            </Label>
+                            <Textarea
+                              id="entry-description"
+                              value={entryFormData.description}
                               onChange={(e) =>
                                 setEntryFormData({
                                   ...entryFormData,
-                                  rateUsed: e.target.value,
+                                  description: e.target.value,
                                 })
                               }
-                              className="pl-10"
-                              placeholder="0.00"
-                              required
+                              className="col-span-3"
+                              rows={3}
+                              placeholder="Notes about the rental..."
                             />
                           </div>
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label
-                            htmlFor="entry-description"
-                            className="text-right"
+                        <DialogFooter>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              setIsAddEntryDialogOpen(false);
+                              resetEntryForm();
+                            }}
                           >
-                            Description
-                          </Label>
-                          <Textarea
-                            id="entry-description"
-                            value={entryFormData.description}
-                            onChange={(e) =>
-                              setEntryFormData({
-                                ...entryFormData,
-                                description: e.target.value,
-                              })
-                            }
-                            className="col-span-3"
-                            rows={3}
-                            placeholder="Notes about the rental..."
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            setIsAddEntryDialogOpen(false);
-                            resetEntryForm();
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button type="submit">Add Rental</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                            Cancel
+                          </Button>
+                          <Button type="submit">Add Rental</Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -1455,6 +1448,7 @@ export function RentalManagement() {
                           })
                         }
                         className="pl-10"
+                        placeholder="0.00"
                         required
                       />
                     </div>
@@ -1477,6 +1471,7 @@ export function RentalManagement() {
                       }
                       className="col-span-3"
                       rows={3}
+                      placeholder="Notes about the rental..."
                     />
                   </div>
                 </div>
