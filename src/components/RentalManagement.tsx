@@ -897,9 +897,15 @@ export function RentalManagement() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Rental Entries</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    Rental Entries
+                    <Badge variant="secondary">
+                      {rentalSummaries.length} of {rentalEntries.length} entries
+                    </Badge>
+                  </CardTitle>
                   <CardDescription>
                     Track rental usage and billing to jobs
+                    {!includeInvoicedEntries && " (excluding invoiced entries)"}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-4">
