@@ -336,7 +336,7 @@ export function useTimeTracking() {
     };
     setAppData((prev) => ({
       ...prev,
-      rentalItems: [...prev.rentalItems, newItem],
+      rentalItems: [...(prev.rentalItems || []), newItem],
     }));
   };
 
