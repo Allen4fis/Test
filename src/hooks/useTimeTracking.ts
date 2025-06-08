@@ -384,7 +384,9 @@ export function useTimeTracking() {
   const deleteRentalEntry = (id: string) => {
     setAppData((prev) => ({
       ...prev,
-      rentalEntries: prev.rentalEntries.filter((entry) => entry.id !== id),
+      rentalEntries: (prev.rentalEntries || []).filter(
+        (entry) => entry.id !== id,
+      ),
     }));
   };
 
