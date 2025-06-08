@@ -9,6 +9,7 @@ import {
   Briefcase,
   FileText,
   Home,
+  Receipt,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -51,13 +52,6 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       label: "Invoices",
       icon: Receipt,
       description: "Manage invoiced dates",
-    },
-    {
-      id: "employees" as const,
-      label: "Employees",
-      icon: Users,
-      description: "Manage staff",
-      count: employees.length,
     },
     {
       id: "employees" as const,
