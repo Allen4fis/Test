@@ -150,6 +150,14 @@ export function useTimeTracking() {
       migratedData.hourTypes = [...migratedData.hourTypes, ...nsHourTypes];
     }
 
+    // Add rental data if it doesn't exist (backward compatibility)
+    if (!migratedData.rentalItems) {
+      migratedData.rentalItems = [];
+    }
+    if (!migratedData.rentalEntries) {
+      migratedData.rentalEntries = [];
+    }
+
     return migratedData;
   }, [rawAppData]);
 
