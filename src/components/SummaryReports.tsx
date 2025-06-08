@@ -38,6 +38,26 @@ import {
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
+interface HourTypeBreakdown {
+  [hourTypeName: string]: {
+    hours: number;
+    effectiveHours: number;
+    cost: number;
+  };
+}
+
+interface EnhancedSummary {
+  title?: string;
+  jobNumber?: string;
+  jobName?: string;
+  date?: string;
+  employeeName?: string;
+  totalHours: number;
+  totalEffectiveHours: number;
+  totalCost: number;
+  hourTypeBreakdown: HourTypeBreakdown;
+}
+
 export function SummaryReports() {
   const {
     employees,
@@ -134,9 +154,30 @@ export function SummaryReports() {
     provinceFilter,
   ]);
 
-  // Filtered summaries for Title & Job view
+  // Helper function to create hour type breakdown
+  const createHourTypeBreakdown = (
+    summaries: typeof filteredSummaries,
+  ): HourTypeBreakdown => {
+    const breakdown: HourTypeBreakdown = {};
+
+    summaries.forEach((summary) => {
+      if (!breakdown[summary.hourTypeName]) {
+        breakdown[summary.hourTypeName] = {
+          hours: 0,
+          effectiveHours: 0,
+          cost: 0,
+        };
+      }
+      breakdown[summary.hourTypeName].hours += summary.hours;
+      breakdown[summary.hourTypeName].effectiveHours += summary.effectiveHours;
+      breakdown[summary.hourTypeName].cost += summary.totalCost;
+    });
+
+    return breakdown;
+  };
+
+  // Filtered summaries for Title & Job view with hour type breakdown
   const filteredTitleJobSummaries = useMemo(() => {
-    // Group filtered entries by title and job
     const grouped = filteredSummaries.reduce(
       (acc, summary) => {
         const key = `${summary.employeeTitle}-${summary.jobNumber}`;
@@ -149,7 +190,7 @@ export function SummaryReports() {
             totalHours: 0,
             totalEffectiveHours: 0,
             totalCost: 0,
-            entries: [],
+            hourTypeBreakdown: {},
           };
         }
 
@@ -157,19 +198,32 @@ export function SummaryReports() {
         acc[key].totalEffectiveHours += summary.effectiveHours;
         acc[key].totalCost += summary.totalCost;
 
+        // Add to hour type breakdown
+        if (!acc[key].hourTypeBreakdown[summary.hourTypeName]) {
+          acc[key].hourTypeBreakdown[summary.hourTypeName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+        acc[key].hourTypeBreakdown[summary.hourTypeName].hours += summary.hours;
+        acc[key].hourTypeBreakdown[summary.hourTypeName].effectiveHours +=
+          summary.effectiveHours;
+        acc[key].hourTypeBreakdown[summary.hourTypeName].cost +=
+          summary.totalCost;
+
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, EnhancedSummary>,
     );
 
-    return Object.values(grouped).sort((a: any, b: any) =>
-      a.title.localeCompare(b.title),
+    return Object.values(grouped).sort((a, b) =>
+      a.title!.localeCompare(b.title!),
     );
   }, [filteredSummaries]);
 
-  // Filtered summaries for Date & Name view
+  // Filtered summaries for Date & Name view with hour type breakdown
   const filteredDateNameSummaries = useMemo(() => {
-    // Group filtered entries by date and name
     const grouped = filteredSummaries.reduce(
       (acc, summary) => {
         const key = `${summary.date}-${summary.employeeName}`;
@@ -181,7 +235,7 @@ export function SummaryReports() {
             totalHours: 0,
             totalEffectiveHours: 0,
             totalCost: 0,
-            entries: [],
+            hourTypeBreakdown: {},
           };
         }
 
@@ -189,17 +243,36 @@ export function SummaryReports() {
         acc[key].totalEffectiveHours += summary.effectiveHours;
         acc[key].totalCost += summary.totalCost;
 
+        // Add to hour type breakdown
+        if (!acc[key].hourTypeBreakdown[summary.hourTypeName]) {
+          acc[key].hourTypeBreakdown[summary.hourTypeName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+        acc[key].hourTypeBreakdown[summary.hourTypeName].hours += summary.hours;
+        acc[key].hourTypeBreakdown[summary.hourTypeName].effectiveHours +=
+          summary.effectiveHours;
+        acc[key].hourTypeBreakdown[summary.hourTypeName].cost +=
+          summary.totalCost;
+
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, EnhancedSummary>,
     );
 
-    return Object.values(grouped).sort((a: any, b: any) => {
-      const dateComparison = b.date.localeCompare(a.date); // Most recent first
+    return Object.values(grouped).sort((a, b) => {
+      const dateComparison = b.date!.localeCompare(a.date!);
       return dateComparison !== 0
         ? dateComparison
-        : a.employeeName.localeCompare(b.employeeName);
+        : a.employeeName!.localeCompare(b.employeeName!);
     });
+  }, [filteredSummaries]);
+
+  // Overall hour type breakdown for filtered period
+  const overallHourTypeBreakdown = useMemo(() => {
+    return createHourTypeBreakdown(filteredSummaries);
   }, [filteredSummaries]);
 
   // Calculate totals for filtered data
@@ -227,6 +300,22 @@ export function SummaryReports() {
   const uniqueProvinceNames = [
     ...new Set(timeEntrySummaries.map((s) => s.provinceName)),
   ].sort();
+
+  // Helper component to render hour type breakdown
+  const HourTypeBreakdownDisplay = ({
+    breakdown,
+  }: {
+    breakdown: HourTypeBreakdown;
+  }) => (
+    <div className="space-y-1">
+      {Object.entries(breakdown).map(([hourType, data]) => (
+        <div key={hourType} className="flex justify-between text-xs">
+          <span className="text-gray-600">{hourType}:</span>
+          <span className="font-medium">{data.hours.toFixed(1)}h</span>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -436,6 +525,7 @@ export function SummaryReports() {
         <TabsList>
           <TabsTrigger value="titleJob">By Title & Job</TabsTrigger>
           <TabsTrigger value="dateName">By Date & Name</TabsTrigger>
+          <TabsTrigger value="hourTypes">By Hour Type</TabsTrigger>
           <TabsTrigger value="detailed">Detailed Entries</TabsTrigger>
         </TabsList>
 
@@ -444,8 +534,8 @@ export function SummaryReports() {
             <CardHeader>
               <CardTitle>Summary by Title and Job Number</CardTitle>
               <CardDescription>
-                Total hours grouped by employee title and job number for
-                selected period
+                Hours breakdown by employee title and job number with hour type
+                details
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -461,13 +551,14 @@ export function SummaryReports() {
                       <TableHead>Title</TableHead>
                       <TableHead>Job Number</TableHead>
                       <TableHead>Job Name</TableHead>
+                      <TableHead>Hour Type Breakdown</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
                       <TableHead>Total Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredTitleJobSummaries.map((summary: any, index) => (
+                    {filteredTitleJobSummaries.map((summary, index) => (
                       <TableRow
                         key={`${summary.title}-${summary.jobNumber}-${index}`}
                       >
@@ -476,6 +567,11 @@ export function SummaryReports() {
                         </TableCell>
                         <TableCell>{summary.jobNumber}</TableCell>
                         <TableCell>{summary.jobName}</TableCell>
+                        <TableCell>
+                          <HourTypeBreakdownDisplay
+                            breakdown={summary.hourTypeBreakdown}
+                          />
+                        </TableCell>
                         <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
                         <TableCell>
                           {summary.totalEffectiveHours.toFixed(2)}
@@ -497,8 +593,7 @@ export function SummaryReports() {
             <CardHeader>
               <CardTitle>Summary by Date and Employee Name</CardTitle>
               <CardDescription>
-                Total hours grouped by date and employee name for selected
-                period
+                Hours breakdown by date and employee with hour type details
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -513,24 +608,30 @@ export function SummaryReports() {
                     <TableRow>
                       <TableHead>Date</TableHead>
                       <TableHead>Employee Name</TableHead>
+                      <TableHead>Hour Type Breakdown</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
                       <TableHead>Total Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredDateNameSummaries.map((summary: any, index) => (
+                    {filteredDateNameSummaries.map((summary, index) => (
                       <TableRow
                         key={`${summary.date}-${summary.employeeName}-${index}`}
                       >
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            {new Date(summary.date).toLocaleDateString()}
+                            {new Date(summary.date!).toLocaleDateString()}
                           </div>
                         </TableCell>
                         <TableCell className="font-medium">
                           {summary.employeeName}
+                        </TableCell>
+                        <TableCell>
+                          <HourTypeBreakdownDisplay
+                            breakdown={summary.hourTypeBreakdown}
+                          />
                         </TableCell>
                         <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
                         <TableCell>
@@ -541,6 +642,66 @@ export function SummaryReports() {
                         </TableCell>
                       </TableRow>
                     ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="hourTypes">
+          <Card>
+            <CardHeader>
+              <CardTitle>Summary by Hour Type</CardTitle>
+              <CardDescription>
+                Overall breakdown of hours by type for selected period
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {Object.keys(overallHourTypeBreakdown).length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No data matches the current filters for the selected time
+                  period.
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Hour Type</TableHead>
+                      <TableHead>Total Hours</TableHead>
+                      <TableHead>Effective Hours</TableHead>
+                      <TableHead>Total Cost</TableHead>
+                      <TableHead>% of Total Hours</TableHead>
+                      <TableHead>% of Total Cost</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {Object.entries(overallHourTypeBreakdown)
+                      .sort(([, a], [, b]) => b.hours - a.hours)
+                      .map(([hourType, data]) => (
+                        <TableRow key={hourType}>
+                          <TableCell className="font-medium">
+                            <Badge variant="outline">{hourType}</Badge>
+                          </TableCell>
+                          <TableCell>{data.hours.toFixed(2)}</TableCell>
+                          <TableCell>
+                            {data.effectiveHours.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="font-medium text-green-600">
+                            ${data.cost.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {((data.hours / totalHours) * 100).toFixed(1)}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {((data.cost / totalCost) * 100).toFixed(1)}%
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               )}
