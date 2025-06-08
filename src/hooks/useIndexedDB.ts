@@ -497,6 +497,22 @@ export function useIndexedDB() {
     );
   }, []);
 
+  // Force reset database (delete and recreate)
+  const resetDatabase = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      await Dexie.delete("TimeTrackingDB");
+      db = await initializeDB();
+      await initializeDefaultData();
+      setError(null);
+    } catch (err) {
+      console.error("Database reset error:", err);
+      setError(err instanceof Error ? err.message : "Database reset failed");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   // Initialize on mount
   useEffect(() => {
     initializeDatabase();
