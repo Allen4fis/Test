@@ -41,7 +41,6 @@ import {
   Printer,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
-import "../styles/print.css";
 
 interface HourTypeBreakdown {
   [hourTypeName: string]: {
