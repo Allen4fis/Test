@@ -101,19 +101,47 @@ export function useTimeTracking() {
       invoicedDates: job.invoicedDates || [],
     }));
 
-    // Add title to existing time entries that don't have it
-    migratedData.timeEntries = rawAppData.timeEntries.map((entry) => {
-      if (!entry.title) {
-        // Find the employee and use their current title as fallback
-        const employee = rawAppData.employees.find(
-          (emp) => emp.id === entry.employeeId,
-        );
+    // Migrate employees from single hourlyWage to billableWage/costWage
+    migratedData.employees = rawAppData.employees.map((employee) => {
+      // If employee has the old structure (hourlyWage only)
+      if ("hourlyWage" in employee && !("billableWage" in employee)) {
+        const oldEmployee = employee as any;
         return {
-          ...entry,
-          title: employee?.title || "Unknown Title",
-        };
+          id: employee.id,
+          name: employee.name,
+          title: employee.title,
+          email: employee.email,
+          billableWage: oldEmployee.hourlyWage || 0,
+          costWage: oldEmployee.hourlyWage || 0,
+          createdAt: employee.createdAt,
+        } as Employee;
       }
-      return entry;
+      return employee;
+    });
+
+    // Add title and wage fields to existing time entries that don't have them
+    migratedData.timeEntries = rawAppData.timeEntries.map((entry) => {
+      const employee = migratedData.employees.find(
+        (emp) => emp.id === entry.employeeId,
+      );
+
+      const migratedEntry = { ...entry };
+
+      // Add title if missing
+      if (!migratedEntry.title) {
+        migratedEntry.title = employee?.title || "Unknown Title";
+      }
+
+      // Add wage fields if missing
+      if (!("billableWageUsed" in migratedEntry)) {
+        migratedEntry.billableWageUsed = employee?.billableWage || 0;
+      }
+
+      if (!("costWageUsed" in migratedEntry)) {
+        migratedEntry.costWageUsed = employee?.costWage || 0;
+      }
+
+      return migratedEntry as TimeEntry;
     });
 
     // Add new NS hour types if they don't exist
@@ -445,7 +473,7 @@ export function useTimeTracking() {
     });
   }, [appData]);
 
-  // Summary calculations with cost
+  // Summary calculations with dual wages
   const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
     return appData.timeEntries.map((entry) => {
       const employee = appData.employees.find(
@@ -458,18 +486,23 @@ export function useTimeTracking() {
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
       const effectiveHours = entry.hours * (hourType?.multiplier || 1);
-      let adjustedHourlyWage = employee?.hourlyWage || 0;
+      let adjustedBillableWage = entry.billableWageUsed || 0;
+      let adjustedCostWage = entry.costWageUsed || 0;
+      let totalBillableAmount = 0;
       let totalCost = 0;
 
       // LOA has fixed $200 cost regardless of hours
       if (hourType?.name === "LOA") {
         totalCost = 200;
+        totalBillableAmount = 200; // Could be different logic if needed
       } else {
         // Add $3 to base wage for NS hour types
         if (hourType?.name.startsWith("NS ")) {
-          adjustedHourlyWage += 3;
+          adjustedBillableWage += 3;
+          adjustedCostWage += 3;
         }
-        totalCost = effectiveHours * adjustedHourlyWage;
+        totalBillableAmount = effectiveHours * adjustedBillableWage;
+        totalCost = effectiveHours * adjustedCostWage;
       }
 
       return {
@@ -482,7 +515,9 @@ export function useTimeTracking() {
         date: entry.date,
         hours: entry.hours,
         effectiveHours: effectiveHours,
-        hourlyWage: employee?.hourlyWage || 0,
+        billableWage: entry.billableWageUsed || 0,
+        costWage: entry.costWageUsed || 0,
+        totalBillableAmount: totalBillableAmount,
         totalCost: totalCost,
       };
     });
@@ -504,7 +539,7 @@ export function useTimeTracking() {
         const entryTitle = entry.title || employee.title;
         const key = `${entryTitle}-${job.jobNumber}`;
         const effectiveHours = entry.hours * hourType.multiplier;
-        let adjustedHourlyWage = employee.hourlyWage || 0;
+        let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
 
         // LOA has fixed $200 cost regardless of hours
@@ -513,9 +548,9 @@ export function useTimeTracking() {
         } else {
           // Add $3 to base wage for NS hour types
           if (hourType.name.startsWith("NS ")) {
-            adjustedHourlyWage += 3;
+            adjustedCostWage += 3;
           }
-          cost = effectiveHours * adjustedHourlyWage;
+          cost = effectiveHours * adjustedCostWage;
         }
 
         if (!acc[key]) {
@@ -562,7 +597,7 @@ export function useTimeTracking() {
 
         const key = `${entry.date}-${employee.name}`;
         const effectiveHours = entry.hours * hourType.multiplier;
-        let adjustedHourlyWage = employee.hourlyWage || 0;
+        let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
 
         // LOA has fixed $200 cost regardless of hours
@@ -571,9 +606,9 @@ export function useTimeTracking() {
         } else {
           // Add $3 to base wage for NS hour types
           if (hourType.name.startsWith("NS ")) {
-            adjustedHourlyWage += 3;
+            adjustedCostWage += 3;
           }
-          cost = effectiveHours * adjustedHourlyWage;
+          cost = effectiveHours * adjustedCostWage;
         }
 
         if (!acc[key]) {
@@ -608,7 +643,7 @@ export function useTimeTracking() {
     });
   }, [appData]);
 
-  // Cost summaries by employee
+  // Cost summaries by employee with dual wages
   const costSummaryByEmployee = useMemo((): CostSummaryByEmployee[] => {
     const grouped = appData.timeEntries.reduce(
       (acc, entry) => {
@@ -622,18 +657,23 @@ export function useTimeTracking() {
         if (!employee || !hourType) return acc;
 
         const effectiveHours = entry.hours * hourType.multiplier;
-        let adjustedHourlyWage = employee.hourlyWage || 0;
+        let adjustedBillableWage = entry.billableWageUsed || 0;
+        let adjustedCostWage = entry.costWageUsed || 0;
+        let billableAmount = 0;
         let cost = 0;
 
         // LOA has fixed $200 cost regardless of hours
         if (hourType.name === "LOA") {
           cost = 200;
+          billableAmount = 200;
         } else {
           // Add $3 to base wage for NS hour types
           if (hourType.name.startsWith("NS ")) {
-            adjustedHourlyWage += 3;
+            adjustedBillableWage += 3;
+            adjustedCostWage += 3;
           }
-          cost = effectiveHours * adjustedHourlyWage;
+          billableAmount = effectiveHours * adjustedBillableWage;
+          cost = effectiveHours * adjustedCostWage;
         }
 
         if (!acc[employee.id]) {
@@ -641,9 +681,11 @@ export function useTimeTracking() {
             employeeId: employee.id,
             employeeName: employee.name,
             employeeTitle: employee.title,
-            hourlyWage: employee.hourlyWage || 0,
+            billableWage: employee.billableWage || 0,
+            costWage: employee.costWage || 0,
             totalHours: 0,
             totalEffectiveHours: 0,
+            totalBillableAmount: 0,
             totalCost: 0,
             entries: [],
           };
@@ -654,6 +696,7 @@ export function useTimeTracking() {
           acc[employee.id].totalHours += entry.hours;
           acc[employee.id].totalEffectiveHours += effectiveHours;
         }
+        acc[employee.id].totalBillableAmount += billableAmount;
         acc[employee.id].totalCost += cost;
         acc[employee.id].entries.push(entry);
 
@@ -665,7 +708,7 @@ export function useTimeTracking() {
     return Object.values(grouped).sort((a, b) => b.totalCost - a.totalCost);
   }, [appData]);
 
-  // Cost summaries by job
+  // Cost summaries by job with dual wages
   const costSummaryByJob = useMemo((): CostSummaryByJob[] => {
     const grouped = appData.timeEntries.reduce(
       (acc, entry) => {
@@ -680,7 +723,7 @@ export function useTimeTracking() {
         if (!employee || !job || !hourType) return acc;
 
         const effectiveHours = entry.hours * hourType.multiplier;
-        let adjustedHourlyWage = employee.hourlyWage || 0;
+        let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
 
         // LOA has fixed $200 cost regardless of hours
@@ -689,9 +732,9 @@ export function useTimeTracking() {
         } else {
           // Add $3 to base wage for NS hour types
           if (hourType.name.startsWith("NS ")) {
-            adjustedHourlyWage += 3;
+            adjustedCostWage += 3;
           }
-          cost = effectiveHours * adjustedHourlyWage;
+          cost = effectiveHours * adjustedCostWage;
         }
 
         if (!acc[job.id]) {
