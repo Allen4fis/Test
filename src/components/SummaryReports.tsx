@@ -626,6 +626,10 @@ export function SummaryReports() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Cost</p>
                 <p className="text-2xl font-bold">${totalCost.toFixed(2)}</p>
+                <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                  <span>Labor: ${totalLaborCost.toFixed(2)}</span>
+                  <span>Rentals: ${totalRentalCost.toFixed(2)}</span>
+                </div>
               </div>
             </div>
           </CardContent>
