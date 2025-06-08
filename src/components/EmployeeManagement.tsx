@@ -50,21 +50,37 @@ export function EmployeeManagement() {
     name: "",
     title: "",
     email: "",
+    hourlyWage: "",
   });
 
   const resetForm = () => {
-    setFormData({ name: "", title: "", email: "" });
+    setFormData({ name: "", title: "", email: "", hourlyWage: "" });
     setEditingEmployee(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.title.trim()) return;
+    if (
+      !formData.name.trim() ||
+      !formData.title.trim() ||
+      !formData.hourlyWage.trim()
+    )
+      return;
+
+    const hourlyWage = parseFloat(formData.hourlyWage);
+    if (isNaN(hourlyWage) || hourlyWage < 0) return;
+
+    const employeeData = {
+      name: formData.name,
+      title: formData.title,
+      email: formData.email,
+      hourlyWage: hourlyWage,
+    };
 
     if (editingEmployee) {
-      updateEmployee(editingEmployee.id, formData);
+      updateEmployee(editingEmployee.id, employeeData);
     } else {
-      addEmployee(formData);
+      addEmployee(employeeData);
     }
 
     setIsDialogOpen(false);
@@ -77,6 +93,7 @@ export function EmployeeManagement() {
       name: employee.name,
       title: employee.title,
       email: employee.email || "",
+      hourlyWage: employee.hourlyWage.toString(),
     });
     setIsDialogOpen(true);
   };
