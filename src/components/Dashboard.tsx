@@ -60,12 +60,12 @@ export function Dashboard() {
   );
   const activeJobs = jobs.filter((job) => job.isActive);
 
-  // Recent activity (last 7 days)
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-  const recentEntries = timeEntries
-    .filter((entry) => new Date(entry.date) >= weekAgo)
-    .sort((a, b) => b.date.localeCompare(a.date))
+  // Recent activity (last 3 days)
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const recentEntries = timeEntries.filter(entry =>
+    new Date(entry.date) >= threeDaysAgo
+  ).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
     .slice(0, 10);
 
   // Top employees by hours this month
@@ -371,13 +371,13 @@ export function Dashboard() {
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
           <CardDescription>
-            Latest time entries from the past 7 days
+            Latest time entries from the past 3 days
           </CardDescription>
         </CardHeader>
         <CardContent>
           {recentEntries.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No recent activity in the past 7 days.
+              No recent activity in the past 3 days.
             </div>
           ) : (
             <Table>
