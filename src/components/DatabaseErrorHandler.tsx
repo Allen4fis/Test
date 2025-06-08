@@ -56,6 +56,8 @@ export function DatabaseErrorHandler({
 
   const isSchemaError =
     error.includes("ConstraintError") || error.includes("index");
+  const isSubscriptionError =
+    error.includes("subscribe") || error.includes("blocked");
 
   return (
     <Card className="border-red-200 bg-red-50">
