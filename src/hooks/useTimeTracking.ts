@@ -10,6 +10,8 @@ import {
   SummaryByTitleAndJob,
   SummaryByDateAndName,
   TimeEntrySummary,
+  CostSummaryByEmployee,
+  CostSummaryByJob,
 } from "@/types";
 
 // Default data to initialize the app
@@ -159,7 +161,7 @@ export function useTimeTracking() {
     }));
   };
 
-  // Summary calculations
+  // Summary calculations with cost
   const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
     return appData.timeEntries.map((entry) => {
       const employee = appData.employees.find(
@@ -205,6 +207,8 @@ export function useTimeTracking() {
         if (!employee || !job || !hourType) return acc;
 
         const key = `${employee.title}-${job.jobNumber}`;
+        const effectiveHours = entry.hours * hourType.multiplier;
+        const cost = effectiveHours * (employee.hourlyWage || 0);
 
         if (!acc[key]) {
           acc[key] = {
@@ -213,12 +217,14 @@ export function useTimeTracking() {
             jobName: job.name,
             totalHours: 0,
             totalEffectiveHours: 0,
+            totalCost: 0,
             entries: [],
           };
         }
 
         acc[key].totalHours += entry.hours;
-        acc[key].totalEffectiveHours += entry.hours * hourType.multiplier;
+        acc[key].totalEffectiveHours += effectiveHours;
+        acc[key].totalCost += cost;
         acc[key].entries.push(entry);
 
         return acc;
@@ -244,6 +250,8 @@ export function useTimeTracking() {
         if (!employee || !hourType) return acc;
 
         const key = `${entry.date}-${employee.name}`;
+        const effectiveHours = entry.hours * hourType.multiplier;
+        const cost = effectiveHours * (employee.hourlyWage || 0);
 
         if (!acc[key]) {
           acc[key] = {
@@ -251,12 +259,14 @@ export function useTimeTracking() {
             employeeName: employee.name,
             totalHours: 0,
             totalEffectiveHours: 0,
+            totalCost: 0,
             entries: [],
           };
         }
 
         acc[key].totalHours += entry.hours;
-        acc[key].totalEffectiveHours += entry.hours * hourType.multiplier;
+        acc[key].totalEffectiveHours += effectiveHours;
+        acc[key].totalCost += cost;
         acc[key].entries.push(entry);
 
         return acc;
@@ -270,6 +280,108 @@ export function useTimeTracking() {
         ? dateComparison
         : a.employeeName.localeCompare(b.employeeName);
     });
+  }, [appData]);
+
+  // Cost summaries by employee
+  const costSummaryByEmployee = useMemo((): CostSummaryByEmployee[] => {
+    const grouped = appData.timeEntries.reduce(
+      (acc, entry) => {
+        const employee = appData.employees.find(
+          (emp) => emp.id === entry.employeeId,
+        );
+        const hourType = appData.hourTypes.find(
+          (ht) => ht.id === entry.hourTypeId,
+        );
+
+        if (!employee || !hourType) return acc;
+
+        const effectiveHours = entry.hours * hourType.multiplier;
+        const cost = effectiveHours * (employee.hourlyWage || 0);
+
+        if (!acc[employee.id]) {
+          acc[employee.id] = {
+            employeeId: employee.id,
+            employeeName: employee.name,
+            employeeTitle: employee.title,
+            hourlyWage: employee.hourlyWage || 0,
+            totalHours: 0,
+            totalEffectiveHours: 0,
+            totalCost: 0,
+            entries: [],
+          };
+        }
+
+        acc[employee.id].totalHours += entry.hours;
+        acc[employee.id].totalEffectiveHours += effectiveHours;
+        acc[employee.id].totalCost += cost;
+        acc[employee.id].entries.push(entry);
+
+        return acc;
+      },
+      {} as Record<string, CostSummaryByEmployee>,
+    );
+
+    return Object.values(grouped).sort((a, b) => b.totalCost - a.totalCost);
+  }, [appData]);
+
+  // Cost summaries by job
+  const costSummaryByJob = useMemo((): CostSummaryByJob[] => {
+    const grouped = appData.timeEntries.reduce(
+      (acc, entry) => {
+        const employee = appData.employees.find(
+          (emp) => emp.id === entry.employeeId,
+        );
+        const job = appData.jobs.find((j) => j.id === entry.jobId);
+        const hourType = appData.hourTypes.find(
+          (ht) => ht.id === entry.hourTypeId,
+        );
+
+        if (!employee || !job || !hourType) return acc;
+
+        const effectiveHours = entry.hours * hourType.multiplier;
+        const cost = effectiveHours * (employee.hourlyWage || 0);
+
+        if (!acc[job.id]) {
+          acc[job.id] = {
+            jobId: job.id,
+            jobNumber: job.jobNumber,
+            jobName: job.name,
+            totalHours: 0,
+            totalEffectiveHours: 0,
+            totalCost: 0,
+            employees: [],
+            entries: [],
+          };
+        }
+
+        acc[job.id].totalHours += entry.hours;
+        acc[job.id].totalEffectiveHours += effectiveHours;
+        acc[job.id].totalCost += cost;
+        acc[job.id].entries.push(entry);
+
+        // Update employee breakdown for this job
+        const existingEmployee = acc[job.id].employees.find(
+          (emp) => emp.employeeName === employee.name,
+        );
+        if (existingEmployee) {
+          existingEmployee.hours += entry.hours;
+          existingEmployee.effectiveHours += effectiveHours;
+          existingEmployee.cost += cost;
+        } else {
+          acc[job.id].employees.push({
+            employeeName: employee.name,
+            hours: entry.hours,
+            effectiveHours: effectiveHours,
+            cost: cost,
+          });
+        }
+
+        return acc;
+      },
+      {} as Record<string, CostSummaryByJob>,
+    );
+
+    return Object.values(grouped).sort((a, b) => b.totalCost - a.totalCost);
   }, [appData]);
 
   return {
@@ -303,6 +415,8 @@ export function useTimeTracking() {
     timeEntrySummaries,
     summaryByTitleAndJob,
     summaryByDateAndName,
+    costSummaryByEmployee,
+    costSummaryByJob,
 
     // Utility
     resetData: () => setAppData(getDefaultAppData()),
