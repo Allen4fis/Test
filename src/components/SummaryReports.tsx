@@ -694,6 +694,9 @@ export function SummaryReports() {
         </TabsList>
 
         <TabsContent value="employee">
+          <div className="print-only print-section-header">
+            Summary by Employee
+          </div>
           <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Employee</CardTitle>
@@ -832,6 +835,9 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="titleJob">
+          <div className="print-only print-section-header">
+            Summary by Title and Job Number
+          </div>
           <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Title and Job Number</CardTitle>
@@ -923,6 +929,9 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="dateName">
+          <div className="print-only print-section-header">
+            Summary by Date and Employee Name
+          </div>
           <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Date and Employee Name</CardTitle>
@@ -1010,6 +1019,9 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="hourTypes">
+          <div className="print-only print-section-header">
+            Summary by Hour Types
+          </div>
           <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Hour Types</CardTitle>
@@ -1062,6 +1074,7 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="rentals">
+          <div className="print-only print-section-header">Rental Summary</div>
           <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -1139,6 +1152,9 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="detailed">
+          <div className="print-only print-section-header">
+            Detailed Time Entries
+          </div>
           <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Detailed Time Entries</CardTitle>
