@@ -37,7 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, DollarSign } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Employee } from "@/types";
 
@@ -93,7 +93,7 @@ export function EmployeeManagement() {
       name: employee.name,
       title: employee.title,
       email: employee.email || "",
-      hourlyWage: employee.hourlyWage.toString(),
+      hourlyWage: employee.hourlyWage?.toString() || "0",
     });
     setIsDialogOpen(true);
   };
@@ -109,7 +109,7 @@ export function EmployeeManagement() {
           <div>
             <CardTitle>Employee Management</CardTitle>
             <CardDescription>
-              Manage your employees and their job titles
+              Manage your employees, job titles, and hourly wages
             </CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -127,14 +127,14 @@ export function EmployeeManagement() {
                 <DialogDescription>
                   {editingEmployee
                     ? "Update the employee information below."
-                    : "Enter the details for the new employee."}
+                    : "Enter the details for the new employee including their hourly wage."}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
-                      Name
+                      Name *
                     </Label>
                     <Input
                       id="name"
@@ -148,7 +148,7 @@ export function EmployeeManagement() {
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="title" className="text-right">
-                      Title
+                      Title *
                     </Label>
                     <Input
                       id="title"
@@ -168,25 +168,35 @@ export function EmployeeManagement() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       className="col-span-3"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="hourlyWage" className="text-right">
-                      Hourly Wage
+                      Hourly Wage *
                     </Label>
-                    <Input
-                      id="hourlyWage"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.hourlyWage}
-                      onChange={(e) => setFormData({ ...formData, hourlyWage: e.target.value })}
-                      className="col-span-3"
-                      placeholder="25.00"
-                      required
-                    />
+                    <div className="col-span-3 relative">
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="hourlyWage"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={formData.hourlyWage}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            hourlyWage: e.target.value,
+                          })
+                        }
+                        className="pl-10"
+                        placeholder="25.00"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
                 <DialogFooter>
@@ -221,13 +231,14 @@ export function EmployeeManagement() {
                 <TableRow key={employee.id}>
                   <TableCell className="font-medium">{employee.name}</TableCell>
                   <TableCell>{employee.title}</TableCell>
-                  <TableCell>{employee.email || '—'}</TableCell>
-                  <TableCell className="font-medium">
-                    ${employee.hourlyWage?.toFixed(2) || '0.00'}/hr
+                  <TableCell>{employee.email || "—"}</TableCell>
+                  <TableCell className="font-medium text-green-600">
+                    ${employee.hourlyWage?.toFixed(2) || "0.00"}/hr
                   </TableCell>
                   <TableCell>
-                    {new Date(employee.createdAt).toLocaleDateDate()}
+                    {new Date(employee.createdAt).toLocaleDateString()}
                   </TableCell>
+                  <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button
                         variant="outline"
