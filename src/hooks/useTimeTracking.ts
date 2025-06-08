@@ -79,6 +79,8 @@ const getDefaultAppData = (): AppData => ({
     { id: "13", name: "Yukon", code: "YT" },
   ],
   timeEntries: [],
+  rentalItems: [],
+  rentalEntries: [],
 });
 
 export function useTimeTracking() {
