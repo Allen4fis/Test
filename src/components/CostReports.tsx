@@ -25,8 +25,12 @@ import {
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
 export function CostReports() {
-  const { costSummaryByEmployee, costSummaryByJob, timeEntrySummaries } =
-    useTimeTracking();
+  const {
+    costSummaryByEmployee,
+    costSummaryByJob,
+    timeEntrySummaries,
+    rentalSummaries,
+  } = useTimeTracking();
 
   // Calculate total costs
   const totalCost = timeEntrySummaries.reduce(
