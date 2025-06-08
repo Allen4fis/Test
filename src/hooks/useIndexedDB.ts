@@ -91,6 +91,10 @@ export function useIndexedDB() {
   const initializeDatabase = useCallback(async () => {
     try {
       setIsLoading(true);
+      setError(null);
+
+      // Ensure database is properly initialized
+      db = await initializeDB();
 
       // Check if data already exists
       const employeeCount = await db.employees.count();
@@ -103,6 +107,7 @@ export function useIndexedDB() {
 
       setError(null);
     } catch (err) {
+      console.error("Database initialization error:", err);
       setError(
         err instanceof Error ? err.message : "Database initialization failed",
       );
