@@ -17,11 +17,22 @@ class TimeTrackingDB extends Dexie {
     this.version(1).stores({
       employees: "id, name, title, email, hourlyWage, createdAt",
       jobs: "id, jobNumber, name, description, isActive, createdAt",
-      timeEntries: "id, employeeId, jobId, hourTypeId, provinceId, date, hours, createdAt",
+      timeEntries:
+        "id, employeeId, jobId, hourTypeId, provinceId, date, hours, createdAt",
       hourTypes: "id, name, description, multiplier",
-      provinces: "id, name, code"
+      provinces: "id, name, code",
     });
-  }
+
+    // Handle database errors
+    this.on("error", (error) => {
+      console.error("IndexedDB error:", error);
+    });
+
+    this.on("blocked", () => {
+      console.warn(
+        "IndexedDB blocked - another tab may be using an older version",
+      );
+    });
   }
 }
 
