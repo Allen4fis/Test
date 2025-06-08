@@ -11,6 +11,7 @@ import {
   Home,
   Receipt,
   Truck,
+  Eye,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
@@ -42,6 +43,13 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       label: "Time Entry",
       icon: Clock,
       description: "Log work hours",
+    },
+    {
+      id: "viewer" as const,
+      label: "Time Viewer",
+      icon: Eye,
+      description: "View & manage entries",
+      count: timeEntries.length,
     },
     {
       id: "reports" as const,
