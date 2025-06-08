@@ -21,8 +21,14 @@ interface LayoutProps {
 }
 
 export function Layout({ children, timeTracking }: LayoutProps) {
-  const { selectedView, setSelectedView, employees, jobs, timeEntries } =
-    timeTracking;
+  const {
+    selectedView,
+    setSelectedView,
+    employees,
+    jobs,
+    timeEntries,
+    rentalItems,
+  } = timeTracking;
 
   const navigationItems = [
     {
