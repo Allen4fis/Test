@@ -37,7 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit, Trash2, DollarSign } from "lucide-react";
+import { Plus, Edit, Trash2, DollarSign, Banknote } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Employee } from "@/types";
 
@@ -50,11 +50,18 @@ export function EmployeeManagement() {
     name: "",
     title: "",
     email: "",
-    hourlyWage: "",
+    billableWage: "",
+    costWage: "",
   });
 
   const resetForm = () => {
-    setFormData({ name: "", title: "", email: "", hourlyWage: "" });
+    setFormData({
+      name: "",
+      title: "",
+      email: "",
+      billableWage: "",
+      costWage: "",
+    });
     setEditingEmployee(null);
   };
 
@@ -63,18 +70,28 @@ export function EmployeeManagement() {
     if (
       !formData.name.trim() ||
       !formData.title.trim() ||
-      !formData.hourlyWage.trim()
+      !formData.billableWage.trim() ||
+      !formData.costWage.trim()
     )
       return;
 
-    const hourlyWage = parseFloat(formData.hourlyWage);
-    if (isNaN(hourlyWage) || hourlyWage < 0) return;
+    const billableWage = parseFloat(formData.billableWage);
+    const costWage = parseFloat(formData.costWage);
+
+    if (
+      isNaN(billableWage) ||
+      billableWage < 0 ||
+      isNaN(costWage) ||
+      costWage < 0
+    )
+      return;
 
     const employeeData = {
       name: formData.name,
       title: formData.title,
       email: formData.email,
-      hourlyWage: hourlyWage,
+      billableWage: billableWage,
+      costWage: costWage,
     };
 
     if (editingEmployee) {
@@ -93,7 +110,8 @@ export function EmployeeManagement() {
       name: employee.name,
       title: employee.title,
       email: employee.email || "",
-      hourlyWage: employee.hourlyWage?.toString() || "0",
+      billableWage: employee.billableWage?.toString() || "0",
+      costWage: employee.costWage?.toString() || "0",
     });
     setIsDialogOpen(true);
   };
@@ -109,7 +127,7 @@ export function EmployeeManagement() {
           <div>
             <CardTitle>Employee Management</CardTitle>
             <CardDescription>
-              Manage your employees, job titles, and hourly wages
+              Manage your employees, job titles, and wage rates
             </CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -119,7 +137,7 @@ export function EmployeeManagement() {
                 Add Employee
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>
                   {editingEmployee ? "Edit Employee" : "Add New Employee"}
@@ -127,7 +145,7 @@ export function EmployeeManagement() {
                 <DialogDescription>
                   {editingEmployee
                     ? "Update the employee information below."
-                    : "Enter the details for the new employee including their hourly wage."}
+                    : "Enter the details for the new employee including their billable and cost wage rates."}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
@@ -175,21 +193,45 @@ export function EmployeeManagement() {
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="hourlyWage" className="text-right">
-                      Hourly Wage *
+                    <Label htmlFor="billableWage" className="text-right">
+                      Billable Rate *
                     </Label>
                     <div className="col-span-3 relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
                       <Input
-                        id="hourlyWage"
+                        id="billableWage"
                         type="number"
                         step="0.01"
                         min="0"
-                        value={formData.hourlyWage}
+                        value={formData.billableWage}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            hourlyWage: e.target.value,
+                            billableWage: e.target.value,
+                          })
+                        }
+                        className="pl-10"
+                        placeholder="45.00"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="costWage" className="text-right">
+                      Cost Rate *
+                    </Label>
+                    <div className="col-span-3 relative">
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
+                      <Input
+                        id="costWage"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={formData.costWage}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            costWage: e.target.value,
                           })
                         }
                         className="pl-10"
@@ -197,6 +239,16 @@ export function EmployeeManagement() {
                         required
                       />
                     </div>
+                  </div>
+                  <div className="col-span-4 text-xs text-gray-500 px-4">
+                    <p>
+                      <strong>Billable Rate:</strong> What you charge clients
+                      for this employee's time
+                    </p>
+                    <p>
+                      <strong>Cost Rate:</strong> Internal cost/what you pay
+                      this employee
+                    </p>
                   </div>
                 </div>
                 <DialogFooter>
@@ -221,7 +273,8 @@ export function EmployeeManagement() {
                 <TableHead>Name</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Hourly Wage</TableHead>
+                <TableHead>Billable Rate</TableHead>
+                <TableHead>Cost Rate</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -233,7 +286,10 @@ export function EmployeeManagement() {
                   <TableCell>{employee.title}</TableCell>
                   <TableCell>{employee.email || "—"}</TableCell>
                   <TableCell className="font-medium text-green-600">
-                    ${employee.hourlyWage?.toFixed(2) || "0.00"}/hr
+                    ${employee.billableWage?.toFixed(2) || "0.00"}/hr
+                  </TableCell>
+                  <TableCell className="font-medium text-red-600">
+                    ${employee.costWage?.toFixed(2) || "0.00"}/hr
                   </TableCell>
                   <TableCell>
                     {new Date(employee.createdAt).toLocaleDateString()}
