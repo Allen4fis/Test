@@ -52,6 +52,7 @@ export function InvoiceManagement() {
     jobs,
     timeEntries,
     timeEntrySummaries,
+    rentalSummaries,
     addInvoicedDates,
     removeInvoicedDates,
   } = useTimeTracking();
