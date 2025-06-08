@@ -695,7 +695,7 @@ export function SummaryReports() {
         </TabsList>
 
         <TabsContent value="employee">
-          <Card>
+          <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Employee</CardTitle>
               <CardDescription>
@@ -833,7 +833,7 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="titleJob">
-          <Card>
+          <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Title and Job Number</CardTitle>
               <CardDescription>
@@ -924,7 +924,7 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="dateName">
-          <Card>
+          <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Date and Employee Name</CardTitle>
               <CardDescription>
@@ -1011,7 +1011,7 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="hourTypes">
-          <Card>
+          <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Summary by Hour Types</CardTitle>
               <CardDescription>
@@ -1063,7 +1063,7 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="rentals">
-          <Card>
+          <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Truck className="h-5 w-5" />
@@ -1140,7 +1140,7 @@ export function SummaryReports() {
         </TabsContent>
 
         <TabsContent value="detailed">
-          <Card>
+          <Card className="page-break-avoid">
             <CardHeader>
               <CardTitle>Detailed Time Entries</CardTitle>
               <CardDescription>
