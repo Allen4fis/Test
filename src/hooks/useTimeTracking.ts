@@ -87,17 +87,52 @@ export function useTimeTracking() {
     getDefaultAppData(),
   );
 
-  // Ensure backward compatibility - add invoicedDates to existing jobs that don't have it
-  const appData = useMemo(
-    () => ({
-      ...rawAppData,
-      jobs: rawAppData.jobs.map((job) => ({
-        ...job,
-        invoicedDates: job.invoicedDates || [],
-      })),
-    }),
-    [rawAppData],
-  );
+  // Ensure backward compatibility and data migrations
+  const appData = useMemo(() => {
+    const migratedData = { ...rawAppData };
+
+    // Add invoicedDates to existing jobs that don't have it
+    migratedData.jobs = rawAppData.jobs.map((job) => ({
+      ...job,
+      invoicedDates: job.invoicedDates || [],
+    }));
+
+    // Add new NS hour types if they don't exist
+    const nsHourTypes = [
+      {
+        id: "6",
+        name: "NS Regular Time",
+        description: "Nova Scotia regular hours (base pay + $3)",
+        multiplier: 1.0,
+      },
+      {
+        id: "7",
+        name: "NS Overtime",
+        description: "Nova Scotia overtime (base pay + $3) x1.5",
+        multiplier: 1.5,
+      },
+      {
+        id: "8",
+        name: "NS Double Time",
+        description: "Nova Scotia double time (base pay + $3) x2",
+        multiplier: 2.0,
+      },
+    ];
+
+    // Check if NS hour types already exist
+    const hasNSHourTypes = nsHourTypes.some((nsType) =>
+      migratedData.hourTypes.some(
+        (existingType) => existingType.id === nsType.id,
+      ),
+    );
+
+    // Add NS hour types if they don't exist
+    if (!hasNSHourTypes) {
+      migratedData.hourTypes = [...migratedData.hourTypes, ...nsHourTypes];
+    }
+
+    return migratedData;
+  }, [rawAppData]);
 
   const setAppData = (data: AppData | ((prev: AppData) => AppData)) => {
     if (typeof data === "function") {
