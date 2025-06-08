@@ -13,6 +13,7 @@ export interface Job {
   name: string;
   description?: string;
   isActive: boolean;
+  invoicedDates: string[]; // Array of dates in YYYY-MM-DD format
   createdAt: string;
 }
 
