@@ -639,6 +639,7 @@ export function SummaryReports() {
           <TabsTrigger value="titleJob">By Title & Job</TabsTrigger>
           <TabsTrigger value="dateName">By Date & Name</TabsTrigger>
           <TabsTrigger value="hourTypes">By Hour Type</TabsTrigger>
+          <TabsTrigger value="rentals">Rentals</TabsTrigger>
           <TabsTrigger value="detailed">Detailed Entries</TabsTrigger>
         </TabsList>
 
