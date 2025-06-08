@@ -12,6 +12,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 
 interface LayoutProps {
   children: ReactNode;
