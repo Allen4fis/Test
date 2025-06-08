@@ -587,8 +587,8 @@ export function TimeEntryViewer() {
           <CardDescription>
             {totalEntries} entries found • Sorted by {sortField} (
             {sortDirection === "asc" ? "ascending" : "descending"})
-            {(employeeFilter && employeeFilter !== "all-employees" || jobFilter && jobFilter !== "all-jobs") && (
-              <span> • Filtered by {employeeFilter && employeeFilter !== "all-employees" && `Employee: ${employeeFilter}`}{employeeFilter && employeeFilter !== "all-employees" && jobFilter && jobFilter !== "all-jobs" && ", "}{jobFilter && jobFilter !== "all-jobs" && `Job: ${jobFilter}`}</span>
+            {((employeeFilter && employeeFilter !== "all-employees") || (jobFilter && jobFilter !== "all-jobs")) && (
+              <span> • Filtered by {employeeFilter && employeeFilter !== "all-employees" && `Employee: ${employeeFilter}`}{(employeeFilter && employeeFilter !== "all-employees") && (jobFilter && jobFilter !== "all-jobs") && ", "}{jobFilter && jobFilter !== "all-jobs" && `Job: ${jobFilter}`}</span>
             )}
                 {employeeFilter && jobFilter && ", "}
                 {jobFilter && `Job: ${jobFilter}`}
