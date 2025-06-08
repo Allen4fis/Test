@@ -192,6 +192,7 @@ export function useTimeTracking() {
     | "reports"
     | "costs"
     | "invoices"
+    | "rentals"
   >("dashboard");
 
   // Employee operations
