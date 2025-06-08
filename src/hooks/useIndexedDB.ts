@@ -555,6 +555,7 @@ export function useIndexedDB() {
 
     // Utility
     clearAllData,
+    resetDatabase,
     initializeDatabase,
   };
 }
