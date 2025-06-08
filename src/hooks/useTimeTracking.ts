@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import {
   AppData,
@@ -64,42 +64,46 @@ const getDefaultAppData = (): AppData => ({
 });
 
 export function useTimeTracking() {
-  const [rawAppData, setRawAppData] = useLocalStorage<AppData>('timeTrackingApp', getDefaultAppData());
+  const [rawAppData, setRawAppData] = useLocalStorage<AppData>(
+    "timeTrackingApp",
+    getDefaultAppData(),
+  );
 
   // Ensure backward compatibility - add invoicedDates to existing jobs that don't have it
-  const appData = useMemo(() => ({
-    ...rawAppData,
-    jobs: rawAppData.jobs.map(job => ({
-      ...job,
-      invoicedDates: job.invoicedDates || []
-    }))
-  }), [rawAppData]);
+  const appData = useMemo(
+    () => ({
+      ...rawAppData,
+      jobs: rawAppData.jobs.map((job) => ({
+        ...job,
+        invoicedDates: job.invoicedDates || [],
+      })),
+    }),
+    [rawAppData],
+  );
 
   const setAppData = (data: AppData | ((prev: AppData) => AppData)) => {
-    if (typeof data === 'function') {
-      setRawAppData(prev => {
+    if (typeof data === "function") {
+      setRawAppData((prev) => {
         const result = data(prev);
         return {
           ...result,
-          jobs: result.jobs.map(job => ({
+          jobs: result.jobs.map((job) => ({
             ...job,
-            invoicedDates: job.invoicedDates || []
-          }))
+            invoicedDates: job.invoicedDates || [],
+          })),
         };
       });
     } else {
       setRawAppData({
         ...data,
-        jobs: data.jobs.map(job => ({
+        jobs: data.jobs.map((job) => ({
           ...job,
-          invoicedDates: job.invoicedDates || []
-        }))
+          invoicedDates: job.invoicedDates || [],
+        })),
       });
     }
   };
-    "timeTrackingApp",
-    getDefaultAppData(),
-  );
+
   const [selectedView, setSelectedView] = useState<
     | "dashboard"
     | "timeEntry"
@@ -109,13 +113,6 @@ export function useTimeTracking() {
     | "costs"
     | "invoices"
   >("dashboard");
-  "dashboard" |
-    "timeEntry" |
-    "employees" |
-    "jobs" |
-    "reports" |
-    ("costs" > "dashboard");
-  "dashboard" | "timeEntry" | "employees" | "jobs" | ("reports" > "dashboard");
 
   // Employee operations
   const addEmployee = (employee: Omit<Employee, "id" | "createdAt">) => {
@@ -195,7 +192,9 @@ export function useTimeTracking() {
         job.id === jobId
           ? {
               ...job,
-              invoicedDates: [...new Set([...job.invoicedDates, ...dates])],
+              invoicedDates: [
+                ...new Set([...(job.invoicedDates || []), ...dates]),
+              ],
             }
           : job,
       ),
@@ -209,7 +208,7 @@ export function useTimeTracking() {
         job.id === jobId
           ? {
               ...job,
-              invoicedDates: job.invoicedDates.filter(
+              invoicedDates: (job.invoicedDates || []).filter(
                 (date) => !dates.includes(date),
               ),
             }
