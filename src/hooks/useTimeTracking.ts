@@ -331,7 +331,7 @@ export function useTimeTracking() {
         date: entry.date,
         hours: entry.hours,
         effectiveHours: effectiveHours,
-        hourlyWage: hourlyWage,
+        hourlyWage: employee?.hourlyWage || 0,
         totalCost: totalCost,
       };
     });
