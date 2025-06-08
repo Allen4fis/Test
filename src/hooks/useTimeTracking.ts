@@ -328,7 +328,7 @@ export function useTimeTracking() {
 
       return {
         employeeName: employee?.name || "Unknown Employee",
-        employeeTitle: employee?.title || "Unknown Title",
+        employeeTitle: entry.title || employee?.title || "Unknown Title",
         jobNumber: job?.jobNumber || "Unknown Job",
         jobName: job?.name || "Unknown Job Name",
         hourTypeName: hourType?.name || "Unknown Hour Type",
