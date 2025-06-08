@@ -171,6 +171,10 @@ export function useTimeTracking() {
       );
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
+      const effectiveHours = entry.hours * (hourType?.multiplier || 1);
+      const hourlyWage = employee?.hourlyWage || 0;
+      const totalCost = effectiveHours * hourlyWage;
+
       return {
         employeeName: employee?.name || "Unknown Employee",
         employeeTitle: employee?.title || "Unknown Title",
@@ -180,7 +184,9 @@ export function useTimeTracking() {
         provinceName: province?.name || "Unknown Province",
         date: entry.date,
         hours: entry.hours,
-        effectiveHours: entry.hours * (hourType?.multiplier || 1),
+        effectiveHours: effectiveHours,
+        hourlyWage: hourlyWage,
+        totalCost: totalCost,
       };
     });
   }, [appData]);
