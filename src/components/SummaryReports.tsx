@@ -41,6 +41,7 @@ import {
   Printer,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import "../styles/print.css";
 
 interface HourTypeBreakdown {
   [hourTypeName: string]: {
@@ -458,7 +459,7 @@ export function SummaryReports() {
       </div>
 
       {/* Enhanced Filters */}
-      <Card>
+      <Card className="print-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
@@ -625,8 +626,8 @@ export function SummaryReports() {
       </Card>
 
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 print-stats">
+        <Card className="print-stat-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-blue-500" />
@@ -684,7 +685,7 @@ export function SummaryReports() {
 
       {/* Reports Tabs */}
       <Tabs defaultValue="employee" className="space-y-4">
-        <TabsList>
+        <TabsList className="print-hidden">
           <TabsTrigger value="employee">By Employee</TabsTrigger>
           <TabsTrigger value="titleJob">By Title & Job</TabsTrigger>
           <TabsTrigger value="dateName">By Date & Name</TabsTrigger>
