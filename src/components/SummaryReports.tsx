@@ -389,10 +389,17 @@ export function SummaryReports() {
   const totalEffectiveHours = filteredSummaries
     .filter((summary) => summary.hourTypeName !== "LOA")
     .reduce((sum, summary) => sum + summary.effectiveHours, 0);
-  const totalCost = filteredSummaries.reduce(
+
+  // Calculate total costs including rentals
+  const totalLaborCost = filteredSummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
   );
+  const totalRentalCost = filteredRentalSummaries.reduce(
+    (sum, summary) => sum + summary.totalCost,
+    0,
+  );
+  const totalCost = totalLaborCost + totalRentalCost;
 
   const clearFilters = () => {
     setDateFilter(getInitialDateFilter());
