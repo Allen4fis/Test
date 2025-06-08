@@ -107,6 +107,7 @@ export function useTimeTracking() {
   const addJob = (job: Omit<Job, "id" | "createdAt">) => {
     const newJob: Job = {
       ...job,
+      invoicedDates: job.invoicedDates || [],
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
     };
@@ -130,6 +131,46 @@ export function useTimeTracking() {
       ...prev,
       jobs: prev.jobs.filter((job) => job.id !== id),
       timeEntries: prev.timeEntries.filter((entry) => entry.jobId !== id),
+    }));
+  };
+
+  // Invoice management for jobs
+  const updateJobInvoicedDates = (jobId: string, dates: string[]) => {
+    setAppData((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job) =>
+        job.id === jobId ? { ...job, invoicedDates: dates } : job,
+      ),
+    }));
+  };
+
+  const addInvoicedDates = (jobId: string, dates: string[]) => {
+    setAppData((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job) =>
+        job.id === jobId
+          ? {
+              ...job,
+              invoicedDates: [...new Set([...job.invoicedDates, ...dates])],
+            }
+          : job,
+      ),
+    }));
+  };
+
+  const removeInvoicedDates = (jobId: string, dates: string[]) => {
+    setAppData((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job) =>
+        job.id === jobId
+          ? {
+              ...job,
+              invoicedDates: job.invoicedDates.filter(
+                (date) => !dates.includes(date),
+              ),
+            }
+          : job,
+      ),
     }));
   };
 
@@ -406,6 +447,9 @@ export function useTimeTracking() {
     addJob,
     updateJob,
     deleteJob,
+    updateJobInvoicedDates,
+    addInvoicedDates,
+    removeInvoicedDates,
 
     // Time entry operations
     addTimeEntry,
