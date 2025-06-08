@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Dashboard } from "@/components/Dashboard";
 import { TimeEntryForm } from "@/components/TimeEntryForm";
+import { TimeEntryViewer } from "@/components/TimeEntryViewer";
 import { SummaryReports } from "@/components/SummaryReports";
 import { CostReports } from "@/components/CostReports";
 import { InvoiceManagement } from "@/components/InvoiceManagement";
@@ -88,6 +89,9 @@ const Index = () => {
         break;
       case "timeEntry":
         component = <TimeEntryForm />;
+        break;
+      case "viewer":
+        component = <TimeEntryViewer />;
         break;
       case "reports":
         component = <SummaryReports />;
