@@ -3,7 +3,8 @@ export interface Employee {
   name: string;
   title: string;
   email?: string;
-  hourlyWage: number;
+  billableWage: number; // What we charge clients
+  costWage: number; // Internal cost/what we pay employee
   createdAt: string;
 }
 
@@ -39,6 +40,8 @@ export interface TimeEntry {
   date: string; // YYYY-MM-DD format
   hours: number;
   title: string; // Employee title at time of entry
+  billableWageUsed: number; // Billable wage at time of entry
+  costWageUsed: number; // Cost wage at time of entry
   description?: string;
   createdAt: string;
 }
@@ -53,8 +56,10 @@ export interface TimeEntrySummary {
   date: string;
   hours: number;
   effectiveHours: number; // hours * multiplier
-  hourlyWage: number;
-  totalCost: number; // effectiveHours * hourlyWage
+  billableWage: number;
+  costWage: number;
+  totalBillableAmount: number; // effectiveHours * billableWage
+  totalCost: number; // effectiveHours * costWage
 }
 
 export interface SummaryByTitleAndJob {
@@ -80,9 +85,11 @@ export interface CostSummaryByEmployee {
   employeeId: string;
   employeeName: string;
   employeeTitle: string;
-  hourlyWage: number;
+  billableWage: number;
+  costWage: number;
   totalHours: number;
   totalEffectiveHours: number;
+  totalBillableAmount: number;
   totalCost: number;
   entries: TimeEntry[];
 }
