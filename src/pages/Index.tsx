@@ -112,6 +112,9 @@ const Index = () => {
           <JobManagement />
         );
         break;
+      case "rentals":
+        component = <RentalManagement />;
+        break;
       default:
         component = <Dashboard />;
     }
