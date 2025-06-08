@@ -375,7 +375,7 @@ export function useTimeTracking() {
   const updateRentalEntry = (id: string, updates: Partial<RentalEntry>) => {
     setAppData((prev) => ({
       ...prev,
-      rentalEntries: prev.rentalEntries.map((entry) =>
+      rentalEntries: (prev.rentalEntries || []).map((entry) =>
         entry.id === id ? { ...entry, ...updates } : entry,
       ),
     }));
