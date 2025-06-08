@@ -69,9 +69,11 @@ export function InvoiceManagement() {
       (entry) => entry.jobNumber === job.jobNumber,
     );
     const dates = [...new Set(jobEntries.map((entry) => entry.date))].sort();
+    const invoicedDates = job.invoicedDates || []; // Safe fallback for existing jobs
+
     return dates.map((date) => ({
       date,
-      isInvoiced: job.invoicedDates.includes(date),
+      isInvoiced: invoicedDates.includes(date),
       entries: jobEntries.filter((entry) => entry.date === date),
       totalHours: jobEntries
         .filter((entry) => entry.date === date)
