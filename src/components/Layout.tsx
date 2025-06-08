@@ -63,21 +63,33 @@ export function Layout({ children, timeTracking }: LayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen modern-gradient">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-sidebar border-b border-sidebar-border/20 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Clock className="h-8 w-8 text-blue-600" />
-                <h1 className="text-xl font-bold text-gray-900">
-                  Time Tracker
-                </h1>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary rounded-xl shadow-lg">
+                  <Clock className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-sidebar-foreground">
+                    TimeTracker Pro
+                  </h1>
+                  <p className="text-xs text-sidebar-foreground/70">
+                    Professional Time Management
+                  </p>
+                </div>
               </div>
-              <Badge variant="outline" className="text-xs">
-                {timeEntries.length} entries
-              </Badge>
+              <div className="ml-4">
+                <Badge
+                  variant="secondary"
+                  className="bg-primary/10 text-primary border-primary/20 font-medium"
+                >
+                  {timeEntries.length} entries
+                </Badge>
+              </div>
             </div>
           </div>
         </div>
@@ -87,76 +99,119 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-3">
-            <Card className="p-4">
-              <nav className="space-y-2">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = selectedView === item.id;
+            <Card className="modern-card bg-sidebar border-sidebar-border shadow-xl overflow-hidden">
+              <div className="p-6">
+                <h2 className="text-lg font-semibold text-sidebar-foreground mb-4">
+                  Navigation
+                </h2>
+                <nav className="space-y-2">
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = selectedView === item.id;
 
-                  return (
-                    <Button
-                      key={item.id}
-                      variant={isActive ? "default" : "ghost"}
-                      className="w-full justify-start gap-3 h-auto p-3"
-                      onClick={() => {
-                        console.log("Navigating to:", item.id);
-                        setSelectedView(item.id);
-                      }}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <div className="flex-1 text-left">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{item.label}</span>
-                          {item.count !== undefined && (
-                            <Badge variant="secondary" className="ml-2">
-                              {item.count}
-                            </Badge>
-                          )}
+                    return (
+                      <Button
+                        key={item.id}
+                        variant={isActive ? "default" : "ghost"}
+                        className={`w-full justify-start gap-3 h-auto p-4 transition-all duration-200 ${
+                          isActive
+                            ? "orange-gradient text-primary-foreground shadow-lg transform scale-105 font-semibold"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-105"
+                        }`}
+                        onClick={() => {
+                          console.log("Navigating to:", item.id);
+                          setSelectedView(item.id);
+                        }}
+                      >
+                        <Icon
+                          className={`h-5 w-5 ${isActive ? "drop-shadow-sm" : ""}`}
+                        />
+                        <div className="flex-1 text-left">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">{item.label}</span>
+                            {item.count !== undefined && (
+                              <Badge
+                                variant="secondary"
+                                className={`ml-2 ${
+                                  isActive
+                                    ? "bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
+                                    : "bg-primary/10 text-primary border-primary/20"
+                                }`}
+                              >
+                                {item.count}
+                              </Badge>
+                            )}
+                          </div>
+                          <p
+                            className={`text-xs mt-1 ${
+                              isActive
+                                ? "text-primary-foreground/80"
+                                : "text-sidebar-foreground/60"
+                            }`}
+                          >
+                            {item.description}
+                          </p>
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {item.description}
-                        </p>
-                      </div>
-                    </Button>
-                  );
-                })}
-              </nav>
+                      </Button>
+                    );
+                  })}
+                </nav>
+              </div>
             </Card>
 
             {/* Quick Stats */}
-            <Card className="p-4 mt-4">
-              <h3 className="font-semibold text-sm text-gray-700 mb-3">
-                Quick Stats
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Employees:</span>
-                  <span className="font-medium">{employees.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Active Jobs:</span>
-                  <span className="font-medium">
-                    {jobs.filter((j) => j.isActive).length}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Time Entries:</span>
-                  <span className="font-medium">{timeEntries.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Hours:</span>
-                  <span className="font-medium">
-                    {timeEntries
-                      .reduce((sum, entry) => sum + entry.hours, 0)
-                      .toFixed(1)}
-                  </span>
+            <Card className="modern-card mt-6 bg-card border-border shadow-lg overflow-hidden">
+              <div className="p-6">
+                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  Quick Stats
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground font-medium">
+                      Total Employees:
+                    </span>
+                    <span className="font-bold text-foreground text-lg">
+                      {employees.length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground font-medium">
+                      Active Jobs:
+                    </span>
+                    <span className="font-bold text-foreground text-lg">
+                      {jobs.filter((j) => j.isActive).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-muted-foreground font-medium">
+                      Time Entries:
+                    </span>
+                    <span className="font-bold text-foreground text-lg">
+                      {timeEntries.length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg border border-primary/20">
+                    <span className="text-foreground font-medium">
+                      Total Hours:
+                    </span>
+                    <span className="font-bold text-primary text-lg">
+                      {timeEntries
+                        .reduce((sum, entry) => sum + entry.hours, 0)
+                        .toFixed(1)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </Card>
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-9">{children}</div>
+          <div className="lg:col-span-9">
+            <div className="modern-card bg-card border-border shadow-xl rounded-2xl overflow-hidden">
+              <div className="p-8">{children}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
