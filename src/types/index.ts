@@ -3,6 +3,7 @@ export interface Employee {
   name: string;
   title: string;
   email?: string;
+  hourlyWage: number;
   createdAt: string;
 }
 
@@ -50,6 +51,8 @@ export interface TimeEntrySummary {
   date: string;
   hours: number;
   effectiveHours: number; // hours * multiplier
+  hourlyWage: number;
+  totalCost: number; // effectiveHours * hourlyWage
 }
 
 export interface SummaryByTitleAndJob {
@@ -58,6 +61,7 @@ export interface SummaryByTitleAndJob {
   jobName: string;
   totalHours: number;
   totalEffectiveHours: number;
+  totalCost: number;
   entries: TimeEntry[];
 }
 
@@ -66,6 +70,34 @@ export interface SummaryByDateAndName {
   employeeName: string;
   totalHours: number;
   totalEffectiveHours: number;
+  totalCost: number;
+  entries: TimeEntry[];
+}
+
+export interface CostSummaryByEmployee {
+  employeeId: string;
+  employeeName: string;
+  employeeTitle: string;
+  hourlyWage: number;
+  totalHours: number;
+  totalEffectiveHours: number;
+  totalCost: number;
+  entries: TimeEntry[];
+}
+
+export interface CostSummaryByJob {
+  jobId: string;
+  jobNumber: string;
+  jobName: string;
+  totalHours: number;
+  totalEffectiveHours: number;
+  totalCost: number;
+  employees: {
+    employeeName: string;
+    hours: number;
+    effectiveHours: number;
+    cost: number;
+  }[];
   entries: TimeEntry[];
 }
 
