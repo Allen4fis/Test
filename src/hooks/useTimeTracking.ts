@@ -316,6 +316,67 @@ export function useTimeTracking() {
     }));
   };
 
+  // Rental item operations
+  const addRentalItem = (item: Omit<RentalItem, "id" | "createdAt">) => {
+    const newItem: RentalItem = {
+      ...item,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    };
+    setAppData((prev) => ({
+      ...prev,
+      rentalItems: [...prev.rentalItems, newItem],
+    }));
+  };
+
+  const updateRentalItem = (id: string, updates: Partial<RentalItem>) => {
+    setAppData((prev) => ({
+      ...prev,
+      rentalItems: prev.rentalItems.map((item) =>
+        item.id === id ? { ...item, ...updates } : item,
+      ),
+    }));
+  };
+
+  const deleteRentalItem = (id: string) => {
+    setAppData((prev) => ({
+      ...prev,
+      rentalItems: prev.rentalItems.filter((item) => item.id !== id),
+      rentalEntries: prev.rentalEntries.filter(
+        (entry) => entry.rentalItemId !== id,
+      ),
+    }));
+  };
+
+  // Rental entry operations
+  const addRentalEntry = (entry: Omit<RentalEntry, "id" | "createdAt">) => {
+    const newEntry: RentalEntry = {
+      ...entry,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    };
+    setAppData((prev) => ({
+      ...prev,
+      rentalEntries: [...prev.rentalEntries, newEntry],
+    }));
+  };
+
+  const updateRentalEntry = (id: string, updates: Partial<RentalEntry>) => {
+    setAppData((prev) => ({
+      ...prev,
+      rentalEntries: prev.rentalEntries.map((entry) =>
+        entry.id === id ? { ...entry, ...updates } : entry,
+      ),
+    }));
+  };
+
+  const deleteRentalEntry = (id: string) => {
+    setAppData((prev) => ({
+      ...prev,
+      rentalEntries: prev.rentalEntries.filter((entry) => entry.id !== id),
+    }));
+  };
+
   // Summary calculations with cost
   const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
     return appData.timeEntries.map((entry) => {
