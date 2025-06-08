@@ -89,7 +89,7 @@ export function SummaryReports() {
   const [dateFilter, setDateFilter] = useState(getInitialDateFilter());
   const [employeeFilter, setEmployeeFilter] = useState("");
   const [jobFilter, setJobFilter] = useState("");
-  const [provinceFilter, setProvinceFilter] = useState("");
+  const [provinceFilter, setProvinceFilter] = useState("all-provinces");
   const [periodFilter, setPeriodFilter] = useState("month"); // Default to last 30 days
   const [includeInvoiced, setIncludeInvoiced] = useState(true); // New toggle for invoiced entries
 
@@ -161,7 +161,7 @@ export function SummaryReports() {
         summary.jobNumber.toLowerCase().includes(jobFilter.toLowerCase());
       const matchesProvince =
         !provinceFilter ||
-        provinceFilter === "all" ||
+        provinceFilter === "all-provinces" ||
         summary.provinceName === provinceFilter;
 
       // Find the corresponding time entry to get jobId
@@ -384,7 +384,7 @@ export function SummaryReports() {
     setDateFilter(getInitialDateFilter());
     setEmployeeFilter("");
     setJobFilter("");
-    setProvinceFilter("");
+    setProvinceFilter("all-provinces");
     setPeriodFilter("month");
     setIncludeInvoiced(true);
   };
@@ -552,7 +552,7 @@ export function SummaryReports() {
                     <SelectValue placeholder="All provinces" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Provinces</SelectItem>
+                    <SelectItem value="all-provinces">All Provinces</SelectItem>
                     {uniqueProvinceNames.map((province) => (
                       <SelectItem key={province} value={province}>
                         {province}
