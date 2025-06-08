@@ -10,6 +10,7 @@ import {
   FileText,
   Home,
   Receipt,
+  Truck,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
