@@ -251,8 +251,11 @@ export function SummaryReports() {
           };
         }
 
-        acc[key].totalHours += summary.hours;
-        acc[key].totalEffectiveHours += summary.effectiveHours;
+        // Don't include LOA hours in total hours calculations
+        if (summary.hourTypeName !== "LOA") {
+          acc[key].totalHours += summary.hours;
+          acc[key].totalEffectiveHours += summary.effectiveHours;
+        }
         acc[key].totalCost += summary.totalCost;
 
         // Add to hour type breakdown
