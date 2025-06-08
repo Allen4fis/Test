@@ -163,16 +163,20 @@ export function TimeEntryViewer() {
           : entry.date >= startDate && entry.date <= endDate;
 
       // Employee filter
-      const employee = employees.find(emp => emp.id === entry.employeeId);
-      const matchesEmployee = !employeeFilter || employeeFilter === "all-employees" ||
+      const employee = employees.find((emp) => emp.id === entry.employeeId);
+      const matchesEmployee =
+        !employeeFilter ||
+        employeeFilter === "all-employees" ||
         employee?.name.toLowerCase().includes(employeeFilter.toLowerCase());
 
       // Job filter
-      const job = jobs.find(j => j.id === entry.jobId);
-      const matchesJob = !jobFilter || jobFilter === "all-jobs" ||
+      const job = jobs.find((j) => j.id === entry.jobId);
+      const matchesJob =
+        !jobFilter ||
+        jobFilter === "all-jobs" ||
         job?.jobNumber.toLowerCase().includes(jobFilter.toLowerCase()) ||
         job?.name.toLowerCase().includes(jobFilter.toLowerCase());
-        job?.name.toLowerCase().includes(jobFilter.toLowerCase());
+      job?.name.toLowerCase().includes(jobFilter.toLowerCase());
 
       return matchesDate && matchesEmployee && matchesJob;
     });
@@ -587,11 +591,20 @@ export function TimeEntryViewer() {
           <CardDescription>
             {totalEntries} entries found • Sorted by {sortField} (
             {sortDirection === "asc" ? "ascending" : "descending"})
-            {((employeeFilter && employeeFilter !== "all-employees") || (jobFilter && jobFilter !== "all-jobs")) && (
-              <span> • Filtered by {employeeFilter && employeeFilter !== "all-employees" && `Employee: ${employeeFilter}`}{(employeeFilter && employeeFilter !== "all-employees") && (jobFilter && jobFilter !== "all-jobs") && ", "}{jobFilter && jobFilter !== "all-jobs" && `Job: ${jobFilter}`}</span>
-            )}
-                {employeeFilter && jobFilter && ", "}
-                {jobFilter && `Job: ${jobFilter}`}
+            {((employeeFilter && employeeFilter !== "all-employees") ||
+              (jobFilter && jobFilter !== "all-jobs")) && (
+              <span>
+                {" "}
+                • Filtered by{" "}
+                {employeeFilter &&
+                  employeeFilter !== "all-employees" &&
+                  `Employee: ${employeeFilter}`}
+                {employeeFilter &&
+                  employeeFilter !== "all-employees" &&
+                  jobFilter &&
+                  jobFilter !== "all-jobs" &&
+                  ", "}
+                {jobFilter && jobFilter !== "all-jobs" && `Job: ${jobFilter}`}
               </span>
             )}
           </CardDescription>
