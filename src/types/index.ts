@@ -38,6 +38,7 @@ export interface TimeEntry {
   provinceId: string;
   date: string; // YYYY-MM-DD format
   hours: number;
+  title: string; // Employee title at time of entry
   description?: string;
   createdAt: string;
 }
