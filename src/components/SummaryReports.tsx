@@ -164,6 +164,26 @@ export function SummaryReports() {
     provinceFilter,
   ]);
 
+  // Enhanced filtering logic for rental summaries
+  const filteredRentalSummaries = useMemo(() => {
+    return rentalSummaries.filter((summary) => {
+      const matchesDate =
+        (!dateFilter.startDate || summary.date >= dateFilter.startDate) &&
+        (!dateFilter.endDate || summary.date <= dateFilter.endDate);
+      const matchesEmployee =
+        !employeeFilter ||
+        summary.employeeName
+          .toLowerCase()
+          .includes(employeeFilter.toLowerCase());
+      const matchesJob =
+        !jobFilter ||
+        summary.jobNumber.toLowerCase().includes(jobFilter.toLowerCase());
+      // Note: Rentals don't have provinces, so we don't filter by province
+
+      return matchesDate && matchesEmployee && matchesJob;
+    });
+  }, [rentalSummaries, dateFilter, employeeFilter, jobFilter]);
+
   // Helper function to create hour type breakdown
   const createHourTypeBreakdown = (
     summaries: typeof filteredSummaries,
