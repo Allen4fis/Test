@@ -270,6 +270,73 @@ export function SummaryReports() {
     });
   }, [filteredSummaries]);
 
+  // New: Employee summary with hour type totals (filterable by date)
+  const employeeSummariesWithHourTypes = useMemo(() => {
+    const grouped = filteredSummaries.reduce(
+      (acc, summary) => {
+        if (!acc[summary.employeeName]) {
+          acc[summary.employeeName] = {
+            employeeName: summary.employeeName,
+            employeeTitle: summary.employeeTitle,
+            totalHours: 0,
+            totalEffectiveHours: 0,
+            totalCost: 0,
+            hourTypeBreakdown: {},
+            dateRange: { earliest: summary.date, latest: summary.date },
+            entryCount: 0,
+          };
+        }
+
+        acc[summary.employeeName].totalHours += summary.hours;
+        acc[summary.employeeName].totalEffectiveHours += summary.effectiveHours;
+        acc[summary.employeeName].totalCost += summary.totalCost;
+        acc[summary.employeeName].entryCount += 1;
+
+        // Update date range
+        if (summary.date < acc[summary.employeeName].dateRange.earliest) {
+          acc[summary.employeeName].dateRange.earliest = summary.date;
+        }
+        if (summary.date > acc[summary.employeeName].dateRange.latest) {
+          acc[summary.employeeName].dateRange.latest = summary.date;
+        }
+
+        // Add to hour type breakdown
+        if (
+          !acc[summary.employeeName].hourTypeBreakdown[summary.hourTypeName]
+        ) {
+          acc[summary.employeeName].hourTypeBreakdown[summary.hourTypeName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+        acc[summary.employeeName].hourTypeBreakdown[
+          summary.hourTypeName
+        ].hours += summary.hours;
+        acc[summary.employeeName].hourTypeBreakdown[
+          summary.hourTypeName
+        ].effectiveHours += summary.effectiveHours;
+        acc[summary.employeeName].hourTypeBreakdown[
+          summary.hourTypeName
+        ].cost += summary.totalCost;
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        EnhancedSummary & {
+          employeeTitle: string;
+          dateRange: { earliest: string; latest: string };
+          entryCount: number;
+        }
+      >,
+    );
+
+    return Object.values(grouped).sort((a, b) =>
+      a.employeeName!.localeCompare(b.employeeName!),
+    );
+  }, [filteredSummaries]);
+
   // Overall hour type breakdown for filtered period
   const overallHourTypeBreakdown = useMemo(() => {
     return createHourTypeBreakdown(filteredSummaries);
@@ -521,13 +588,145 @@ export function SummaryReports() {
       </div>
 
       {/* Reports Tabs */}
-      <Tabs defaultValue="titleJob" className="space-y-4">
+      <Tabs defaultValue="employee" className="space-y-4">
         <TabsList>
+          <TabsTrigger value="employee">By Employee</TabsTrigger>
           <TabsTrigger value="titleJob">By Title & Job</TabsTrigger>
           <TabsTrigger value="dateName">By Date & Name</TabsTrigger>
           <TabsTrigger value="hourTypes">By Hour Type</TabsTrigger>
           <TabsTrigger value="detailed">Detailed Entries</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="employee">
+          <Card>
+            <CardHeader>
+              <CardTitle>Summary by Employee</CardTitle>
+              <CardDescription>
+                Total hours by employee with hour type breakdown for selected
+                period
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {employeeSummariesWithHourTypes.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No data matches the current filters for the selected time
+                  period.
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Employee Name</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Hour Type Breakdown</TableHead>
+                      <TableHead>Total Hours</TableHead>
+                      <TableHead>Effective Hours</TableHead>
+                      <TableHead>Total Cost</TableHead>
+                      <TableHead>Date Range</TableHead>
+                      <TableHead>Entries</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {employeeSummariesWithHourTypes.map((employee, index) => (
+                      <TableRow key={employee.employeeName}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                index < 3
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {index + 1}
+                            </span>
+                            {employee.employeeName}
+                          </div>
+                        </TableCell>
+                        <TableCell>{employee.employeeTitle}</TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            {Object.entries(employee.hourTypeBreakdown)
+                              .sort(([, a], [, b]) => b.hours - a.hours)
+                              .map(([hourType, data]) => (
+                                <div
+                                  key={hourType}
+                                  className="flex justify-between text-xs bg-gray-50 px-2 py-1 rounded"
+                                >
+                                  <span className="font-medium text-gray-700">
+                                    {hourType}:
+                                  </span>
+                                  <span className="font-bold text-gray-900">
+                                    {data.hours.toFixed(1)}h
+                                  </span>
+                                </div>
+                              ))}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {employee.totalHours.toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          {employee.totalEffectiveHours.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="font-medium text-green-600">
+                          ${employee.totalCost.toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-xs text-gray-600">
+                            <div>
+                              {new Date(
+                                employee.dateRange.earliest,
+                              ).toLocaleDateString()}
+                            </div>
+                            <div>
+                              to{" "}
+                              {new Date(
+                                employee.dateRange.latest,
+                              ).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{employee.entryCount}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow className="bg-gray-50 font-bold">
+                      <TableCell colSpan={3}>Total</TableCell>
+                      <TableCell>
+                        {employeeSummariesWithHourTypes
+                          .reduce((sum, emp) => sum + emp.totalHours, 0)
+                          .toFixed(2)}
+                      </TableCell>
+                      <TableCell>
+                        {employeeSummariesWithHourTypes
+                          .reduce(
+                            (sum, emp) => sum + emp.totalEffectiveHours,
+                            0,
+                          )
+                          .toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-green-600">
+                        $
+                        {employeeSummariesWithHourTypes
+                          .reduce((sum, emp) => sum + emp.totalCost, 0)
+                          .toFixed(2)}
+                      </TableCell>
+                      <TableCell></TableCell>
+                      <TableCell>
+                        {employeeSummariesWithHourTypes.reduce(
+                          (sum, emp) => sum + emp.entryCount,
+                          0,
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="titleJob">
           <Card>
