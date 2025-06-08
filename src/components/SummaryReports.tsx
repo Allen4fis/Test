@@ -66,6 +66,7 @@ export function SummaryReports() {
     provinces,
     timeEntries,
     timeEntrySummaries,
+    rentalSummaries,
     summaryByTitleAndJob,
     summaryByDateAndName,
   } = useTimeTracking();
