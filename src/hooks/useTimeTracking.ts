@@ -97,6 +97,21 @@ export function useTimeTracking() {
       invoicedDates: job.invoicedDates || [],
     }));
 
+    // Add title to existing time entries that don't have it
+    migratedData.timeEntries = rawAppData.timeEntries.map((entry) => {
+      if (!entry.title) {
+        // Find the employee and use their current title as fallback
+        const employee = rawAppData.employees.find(
+          (emp) => emp.id === entry.employeeId,
+        );
+        return {
+          ...entry,
+          title: employee?.title || "Unknown Title",
+        };
+      }
+      return entry;
+    });
+
     // Add new NS hour types if they don't exist
     const nsHourTypes = [
       {
