@@ -58,10 +58,12 @@ export function CostReports() {
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-500" />
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Labor Cost
-                </p>
+                <p className="text-sm font-medium text-gray-600">Total Cost</p>
                 <p className="text-2xl font-bold">${totalCost.toFixed(2)}</p>
+                <div className="text-xs text-gray-500 mt-1">
+                  Labor: ${totalLaborCost.toFixed(2)} | Rentals: $
+                  {totalRentalCost.toFixed(2)}
+                </div>
               </div>
             </div>
           </CardContent>
