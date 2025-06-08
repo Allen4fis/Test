@@ -321,9 +321,10 @@ export function SummaryReports() {
     return Object.values(grouped).sort((a, b) => b.totalCost - a.totalCost);
   }, [filteredSummaries]);
 
-  // Enhanced filtering for title/job summaries
+  // Enhanced filtering for title/job summaries with hour type breakdown
   const filteredTitleJobSummaries = useMemo(() => {
-    return summaryByTitleAndJob.filter((summary) => {
+    // First filter the base summaries
+    const filtered = summaryByTitleAndJob.filter((summary) => {
       const matchesJob =
         !jobFilter ||
         summary.jobNumber.toLowerCase().includes(jobFilter.toLowerCase());
@@ -337,11 +338,48 @@ export function SummaryReports() {
 
       return matchesJob && matchesInvoiceFilter;
     });
-  }, [summaryByTitleAndJob, jobFilter, includeInvoiced, jobs]);
 
-  // Enhanced filtering for date/name summaries
+    // Then add hour type breakdown to each summary
+    return filtered.map((summary) => {
+      const hourTypeBreakdown: HourTypeBreakdown = {};
+
+      // Get the relevant filtered summaries for this title/job combination
+      const relevantSummaries = filteredSummaries.filter(
+        (fs) =>
+          fs.employeeTitle === summary.title &&
+          fs.jobNumber === summary.jobNumber,
+      );
+
+      relevantSummaries.forEach((fs) => {
+        if (!hourTypeBreakdown[fs.hourTypeName]) {
+          hourTypeBreakdown[fs.hourTypeName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+        hourTypeBreakdown[fs.hourTypeName].hours += fs.hours;
+        hourTypeBreakdown[fs.hourTypeName].effectiveHours += fs.effectiveHours;
+        hourTypeBreakdown[fs.hourTypeName].cost += fs.totalCost;
+      });
+
+      return {
+        ...summary,
+        hourTypeBreakdown,
+      };
+    });
+  }, [
+    summaryByTitleAndJob,
+    jobFilter,
+    includeInvoiced,
+    jobs,
+    filteredSummaries,
+  ]);
+
+  // Enhanced filtering for date/name summaries with hour type breakdown
   const filteredDateNameSummaries = useMemo(() => {
-    return summaryByDateAndName.filter((summary) => {
+    // First filter the base summaries
+    const filtered = summaryByDateAndName.filter((summary) => {
       const matchesDate =
         (!dateFilter.startDate || summary.date >= dateFilter.startDate) &&
         (!dateFilter.endDate || summary.date <= dateFilter.endDate);
@@ -360,7 +398,43 @@ export function SummaryReports() {
 
       return matchesDate && matchesEmployee && matchesInvoiceFilter;
     });
-  }, [summaryByDateAndName, dateFilter, employeeFilter, includeInvoiced, jobs]);
+
+    // Then add hour type breakdown to each summary
+    return filtered.map((summary) => {
+      const hourTypeBreakdown: HourTypeBreakdown = {};
+
+      // Get the relevant filtered summaries for this date/employee combination
+      const relevantSummaries = filteredSummaries.filter(
+        (fs) =>
+          fs.date === summary.date && fs.employeeName === summary.employeeName,
+      );
+
+      relevantSummaries.forEach((fs) => {
+        if (!hourTypeBreakdown[fs.hourTypeName]) {
+          hourTypeBreakdown[fs.hourTypeName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+        hourTypeBreakdown[fs.hourTypeName].hours += fs.hours;
+        hourTypeBreakdown[fs.hourTypeName].effectiveHours += fs.effectiveHours;
+        hourTypeBreakdown[fs.hourTypeName].cost += fs.totalCost;
+      });
+
+      return {
+        ...summary,
+        hourTypeBreakdown,
+      };
+    });
+  }, [
+    summaryByDateAndName,
+    dateFilter,
+    employeeFilter,
+    includeInvoiced,
+    jobs,
+    filteredSummaries,
+  ]);
 
   // Calculate summary statistics
   const totalHours = filteredSummaries.reduce(
