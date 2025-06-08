@@ -35,6 +35,7 @@ import {
   DollarSign,
   Filter,
   RotateCcw,
+  Truck,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
