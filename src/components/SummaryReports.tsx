@@ -640,7 +640,7 @@ export function SummaryReports() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="print-stat-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-green-500" />
@@ -651,7 +651,7 @@ export function SummaryReports() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="print-stat-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-orange-500" />
@@ -666,7 +666,7 @@ export function SummaryReports() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="print-stat-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-purple-500" />
