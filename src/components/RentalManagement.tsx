@@ -137,6 +137,9 @@ export function RentalManagement() {
     description: "",
   });
 
+  // State for invoiced entries filter
+  const [includeInvoicedEntries, setIncludeInvoicedEntries] = useState(true);
+
   const resetItemForm = () => {
     setItemFormData({
       name: "",
