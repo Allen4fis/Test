@@ -76,8 +76,8 @@ export function TimeEntryViewer() {
   // Filter states
   const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [dateRange, setDateRange] = useState("today");
-  const [employeeFilter, setEmployeeFilter] = useState("");
-  const [jobFilter, setJobFilter] = useState("");
+  const [employeeFilter, setEmployeeFilter] = useState("all-employees");
+  const [jobFilter, setJobFilter] = useState("all-jobs");
 
   // Sorting states
   const [sortField, setSortField] = useState<SortField>("date");
@@ -163,16 +163,15 @@ export function TimeEntryViewer() {
           : entry.date >= startDate && entry.date <= endDate;
 
       // Employee filter
-      const employee = employees.find((emp) => emp.id === entry.employeeId);
-      const matchesEmployee =
-        !employeeFilter ||
+      const employee = employees.find(emp => emp.id === entry.employeeId);
+      const matchesEmployee = !employeeFilter || employeeFilter === "all-employees" ||
         employee?.name.toLowerCase().includes(employeeFilter.toLowerCase());
 
       // Job filter
-      const job = jobs.find((j) => j.id === entry.jobId);
-      const matchesJob =
-        !jobFilter ||
+      const job = jobs.find(j => j.id === entry.jobId);
+      const matchesJob = !jobFilter || jobFilter === "all-jobs" ||
         job?.jobNumber.toLowerCase().includes(jobFilter.toLowerCase()) ||
+        job?.name.toLowerCase().includes(jobFilter.toLowerCase());
         job?.name.toLowerCase().includes(jobFilter.toLowerCase());
 
       return matchesDate && matchesEmployee && matchesJob;
@@ -295,8 +294,8 @@ export function TimeEntryViewer() {
   };
 
   const clearFilters = () => {
-    setEmployeeFilter("");
-    setJobFilter("");
+    setEmployeeFilter("all-employees");
+    setJobFilter("all-jobs");
     setDateRange("today");
     setSelectedDate(getLocalDateString());
     setSortField("date");
@@ -414,7 +413,7 @@ export function TimeEntryViewer() {
                     <SelectValue placeholder="All employees" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Employees</SelectItem>
+                    <SelectItem value="all-employees">All Employees</SelectItem>
                     {uniqueEmployees.map((employee) => (
                       <SelectItem key={employee} value={employee}>
                         {employee}
@@ -431,7 +430,7 @@ export function TimeEntryViewer() {
                     <SelectValue placeholder="All jobs" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Jobs</SelectItem>
+                    <SelectItem value="all-jobs">All Jobs</SelectItem>
                     {uniqueJobs.map((job) => (
                       <SelectItem key={job} value={job.split(" - ")[0]}>
                         {job}
@@ -588,10 +587,9 @@ export function TimeEntryViewer() {
           <CardDescription>
             {totalEntries} entries found • Sorted by {sortField} (
             {sortDirection === "asc" ? "ascending" : "descending"})
-            {(employeeFilter || jobFilter) && (
-              <span>
-                {" "}
-                • Filtered by {employeeFilter && `Employee: ${employeeFilter}`}
+            {(employeeFilter && employeeFilter !== "all-employees" || jobFilter && jobFilter !== "all-jobs") && (
+              <span> • Filtered by {employeeFilter && employeeFilter !== "all-employees" && `Employee: ${employeeFilter}`}{employeeFilter && employeeFilter !== "all-employees" && jobFilter && jobFilter !== "all-jobs" && ", "}{jobFilter && jobFilter !== "all-jobs" && `Job: ${jobFilter}`}</span>
+            )}
                 {employeeFilter && jobFilter && ", "}
                 {jobFilter && `Job: ${jobFilter}`}
               </span>
