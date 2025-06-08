@@ -302,8 +302,12 @@ export function SummaryReports() {
           };
         }
 
-        acc[summary.employeeName].totalHours += summary.hours;
-        acc[summary.employeeName].totalEffectiveHours += summary.effectiveHours;
+        // Don't include LOA hours in total hours calculations
+        if (summary.hourTypeName !== "LOA") {
+          acc[summary.employeeName].totalHours += summary.hours;
+          acc[summary.employeeName].totalEffectiveHours +=
+            summary.effectiveHours;
+        }
         acc[summary.employeeName].totalCost += summary.totalCost;
         acc[summary.employeeName].entryCount += 1;
 
