@@ -115,7 +115,7 @@ export function DatabaseErrorHandler({
             Retry Connection
           </Button>
 
-          {isSchemaError && (
+          {(isSchemaError || isSubscriptionError) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
