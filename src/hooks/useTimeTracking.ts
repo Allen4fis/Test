@@ -707,6 +707,18 @@ export function useTimeTracking() {
     updateTimeEntry,
     deleteTimeEntry,
 
+    // Rental item operations
+    rentalItems: appData.rentalItems,
+    addRentalItem,
+    updateRentalItem,
+    deleteRentalItem,
+
+    // Rental entry operations
+    rentalEntries: appData.rentalEntries,
+    addRentalEntry,
+    updateRentalEntry,
+    deleteRentalEntry,
+
     // Summaries
     timeEntrySummaries,
     summaryByTitleAndJob,
