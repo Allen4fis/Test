@@ -21,6 +21,7 @@ import {
   Briefcase,
   TrendingUp,
   Calculator,
+  Banknote,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -32,9 +33,13 @@ export function CostReports() {
     rentalSummaries,
   } = useTimeTracking();
 
-  // Calculate total costs including rentals
+  // Calculate total costs and billable amounts including rentals
   const totalLaborCost = timeEntrySummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
+    0,
+  );
+  const totalBillableAmount = timeEntrySummaries.reduce(
+    (sum, summary) => sum + summary.totalBillableAmount,
     0,
   );
   const totalRentalCost = rentalSummaries.reduce(
@@ -42,24 +47,49 @@ export function CostReports() {
     0,
   );
   const totalCost = totalLaborCost + totalRentalCost;
+  const totalRevenue = totalBillableAmount + totalRentalCost; // Rentals are typically billable at cost
+  const profit = totalRevenue - totalCost;
   const totalEffectiveHours = timeEntrySummaries.reduce(
     (sum, summary) => sum + summary.effectiveHours,
     0,
   );
-  const averageHourlyRate =
+  const averageCostRate =
     totalEffectiveHours > 0 ? totalLaborCost / totalEffectiveHours : 0;
+  const averageBillableRate =
+    totalEffectiveHours > 0 ? totalBillableAmount / totalEffectiveHours : 0;
 
   return (
     <div className="space-y-6">
       {/* Cost Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-500" />
+              <Banknote className="h-5 w-5 text-green-500" />
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Revenue
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  ${totalRevenue.toFixed(2)}
+                </p>
+                <div className="text-xs text-gray-500 mt-1">
+                  Labor: ${totalBillableAmount.toFixed(2)} | Rentals: $
+                  {totalRentalCost.toFixed(2)}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-red-500" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Cost</p>
-                <p className="text-2xl font-bold">${totalCost.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  ${totalCost.toFixed(2)}
+                </p>
                 <div className="text-xs text-gray-500 mt-1">
                   Labor: ${totalLaborCost.toFixed(2)} | Rentals: $
                   {totalRentalCost.toFixed(2)}
@@ -71,14 +101,40 @@ export function CostReports() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
+              <TrendingUp
+                className={`h-5 w-5 ${profit >= 0 ? "text-green-500" : "text-red-500"}`}
+              />
+              <div>
+                <p className="text-sm font-medium text-gray-600">Profit</p>
+                <p
+                  className={`text-2xl font-bold ${profit >= 0 ? "text-green-600" : "text-red-600"}`}
+                >
+                  ${profit.toFixed(2)}
+                </p>
+                <div className="text-xs text-gray-500 mt-1">
+                  {totalRevenue > 0
+                    ? ((profit / totalRevenue) * 100).toFixed(1)
+                    : "0.0"}
+                  % margin
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
               <Calculator className="h-5 w-5 text-blue-500" />
               <div>
                 <p className="text-sm font-medium text-gray-600">
-                  Avg Hourly Rate
+                  Avg Cost Rate
                 </p>
-                <p className="text-2xl font-bold">
-                  ${averageHourlyRate.toFixed(2)}
+                <p className="text-2xl font-bold text-red-600">
+                  ${averageCostRate.toFixed(2)}
                 </p>
+                <div className="text-xs text-gray-500 mt-1">
+                  Billable: ${averageBillableRate.toFixed(2)}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -94,17 +150,9 @@ export function CostReports() {
                 <p className="text-2xl font-bold">
                   {costSummaryByEmployee.length}
                 </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-orange-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-600">Active Jobs</p>
-                <p className="text-2xl font-bold">{costSummaryByJob.length}</p>
+                <div className="text-xs text-gray-500 mt-1">
+                  Jobs: {costSummaryByJob.length}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -124,8 +172,8 @@ export function CostReports() {
             <CardHeader>
               <CardTitle>Labor Costs by Employee</CardTitle>
               <CardDescription>
-                Total costs for each employee including hourly wages and
-                multipliers
+                Total costs and billable amounts for each employee including
+                wage rates and multipliers
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -140,54 +188,74 @@ export function CostReports() {
                     <TableRow>
                       <TableHead>Employee</TableHead>
                       <TableHead>Title</TableHead>
-                      <TableHead>Hourly Wage</TableHead>
-                      <TableHead>Hours Worked</TableHead>
+                      <TableHead>Billable Rate</TableHead>
+                      <TableHead>Cost Rate</TableHead>
+                      <TableHead>Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
-                      <TableHead>Total Cost</TableHead>
+                      <TableHead>Revenue</TableHead>
+                      <TableHead>Cost</TableHead>
+                      <TableHead>Profit</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {costSummaryByEmployee.map((employee, index) => (
-                      <TableRow key={employee.employeeId}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                index === 0
-                                  ? "bg-green-100 text-green-800"
-                                  : index === 1
-                                    ? "bg-blue-100 text-blue-800"
-                                    : index === 2
-                                      ? "bg-purple-100 text-purple-800"
-                                      : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {index + 1}
-                            </span>
-                            {employee.employeeName}
-                          </div>
-                        </TableCell>
-                        <TableCell>{employee.employeeTitle}</TableCell>
-                        <TableCell className="font-medium text-green-600">
-                          ${employee.hourlyWage.toFixed(2)}/hr
-                        </TableCell>
-                        <TableCell>{employee.totalHours.toFixed(1)}</TableCell>
-                        <TableCell>
-                          {employee.totalEffectiveHours.toFixed(1)}
-                        </TableCell>
-                        <TableCell className="font-bold text-green-600">
-                          ${employee.totalCost.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {employee.entries.length}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {costSummaryByEmployee.map((employee, index) => {
+                      const employeeProfit =
+                        employee.totalBillableAmount - employee.totalCost;
+                      return (
+                        <TableRow key={employee.employeeId}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                  index === 0
+                                    ? "bg-green-100 text-green-800"
+                                    : index === 1
+                                      ? "bg-blue-100 text-blue-800"
+                                      : index === 2
+                                        ? "bg-purple-100 text-purple-800"
+                                        : "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {index + 1}
+                              </span>
+                              {employee.employeeName}
+                            </div>
+                          </TableCell>
+                          <TableCell>{employee.employeeTitle}</TableCell>
+                          <TableCell className="font-medium text-green-600">
+                            ${(employee.billableWage || 0).toFixed(2)}/hr
+                          </TableCell>
+                          <TableCell className="font-medium text-red-600">
+                            ${(employee.costWage || 0).toFixed(2)}/hr
+                          </TableCell>
+                          <TableCell>
+                            {employee.totalHours.toFixed(1)}
+                          </TableCell>
+                          <TableCell>
+                            {employee.totalEffectiveHours.toFixed(1)}
+                          </TableCell>
+                          <TableCell className="font-bold text-green-600">
+                            ${employee.totalBillableAmount.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="font-bold text-red-600">
+                            ${employee.totalCost.toFixed(2)}
+                          </TableCell>
+                          <TableCell
+                            className={`font-bold ${employeeProfit >= 0 ? "text-green-600" : "text-red-600"}`}
+                          >
+                            ${employeeProfit.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">
+                              {employee.entries.length}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                     <TableRow className="bg-gray-50 font-bold">
-                      <TableCell colSpan={4}>Total</TableCell>
+                      <TableCell colSpan={5}>Total</TableCell>
                       <TableCell>
                         {costSummaryByEmployee
                           .reduce(
@@ -199,14 +267,40 @@ export function CostReports() {
                       <TableCell className="text-green-600">
                         $
                         {costSummaryByEmployee
+                          .reduce(
+                            (sum, emp) => sum + emp.totalBillableAmount,
+                            0,
+                          )
+                          .toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-red-600">
+                        $
+                        {costSummaryByEmployee
                           .reduce((sum, emp) => sum + emp.totalCost, 0)
                           .toFixed(2)}
                       </TableCell>
+                      <TableCell
+                        className={`${profit >= 0 ? "text-green-600" : "text-red-600"}`}
+                      >
+                        $
+                        {(
+                          costSummaryByEmployee.reduce(
+                            (sum, emp) => sum + emp.totalBillableAmount,
+                            0,
+                          ) -
+                          costSummaryByEmployee.reduce(
+                            (sum, emp) => sum + emp.totalCost,
+                            0,
+                          )
+                        ).toFixed(2)}
+                      </TableCell>
                       <TableCell>
-                        {costSummaryByEmployee.reduce(
-                          (sum, emp) => sum + emp.entries.length,
-                          0,
-                        )}
+                        <Badge variant="secondary">
+                          {costSummaryByEmployee.reduce(
+                            (sum, emp) => sum + emp.entries.length,
+                            0,
+                          )}
+                        </Badge>
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -219,9 +313,9 @@ export function CostReports() {
         <TabsContent value="jobs">
           <Card>
             <CardHeader>
-              <CardTitle>Labor Costs by Job</CardTitle>
+              <CardTitle>Costs by Job</CardTitle>
               <CardDescription>
-                Total labor costs for each job with employee breakdown
+                Labor costs breakdown for each job including employee details
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -230,33 +324,45 @@ export function CostReports() {
                   No cost data available. Add time entries to see job costs.
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {costSummaryByJob.map((job, index) => (
-                    <Card
-                      key={job.jobId}
-                      className="border-l-4 border-l-blue-500"
-                    >
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <CardTitle className="text-lg">
-                              {job.jobNumber} - {job.jobName}
-                            </CardTitle>
-                            <CardDescription>
-                              {job.totalHours.toFixed(1)} hours (
-                              {job.totalEffectiveHours.toFixed(1)} effective) •{" "}
-                              {job.employees.length} employees
-                            </CardDescription>
+                    <Card key={job.jobId}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                                index === 0
+                                  ? "bg-green-100 text-green-800"
+                                  : index === 1
+                                    ? "bg-blue-100 text-blue-800"
+                                    : index === 2
+                                      ? "bg-purple-100 text-purple-800"
+                                      : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {index + 1}
+                            </span>
+                            <div>
+                              <span className="text-lg">
+                                {job.jobNumber} - {job.jobName}
+                              </span>
+                              <div className="text-sm text-gray-500 font-normal">
+                                {job.totalHours.toFixed(1)} hours •{" "}
+                                {job.totalEffectiveHours.toFixed(1)} effective
+                                hours
+                              </div>
+                            </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl font-bold text-green-600">
+                            <div className="text-2xl font-bold text-red-600">
                               ${job.totalCost.toFixed(2)}
                             </div>
                             <div className="text-sm text-gray-500">
-                              Total Labor Cost
+                              {job.entries.length} entries
                             </div>
                           </div>
-                        </div>
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <Table>
@@ -270,75 +376,31 @@ export function CostReports() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {job.employees
-                              .sort((a, b) => b.cost - a.cost)
-                              .map((employee) => (
-                                <TableRow key={employee.employeeName}>
-                                  <TableCell className="font-medium">
-                                    {employee.employeeName}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.hours.toFixed(1)}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.effectiveHours.toFixed(1)}
-                                  </TableCell>
-                                  <TableCell className="font-medium text-green-600">
-                                    ${employee.cost.toFixed(2)}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Badge variant="secondary">
-                                      {(
-                                        (employee.cost / job.totalCost) *
-                                        100
-                                      ).toFixed(1)}
-                                      %
-                                    </Badge>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
+                            {job.employees.map((emp) => (
+                              <TableRow key={emp.employeeName}>
+                                <TableCell>{emp.employeeName}</TableCell>
+                                <TableCell>{emp.hours.toFixed(1)}</TableCell>
+                                <TableCell>
+                                  {emp.effectiveHours.toFixed(1)}
+                                </TableCell>
+                                <TableCell className="font-medium text-red-600">
+                                  ${emp.cost.toFixed(2)}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="outline">
+                                    {((emp.cost / job.totalCost) * 100).toFixed(
+                                      1,
+                                    )}
+                                    %
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            ))}
                           </TableBody>
                         </Table>
                       </CardContent>
                     </Card>
                   ))}
-
-                  {/* Summary totals */}
-                  <Card className="bg-gray-50">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold">
-                            Total Across All Jobs
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {costSummaryByJob
-                              .reduce((sum, job) => sum + job.totalHours, 0)
-                              .toFixed(1)}{" "}
-                            hours (
-                            {costSummaryByJob
-                              .reduce(
-                                (sum, job) => sum + job.totalEffectiveHours,
-                                0,
-                              )
-                              .toFixed(1)}{" "}
-                            effective)
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-green-600">
-                            $
-                            {costSummaryByJob
-                              .reduce((sum, job) => sum + job.totalCost, 0)
-                              .toFixed(2)}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Total Labor Cost
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
               )}
             </CardContent>
@@ -350,37 +412,39 @@ export function CostReports() {
             <CardHeader>
               <CardTitle>Rental Costs Analysis</CardTitle>
               <CardDescription>
-                Equipment and item rental costs by job and category
+                Equipment and rental costs breakdown by job and category
               </CardDescription>
             </CardHeader>
             <CardContent>
               {rentalSummaries.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No rental cost data available. Add rental entries to see
-                  rental costs.
+                  No rental data available. Add rental entries to see costs.
                 </div>
               ) : (
-                <div className="space-y-6">
-                  {/* Rental Cost Summary by Job */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">
-                      Rental Costs by Job
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Tabs defaultValue="jobs" className="space-y-4">
+                  <TabsList>
+                    <TabsTrigger value="jobs">By Job</TabsTrigger>
+                    <TabsTrigger value="categories">By Category</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="jobs">
+                    <div className="space-y-4">
                       {Object.entries(
                         rentalSummaries.reduce(
                           (acc, rental) => {
-                            const key = rental.jobNumber;
+                            const key = `${rental.jobNumber}-${rental.jobName}`;
                             if (!acc[key]) {
                               acc[key] = {
                                 jobNumber: rental.jobNumber,
                                 jobName: rental.jobName,
                                 totalCost: 0,
                                 rentalCount: 0,
+                                rentals: [],
                               };
                             }
                             acc[key].totalCost += rental.totalCost;
                             acc[key].rentalCount += 1;
+                            acc[key].rentals.push(rental);
                             return acc;
                           },
                           {} as Record<string, any>,
@@ -389,36 +453,67 @@ export function CostReports() {
                         .sort(([, a], [, b]) => b.totalCost - a.totalCost)
                         .map(([key, summary]) => (
                           <Card key={key}>
-                            <CardContent className="p-4">
-                              <div className="flex items-center justify-between">
+                            <CardHeader>
+                              <CardTitle className="flex items-center justify-between">
                                 <div>
-                                  <h4 className="font-medium">
-                                    {summary.jobNumber}
-                                  </h4>
-                                  <p className="text-sm text-gray-500">
-                                    {summary.jobName}
-                                  </p>
-                                  <p className="text-xs text-gray-400">
+                                  <span className="text-lg">
+                                    {summary.jobNumber} - {summary.jobName}
+                                  </span>
+                                  <div className="text-sm text-gray-500 font-normal">
                                     {summary.rentalCount} rentals
-                                  </p>
-                                </div>
-                                <div className="text-right">
-                                  <div className="text-xl font-bold text-orange-600">
-                                    ${summary.totalCost.toFixed(2)}
                                   </div>
                                 </div>
-                              </div>
+                                <div className="text-2xl font-bold text-orange-600">
+                                  ${summary.totalCost.toFixed(2)}
+                                </div>
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead>Item</TableHead>
+                                    <TableHead>Category</TableHead>
+                                    <TableHead>Duration</TableHead>
+                                    <TableHead>Rate</TableHead>
+                                    <TableHead>Cost</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {summary.rentals.map((rental: any) => (
+                                    <TableRow key={rental.id}>
+                                      <TableCell>
+                                        {rental.rentalItemName}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline">
+                                          {rental.category}
+                                        </Badge>
+                                      </TableCell>
+                                      <TableCell>
+                                        {rental.duration} {rental.billingUnit}
+                                        {rental.duration !== 1 ? "s" : ""}
+                                        {rental.quantity > 1 &&
+                                          ` × ${rental.quantity}`}
+                                      </TableCell>
+                                      <TableCell>
+                                        ${rental.rateUsed.toFixed(2)}/
+                                        {rental.billingUnit}
+                                      </TableCell>
+                                      <TableCell className="font-medium text-orange-600">
+                                        ${rental.totalCost.toFixed(2)}
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
                             </CardContent>
                           </Card>
                         ))}
                     </div>
-                  </div>
+                  </TabsContent>
 
-                  {/* Rental Cost Summary by Category */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">
-                      Rental Costs by Category
-                    </h3>
+                  <TabsContent value="categories">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {Object.entries(
                         rentalSummaries.reduce(
@@ -455,39 +550,24 @@ export function CostReports() {
                                   <div className="text-xl font-bold text-orange-600">
                                     ${summary.totalCost.toFixed(2)}
                                   </div>
+                                  <div className="text-xs text-gray-500">
+                                    {totalRentalCost > 0
+                                      ? (
+                                          (summary.totalCost /
+                                            totalRentalCost) *
+                                          100
+                                        ).toFixed(1)
+                                      : "0.0"}
+                                    %
+                                  </div>
                                 </div>
                               </div>
                             </CardContent>
                           </Card>
                         ))}
                     </div>
-                  </div>
-
-                  {/* Total Summary */}
-                  <Card className="bg-orange-50 border-orange-200">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold text-orange-800">
-                            Total Rental Costs
-                          </h3>
-                          <p className="text-sm text-orange-600">
-                            {rentalSummaries.length} total rental entries
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-3xl font-bold text-orange-600">
-                            ${totalRentalCost.toFixed(2)}
-                          </div>
-                          <div className="text-sm text-orange-500">
-                            {((totalRentalCost / totalCost) * 100).toFixed(1)}%
-                            of total costs
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                  </TabsContent>
+                </Tabs>
               )}
             </CardContent>
           </Card>
