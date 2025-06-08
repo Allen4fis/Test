@@ -118,7 +118,7 @@ export function Dashboard() {
     .sort((a, b) => b.effectiveHours - a.effectiveHours)
     .slice(0, 5);
 
-  // Top jobs by hours this month
+  // Top jobs by hours this month (excluding LOA from hours totals)
   const jobHours = thisMonthEntries.reduce(
     (acc, summary) => {
       if (!acc[summary.jobNumber]) {
@@ -130,8 +130,11 @@ export function Dashboard() {
           cost: 0,
         };
       }
-      acc[summary.jobNumber].hours += summary.hours;
-      acc[summary.jobNumber].effectiveHours += summary.effectiveHours;
+      // Don't include LOA hours in job hours totals
+      if (summary.hourTypeName !== "LOA") {
+        acc[summary.jobNumber].hours += summary.hours;
+        acc[summary.jobNumber].effectiveHours += summary.effectiveHours;
+      }
       acc[summary.jobNumber].cost += summary.totalCost;
       return acc;
     },
