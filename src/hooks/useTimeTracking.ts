@@ -390,6 +390,61 @@ export function useTimeTracking() {
     }));
   };
 
+  // Rental summary calculations
+  const rentalSummaries = useMemo(() => {
+    return appData.rentalEntries.map((entry) => {
+      const item = appData.rentalItems.find(
+        (item) => item.id === entry.rentalItemId,
+      );
+      const job = appData.jobs.find((job) => job.id === entry.jobId);
+      const employee = entry.employeeId
+        ? appData.employees.find((emp) => emp.id === entry.employeeId)
+        : null;
+
+      // Calculate duration based on billing unit
+      const startDate = new Date(entry.startDate);
+      const endDate = new Date(entry.endDate);
+      const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+
+      let duration = 1;
+      switch (entry.billingUnit) {
+        case "hour":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60));
+          break;
+        case "day":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both start and end days
+          break;
+        case "week":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+          break;
+        case "month":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+          break;
+      }
+
+      const totalCost = duration * entry.quantity * entry.rateUsed;
+
+      return {
+        id: entry.id,
+        rentalItemName: item?.name || "Unknown Item",
+        category: item?.category || "Unknown",
+        jobNumber: job?.jobNumber || "Unknown Job",
+        jobName: job?.name || "Unknown Job Name",
+        employeeName: employee?.name || "Unassigned",
+        employeeTitle: employee?.title || "N/A",
+        startDate: entry.startDate,
+        endDate: entry.endDate,
+        duration,
+        quantity: entry.quantity,
+        billingUnit: entry.billingUnit,
+        rateUsed: entry.rateUsed,
+        totalCost,
+        description: entry.description,
+        date: entry.startDate, // Use start date for filtering compatibility
+      };
+    });
+  }, [appData]);
+
   // Summary calculations with cost
   const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
     return appData.timeEntries.map((entry) => {
