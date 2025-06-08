@@ -64,25 +64,55 @@ export function InvoiceManagement() {
     endDate: "",
   });
 
-  // Get unique dates that have time entries for the selected job
+  // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job) => {
-    const jobEntries = timeEntrySummaries.filter(
+    const jobTimeEntries = timeEntrySummaries.filter(
       (entry) => entry.jobNumber === job.jobNumber,
     );
-    const dates = [...new Set(jobEntries.map((entry) => entry.date))].sort();
+    const jobRentalEntries = rentalSummaries.filter(
+      (entry) => entry.jobNumber === job.jobNumber,
+    );
+
+    // Get all unique dates from both time entries and rental entries
+    const timeDates = jobTimeEntries.map((entry) => entry.date);
+    const rentalDates = jobRentalEntries.map((entry) => entry.date);
+    const dates = [...new Set([...timeDates, ...rentalDates])].sort();
+
     const invoicedDates = job.invoicedDates || []; // Safe fallback for existing jobs
 
-    return dates.map((date) => ({
-      date,
-      isInvoiced: invoicedDates.includes(date),
-      entries: jobEntries.filter((entry) => entry.date === date),
-      totalHours: jobEntries
-        .filter((entry) => entry.date === date)
-        .reduce((sum, entry) => sum + entry.hours, 0),
-      totalCost: jobEntries
-        .filter((entry) => entry.date === date)
-        .reduce((sum, entry) => sum + entry.totalCost, 0),
-    }));
+    return dates.map((date) => {
+      const dayTimeEntries = jobTimeEntries.filter(
+        (entry) => entry.date === date,
+      );
+      const dayRentalEntries = jobRentalEntries.filter(
+        (entry) => entry.date === date,
+      );
+
+      const totalHours = dayTimeEntries.reduce(
+        (sum, entry) => sum + entry.hours,
+        0,
+      );
+      const laborCost = dayTimeEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      );
+      const rentalCost = dayRentalEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      );
+      const totalCost = laborCost + rentalCost;
+
+      return {
+        date,
+        isInvoiced: invoicedDates.includes(date),
+        timeEntries: dayTimeEntries,
+        rentalEntries: dayRentalEntries,
+        totalHours,
+        laborCost,
+        rentalCost,
+        totalCost,
+      };
+    });
   };
 
   // Calculate invoice statistics for each job
