@@ -361,7 +361,9 @@ export function InvoiceManagement() {
                                   <TableRow>
                                     <TableHead>Date</TableHead>
                                     <TableHead>Hours</TableHead>
-                                    <TableHead>Cost</TableHead>
+                                    <TableHead>Labor Cost</TableHead>
+                                    <TableHead>Rental Cost</TableHead>
+                                    <TableHead>Total Cost</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Action</TableHead>
                                   </TableRow>
