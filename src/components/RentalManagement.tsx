@@ -128,7 +128,7 @@ export function RentalManagement() {
   const [entryFormData, setEntryFormData] = useState({
     rentalItemId: "",
     jobId: "",
-    employeeId: "",
+    employeeId: "unassigned",
     startDate: getLocalDateString(),
     endDate: getLocalDateString(),
     quantity: "1",
@@ -154,7 +154,7 @@ export function RentalManagement() {
     setEntryFormData({
       rentalItemId: "",
       jobId: "",
-      employeeId: "",
+      employeeId: "unassigned",
       startDate: getLocalDateString(),
       endDate: getLocalDateString(),
       quantity: "1",
@@ -219,7 +219,10 @@ export function RentalManagement() {
     const entryData = {
       rentalItemId: entryFormData.rentalItemId,
       jobId: entryFormData.jobId,
-      employeeId: entryFormData.employeeId || undefined,
+      employeeId:
+        entryFormData.employeeId === "unassigned"
+          ? undefined
+          : entryFormData.employeeId || undefined,
       startDate: entryFormData.startDate,
       endDate: entryFormData.endDate,
       quantity: parseInt(entryFormData.quantity) || 1,
@@ -243,7 +246,7 @@ export function RentalManagement() {
     setEntryFormData({
       rentalItemId: entry.rentalItemId,
       jobId: entry.jobId,
-      employeeId: entry.employeeId || "",
+      employeeId: entry.employeeId || "unassigned",
       startDate: entry.startDate,
       endDate: entry.endDate,
       quantity: entry.quantity.toString(),
@@ -966,7 +969,9 @@ export function RentalManagement() {
                               <SelectValue placeholder="Select employee (optional)" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Unassigned</SelectItem>
+                              <SelectItem value="unassigned">
+                                Unassigned
+                              </SelectItem>
                               {employees.map((employee) => (
                                 <SelectItem
                                   key={employee.id}
@@ -1316,7 +1321,7 @@ export function RentalManagement() {
                         <SelectValue placeholder="Select employee (optional)" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Unassigned</SelectItem>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
                         {employees.map((employee) => (
                           <SelectItem key={employee.id} value={employee.id}>
                             {employee.name} - {employee.title}
