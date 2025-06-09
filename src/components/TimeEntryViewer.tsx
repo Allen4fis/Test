@@ -678,6 +678,9 @@ export function TimeEntryViewer() {
                         {getSortIcon("hours")}
                       </div>
                     </TableHead>
+                    <TableHead className="text-purple-600">
+                      Live Out Allowance
+                    </TableHead>
                     <TableHead>Billable Rate</TableHead>
                     <TableHead>Cost Rate</TableHead>
                     <TableHead>Description</TableHead>
