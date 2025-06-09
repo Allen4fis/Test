@@ -222,6 +222,8 @@ export function useTimeTracking() {
     | "costs"
     | "invoices"
     | "rentals"
+    | "export"
+    | "backup"
   >("dashboard");
 
   // Employee operations
