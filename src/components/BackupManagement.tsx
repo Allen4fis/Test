@@ -649,98 +649,418 @@ export function BackupManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Dialog>
+                          <Dialog
+                            open={selectedBackup?.id === backup.id}
+                            onOpenChange={(open) => {
+                              if (!open) {
+                                setSelectedBackup(null);
+                                resetRestoreConfirmation();
+                              }
+                            }}
+                          >
                             <DialogTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => setSelectedBackup(backup)}
+                                onClick={() => {
+                                  setSelectedBackup(backup);
+                                  resetRestoreConfirmation();
+                                }}
                               >
                                 <Upload className="h-4 w-4" />
                               </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="max-w-2xl">
                               <DialogHeader>
                                 <DialogTitle className="flex items-center gap-2">
-                                  <AlertCircle className="h-5 w-5 text-orange-500" />
-                                  Restore Backup
+                                  <AlertCircle className="h-6 w-6 text-red-500" />
+                                  {restoreConfirmStep === 0 &&
+                                    "⚠️ CRITICAL WARNING: Data Restore"}
+                                  {restoreConfirmStep === 1 &&
+                                    "🚨 SECOND WARNING: Permanent Data Loss"}
+                                  {restoreConfirmStep === 2 &&
+                                    "🔥 FINAL WARNING: Confirm Destructive Action"}
+                                  {restoreConfirmStep === 3 &&
+                                    "🔒 Type RESTORE to Confirm"}
                                 </DialogTitle>
                                 <DialogDescription>
-                                  This will replace ALL current data with the
-                                  backup "{backup.name}".
+                                  {restoreConfirmStep === 0 &&
+                                    "You are about to perform a DESTRUCTIVE operation that will replace ALL current data."}
+                                  {restoreConfirmStep === 1 &&
+                                    "This action is IRREVERSIBLE and will permanently delete all existing data."}
+                                  {restoreConfirmStep === 2 &&
+                                    "Last chance to cancel before data destruction begins."}
+                                  {restoreConfirmStep === 3 &&
+                                    "Type 'RESTORE' exactly to confirm you understand the consequences."}
                                 </DialogDescription>
                               </DialogHeader>
+
                               <div className="space-y-4">
-                                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                                  <div className="flex items-start gap-2">
-                                    <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5" />
-                                    <div>
-                                      <h4 className="font-medium text-orange-800">
-                                        Warning: Destructive Operation
-                                      </h4>
-                                      <p className="text-sm text-orange-700 mt-1">
-                                        All current data will be permanently
-                                        replaced. This cannot be undone.
-                                      </p>
+                                {/* Step 0: First Warning */}
+                                {restoreConfirmStep === 0 && (
+                                  <div className="space-y-4">
+                                    <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
+                                      <div className="flex items-start gap-3">
+                                        <AlertCircle className="h-6 w-6 text-red-500 mt-0.5 flex-shrink-0" />
+                                        <div>
+                                          <h4 className="font-bold text-red-800 text-lg">
+                                            ⚠️ CRITICAL WARNING ⚠️
+                                          </h4>
+                                          <p className="text-red-700 mt-2 font-medium">
+                                            You are about to PERMANENTLY DELETE
+                                            all current data and replace it with
+                                            backup "{backup.name}".
+                                          </p>
+                                          <ul className="text-red-700 mt-3 space-y-1 text-sm">
+                                            <li>
+                                              • All current time entries will be
+                                              LOST FOREVER
+                                            </li>
+                                            <li>
+                                              • All current employee data will
+                                              be REPLACED
+                                            </li>
+                                            <li>
+                                              • All current job information will
+                                              be OVERWRITTEN
+                                            </li>
+                                            <li>
+                                              • All current rental data will be
+                                              DESTROYED
+                                            </li>
+                                            <li>
+                                              • This action CANNOT BE UNDONE
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="bg-gray-50 rounded-lg p-4">
+                                      <h5 className="font-medium mb-2">
+                                        Backup Details:
+                                      </h5>
+                                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                                        <div>
+                                          <p>
+                                            <strong>Name:</strong> {backup.name}
+                                          </p>
+                                          <p>
+                                            <strong>Created:</strong>{" "}
+                                            {new Date(
+                                              backup.timestamp,
+                                            ).toLocaleString()}
+                                          </p>
+                                          <p>
+                                            <strong>Size:</strong>{" "}
+                                            {formatFileSize(backup.dataSize)}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <p>
+                                            <strong>Records:</strong>{" "}
+                                            {Object.values(
+                                              backup.recordCounts,
+                                            ).reduce((a, b) => a + b, 0)}{" "}
+                                            total
+                                          </p>
+                                          <p>
+                                            <strong>Time Entries:</strong>{" "}
+                                            {backup.recordCounts.timeEntries}
+                                          </p>
+                                          <p>
+                                            <strong>Employees:</strong>{" "}
+                                            {backup.recordCounts.employees}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                      <input
+                                        type="checkbox"
+                                        id="warning1"
+                                        checked={warningsAccepted.warning1}
+                                        onChange={(e) =>
+                                          setWarningsAccepted((prev) => ({
+                                            ...prev,
+                                            warning1: e.target.checked,
+                                          }))
+                                        }
+                                        className="h-4 w-4"
+                                      />
+                                      <Label
+                                        htmlFor="warning1"
+                                        className="text-sm font-medium"
+                                      >
+                                        I understand this will PERMANENTLY
+                                        DELETE all current data
+                                      </Label>
                                     </div>
                                   </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <h5 className="font-medium">
-                                      Backup Details:
-                                    </h5>
-                                    <ul className="text-gray-600 mt-1">
-                                      <li>
-                                        Created:{" "}
-                                        {new Date(
-                                          backup.timestamp,
-                                        ).toLocaleString()}
-                                      </li>
-                                      <li>
-                                        Records:{" "}
-                                        {Object.values(
-                                          backup.recordCounts,
-                                        ).reduce((a, b) => a + b, 0)}
-                                      </li>
-                                      <li>
-                                        Size: {formatFileSize(backup.dataSize)}
-                                      </li>
-                                    </ul>
+                                )}
+
+                                {/* Step 1: Second Warning */}
+                                {restoreConfirmStep === 1 && (
+                                  <div className="space-y-4">
+                                    <div className="bg-red-100 border-2 border-red-300 rounded-lg p-4">
+                                      <div className="flex items-start gap-3">
+                                        <AlertCircle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
+                                        <div>
+                                          <h4 className="font-bold text-red-900 text-lg">
+                                            🚨 SECOND WARNING - NO RECOVERY
+                                            POSSIBLE 🚨
+                                          </h4>
+                                          <p className="text-red-800 mt-2 font-medium">
+                                            Once you proceed, there is NO WAY to
+                                            recover your current data.
+                                          </p>
+                                          <div className="mt-3 p-3 bg-red-200 rounded border-l-4 border-red-500">
+                                            <p className="text-red-900 font-semibold text-sm">
+                                              Current data summary that will be
+                                              LOST:
+                                            </p>
+                                            <ul className="text-red-800 mt-2 space-y-1 text-sm">
+                                              <li>
+                                                •{" "}
+                                                {
+                                                  currentDataSummary
+                                                    .recordCounts.timeEntries
+                                                }{" "}
+                                                time entries
+                                              </li>
+                                              <li>
+                                                •{" "}
+                                                {
+                                                  currentDataSummary
+                                                    .recordCounts.employees
+                                                }{" "}
+                                                employees
+                                              </li>
+                                              <li>
+                                                •{" "}
+                                                {
+                                                  currentDataSummary
+                                                    .recordCounts.jobs
+                                                }{" "}
+                                                jobs
+                                              </li>
+                                              <li>
+                                                •{" "}
+                                                {
+                                                  currentDataSummary
+                                                    .recordCounts.rentalEntries
+                                                }{" "}
+                                                rental entries
+                                              </li>
+                                              <li>
+                                                • Total:{" "}
+                                                {
+                                                  currentDataSummary.totalRecords
+                                                }{" "}
+                                                records
+                                              </li>
+                                            </ul>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                      <input
+                                        type="checkbox"
+                                        id="warning2"
+                                        checked={warningsAccepted.warning2}
+                                        onChange={(e) =>
+                                          setWarningsAccepted((prev) => ({
+                                            ...prev,
+                                            warning2: e.target.checked,
+                                          }))
+                                        }
+                                        className="h-4 w-4"
+                                      />
+                                      <Label
+                                        htmlFor="warning2"
+                                        className="text-sm font-medium"
+                                      >
+                                        I acknowledge there is NO RECOVERY
+                                        possible after this action
+                                      </Label>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <h5 className="font-medium">
-                                      Will Replace:
-                                    </h5>
-                                    <ul className="text-gray-600 mt-1">
-                                      <li>All time entries</li>
-                                      <li>All employees & jobs</li>
-                                      <li>All rental data</li>
-                                    </ul>
+                                )}
+
+                                {/* Step 2: Final Warning */}
+                                {restoreConfirmStep === 2 && (
+                                  <div className="space-y-4">
+                                    <div className="bg-red-200 border-2 border-red-400 rounded-lg p-4">
+                                      <div className="flex items-start gap-3">
+                                        <AlertCircle className="h-6 w-6 text-red-700 mt-0.5 flex-shrink-0 animate-pulse" />
+                                        <div>
+                                          <h4 className="font-bold text-red-900 text-lg">
+                                            🔥 FINAL WARNING - LAST CHANCE 🔥
+                                          </h4>
+                                          <p className="text-red-900 mt-2 font-bold">
+                                            This is your FINAL CHANCE to cancel
+                                            before data destruction begins.
+                                          </p>
+                                          <div className="mt-3 p-4 bg-yellow-100 border-2 border-yellow-400 rounded">
+                                            <p className="text-yellow-900 font-bold text-center">
+                                              ⚡ CLICKING NEXT WILL IMMEDIATELY
+                                              START THE DESTRUCTIVE PROCESS ⚡
+                                            </p>
+                                          </div>
+                                          <p className="text-red-900 mt-3 font-medium">
+                                            Are you absolutely certain you want
+                                            to:
+                                          </p>
+                                          <ul className="text-red-900 mt-2 space-y-1 font-medium">
+                                            <li>
+                                              • Delete ALL current data
+                                              permanently?
+                                            </li>
+                                            <li>
+                                              • Replace it with backup "
+                                              {backup.name}"?
+                                            </li>
+                                            <li>
+                                              • Accept that this CANNOT be
+                                              undone?
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                      <input
+                                        type="checkbox"
+                                        id="warning3"
+                                        checked={warningsAccepted.warning3}
+                                        onChange={(e) =>
+                                          setWarningsAccepted((prev) => ({
+                                            ...prev,
+                                            warning3: e.target.checked,
+                                          }))
+                                        }
+                                        className="h-4 w-4"
+                                      />
+                                      <Label
+                                        htmlFor="warning3"
+                                        className="text-sm font-medium"
+                                      >
+                                        I am absolutely certain and accept full
+                                        responsibility for this destructive
+                                        action
+                                      </Label>
+                                    </div>
                                   </div>
-                                </div>
+                                )}
+
+                                {/* Step 3: Type RESTORE */}
+                                {restoreConfirmStep === 3 && (
+                                  <div className="space-y-4">
+                                    <div className="bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+                                      <div className="text-center">
+                                        <h4 className="font-bold text-gray-900 text-lg mb-3">
+                                          🔒 TYPE "RESTORE" TO CONFIRM
+                                        </h4>
+                                        <p className="text-gray-700 mb-4">
+                                          To confirm you understand the
+                                          consequences, type{" "}
+                                          <strong>RESTORE</strong> exactly in
+                                          the box below:
+                                        </p>
+                                        <Input
+                                          value={restoreConfirmText}
+                                          onChange={(e) =>
+                                            setRestoreConfirmText(
+                                              e.target.value,
+                                            )
+                                          }
+                                          placeholder="Type RESTORE here"
+                                          className="text-center font-mono text-lg"
+                                          autoFocus
+                                        />
+                                        <p className="text-xs text-gray-500 mt-2">
+                                          Must match exactly: RESTORE (all
+                                          capitals)
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                              <DialogFooter>
-                                <DialogTrigger asChild>
-                                  <Button variant="outline">Cancel</Button>
-                                </DialogTrigger>
+
+                              <DialogFooter className="flex justify-between">
                                 <Button
-                                  onClick={() => restoreBackup(backup)}
-                                  disabled={isRestoring}
-                                  className="bg-orange-500 hover:bg-orange-600"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setSelectedBackup(null);
+                                    resetRestoreConfirmation();
+                                  }}
                                 >
-                                  {isRestoring ? (
-                                    <>
-                                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                      Restoring...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Upload className="h-4 w-4 mr-2" />
-                                      Restore Backup
-                                    </>
-                                  )}
+                                  Cancel (Safe Choice)
                                 </Button>
+
+                                <div className="flex gap-2">
+                                  {restoreConfirmStep > 0 && (
+                                    <Button
+                                      variant="ghost"
+                                      onClick={() =>
+                                        setRestoreConfirmStep(
+                                          (prev) => prev - 1,
+                                        )
+                                      }
+                                    >
+                                      Back
+                                    </Button>
+                                  )}
+
+                                  {restoreConfirmStep < 3 ? (
+                                    <Button
+                                      onClick={() =>
+                                        setRestoreConfirmStep(
+                                          (prev) => prev + 1,
+                                        )
+                                      }
+                                      disabled={
+                                        (restoreConfirmStep === 0 &&
+                                          !warningsAccepted.warning1) ||
+                                        (restoreConfirmStep === 1 &&
+                                          !warningsAccepted.warning2) ||
+                                        (restoreConfirmStep === 2 &&
+                                          !warningsAccepted.warning3)
+                                      }
+                                      className="bg-orange-500 hover:bg-orange-600"
+                                    >
+                                      {restoreConfirmStep === 2
+                                        ? "Continue to Final Step"
+                                        : "Next Warning"}
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      onClick={() => restoreBackup(backup)}
+                                      disabled={
+                                        isRestoring ||
+                                        restoreConfirmText !== "RESTORE"
+                                      }
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      {isRestoring ? (
+                                        <>
+                                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                          DESTROYING DATA...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Upload className="h-4 w-4 mr-2" />
+                                          RESTORE BACKUP
+                                        </>
+                                      )}
+                                    </Button>
+                                  )}
+                                </div>
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>
