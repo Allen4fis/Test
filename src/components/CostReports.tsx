@@ -405,6 +405,9 @@ export function CostReports() {
                               <TableHead>Employee</TableHead>
                               <TableHead>Hours</TableHead>
                               <TableHead>Effective Hours</TableHead>
+                              <TableHead className="text-purple-600">
+                                LOA Count
+                              </TableHead>
                               <TableHead>Cost</TableHead>
                               <TableHead>% of Job</TableHead>
                             </TableRow>
