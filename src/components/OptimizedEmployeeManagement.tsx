@@ -34,6 +34,7 @@ import { VirtualizedTable, DebouncedSearchInput } from "./VirtualizedTable";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 import { Employee } from "@/types";
 import { Users, Plus, Pencil, Trash2, DollarSign, Search } from "lucide-react";
+import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 
 export function OptimizedEmployeeManagement() {
   const {
