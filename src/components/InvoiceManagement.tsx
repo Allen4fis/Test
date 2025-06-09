@@ -390,6 +390,28 @@ export function InvoiceManagement() {
                                       <TableCell>
                                         {dateInfo.totalHours.toFixed(2)}
                                       </TableCell>
+                                      <TableCell>
+                                        {dateInfo.totalLoaCount > 0 ? (
+                                          <div className="flex items-center gap-1">
+                                            <Badge
+                                              variant="secondary"
+                                              className="bg-purple-100 text-purple-800"
+                                            >
+                                              {dateInfo.totalLoaCount}
+                                            </Badge>
+                                            <span className="text-xs text-purple-600">
+                                              $
+                                              {(
+                                                dateInfo.totalLoaCount * 200
+                                              ).toFixed(2)}
+                                            </span>
+                                          </div>
+                                        ) : (
+                                          <span className="text-gray-400 text-sm">
+                                            —
+                                          </span>
+                                        )}
+                                      </TableCell>
                                       <TableCell className="font-medium text-blue-600">
                                         ${dateInfo.laborCost.toFixed(2)}
                                       </TableCell>
