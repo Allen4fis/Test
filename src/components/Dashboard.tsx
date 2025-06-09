@@ -411,6 +411,9 @@ export function Dashboard() {
                   <TableHead>Type</TableHead>
                   <TableHead>Province</TableHead>
                   <TableHead>Hours</TableHead>
+                  <TableHead className="text-purple-600">
+                    Live Out Allowance
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
