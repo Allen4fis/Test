@@ -413,16 +413,42 @@ export function CostReports() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {job.employees.map((emp) => (
-                              <TableRow key={emp.employeeName}>
-                                <TableCell>{emp.employeeName}</TableCell>
-                                <TableCell>{emp.hours.toFixed(1)}</TableCell>
-                                <TableCell>
-                                  {emp.effectiveHours.toFixed(1)}
-                                </TableCell>
-                                <TableCell className="font-medium text-red-600">
-                                  ${emp.cost.toFixed(2)}
-                                </TableCell>
+                            {job.employees.map((emp) => {
+                              // Calculate LOA count for this employee in this job
+                              const empLoaCount = job.entries.filter(
+                                (entry) => {
+                                  const employee = employees.find(e => e.id === entry.employeeId);
+                                  return employee?.name === emp.employeeName;
+                                }
+                              ).reduce((sum, entry) => sum + (entry.loaCount || 0), 0);
+
+                              return (
+                                <TableRow key={emp.employeeName}>
+                                  <TableCell>{emp.employeeName}</TableCell>
+                                  <TableCell>{emp.hours.toFixed(1)}</TableCell>
+                                  <TableCell>
+                                    {emp.effectiveHours.toFixed(1)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {empLoaCount > 0 ? (
+                                      <div className="flex items-center gap-1">
+                                        <Badge
+                                          variant="secondary"
+                                          className="bg-purple-100 text-purple-800"
+                                        >
+                                          {empLoaCount}
+                                        </Badge>
+                                        <span className="text-xs text-purple-600">
+                                          ${(empLoaCount * 200).toFixed(2)}
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400 text-sm">—</span>
+                                    )}
+                                  </TableCell>
+                                  <TableCell className="font-medium text-red-600">
+                                    ${emp.cost.toFixed(2)}
+                                  </TableCell>
                                 <TableCell>
                                   <Badge variant="outline">
                                     {((emp.cost / job.totalCost) * 100).toFixed(
