@@ -565,12 +565,9 @@ export function useTimeTracking() {
           };
         }
 
-        // Don't include LOA hours in total hours calculations
-        if (hourType.name !== "LOA") {
-          acc[key].totalHours += entry.hours;
-          acc[key].totalEffectiveHours += effectiveHours;
-        }
-        acc[key].totalCost += cost;
+        acc[key].totalHours += entry.hours;
+        acc[key].totalEffectiveHours += effectiveHours;
+        acc[key].totalCost += cost + loaCost;
         acc[key].entries.push(entry);
 
         return acc;
