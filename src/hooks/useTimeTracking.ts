@@ -740,12 +740,9 @@ export function useTimeTracking() {
           };
         }
 
-        // Don't include LOA hours in total hours calculations
-        if (hourType.name !== "LOA") {
-          acc[job.id].totalHours += entry.hours;
-          acc[job.id].totalEffectiveHours += effectiveHours;
-        }
-        acc[job.id].totalCost += cost;
+        acc[job.id].totalHours += entry.hours;
+        acc[job.id].totalEffectiveHours += effectiveHours;
+        acc[job.id].totalCost += cost + loaCost;
         acc[job.id].entries.push(entry);
 
         // Update employee breakdown for this job
