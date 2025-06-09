@@ -209,18 +209,6 @@ export function Dashboard() {
         <p className="text-muted-foreground">
           Monitor your team's productivity and project performance
         </p>
-        {hourTypes.length < 7 && (
-          <div className="mt-4">
-            <Button
-              onClick={restoreHourTypes}
-              variant="outline"
-              className="text-blue-600 border-blue-600 hover:bg-blue-50"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Restore Missing Hour Types
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Overview Stats */}
