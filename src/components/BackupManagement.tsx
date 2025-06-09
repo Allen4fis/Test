@@ -101,6 +101,7 @@ export function BackupManagement() {
     null,
   );
   const [isRestoring, setIsRestoring] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   // Get stored backups from localStorage
   const storedBackups = useMemo(() => {
