@@ -120,6 +120,9 @@ const Index = () => {
       case "rentals":
         component = <RentalManagement />;
         break;
+      case "export":
+        component = <DataExport />;
+        break;
       default:
         component = <Dashboard />;
     }
