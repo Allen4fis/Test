@@ -652,37 +652,31 @@ export function RentalManagement() {
                               >
                                 <Pencil className="h-4 w-4" />
                               </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
+                              <DeleteConfirmationDialog
+                                item={{
+                                  id: item.id,
+                                  name: item.name,
+                                  type: "rental-item",
+                                  associatedData: {
+                                    rentalEntries: rentalEntries.filter(
+                                      (entry) => entry.rentalItemId === item.id,
+                                    ).length,
+                                    additionalInfo: [
+                                      `Category: ${item.category}`,
+                                      `Daily rate: $${item.dailyRate.toFixed(2)}`,
+                                      `Unit: ${item.unit}`,
+                                      `Status: ${item.isActive ? "Active" : "Inactive"}`,
+                                      `Created: ${new Date(item.createdAt).toLocaleDateString()}`,
+                                    ],
+                                  },
+                                }}
+                                trigger={
                                   <Button variant="ghost" size="sm">
                                     <Trash2 className="h-4 w-4 text-red-500" />
                                   </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Delete Rental Item
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete "
-                                      {item.name}"? This will also delete all
-                                      rental entries for this item. This action
-                                      cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteItem(item)}
-                                      className="bg-red-500 hover:bg-red-600"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                }
+                                onConfirm={handleDeleteItem}
+                              />
                             </div>
                           </TableCell>
                         </TableRow>
