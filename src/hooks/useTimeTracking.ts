@@ -865,19 +865,6 @@ export function useTimeTracking() {
             description: "Nova Scotia Overtime hours",
             multiplier: 1.5,
           },
-          },
-          {
-            id: "5",
-            name: "NS Regular Time",
-            description: "Nova Scotia Regular working hours",
-            multiplier: 1.0,
-          },
-          {
-            id: "6",
-            name: "NS Overtime",
-            description: "Nova Scotia Overtime hours",
-            multiplier: 1.5,
-          },
         ],
         provinces: [
           { id: "1", name: "Alberta", code: "AB" },
