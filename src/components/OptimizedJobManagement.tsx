@@ -225,8 +225,26 @@ export function OptimizedJobManagement() {
           >
             <Pencil className="h-4 w-4" />
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
+          <DeleteConfirmationDialog
+            item={{
+              id: job.id,
+              name: `${job.jobNumber} - ${job.name}`,
+              type: "job",
+              associatedData: {
+                timeEntries: timeEntries.filter(
+                  (entry) => entry.jobId === job.id,
+                ).length,
+                rentalEntries: rentalEntries.filter(
+                  (entry) => entry.jobId === job.id,
+                ).length,
+                additionalInfo: [
+                  `Status: ${job.isActive ? "Active" : "Inactive"}`,
+                  `Invoiced dates: ${job.invoicedDates?.length || 0} dates`,
+                  `Created: ${new Date(job.createdAt).toLocaleDateString()}`,
+                ],
+              },
+            }}
+            trigger={
               <Button
                 variant="ghost"
                 size="sm"
@@ -234,27 +252,9 @@ export function OptimizedJobManagement() {
               >
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Job</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete job "{job.jobNumber} -{" "}
-                  {job.name}"? This will also delete all time entries for this
-                  job. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleDelete(job)}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            }
+            onConfirm={async (jobId) => handleDelete({ id: jobId } as Job)}
+          />
         </div>
       ),
     },
