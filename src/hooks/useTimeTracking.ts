@@ -667,13 +667,17 @@ export function useTimeTracking() {
 
         const effectiveHours = entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
+        let adjustedBillableWage = entry.billableWageUsed || 0;
         let cost = 0;
+        let billableAmount = 0;
 
         // Add $3 to base wage for NS hour types
         if (hourType.name.startsWith("NS ")) {
           adjustedCostWage += 3;
+          adjustedBillableWage += 3;
         }
         cost = effectiveHours * adjustedCostWage;
+        billableAmount = effectiveHours * adjustedBillableWage;
 
         // Add LOA cost separately (fixed $200 per LOA count)
         const loaCost = (entry.loaCount || 0) * 200;
