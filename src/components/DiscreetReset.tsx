@@ -90,7 +90,7 @@ export function DiscreetReset() {
           </div>
           <div className="text-xs text-gray-500">
             ⚠️ This will permanently delete all employees, jobs, time entries,
-            and rental data.
+            and rental data. <strong>Backups will be preserved.</strong>
           </div>
         </div>
         <DialogFooter>
