@@ -146,11 +146,17 @@ export function TimeEntryForm() {
     }
 
     const hours = parseFloat(formData.hours);
+    const loaCount = formData.loaCount ? parseFloat(formData.loaCount) : 0;
     const billableWageUsed = parseFloat(formData.billableWageUsed);
     const costWageUsed = parseFloat(formData.costWageUsed);
 
-    if (isNaN(hours) || hours <= 0) {
-      setFormError("Please enter a valid number of hours greater than 0.");
+    if (isNaN(hours) || hours < 0) {
+      setFormError("Please enter a valid number of hours (0 or greater).");
+      return;
+    }
+
+    if (hours === 0 && loaCount === 0) {
+      setFormError("Please enter either hours worked or LOA count.");
       return;
     }
 
