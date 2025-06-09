@@ -1003,6 +1003,11 @@ export function SummaryReports() {
                         <TableCell>
                           {summary.totalEffectiveHours.toFixed(2)}
                         </TableCell>
+                        <TableCell className="font-medium text-purple-600">
+                          {summary.totalLoaCount > 0
+                            ? summary.totalLoaCount
+                            : "—"}
+                        </TableCell>
                         <TableCell className="font-medium text-green-600">
                           ${summary.totalCost.toFixed(2)}
                         </TableCell>
