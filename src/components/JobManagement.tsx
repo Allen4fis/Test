@@ -43,6 +43,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Job } from "@/types";
+import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 
 export function JobManagement() {
   const { jobs, addJob, updateJob, deleteJob } = useTimeTracking();
