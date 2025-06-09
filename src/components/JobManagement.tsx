@@ -87,8 +87,8 @@ export function JobManagement() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (job: Job) => {
-    deleteJob(job.id);
+  const handleDelete = async (jobId: string) => {
+    deleteJob(jobId);
   };
 
   const toggleJobStatus = (job: Job) => {
