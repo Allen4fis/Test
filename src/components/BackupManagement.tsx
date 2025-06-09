@@ -297,6 +297,8 @@ export function BackupManagement() {
         title: "Backup Deleted",
         description: "Backup has been removed from storage.",
       });
+
+      setRefreshKey((prev) => prev + 1);
     } catch (error) {
       console.error("Delete backup failed:", error);
       toast({
