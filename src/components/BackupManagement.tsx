@@ -258,21 +258,13 @@ export function BackupManagement() {
         return;
       }
 
-      // For this implementation, we'll need to add restore methods to the time tracking hook
-      // For now, let's simulate the restore process and show what would happen
-
       toast({
         title: "Restore Initiated",
         description: `Restoring from "${backup.name}"...`,
       });
 
-      // In a real implementation, you would:
-      // 1. Clear all existing data
-      // 2. Restore employees, jobs, time entries, etc. from backup.data
-      // 3. Update the UI
-
-      // Simulate restore process
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Restore the data using the time tracking hook
+      restoreFromBackup(fullBackup.data);
 
       toast({
         title: "Restore Completed",
