@@ -366,9 +366,16 @@ export function SummaryReports() {
         hourTypeBreakdown[fs.hourTypeName].cost += fs.totalCost;
       });
 
+      // Calculate total LOA count for this title/job combination
+      const totalLoaCount = relevantSummaries.reduce(
+        (sum, fs) => sum + (fs.loaCount || 0),
+        0,
+      );
+
       return {
         ...summary,
         hourTypeBreakdown,
+        totalLoaCount,
       };
     });
   }, [
