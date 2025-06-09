@@ -79,6 +79,7 @@ export interface SummaryByDateAndName {
   employeeName: string;
   totalHours: number;
   totalEffectiveHours: number;
+  totalLoaCount: number;
   totalCost: number;
   entries: TimeEntry[];
 }
