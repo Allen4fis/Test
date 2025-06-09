@@ -839,5 +839,6 @@ export function useTimeTracking() {
 
     // Utility
     resetData: () => setAppData(getDefaultAppData()),
+    restoreFromBackup: (backupData: AppData) => setAppData(backupData),
   };
 }
