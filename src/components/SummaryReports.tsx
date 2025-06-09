@@ -1148,6 +1148,12 @@ export function SummaryReports() {
                           .reduce((sum, s) => sum + s.totalEffectiveHours, 0)
                           .toFixed(2)}
                       </TableCell>
+                      <TableCell className="text-purple-600">
+                        {filteredDateNameSummaries.reduce(
+                          (sum, s) => sum + (s.totalLoaCount || 0),
+                          0,
+                        )}
+                      </TableCell>
                       <TableCell className="text-green-600">
                         $
                         {filteredDateNameSummaries
