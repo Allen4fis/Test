@@ -350,33 +350,29 @@ export function EmployeeManagement() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
+                          <DeleteConfirmationDialog
+                            item={{
+                              id: employee.id,
+                              name: employee.name,
+                              type: "employee",
+                              associatedData: {
+                                timeEntries: timeEntries.filter(
+                                  (entry) => entry.employeeId === employee.id,
+                                ).length,
+                                additionalInfo: [
+                                  `Billable wage: $${employee.billableWage?.toFixed(2) || "0.00"}/hr`,
+                                  `Cost wage: $${employee.costWage?.toFixed(2) || "0.00"}/hr`,
+                                  `Created: ${new Date(employee.createdAt).toLocaleDateString()}`,
+                                ],
+                              },
+                            }}
+                            trigger={
                               <Button variant="outline" size="sm">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you sure?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This will permanently delete {employee.name}{" "}
-                                  and all their time entries. This action cannot
-                                  be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(employee)}
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                            }
+                            onConfirm={handleDelete}
+                          />
                         </div>
                       </TableCell>
                     </TableRow>
