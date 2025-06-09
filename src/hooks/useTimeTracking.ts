@@ -848,24 +848,6 @@ export function useTimeTracking() {
         jobs: [],
         hourTypes: [
           {
-            id: "1",
-            name: "Regular Time",
-            description: "Regular working hours",
-            multiplier: 1.0,
-          },
-          {
-            id: "2",
-            name: "Overtime",
-            description: "Overtime hours",
-            multiplier: 1.5,
-          },
-          {
-            id: "3",
-            name: "Double Time",
-            description: "Double time hours",
-            multiplier: 2.0,
-          },
-          {
             id: "4",
             name: "Travel Hours",
             description: "Travel time",
@@ -873,9 +855,16 @@ export function useTimeTracking() {
           },
           {
             id: "5",
-            name: "LOA",
-            description: "Leave of Absence",
+            name: "NS Regular Time",
+            description: "Nova Scotia Regular working hours",
             multiplier: 1.0,
+          },
+          {
+            id: "6",
+            name: "NS Overtime",
+            description: "Nova Scotia Overtime hours",
+            multiplier: 1.5,
+          },
           },
           {
             id: "5",
