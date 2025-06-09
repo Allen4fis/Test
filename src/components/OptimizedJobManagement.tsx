@@ -49,6 +49,8 @@ import {
 export function OptimizedJobManagement() {
   const {
     jobs,
+    timeEntries,
+    rentalEntries,
     isLoadingJobs,
     jobPagination,
     searchFilters,
