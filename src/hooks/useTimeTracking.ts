@@ -155,6 +155,10 @@ export function useTimeTracking() {
       return migratedEntry as TimeEntry;
     });
 
+    // Remove LOA hour type if it exists (migrated to separate field)
+    migratedData.hourTypes =
+      rawAppData.hourTypes?.filter((ht) => ht.name !== "LOA") || [];
+
     // Add new NS hour types if they don't exist
     const nsHourTypes = [
       {
