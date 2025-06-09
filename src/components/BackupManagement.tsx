@@ -124,7 +124,7 @@ export function BackupManagement() {
       });
     }
     return [];
-  }, [isCreatingBackup]); // Re-evaluate when creating backup changes
+  }, [refreshKey]); // Re-evaluate when refresh key changes
 
   // Current data summary
   const currentDataSummary = useMemo(() => {
