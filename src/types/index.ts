@@ -57,6 +57,7 @@ export interface TimeEntrySummary {
   date: string;
   hours: number;
   effectiveHours: number; // hours * multiplier
+  loaCount?: number; // LOA count
   billableWage: number;
   costWage: number;
   totalBillableAmount: number; // effectiveHours * billableWage
