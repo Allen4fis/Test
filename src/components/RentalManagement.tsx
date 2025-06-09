@@ -208,8 +208,8 @@ export function RentalManagement() {
     });
   };
 
-  const handleDeleteItem = (item: RentalItem) => {
-    deleteRentalItem(item.id);
+  const handleDeleteItem = async (itemId: string) => {
+    deleteRentalItem(itemId);
   };
 
   // Handle rental entry operations
