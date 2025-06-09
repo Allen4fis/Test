@@ -736,6 +736,9 @@ export function useTimeTracking() {
         }
         cost = effectiveHours * adjustedCostWage;
 
+        // Add LOA cost separately (fixed $200 per LOA count)
+        const loaCost = (entry.loaCount || 0) * 200;
+
         if (!acc[job.id]) {
           acc[job.id] = {
             jobId: job.id,
