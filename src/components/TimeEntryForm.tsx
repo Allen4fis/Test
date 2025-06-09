@@ -165,6 +165,11 @@ export function TimeEntryForm() {
       return;
     }
 
+    if (loaCount < 0 || (loaCount > 0 && !Number.isInteger(loaCount))) {
+      setFormError("LOA count must be a whole number (0 or greater).");
+      return;
+    }
+
     if (isNaN(billableWageUsed) || billableWageUsed < 0) {
       setFormError("Please enter a valid billable wage.");
       return;
