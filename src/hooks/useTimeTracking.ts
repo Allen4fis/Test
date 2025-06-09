@@ -506,7 +506,6 @@ export function useTimeTracking() {
       const loaBillable = (entry.loaCount || 0) * 200;
       totalBillableAmount += loaBillable;
       totalCost += loaCost;
-      }
 
       return {
         employeeName: employee?.name || "Unknown Employee",
@@ -518,6 +517,7 @@ export function useTimeTracking() {
         date: entry.date,
         hours: entry.hours,
         effectiveHours: effectiveHours,
+        loaCount: entry.loaCount,
         billableWage: entry.billableWageUsed || 0,
         costWage: entry.costWageUsed || 0,
         totalBillableAmount: totalBillableAmount,
