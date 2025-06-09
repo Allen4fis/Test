@@ -242,6 +242,17 @@ export function BackupManagement() {
     }
   };
 
+  // Reset restore confirmation state
+  const resetRestoreConfirmation = () => {
+    setRestoreConfirmStep(0);
+    setRestoreConfirmText("");
+    setWarningsAccepted({
+      warning1: false,
+      warning2: false,
+      warning3: false,
+    });
+  };
+
   // Restore from backup
   const restoreBackup = async (backup: BackupMetadata) => {
     setIsRestoring(true);
