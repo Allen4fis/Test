@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
+import { DiscreetReset } from "@/components/DiscreetReset";
 
 interface LayoutProps {
   children: ReactNode;
