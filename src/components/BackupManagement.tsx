@@ -334,6 +334,58 @@ export function BackupManagement() {
     }
   };
 
+  // Import backup from file
+  const importBackupFromFile = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      setIsImporting(true);
+
+      try {
+        const text = await file.text();
+        const importedData: StoredBackup = JSON.parse(text);
+
+        // Validate the backup structure
+        if (
+          !importedData.data ||
+          !importedData.id ||
+          !importedData.name ||
+          !importedData.timestamp
+        ) {
+          throw new Error("Invalid backup file format");
+        }
+
+        // Add to stored backups
+        const existing = storedBackups;
+        const updated = [importedData, ...existing];
+        const trimmed = updated.slice(0, 20);
+
+        localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+
+        toast({
+          title: "Backup Imported",
+          description: `Successfully imported "${importedData.name}" from file.`,
+        });
+      } catch (error) {
+        console.error("Import failed:", error);
+        toast({
+          title: "Import Failed",
+          description:
+            "Could not import backup file. File may be corrupted or invalid.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsImporting(false);
+      }
+    };
+
+    input.click();
+  };
+
   // Format file size
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
