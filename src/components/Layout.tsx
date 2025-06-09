@@ -98,6 +98,12 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       icon: Download,
       description: "Export for accountant",
     },
+    {
+      id: "backup" as const,
+      label: "Backup & Restore",
+      icon: Database,
+      description: "Manage data backups",
+    },
   ];
 
   return (
