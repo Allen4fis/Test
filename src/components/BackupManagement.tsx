@@ -268,16 +268,7 @@ export function BackupManagement() {
       // Note: We'll need to clear existing data and restore from backup
       // This is a destructive operation, so we should be careful
 
-      // Create a confirmation that this is destructive
-      const confirmed = window.confirm(
-        `This will replace ALL current data with the backup "${backup.name}" from ${new Date(backup.timestamp).toLocaleString()}.\n\n` +
-          "Current data will be lost. Are you sure you want to continue?",
-      );
-
-      if (!confirmed) {
-        setIsRestoring(false);
-        return;
-      }
+      // Multi-step confirmation process is handled in the UI
 
       toast({
         title: "Restore Initiated",
