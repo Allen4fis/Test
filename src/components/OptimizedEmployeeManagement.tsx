@@ -170,8 +170,23 @@ export function OptimizedEmployeeManagement() {
           >
             <Pencil className="h-4 w-4" />
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
+          <DeleteConfirmationDialog
+            item={{
+              id: employee.id,
+              name: employee.name,
+              type: "employee",
+              associatedData: {
+                timeEntries: timeEntries.filter(
+                  (entry) => entry.employeeId === employee.id,
+                ).length,
+                additionalInfo: [
+                  `Billable wage: $${employee.billableWage?.toFixed(2) || "0.00"}/hr`,
+                  `Cost wage: $${employee.costWage?.toFixed(2) || "0.00"}/hr`,
+                  `Created: ${new Date(employee.createdAt).toLocaleDateString()}`,
+                ],
+              },
+            }}
+            trigger={
               <Button
                 variant="ghost"
                 size="sm"
@@ -179,27 +194,11 @@ export function OptimizedEmployeeManagement() {
               >
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Employee</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete {employee.name}? This will
-                  also delete all their time entries. This action cannot be
-                  undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleDelete(employee)}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            }
+            onConfirm={async (employeeId) =>
+              handleDelete({ id: employeeId } as Employee)
+            }
+          />
         </div>
       ),
     },
