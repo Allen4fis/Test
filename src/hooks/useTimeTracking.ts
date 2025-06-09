@@ -597,16 +597,14 @@ export function useTimeTracking() {
         let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
 
-        // LOA has fixed $200 cost regardless of hours
-        if (hourType.name === "LOA") {
-          cost = 200;
-        } else {
-          // Add $3 to base wage for NS hour types
-          if (hourType.name.startsWith("NS ")) {
-            adjustedCostWage += 3;
-          }
-          cost = effectiveHours * adjustedCostWage;
+        // Add $3 to base wage for NS hour types
+        if (hourType.name.startsWith("NS ")) {
+          adjustedCostWage += 3;
         }
+        cost = effectiveHours * adjustedCostWage;
+
+        // Add LOA cost separately (fixed $200 per LOA count)
+        const loaCost = (entry.loaCount || 0) * 200;
 
         if (!acc[key]) {
           acc[key] = {
