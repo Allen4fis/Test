@@ -217,6 +217,7 @@ export function TimeEntryForm() {
       provinceId: entry.provinceId,
       date: entry.date,
       hours: entry.hours.toString(),
+      loaCount: entry.loaCount?.toString() || "",
       title: entry.title || "",
       billableWageUsed: entry.billableWageUsed?.toString() || "0",
       costWageUsed: entry.costWageUsed?.toString() || "0",
