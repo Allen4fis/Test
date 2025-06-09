@@ -515,23 +515,41 @@ export function BackupManagement() {
               </div>
             </div>
 
-            <Button
-              onClick={createBackup}
-              disabled={isCreatingBackup || !backupName.trim()}
-              className="w-full"
-            >
-              {isCreatingBackup ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Creating Backup...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Create Backup
-                </>
-              )}
-            </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Button
+                onClick={createBackup}
+                disabled={isCreatingBackup || !backupName.trim()}
+              >
+                {isCreatingBackup ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Create Backup
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={importBackupFromFile}
+                disabled={isImporting}
+                variant="outline"
+              >
+                {isImporting ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Importing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Import from File
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
