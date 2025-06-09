@@ -903,6 +903,12 @@ export function SummaryReports() {
                           )
                           .toFixed(2)}
                       </TableCell>
+                      <TableCell className="font-medium text-purple-600">
+                        {employeeSummariesWithHourTypes.reduce(
+                          (sum, emp) => sum + emp.totalLoaCount,
+                          0,
+                        )}
+                      </TableCell>
                       <TableCell className="text-green-600">
                         $
                         {employeeSummariesWithHourTypes
