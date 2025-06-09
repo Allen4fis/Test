@@ -364,6 +364,9 @@ export function InvoiceManagement() {
                                   <TableRow>
                                     <TableHead>Date</TableHead>
                                     <TableHead>Hours</TableHead>
+                                    <TableHead className="text-purple-600">
+                                      LOA Count
+                                    </TableHead>
                                     <TableHead>Labor Cost</TableHead>
                                     <TableHead>Rental Cost</TableHead>
                                     <TableHead>Total Cost</TableHead>
