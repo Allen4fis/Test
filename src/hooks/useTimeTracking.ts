@@ -878,13 +878,13 @@ export function useTimeTracking() {
             multiplier: 1.0,
           },
           {
-            id: "6",
+            id: "5",
             name: "NS Regular Time",
             description: "Nova Scotia Regular working hours",
             multiplier: 1.0,
           },
           {
-            id: "7",
+            id: "6",
             name: "NS Overtime",
             description: "Nova Scotia Overtime hours",
             multiplier: 1.5,
