@@ -374,6 +374,8 @@ export function BackupManagement() {
           title: "Backup Imported",
           description: `Successfully imported "${importedData.name}" from file.`,
         });
+
+        setRefreshKey((prev) => prev + 1);
       } catch (error) {
         console.error("Import failed:", error);
         toast({
