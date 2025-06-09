@@ -262,9 +262,13 @@ export function TimeEntryViewer() {
       adjustedBillableWage += 3;
     }
 
-    return hourType?.name === "LOA"
-      ? sum + 200
-      : sum + effectiveHours * adjustedBillableWage;
+    // Calculate hourly billable amount
+    const hourlyBillable = effectiveHours * adjustedBillableWage;
+
+    // Add LOA amount separately (fixed $200 per LOA count)
+    const loaBillable = (entry.loaCount || 0) * 200;
+
+    return sum + hourlyBillable + loaBillable;
   }, 0);
 
   const totalCost = filteredAndSortedEntries.reduce((sum, entry) => {
@@ -277,9 +281,13 @@ export function TimeEntryViewer() {
       adjustedCostWage += 3;
     }
 
-    return hourType?.name === "LOA"
-      ? sum + 200
-      : sum + effectiveHours * adjustedCostWage;
+    // Calculate hourly cost
+    const hourlyCost = effectiveHours * adjustedCostWage;
+
+    // Add LOA cost separately (fixed $200 per LOA count)
+    const loaCost = (entry.loaCount || 0) * 200;
+
+    return sum + hourlyCost + loaCost;
   }, 0);
 
   const handleDelete = async (entry: TimeEntry) => {
