@@ -905,5 +905,13 @@ export function useTimeTracking() {
       };
       setRawAppData(emptyData);
     },
+    restoreHourTypes: () => {
+      // Restore all standard hour types (excluding LOA)
+      const defaultHourTypes = getDefaultAppData().hourTypes;
+      setRawAppData((prev) => ({
+        ...prev,
+        hourTypes: defaultHourTypes,
+      }));
+    },
   };
 }
