@@ -124,6 +124,9 @@ const Index = () => {
       case "export":
         component = <DataExport />;
         break;
+      case "backup":
+        component = <BackupManagement />;
+        break;
       default:
         component = <Dashboard />;
     }
