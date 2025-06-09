@@ -16,7 +16,7 @@ import { useTimeTracking } from "@/hooks/useTimeTracking";
 const RESET_PASSWORD = "6942069";
 
 export function DiscreetReset() {
-  const { resetData } = useTimeTracking();
+  const { clearAllData } = useTimeTracking();
   const [isOpen, setIsOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [isResetting, setIsResetting] = useState(false);
