@@ -188,6 +188,7 @@ export function TimeEntryForm() {
         provinceId: formData.provinceId,
         date: formData.date,
         hours: hours,
+        loaCount: loaCount > 0 ? loaCount : undefined,
         title: formData.title,
         billableWageUsed: billableWageUsed,
         costWageUsed: costWageUsed,
