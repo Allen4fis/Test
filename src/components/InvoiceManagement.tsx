@@ -47,6 +47,18 @@ import {
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Job } from "@/types";
 
+interface JobDateInfo {
+  date: string;
+  isInvoiced: boolean;
+  timeEntries: any[];
+  rentalEntries: any[];
+  totalHours: number;
+  totalLoaCount: number;
+  laborCost: number;
+  rentalCost: number;
+  totalCost: number;
+}
+
 export function InvoiceManagement() {
   const {
     jobs,
