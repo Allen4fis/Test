@@ -273,6 +273,7 @@ export function SummaryReports() {
             totalHours: 0,
             totalEffectiveHours: 0,
             totalCost: 0,
+            totalLoaCount: 0,
             hourTypeBreakdown: {},
             entryCount: 0,
             dateRange: { earliest: summary.date, latest: summary.date },
@@ -283,6 +284,7 @@ export function SummaryReports() {
         emp.totalHours += summary.hours;
         emp.totalEffectiveHours += summary.effectiveHours;
         emp.totalCost += summary.totalCost;
+        emp.totalLoaCount += summary.loaCount || 0;
         emp.entryCount += 1;
 
         // Update date range
