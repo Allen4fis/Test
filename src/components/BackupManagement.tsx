@@ -284,6 +284,7 @@ export function BackupManagement() {
       });
 
       setSelectedBackup(null);
+      resetRestoreConfirmation();
     } catch (error) {
       console.error("Restore failed:", error);
       toast({
