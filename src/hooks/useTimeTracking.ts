@@ -750,18 +750,15 @@ export function useTimeTracking() {
           (emp) => emp.employeeName === employee.name,
         );
         if (existingEmployee) {
-          // Don't include LOA hours in employee breakdown hours
-          if (hourType.name !== "LOA") {
-            existingEmployee.hours += entry.hours;
-            existingEmployee.effectiveHours += effectiveHours;
-          }
-          existingEmployee.cost += cost;
+          existingEmployee.hours += entry.hours;
+          existingEmployee.effectiveHours += effectiveHours;
+          existingEmployee.cost += cost + loaCost;
         } else {
           acc[job.id].employees.push({
             employeeName: employee.name,
-            hours: hourType.name !== "LOA" ? entry.hours : 0,
-            effectiveHours: hourType.name !== "LOA" ? effectiveHours : 0,
-            cost: cost,
+            hours: entry.hours,
+            effectiveHours: effectiveHours,
+            cost: cost + loaCost,
           });
         }
 
