@@ -156,42 +156,26 @@ export function useTimeTracking() {
     });
 
     // Remove LOA hour type if it exists (migrated to separate field)
-    migratedData.hourTypes =
+    const existingHourTypes =
       rawAppData.hourTypes?.filter((ht) => ht.name !== "LOA") || [];
 
-    // Add new NS hour types if they don't exist
-    const nsHourTypes = [
-      {
-        id: "6",
-        name: "NS Regular Time",
-        description: "Nova Scotia regular hours (base pay + $3)",
-        multiplier: 1.0,
-      },
-      {
-        id: "7",
-        name: "NS Overtime",
-        description: "Nova Scotia overtime (base pay + $3) x1.5",
-        multiplier: 1.5,
-      },
-      {
-        id: "8",
-        name: "NS Double Time",
-        description: "Nova Scotia double time (base pay + $3) x2",
-        multiplier: 2.0,
-      },
-    ];
+    // Get all standard hour types (excluding LOA)
+    const allStandardHourTypes = getDefaultAppData().hourTypes;
 
-    // Check if NS hour types already exist
-    const hasNSHourTypes = nsHourTypes.some((nsType) =>
-      migratedData.hourTypes.some(
-        (existingType) => existingType.id === nsType.id,
-      ),
-    );
+    // Merge existing with defaults, preferring existing where IDs match
+    const hourTypeMap = new Map();
 
-    // Add NS hour types if they don't exist
-    if (!hasNSHourTypes) {
-      migratedData.hourTypes = [...migratedData.hourTypes, ...nsHourTypes];
-    }
+    // First add all standard types
+    allStandardHourTypes.forEach((ht) => {
+      hourTypeMap.set(ht.id, ht);
+    });
+
+    // Then override with existing types (preserves any customizations)
+    existingHourTypes.forEach((ht) => {
+      hourTypeMap.set(ht.id, ht);
+    });
+
+    migratedData.hourTypes = Array.from(hourTypeMap.values());
 
     // Add rental data if it doesn't exist (backward compatibility)
     if (!migratedData.rentalItems) {
