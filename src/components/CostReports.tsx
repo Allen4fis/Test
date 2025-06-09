@@ -427,33 +427,16 @@ export function CostReports() {
                                   <TableCell>{emp.employeeName}</TableCell>
                                   <TableCell>{emp.hours.toFixed(1)}</TableCell>
                                   <TableCell>
-                                    {emp.effectiveHours.toFixed(1)}
+                                    <Badge variant="outline">
+                                      {((emp.cost / job.totalCost) * 100).toFixed(
+                                        1,
+                                      )}
+                                      %
+                                    </Badge>
                                   </TableCell>
-                                  <TableCell>
-                                    {empLoaCount > 0 ? (
-                                      <div className="flex items-center gap-1">
-                                        <Badge
-                                          variant="secondary"
-                                          className="bg-purple-100 text-purple-800"
-                                        >
-                                          {empLoaCount}
-                                        </Badge>
-                                        <span className="text-xs text-purple-600">
-                                          ${(empLoaCount * 200).toFixed(2)}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <span className="text-gray-400 text-sm">—</span>
-                                    )}
-                                  </TableCell>
-                                  <TableCell className="font-medium text-red-600">
-                                    ${emp.cost.toFixed(2)}
-                                  </TableCell>
-                                <TableCell>
-                                  <Badge variant="outline">
-                                    {((emp.cost / job.totalCost) * 100).toFixed(
-                                      1,
-                                    )}
+                                </TableRow>
+                              );
+                            })}
                                     %
                                   </Badge>
                                 </TableCell>
