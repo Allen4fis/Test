@@ -140,6 +140,18 @@ export function useTimeTracking() {
         migratedEntry.costWageUsed = employee?.costWage || 0;
       }
 
+      // Migrate LOA from hour type to separate field
+      const hourType = rawAppData.hourTypes?.find(
+        (ht) => ht.id === entry.hourTypeId,
+      );
+      if (hourType?.name === "LOA") {
+        // Convert LOA hour entry to regular time entry with LOA count
+        migratedEntry.loaCount = entry.hours; // Use hours as LOA count
+        migratedEntry.hours = 0; // Set hours to 0 for LOA entries
+        // Change to regular time hour type
+        migratedEntry.hourTypeId = "1"; // Regular Time
+      }
+
       return migratedEntry as TimeEntry;
     });
 
