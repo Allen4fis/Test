@@ -1221,36 +1221,30 @@ export function RentalManagement() {
                               >
                                 <Pencil className="h-4 w-4" />
                               </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
+                              <DeleteConfirmationDialog
+                                item={{
+                                  id: summary.id,
+                                  name: `${summary.itemName} - ${summary.jobNumber}`,
+                                  type: "rental-entry",
+                                  associatedData: {
+                                    additionalInfo: [
+                                      `Item: ${summary.itemName}`,
+                                      `Job: ${summary.jobNumber} - ${summary.jobName}`,
+                                      `Employee: ${summary.employeeName}`,
+                                      `Period: ${summary.startDate} to ${summary.endDate}`,
+                                      `Duration: ${summary.duration} ${summary.billingUnit}${summary.duration !== 1 ? "s" : ""}`,
+                                      `Quantity: ${summary.quantity}`,
+                                      `Total cost: $${summary.totalCost.toFixed(2)}`,
+                                    ],
+                                  },
+                                }}
+                                trigger={
                                   <Button variant="ghost" size="sm">
                                     <Trash2 className="h-4 w-4 text-red-500" />
                                   </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Delete Rental Entry
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete this
-                                      rental entry for {summary.itemName}? This
-                                      action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteEntry(summary)}
-                                      className="bg-red-500 hover:bg-red-600"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                }
+                                onConfirm={handleDeleteEntry}
+                              />
                             </div>
                           </TableCell>
                         </TableRow>
