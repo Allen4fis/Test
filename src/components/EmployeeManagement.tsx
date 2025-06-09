@@ -117,8 +117,8 @@ export function EmployeeManagement() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (employee: Employee) => {
-    deleteEmployee(employee.id);
+  const handleDelete = async (employeeId: string) => {
+    deleteEmployee(employeeId);
   };
 
   return (
