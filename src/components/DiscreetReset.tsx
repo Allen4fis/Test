@@ -34,16 +34,13 @@ export function DiscreetReset() {
     setIsResetting(true);
 
     try {
-      // Clear all data
+      // Clear all data but preserve backups
       clearAllData();
-
-      // Clear any backup data
-      localStorage.removeItem("trackity-doo-backups");
 
       toast({
         title: "System Reset Complete",
         description:
-          "All data has been cleared. Application reset to base state.",
+          "All data has been cleared. Backups preserved. Application reset to base state.",
       });
 
       setIsOpen(false);
