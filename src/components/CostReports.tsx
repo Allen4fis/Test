@@ -54,6 +54,11 @@ export function CostReports() {
     (sum, summary) => sum + summary.effectiveHours,
     0,
   );
+  const totalLoaCount = timeEntrySummaries.reduce(
+    (sum, summary) => sum + (summary.loaCount || 0),
+    0,
+  );
+  const totalLoaAmount = totalLoaCount * 200;
   const averageCostRate =
     totalEffectiveHours > 0 ? totalLaborCost / totalEffectiveHours : 0;
   const averageBillableRate =
