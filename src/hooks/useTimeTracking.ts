@@ -45,7 +45,6 @@ const getDefaultAppData = (): AppData => ({
       description: "Travel time",
       multiplier: 1.0,
     },
-    { id: "5", name: "LOA", description: "Leave of Absence", multiplier: 1.0 },
     {
       id: "6",
       name: "NS Regular Time",
