@@ -248,6 +248,7 @@ export function InvoiceManagement() {
                   <TableHead>Invoice Status</TableHead>
                   <TableHead>Dates</TableHead>
                   <TableHead>Hours</TableHead>
+                  <TableHead className="text-purple-600">LOA Count</TableHead>
                   <TableHead>Cost</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
