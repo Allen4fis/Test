@@ -63,16 +63,10 @@ export function DiscreetReset() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <div
-          className="absolute bottom-0 left-0 w-1 h-1 opacity-0 hover:opacity-100 cursor-pointer"
-          title="System Reset"
+          className="fixed bottom-2 left-2 w-2 h-2 opacity-0 hover:opacity-30 cursor-pointer transition-opacity duration-500 z-50"
+          style={{ background: "transparent" }}
         >
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-1 h-1 p-0 invisible hover:visible"
-          >
-            •
-          </Button>
+          <div className="w-full h-full bg-gray-300 rounded-full hover:bg-gray-500" />
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
