@@ -288,6 +288,16 @@ export function CostReports() {
                           )
                           .toFixed(1)}
                       </TableCell>
+                      <TableCell className="text-purple-600">
+                        {costSummaryByEmployee.reduce((sum, emp) => {
+                          const loaCount = emp.entries.reduce(
+                            (entrySum, entry) =>
+                              entrySum + (entry.loaCount || 0),
+                            0,
+                          );
+                          return sum + loaCount;
+                        }, 0)}
+                      </TableCell>
                       <TableCell className="text-green-600">
                         $
                         {costSummaryByEmployee
