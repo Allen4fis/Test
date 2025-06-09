@@ -613,6 +613,7 @@ export function useTimeTracking() {
             employeeName: employee.name,
             totalHours: 0,
             totalEffectiveHours: 0,
+            totalLoaCount: 0,
             totalCost: 0,
             entries: [],
           };
@@ -620,6 +621,7 @@ export function useTimeTracking() {
 
         acc[key].totalHours += entry.hours;
         acc[key].totalEffectiveHours += effectiveHours;
+        acc[key].totalLoaCount += entry.loaCount || 0;
         acc[key].totalCost += cost + loaCost;
         acc[key].entries.push(entry);
 
