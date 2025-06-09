@@ -744,6 +744,23 @@ export function TimeEntryViewer() {
                           {entry.hours}h
                         </TableCell>
                         <TableCell>
+                          {entry.loaCount && entry.loaCount > 0 ? (
+                            <div className="flex items-center gap-1">
+                              <Badge
+                                variant="secondary"
+                                className="bg-purple-100 text-purple-800"
+                              >
+                                {entry.loaCount} × $200
+                              </Badge>
+                              <span className="text-xs text-purple-600 font-medium">
+                                = ${(entry.loaCount * 200).toFixed(2)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
                           <div className="flex items-center gap-1">
                             <span className="text-green-600 font-medium">
                               ${entry.billableWageUsed?.toFixed(2) || "0.00"}
