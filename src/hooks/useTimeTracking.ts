@@ -838,7 +838,7 @@ export function useTimeTracking() {
     costSummaryByJob,
 
     // Utility
-    resetData: () => setAppData(getDefaultAppData()),
-    restoreFromBackup: (backupData: AppData) => setAppData(backupData),
+    resetData: () => setRawAppData(getDefaultAppData()),
+    restoreFromBackup: (backupData: AppData) => setRawAppData(backupData),
   };
 }
