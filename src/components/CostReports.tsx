@@ -192,6 +192,9 @@ export function CostReports() {
                       <TableHead>Cost Rate</TableHead>
                       <TableHead>Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
+                      <TableHead className="text-purple-600">
+                        LOA Count
+                      </TableHead>
                       <TableHead>Revenue</TableHead>
                       <TableHead>Cost</TableHead>
                       <TableHead>Profit</TableHead>
