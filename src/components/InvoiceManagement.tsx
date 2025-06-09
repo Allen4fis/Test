@@ -143,6 +143,13 @@ export function InvoiceManagement() {
         const invoicedHours = jobDates
           .filter((d) => d.isInvoiced)
           .reduce((sum, d) => sum + d.totalHours, 0);
+        const totalLoaCount = jobDates.reduce(
+          (sum, d) => sum + d.totalLoaCount,
+          0,
+        );
+        const invoicedLoaCount = jobDates
+          .filter((d) => d.isInvoiced)
+          .reduce((sum, d) => sum + d.totalLoaCount, 0);
         const totalCost = jobDates.reduce((sum, d) => sum + d.totalCost, 0);
         const invoicedCost = jobDates
           .filter((d) => d.isInvoiced)
