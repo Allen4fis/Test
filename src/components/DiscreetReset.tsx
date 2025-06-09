@@ -35,7 +35,7 @@ export function DiscreetReset() {
 
     try {
       // Clear all data
-      resetData();
+      clearAllData();
 
       // Clear any backup data
       localStorage.removeItem("trackity-doo-backups");
