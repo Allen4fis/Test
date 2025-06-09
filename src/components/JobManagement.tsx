@@ -46,7 +46,8 @@ import { Job } from "@/types";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 
 export function JobManagement() {
-  const { jobs, addJob, updateJob, deleteJob } = useTimeTracking();
+  const { jobs, timeEntries, rentalEntries, addJob, updateJob, deleteJob } =
+    useTimeTracking();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [formData, setFormData] = useState({
