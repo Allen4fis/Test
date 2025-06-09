@@ -97,6 +97,7 @@ export function BackupManagement() {
   const [isCreatingBackup, setIsCreatingBackup] = useState(false);
   const [backupName, setBackupName] = useState("");
   const [backupDescription, setBackupDescription] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
   const [selectedBackup, setSelectedBackup] = useState<BackupMetadata | null>(
     null,
   );
