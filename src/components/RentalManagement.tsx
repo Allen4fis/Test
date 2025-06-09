@@ -256,8 +256,8 @@ export function RentalManagement() {
     });
   };
 
-  const handleDeleteEntry = (entry: any) => {
-    deleteRentalEntry(entry.id);
+  const handleDeleteEntry = async (entryId: string) => {
+    deleteRentalEntry(entryId);
   };
 
   const handleRentalItemChange = (itemId: string) => {
