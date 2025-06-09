@@ -218,9 +218,10 @@ export function BackupManagement() {
         description: `"${backupName}" has been saved with ${currentDataSummary.totalRecords} records.`,
       });
 
-      // Reset form
+      // Reset form and trigger refresh
       setBackupName("");
       setBackupDescription("");
+      setRefreshKey((prev) => prev + 1);
     } catch (error) {
       console.error("Backup creation failed:", error);
       toast({
