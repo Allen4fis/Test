@@ -77,7 +77,7 @@ export function InvoiceManagement() {
   });
 
   // Get unique dates that have time entries or rental entries for the selected job
-  const getJobDates = (job: Job) => {
+  const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
       (entry) => entry.jobNumber === job.jobNumber,
     );
