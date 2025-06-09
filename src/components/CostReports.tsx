@@ -31,6 +31,7 @@ export function CostReports() {
     costSummaryByJob,
     timeEntrySummaries,
     rentalSummaries,
+    employees,
   } = useTimeTracking();
 
   // Calculate total costs and billable amounts including rentals
