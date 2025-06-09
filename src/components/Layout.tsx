@@ -259,6 +259,9 @@ export function Layout({ children, timeTracking }: LayoutProps) {
           </div>
         </div>
       </div>
+
+      {/* Discreet reset button - nearly invisible */}
+      <DiscreetReset />
     </div>
   );
 }
