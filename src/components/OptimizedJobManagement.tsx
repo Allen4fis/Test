@@ -35,6 +35,7 @@ import { Badge } from "@/components/ui/badge";
 import { VirtualizedTable, DebouncedSearchInput } from "./VirtualizedTable";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 import { Job } from "@/types";
+import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 import {
   Briefcase,
   Plus,
