@@ -39,6 +39,7 @@ import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog"
 export function OptimizedEmployeeManagement() {
   const {
     employees,
+    timeEntries,
     isLoadingEmployees,
     employeePagination,
     searchFilters,
