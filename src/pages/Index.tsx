@@ -25,6 +25,15 @@ import {
 // Import database cleanup utilities for development
 if (process.env.NODE_ENV === "development") {
   import("@/utils/databaseCleanup");
+
+  // One-time clear of existing data to show clean state
+  if (!localStorage.getItem("app_cleared")) {
+    localStorage.removeItem("timeTrackingApp");
+    localStorage.removeItem("trackity-doo-backups");
+    localStorage.removeItem("timeTrackingApp_fallback");
+    localStorage.setItem("app_cleared", "true");
+    window.location.reload();
+  }
 }
 
 const Index = () => {
