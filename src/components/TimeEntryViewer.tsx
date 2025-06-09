@@ -567,6 +567,24 @@ export function TimeEntryViewer() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-purple-500" />
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Live Out Allowance
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {totalLoaCount}
+                </p>
+                <div className="text-xs text-gray-500 mt-1">
+                  ${totalLoaAmount.toFixed(2)} total
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600" />
               <div>
                 <p className="text-sm font-medium text-gray-600">
