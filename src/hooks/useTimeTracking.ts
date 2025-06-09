@@ -842,5 +842,75 @@ export function useTimeTracking() {
     // Utility
     resetData: () => setRawAppData(getDefaultAppData()),
     restoreFromBackup: (backupData: AppData) => setRawAppData(backupData),
+    clearAllData: () => {
+      // Clear all data and reset to completely empty state
+      const emptyData: AppData = {
+        employees: [],
+        jobs: [],
+        hourTypes: [
+          {
+            id: "1",
+            name: "Regular Time",
+            description: "Regular working hours",
+            multiplier: 1.0,
+          },
+          {
+            id: "2",
+            name: "Overtime",
+            description: "Overtime hours",
+            multiplier: 1.5,
+          },
+          {
+            id: "3",
+            name: "Double Time",
+            description: "Double time hours",
+            multiplier: 2.0,
+          },
+          {
+            id: "4",
+            name: "Travel Hours",
+            description: "Travel time",
+            multiplier: 1.0,
+          },
+          {
+            id: "5",
+            name: "LOA",
+            description: "Leave of Absence",
+            multiplier: 1.0,
+          },
+          {
+            id: "6",
+            name: "NS Regular Time",
+            description: "Nova Scotia Regular working hours",
+            multiplier: 1.0,
+          },
+          {
+            id: "7",
+            name: "NS Overtime",
+            description: "Nova Scotia Overtime hours",
+            multiplier: 1.5,
+          },
+        ],
+        provinces: [
+          { id: "1", name: "Alberta", code: "AB" },
+          { id: "2", name: "British Columbia", code: "BC" },
+          { id: "3", name: "Manitoba", code: "MB" },
+          { id: "4", name: "New Brunswick", code: "NB" },
+          { id: "5", name: "Newfoundland and Labrador", code: "NL" },
+          { id: "6", name: "Northwest Territories", code: "NT" },
+          { id: "7", name: "Nova Scotia", code: "NS" },
+          { id: "8", name: "Nunavut", code: "NU" },
+          { id: "9", name: "Ontario", code: "ON" },
+          { id: "10", name: "Prince Edward Island", code: "PE" },
+          { id: "11", name: "Quebec", code: "QC" },
+          { id: "12", name: "Saskatchewan", code: "SK" },
+          { id: "13", name: "Yukon", code: "YT" },
+        ],
+        timeEntries: [],
+        rentalItems: [],
+        rentalEntries: [],
+      };
+      setRawAppData(emptyData);
+    },
   };
 }
