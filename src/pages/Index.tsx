@@ -12,6 +12,7 @@ import { OptimizedEmployeeManagement } from "@/components/OptimizedEmployeeManag
 import { OptimizedJobManagement } from "@/components/OptimizedJobManagement";
 import { RentalManagement } from "@/components/RentalManagement";
 import { DatabaseErrorHandler } from "@/components/DatabaseErrorHandler";
+import { DataExport } from "@/components/DataExport";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 import {
