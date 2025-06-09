@@ -242,6 +242,23 @@ export function CostReports() {
                           <TableCell>
                             {employee.totalEffectiveHours.toFixed(1)}
                           </TableCell>
+                          <TableCell>
+                            {employeeLoaCount > 0 ? (
+                              <div className="flex items-center gap-1">
+                                <Badge
+                                  variant="secondary"
+                                  className="bg-purple-100 text-purple-800"
+                                >
+                                  {employeeLoaCount}
+                                </Badge>
+                                <span className="text-xs text-purple-600">
+                                  ${(employeeLoaCount * 200).toFixed(2)}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-sm">—</span>
+                            )}
+                          </TableCell>
                           <TableCell className="font-bold text-green-600">
                             ${employee.totalBillableAmount.toFixed(2)}
                           </TableCell>
