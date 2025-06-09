@@ -1084,6 +1084,9 @@ export function SummaryReports() {
                       <TableHead>Hour Type Breakdown</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
+                      <TableHead className="text-purple-600">
+                        LOA Count
+                      </TableHead>
                       <TableHead>Total Cost</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
