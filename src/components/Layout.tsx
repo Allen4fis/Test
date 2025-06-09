@@ -91,6 +91,12 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       description: "Manage projects",
       count: jobs.filter((job) => job.isActive).length,
     },
+    {
+      id: "export" as const,
+      label: "Data Export",
+      icon: Download,
+      description: "Export for accountant",
+    },
   ];
 
   return (
