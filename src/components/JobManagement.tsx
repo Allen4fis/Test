@@ -242,31 +242,32 @@ export function JobManagement() {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                      <DeleteConfirmationDialog
+                        item={{
+                          id: job.id,
+                          name: `${job.jobNumber} - ${job.name}`,
+                          type: "job",
+                          associatedData: {
+                            timeEntries: timeEntries.filter(
+                              (entry) => entry.jobId === job.id,
+                            ).length,
+                            rentalEntries: rentalEntries.filter(
+                              (entry) => entry.jobId === job.id,
+                            ).length,
+                            additionalInfo: [
+                              `Status: ${job.isActive ? "Active" : "Inactive"}`,
+                              `Invoiced dates: ${job.invoicedDates?.length || 0} dates`,
+                              `Created: ${new Date(job.createdAt).toLocaleDateString()}`,
+                            ],
+                          },
+                        }}
+                        trigger={
                           <Button variant="outline" size="sm">
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete job "{job.jobNumber}{" "}
-                              - {job.name}" and all related time entries. This
-                              action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(job)}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                        }
+                        onConfirm={handleDelete}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
