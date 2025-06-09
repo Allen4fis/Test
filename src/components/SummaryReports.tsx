@@ -59,6 +59,7 @@ interface EnhancedSummary {
   totalHours: number;
   totalEffectiveHours: number;
   totalCost: number;
+  totalLoaCount: number;
   hourTypeBreakdown: HourTypeBreakdown;
 }
 
