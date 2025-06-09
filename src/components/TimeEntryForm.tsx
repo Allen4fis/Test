@@ -430,7 +430,7 @@ export function TimeEntryForm() {
               {/* Hours */}
               <div className="space-y-2">
                 <Label htmlFor="hours" className="text-sm font-medium">
-                  Hours *
+                  Hours
                 </Label>
                 <Input
                   id="hours"
@@ -443,8 +443,28 @@ export function TimeEntryForm() {
                     setFormData({ ...formData, hours: e.target.value })
                   }
                   placeholder="8.0"
-                  required
                 />
+              </div>
+
+              {/* LOA Count */}
+              <div className="space-y-2">
+                <Label htmlFor="loaCount" className="text-sm font-medium">
+                  LOA Count
+                </Label>
+                <Input
+                  id="loaCount"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={formData.loaCount}
+                  onChange={(e) =>
+                    setFormData({ ...formData, loaCount: e.target.value })
+                  }
+                  placeholder="0"
+                />
+                <p className="text-xs text-gray-500">
+                  Leave of Absence count ($200 per LOA)
+                </p>
               </div>
 
               {/* Billable Wage */}
