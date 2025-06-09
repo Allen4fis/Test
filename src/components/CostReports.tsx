@@ -205,6 +205,10 @@ export function CostReports() {
                     {costSummaryByEmployee.map((employee, index) => {
                       const employeeProfit =
                         employee.totalBillableAmount - employee.totalCost;
+                      const employeeLoaCount = employee.entries.reduce(
+                        (sum, entry) => sum + (entry.loaCount || 0),
+                        0,
+                      );
                       return (
                         <TableRow key={employee.employeeId}>
                           <TableCell className="font-medium">
