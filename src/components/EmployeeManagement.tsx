@@ -43,8 +43,13 @@ import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Employee } from "@/types";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 export function EmployeeManagement() {
-  const { employees, addEmployee, updateEmployee, deleteEmployee } =
-    useTimeTracking();
+  const {
+    employees,
+    timeEntries,
+    addEmployee,
+    updateEmployee,
+    deleteEmployee,
+  } = useTimeTracking();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [formData, setFormData] = useState({
