@@ -305,6 +305,30 @@ export function InvoiceManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
+                        {stat.totalLoaCount > 0 ? (
+                          <>
+                            <div className="text-green-600 font-medium">
+                              {stat.invoicedLoaCount > 0 && (
+                                <span>{stat.invoicedLoaCount} LOA</span>
+                              )}
+                            </div>
+                            <div className="text-red-600">
+                              {stat.uninvoicedLoaCount > 0 && (
+                                <span>{stat.uninvoicedLoaCount} LOA</span>
+                              )}
+                            </div>
+                            <div className="text-xs text-purple-600 mt-1">
+                              Total: {stat.totalLoaCount} ($
+                              {(stat.totalLoaCount * 200).toFixed(2)})
+                            </div>
+                          </>
+                        ) : (
+                          <span className="text-gray-400 text-sm">—</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
                         <div className="text-green-600 font-medium">
                           ${stat.invoicedCost.toFixed(2)}
                         </div>
