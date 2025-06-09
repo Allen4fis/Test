@@ -112,6 +112,7 @@ export function InvoiceManagement() {
         timeEntries: dayTimeEntries,
         rentalEntries: dayRentalEntries,
         totalHours,
+        totalLoaCount,
         laborCost,
         rentalCost,
         totalCost,
