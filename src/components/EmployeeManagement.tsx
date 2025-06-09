@@ -38,9 +38,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Plus, Edit, Trash2, DollarSign, Banknote } from "lucide-react";
+
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Employee } from "@/types";
-
+import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 export function EmployeeManagement() {
   const { employees, addEmployee, updateEmployee, deleteEmployee } =
     useTimeTracking();
