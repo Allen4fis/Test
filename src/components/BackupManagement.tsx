@@ -91,6 +91,7 @@ export function BackupManagement() {
     rentalEntries,
     hourTypes,
     provinces,
+    restoreFromBackup,
   } = timeTracking;
 
   const [isCreatingBackup, setIsCreatingBackup] = useState(false);
