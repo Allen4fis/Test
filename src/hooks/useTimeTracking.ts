@@ -842,22 +842,46 @@ export function useTimeTracking() {
         jobs: [],
         hourTypes: [
           {
+            id: "1",
+            name: "Regular Time",
+            description: "Regular working hours",
+            multiplier: 1.0,
+          },
+          {
+            id: "2",
+            name: "Overtime",
+            description: "Overtime hours",
+            multiplier: 1.5,
+          },
+          {
+            id: "3",
+            name: "Double Time",
+            description: "Double time hours",
+            multiplier: 2.0,
+          },
+          {
             id: "4",
             name: "Travel Hours",
             description: "Travel time",
             multiplier: 1.0,
           },
           {
-            id: "5",
+            id: "6",
             name: "NS Regular Time",
-            description: "Nova Scotia Regular working hours",
+            description: "Nova Scotia regular hours (base pay + $3)",
             multiplier: 1.0,
           },
           {
-            id: "6",
+            id: "7",
             name: "NS Overtime",
-            description: "Nova Scotia Overtime hours",
+            description: "Nova Scotia overtime (base pay + $3) x1.5",
             multiplier: 1.5,
+          },
+          {
+            id: "8",
+            name: "NS Double Time",
+            description: "Nova Scotia double time (base pay + $3) x2",
+            multiplier: 2.0,
           },
         ],
         provinces: [
