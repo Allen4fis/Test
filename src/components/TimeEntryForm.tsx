@@ -81,6 +81,7 @@ export function TimeEntryForm() {
     provinceId: "",
     date: getLocalDateString(),
     hours: "",
+    loaCount: "",
     title: "",
     billableWageUsed: "",
     costWageUsed: "",
