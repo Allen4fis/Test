@@ -39,7 +39,6 @@ export function Dashboard() {
     provinces,
     timeEntrySummaries,
     summaryByTitleAndJob,
-    restoreHourTypes,
   } = useTimeTracking();
 
   const summaries = timeEntrySummaries;
