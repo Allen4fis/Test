@@ -860,6 +860,11 @@ export function SummaryReports() {
                         <TableCell>
                           {employee.totalEffectiveHours.toFixed(2)}
                         </TableCell>
+                        <TableCell className="font-medium text-purple-600">
+                          {employee.totalLoaCount > 0
+                            ? employee.totalLoaCount
+                            : "—"}
+                        </TableCell>
                         <TableCell className="font-medium text-green-600">
                           ${employee.totalCost.toFixed(2)}
                         </TableCell>
