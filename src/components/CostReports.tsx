@@ -163,6 +163,24 @@ export function CostReports() {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <Banknote className="h-5 w-5 text-purple-500" />
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Live Out Allowance
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {totalLoaCount}
+                </p>
+                <div className="text-xs text-gray-500 mt-1">
+                  ${totalLoaAmount.toFixed(2)} total
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Cost Reports Tabs */}
