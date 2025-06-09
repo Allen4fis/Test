@@ -1173,61 +1173,6 @@ export function SummaryReports() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="hourTypes">
-          <div className="print-only print-section-header">
-            Summary by Hour Types
-          </div>
-          <Card className="page-break-avoid">
-            <CardHeader>
-              <CardTitle>Summary by Hour Types</CardTitle>
-              <CardDescription>
-                Hours breakdown by different hour types (Regular, Overtime,
-                etc.)
-                {!includeInvoiced && " (excluding invoiced entries)"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Object.entries(createHourTypeBreakdown(filteredSummaries))
-                  .sort(([, a], [, b]) => b.hours - a.hours)
-                  .map(([hourType, data]) => (
-                    <Card key={hourType}>
-                      <CardContent className="p-4">
-                        <div className="text-center">
-                          <h3 className="font-medium text-lg">{hourType}</h3>
-                          <div className="mt-2 space-y-1">
-                            <div className="text-2xl font-bold text-blue-600">
-                              {data.hours.toFixed(1)}h
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Effective: {data.effectiveHours.toFixed(1)}h
-                            </div>
-                            <div className="text-sm font-medium text-green-600">
-                              ${data.cost.toFixed(2)}
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-              {Object.keys(createHourTypeBreakdown(filteredSummaries))
-                .length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No hour type data available for the selected filters.
-                  {!includeInvoiced && (
-                    <div className="mt-2 text-sm">
-                      <span className="text-blue-600">Note:</span> Invoiced
-                      entries are currently hidden. Toggle "Include Invoiced
-                      Entries" to show them.
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="rentals">
           <div className="print-only print-section-header">Rental Summary</div>
           <Card className="page-break-avoid">
