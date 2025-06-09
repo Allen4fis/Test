@@ -92,6 +92,10 @@ export function InvoiceManagement() {
         (sum, entry) => sum + entry.hours,
         0,
       );
+      const totalLoaCount = dayTimeEntries.reduce(
+        (sum, entry) => sum + (entry.loaCount || 0),
+        0,
+      );
       const laborCost = dayTimeEntries.reduce(
         (sum, entry) => sum + entry.totalCost,
         0,
