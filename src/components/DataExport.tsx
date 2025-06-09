@@ -39,7 +39,6 @@ import {
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
-import { format } from "date-fns";
 
 // Helper function to get local date string in YYYY-MM-DD format
 const getLocalDateString = (date: Date = new Date()) => {
