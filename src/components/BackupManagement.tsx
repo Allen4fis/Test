@@ -353,16 +353,14 @@ export function BackupManagement() {
     }
   };
 
-  // Import backup from file
-  const importBackupFromFile = () => {
+  // Step 1: Select file and validate
+  const selectImportFile = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
-
-      setIsImporting(true);
 
       try {
         const text = await file.text();
@@ -378,33 +376,57 @@ export function BackupManagement() {
           throw new Error("Invalid backup file format");
         }
 
-        // Add to stored backups
-        const existing = storedBackups;
-        const updated = [importedData, ...existing];
-        const trimmed = updated.slice(0, 20);
-
-        localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
-
-        toast({
-          title: "Backup Imported",
-          description: `Successfully imported "${importedData.name}" from file.`,
-        });
-
-        setRefreshKey((prev) => prev + 1);
+        // Store file and data for confirmation
+        setSelectedFile(file);
+        setImportConfirmationData(importedData);
       } catch (error) {
-        console.error("Import failed:", error);
+        console.error("File validation failed:", error);
         toast({
-          title: "Import Failed",
+          title: "Invalid File",
           description:
-            "Could not import backup file. File may be corrupted or invalid.",
+            "Could not read backup file. File may be corrupted or invalid.",
           variant: "destructive",
         });
-      } finally {
-        setIsImporting(false);
       }
     };
 
     input.click();
+  };
+
+  // Step 2: Perform actual import after confirmation
+  const performImport = async (confirmationId: string) => {
+    if (!importConfirmationData) return;
+
+    setIsImporting(true);
+
+    try {
+      // Add to stored backups
+      const existing = storedBackups;
+      const updated = [importConfirmationData, ...existing];
+      const trimmed = updated.slice(0, 20);
+
+      localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+
+      toast({
+        title: "Backup Imported",
+        description: `Successfully imported "${importConfirmationData.name}" from file.`,
+      });
+
+      setRefreshKey((prev) => prev + 1);
+
+      // Clear confirmation data
+      setSelectedFile(null);
+      setImportConfirmationData(null);
+    } catch (error) {
+      console.error("Import failed:", error);
+      toast({
+        title: "Import Failed",
+        description: "Could not import backup file. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsImporting(false);
+    }
   };
 
   // Format file size
