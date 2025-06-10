@@ -659,56 +659,22 @@ export function InvoiceManagement() {
                                       </TableCell>
                                       <TableCell className="font-medium text-green-600">
                                         <div className="text-sm">
-                                          <div>
-                                            ${dateInfo.totalBillable.toFixed(2)}
-                                          </div>
+                                          <div>${dateInfo.totalBillable.toFixed(2)}</div>
                                           <div className="text-xs text-gray-500">
-                                            L: $
-                                            {dateInfo.laborBillable.toFixed(2)}{" "}
-                                            + R: $
-                                            {dateInfo.rentalCost.toFixed(2)} +
+                                            Labor: ${dateInfo.laborBillable.toFixed(2)} +
+                                            Rentals: ${dateInfo.rentalBillable.toFixed(2)} +
                                             LOA: ${dateInfo.loaCost.toFixed(2)}
                                           </div>
                                         </div>
                                       </TableCell>
                                       <TableCell className="font-medium text-red-600">
                                         <div className="text-sm">
-                                          <div>
-                                            ${dateInfo.totalCost.toFixed(2)}
-                                          </div>
+                                          <div>${dateInfo.totalCost.toFixed(2)}</div>
                                           <div className="text-xs text-gray-500">
-                                            L: ${dateInfo.laborCost.toFixed(2)}{" "}
-                                            + R: $
-                                            {dateInfo.rentalCost.toFixed(2)}
+                                            Labor Cost Only
                                           </div>
                                         </div>
                                       </TableCell>
-                                      <TableCell
-                                        className={`font-medium ${dateInfo.totalBillable - dateInfo.totalCost >= 0 ? "text-blue-600" : "text-red-600"}`}
-                                      >
-                                        <div className="text-sm">
-                                          <div>
-                                            $
-                                            {(
-                                              dateInfo.totalBillable -
-                                              dateInfo.totalCost
-                                            ).toFixed(2)}
-                                          </div>
-                                          <div className="text-xs text-gray-500">
-                                            {dateInfo.totalBillable > 0
-                                              ? (
-                                                  ((dateInfo.totalBillable -
-                                                    dateInfo.totalCost) /
-                                                    dateInfo.totalBillable) *
-                                                  100
-                                                ).toFixed(1)
-                                              : "0.0"}
-                                            %
-                                          </div>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell>
-                                        <Badge
                                           variant={
                                             dateInfo.isInvoiced
                                               ? "default"
