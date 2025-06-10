@@ -251,16 +251,14 @@ export function TimeEntryForm() {
     }
   };
 
-  // Get recent time entries (last 10)
+  // Get recent time entries (last 50, sorted by latest input time)
   const recentEntries = timeEntries
     .slice()
     .sort((a, b) => {
-      // Sort by date (descending) then by creation time (descending)
-      const dateComparison = b.date.localeCompare(a.date);
-      if (dateComparison !== 0) return dateComparison;
+      // Sort by creation time (latest input first)
       return b.createdAt.localeCompare(a.createdAt);
     })
-    .slice(0, 10);
+    .slice(0, 50);
 
   const selectedEmployee = employees.find(
     (emp) => emp.id === formData.employeeId,
