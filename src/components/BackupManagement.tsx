@@ -105,6 +105,9 @@ export function BackupManagement() {
   );
   const [isRestoring, setIsRestoring] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [importConfirmationData, setImportConfirmationData] =
+    useState<any>(null);
   const [restoreConfirmStep, setRestoreConfirmStep] = useState(0);
   const [restoreConfirmText, setRestoreConfirmText] = useState("");
   const [warningsAccepted, setWarningsAccepted] = useState({
