@@ -143,6 +143,62 @@ export function InvoiceManagement() {
     });
   };
 
+  // Get detailed breakdown for a specific date and job
+  const getDayBreakdown = (job: Job, date: string) => {
+    const jobTimeEntries = timeEntrySummaries.filter(
+      (entry) => entry.jobNumber === job.jobNumber && entry.date === date,
+    );
+    const jobRentalEntries = rentalSummaries.filter(
+      (entry) => entry.jobNumber === job.jobNumber && entry.date === date,
+    );
+
+    // Group time entries by employee title
+    const timeEntriesByTitle = jobTimeEntries.reduce(
+      (acc, entry) => {
+        const title = entry.employeeTitle;
+        if (!acc[title]) {
+          acc[title] = [];
+        }
+        acc[title].push(entry);
+        return acc;
+      },
+      {} as Record<string, typeof jobTimeEntries>,
+    );
+
+    // Group rental entries by category
+    const rentalsByCategory = jobRentalEntries.reduce(
+      (acc, entry) => {
+        const category = entry.category;
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(entry);
+        return acc;
+      },
+      {} as Record<string, typeof jobRentalEntries>,
+    );
+
+    return {
+      timeEntriesByTitle,
+      rentalsByCategory,
+      totalTimeEntries: jobTimeEntries.length,
+      totalRentalEntries: jobRentalEntries.length,
+      totalHours: jobTimeEntries.reduce((sum, entry) => sum + entry.hours, 0),
+      totalLaborCost: jobTimeEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      ),
+      totalRentalCost: jobRentalEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      ),
+      totalLoaCount: jobTimeEntries.reduce(
+        (sum, entry) => sum + (entry.loaCount || 0),
+        0,
+      ),
+    };
+  };
+
   // Calculate invoice statistics for each job
   const jobStats = useMemo(() => {
     return jobs
