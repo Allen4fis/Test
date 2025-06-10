@@ -161,7 +161,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                     });
                   }
                 }}
-                className="bg-[#FF00FF] hover:bg-[#E600E6] text-white font-bold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-[#FF00FF] hover:border-[#E600E6] animate-pulse"
+                className="bg-[#FF00FF] hover:bg-[#E600E6] text-white font-bold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-[#FF00FF] hover:border-[#E600E6]"
                 size="lg"
               >
                 <Save className="h-5 w-5 mr-2 drop-shadow-sm" />
