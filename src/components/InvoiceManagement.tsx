@@ -234,6 +234,13 @@ export function InvoiceManagement() {
         const invoicedCost = jobDates
           .filter((d) => d.isInvoiced)
           .reduce((sum, d) => sum + d.totalCost, 0);
+        const totalBillable = jobDates.reduce(
+          (sum, d) => sum + d.totalBillable,
+          0,
+        );
+        const invoicedBillable = jobDates
+          .filter((d) => d.isInvoiced)
+          .reduce((sum, d) => sum + d.totalBillable, 0);
 
         return {
           job,
@@ -249,6 +256,9 @@ export function InvoiceManagement() {
           totalCost,
           invoicedCost,
           uninvoicedCost: totalCost - invoicedCost,
+          totalBillable,
+          invoicedBillable,
+          uninvoicedBillable: totalBillable - invoicedBillable,
           invoicePercentage:
             totalDates > 0 ? (invoicedDates / totalDates) * 100 : 0,
         };
