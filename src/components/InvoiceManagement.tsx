@@ -1055,13 +1055,56 @@ export function InvoiceManagement() {
                                             )}
                                           </TableCell>
                                           <TableCell className="text-green-600">
-                                            ${entry.billableWage.toFixed(2)}
+                                            <div className="text-sm">
+                                              <div className="font-medium">
+                                                ${entry.billableWage.toFixed(2)}
+                                              </div>
+                                              <div className="text-xs text-gray-500">
+                                                Billable/hr
+                                              </div>
+                                            </div>
                                           </TableCell>
                                           <TableCell className="text-red-600">
-                                            ${entry.costWage.toFixed(2)}
+                                            <div className="text-sm">
+                                              <div className="font-medium">
+                                                ${entry.costWage.toFixed(2)}
+                                              </div>
+                                              <div className="text-xs text-gray-500">
+                                                Cost/hr
+                                              </div>
+                                            </div>
                                           </TableCell>
-                                          <TableCell className="font-bold">
-                                            ${entry.totalCost.toFixed(2)}
+                                          <TableCell>
+                                            <div className="text-sm">
+                                              <div className="font-bold">
+                                                ${entry.totalCost.toFixed(2)}
+                                              </div>
+                                              <div
+                                                className={`text-xs ${(() => {
+                                                  const profitMargin =
+                                                    entry.billableWage > 0
+                                                      ? ((entry.billableWage -
+                                                          entry.costWage) /
+                                                          entry.billableWage) *
+                                                        100
+                                                      : 0;
+                                                  return profitMargin >= 0
+                                                    ? "text-blue-600"
+                                                    : "text-red-600";
+                                                })()}`}
+                                              >
+                                                {(() => {
+                                                  const profitMargin =
+                                                    entry.billableWage > 0
+                                                      ? ((entry.billableWage -
+                                                          entry.costWage) /
+                                                          entry.billableWage) *
+                                                        100
+                                                      : 0;
+                                                  return `${profitMargin.toFixed(1)}% margin`;
+                                                })()}
+                                              </div>
+                                            </div>
                                           </TableCell>
                                         </TableRow>
                                       ))}
