@@ -495,11 +495,26 @@ export function InvoiceManagement() {
                                 </TableHeader>
                                 <TableBody>
                                   {getJobDates(stat.job).map((dateInfo) => (
-                                    <TableRow key={dateInfo.date}>
-                                      <TableCell className="font-medium">
-                                        {parseLocalDate(
+                                    <TableRow
+                                      key={dateInfo.date}
+                                      className="cursor-pointer hover:bg-blue-50 transition-colors"
+                                      onClick={() => {
+                                        setSelectedDateForBreakdown(
                                           dateInfo.date,
-                                        ).toLocaleDateString()}
+                                        );
+                                        setSelectedJobForBreakdown(stat.job);
+                                        setIsBreakdownDialogOpen(true);
+                                      }}
+                                    >
+                                      <TableCell className="font-medium text-blue-600 hover:text-blue-800">
+                                        <div className="flex items-center gap-2">
+                                          <span>
+                                            {parseLocalDate(
+                                              dateInfo.date,
+                                            ).toLocaleDateString()}
+                                          </span>
+                                          <Eye className="h-4 w-4 opacity-50" />
+                                        </div>
                                       </TableCell>
                                       <TableCell>
                                         {dateInfo.totalHours.toFixed(2)}
