@@ -213,7 +213,7 @@ export function DeleteConfirmationDialog({
           <DialogTitle className="flex items-center gap-2">
             <AlertCircle className="h-6 w-6 text-red-500" />
             {confirmStep === 0 &&
-              `⚠️ CRITICAL WARNING: Delete ${item.type === "rental-item" ? "Rental Item" : item.type === "rental-entry" ? "Rental Entry" : item.type.charAt(0).toUpperCase() + item.type.slice(1)}`}
+              `⚠️ CRITICAL WARNING: ${item.type === "import" ? "Import Backup" : `Delete ${item.type === "rental-item" ? "Rental Item" : item.type === "rental-entry" ? "Rental Entry" : item.type.charAt(0).toUpperCase() + item.type.slice(1)}`}`}
             {confirmStep === 1 && "🚨 SECOND WARNING: Permanent Data Loss"}
             {confirmStep === 2 &&
               "🔥 FINAL WARNING: Confirm Destructive Action"}
