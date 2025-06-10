@@ -93,6 +93,7 @@ export function BackupManagement() {
     hourTypes,
     provinces,
     restoreFromBackup,
+    getAutosaveInfo,
   } = timeTracking;
 
   const [isCreatingBackup, setIsCreatingBackup] = useState(false);
