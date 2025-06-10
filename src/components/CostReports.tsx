@@ -215,7 +215,7 @@ export function CostReports() {
                         LOA Count
                       </TableHead>
                       <TableHead>Revenue</TableHead>
-                      <TableHead>Cost</TableHead>
+                      <TableHead>Revenue</TableHead>
                       <TableHead>Profit</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
