@@ -927,7 +927,9 @@ export function SummaryReports() {
                   </TableHeader>
                   <TableBody>
                     {employeeSummariesWithHourTypes.map((employee, index) => (
-                      <TableRow key={employee.employeeName}>
+                      <TableRow
+                        key={`${employee.employeeName}|${employee.employeeTitle}`}
+                      >
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
                             <span
