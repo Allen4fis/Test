@@ -33,6 +33,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
     jobs,
     timeEntries,
     rentalItems,
+    manualSave,
   } = timeTracking;
 
   const navigationItems = [
