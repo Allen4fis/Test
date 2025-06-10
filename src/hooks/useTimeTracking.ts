@@ -94,6 +94,21 @@ export function useTimeTracking() {
   const lastSaveRef = useRef<string>("");
   const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // State hooks must come after refs but before any conditional logic
+  const [selectedView, setSelectedView] = useState<
+    | "dashboard"
+    | "timeEntry"
+    | "viewer"
+    | "employees"
+    | "jobs"
+    | "reports"
+    | "costs"
+    | "invoices"
+    | "rentals"
+    | "export"
+    | "backup"
+  >("dashboard");
+
   // Ensure backward compatibility and data migrations
   const appData = useMemo(() => {
     const migratedData = { ...rawAppData };
