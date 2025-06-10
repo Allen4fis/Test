@@ -642,10 +642,10 @@ export function CostReports() {
                                     ${summary.totalCost.toFixed(2)}
                                   </div>
                                   <div className="text-xs text-gray-500">
-                                    {totalRentalCost > 0
+                                    {totalRentalRevenue > 0
                                       ? (
                                           (summary.totalCost /
-                                            totalRentalCost) *
+                                            totalRentalRevenue) *
                                           100
                                         ).toFixed(1)
                                       : "0.0"}
