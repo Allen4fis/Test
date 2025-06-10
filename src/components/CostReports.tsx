@@ -591,7 +591,7 @@ export function CostReports() {
                                         ${rental.rateUsed.toFixed(2)}/
                                         {rental.billingUnit}
                                       </TableCell>
-                                      <TableCell className="font-medium text-orange-600">
+                                      <TableCell className="font-medium text-green-600">
                                         ${rental.totalCost.toFixed(2)}
                                       </TableCell>
                                     </TableRow>
