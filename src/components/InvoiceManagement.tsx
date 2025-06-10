@@ -75,12 +75,17 @@ export function InvoiceManagement() {
     removeInvoicedDates,
   } = useTimeTracking();
 
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dateRange, setDateRange] = useState({
     startDate: "",
     endDate: "",
   });
+  const [selectedDateForBreakdown, setSelectedDateForBreakdown] = useState<
+    string | null
+  >(null);
+  const [selectedJobForBreakdown, setSelectedJobForBreakdown] =
+    useState<Job | null>(null);
+  const [isBreakdownDialogOpen, setIsBreakdownDialogOpen] = useState(false);
 
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
