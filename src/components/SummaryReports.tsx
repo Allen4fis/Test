@@ -1188,7 +1188,7 @@ export function SummaryReports() {
                 Rental Summary
               </CardTitle>
               <CardDescription>
-                Equipment and rental costs for the selected period
+                Equipment and rental revenue for the selected period
                 {!includeInvoiced && " (excluding invoiced entries)"}
               </CardDescription>
             </CardHeader>
