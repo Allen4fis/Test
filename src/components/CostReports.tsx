@@ -541,7 +541,7 @@ export function CostReports() {
                           {} as Record<string, any>,
                         ),
                       )
-                        .sort(([, a], [, b]) => b.totalCost - a.totalCost)
+                        .sort(([, a], [, b]) => b.totalRevenue - a.totalRevenue)
                         .map(([key, summary]) => (
                           <Card key={key}>
                             <CardHeader>
