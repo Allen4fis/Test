@@ -509,7 +509,7 @@ export function CostReports() {
             <CardContent>
               {rentalSummaries.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No rental data available. Add rental entries to see costs.
+                  No rental data available. Add rental entries to see revenue.
                 </div>
               ) : (
                 <Tabs defaultValue="jobs" className="space-y-4">
