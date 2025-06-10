@@ -48,19 +48,19 @@ const getDefaultAppData = (): AppData => ({
     {
       id: "6",
       name: "NS Regular Time",
-      description: "Nova Scotia regular hours (base pay + $3)",
+      description: "Nightshift regular hours (base pay + $3)",
       multiplier: 1.0,
     },
     {
       id: "7",
       name: "NS Overtime",
-      description: "Nova Scotia overtime (base pay + $3) x1.5",
+      description: "Nightshift overtime (base pay + $3) x1.5",
       multiplier: 1.5,
     },
     {
       id: "8",
       name: "NS Double Time",
-      description: "Nova Scotia double time (base pay + $3) x2",
+      description: "Nightshift double time (base pay + $3) x2",
       multiplier: 2.0,
     },
   ],
