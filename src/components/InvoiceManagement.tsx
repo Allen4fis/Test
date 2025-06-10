@@ -62,8 +62,11 @@ interface JobDateInfo {
   totalHours: number;
   totalLoaCount: number;
   laborCost: number;
+  laborBillable: number;
   rentalCost: number;
+  loaCost: number;
   totalCost: number;
+  totalBillable: number;
 }
 
 export function InvoiceManagement() {
