@@ -1127,15 +1127,107 @@ export function InvoiceManagement() {
                                             0,
                                           )}
                                         </TableCell>
-                                        <TableCell colSpan={2}></TableCell>
+                                        <TableCell className="text-green-600">
+                                          <div className="text-sm">
+                                            <div className="font-medium">
+                                              $
+                                              {entries
+                                                .reduce(
+                                                  (sum, e) =>
+                                                    sum + e.totalBillableAmount,
+                                                  0,
+                                                )
+                                                .toFixed(2)}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                              Total Billable
+                                            </div>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="text-red-600">
+                                          <div className="text-sm">
+                                            <div className="font-medium">
+                                              $
+                                              {entries
+                                                .reduce(
+                                                  (sum, e) => sum + e.totalCost,
+                                                  0,
+                                                )
+                                                .toFixed(2)}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                              Total Cost
+                                            </div>
+                                          </div>
+                                        </TableCell>
                                         <TableCell>
-                                          $
-                                          {entries
-                                            .reduce(
-                                              (sum, e) => sum + e.totalCost,
-                                              0,
-                                            )
-                                            .toFixed(2)}
+                                          <div className="text-sm">
+                                            <div className="font-bold">
+                                              $
+                                              {(
+                                                entries.reduce(
+                                                  (sum, e) =>
+                                                    sum + e.totalBillableAmount,
+                                                  0,
+                                                ) -
+                                                entries.reduce(
+                                                  (sum, e) => sum + e.totalCost,
+                                                  0,
+                                                )
+                                              ).toFixed(2)}
+                                            </div>
+                                            <div
+                                              className={`text-xs ${(() => {
+                                                const totalBillable =
+                                                  entries.reduce(
+                                                    (sum, e) =>
+                                                      sum +
+                                                      e.totalBillableAmount,
+                                                    0,
+                                                  );
+                                                const totalCost =
+                                                  entries.reduce(
+                                                    (sum, e) =>
+                                                      sum + e.totalCost,
+                                                    0,
+                                                  );
+                                                const profitMargin =
+                                                  totalBillable > 0
+                                                    ? ((totalBillable -
+                                                        totalCost) /
+                                                        totalBillable) *
+                                                      100
+                                                    : 0;
+                                                return profitMargin >= 0
+                                                  ? "text-blue-600"
+                                                  : "text-red-600";
+                                              })()}`}
+                                            >
+                                              {(() => {
+                                                const totalBillable =
+                                                  entries.reduce(
+                                                    (sum, e) =>
+                                                      sum +
+                                                      e.totalBillableAmount,
+                                                    0,
+                                                  );
+                                                const totalCost =
+                                                  entries.reduce(
+                                                    (sum, e) =>
+                                                      sum + e.totalCost,
+                                                    0,
+                                                  );
+                                                const profitMargin =
+                                                  totalBillable > 0
+                                                    ? ((totalBillable -
+                                                        totalCost) /
+                                                        totalBillable) *
+                                                      100
+                                                    : 0;
+                                                return `${profitMargin.toFixed(1)}% margin`;
+                                              })()}
+                                            </div>
+                                          </div>
                                         </TableCell>
                                       </TableRow>
                                     </TableBody>
