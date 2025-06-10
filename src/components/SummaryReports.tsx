@@ -549,28 +549,52 @@ export function SummaryReports() {
   }: {
     breakdown: HourTypeBreakdown;
   }) => (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {Object.entries(breakdown).map(([hourType, data]) => (
-        <div key={hourType} className="border-l-2 border-gray-200 pl-2">
-          <div className="flex justify-between text-xs font-medium mb-1">
-            <span className="text-gray-700">{hourType}:</span>
-            <span className="font-semibold">{data.hours.toFixed(1)}h</span>
-          </div>
-          <div className="space-y-1 ml-2">
-            {Object.entries(data.provinces).map(
-              ([provinceName, provinceData]) => (
-                <div
-                  key={provinceName}
-                  className="flex justify-between text-xs"
-                >
-                  <span className="text-gray-500">{provinceName}:</span>
-                  <span className="text-gray-600">
-                    {provinceData.hours.toFixed(1)}h
-                  </span>
+        <div
+          key={hourType}
+          className="bg-gray-50 rounded-md p-2 border-l-4 border-blue-300"
+        >
+          <div className="flex justify-between items-center text-sm font-semibold mb-2">
+            <span className="text-blue-800">{hourType}</span>
+            <div className="text-right">
+              <div className="text-blue-600">{data.hours.toFixed(1)}h</div>
+              {data.effectiveHours !== data.hours && (
+                <div className="text-xs text-gray-500">
+                  ({data.effectiveHours.toFixed(1)}h effective)
                 </div>
-              ),
-            )}
+              )}
+            </div>
           </div>
+          {Object.keys(data.provinces).length > 1 && (
+            <div className="space-y-1 ml-3 border-l-2 border-gray-300 pl-3">
+              {Object.entries(data.provinces).map(
+                ([provinceName, provinceData]) => (
+                  <div
+                    key={provinceName}
+                    className="flex justify-between text-xs"
+                  >
+                    <span className="text-gray-600">📍 {provinceName}:</span>
+                    <div className="text-right">
+                      <span className="text-gray-700 font-medium">
+                        {provinceData.hours.toFixed(1)}h
+                      </span>
+                      {provinceData.effectiveHours !== provinceData.hours && (
+                        <div className="text-xs text-gray-500">
+                          ({provinceData.effectiveHours.toFixed(1)}h eff.)
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ),
+              )}
+            </div>
+          )}
+          {Object.keys(data.provinces).length === 1 && (
+            <div className="text-xs text-gray-600 ml-3">
+              📍 {Object.keys(data.provinces)[0]}
+            </div>
+          )}
         </div>
       ))}
     </div>
