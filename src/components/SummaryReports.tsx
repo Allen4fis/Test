@@ -1245,9 +1245,9 @@ export function SummaryReports() {
                       </TableRow>
                     ))}
                     <TableRow className="bg-gray-50 font-bold">
-                      <TableCell colSpan={6}>Total Rental Cost</TableCell>
-                      <TableCell className="text-orange-600">
-                        ${totalRentalCost.toFixed(2)}
+                      <TableCell colSpan={6}>Total Rental Revenue</TableCell>
+                      <TableCell className="text-green-600">
+                        ${totalRentalRevenue.toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
