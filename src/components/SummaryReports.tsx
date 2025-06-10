@@ -877,7 +877,7 @@ export function SummaryReports() {
       {/* Reports Tabs */}
       <Tabs defaultValue="employee" className="space-y-4">
         <TabsList className="print-hidden">
-          <TabsTrigger value="employee">By Employee</TabsTrigger>
+          <TabsTrigger value="employee">By Employee & Title</TabsTrigger>
           <TabsTrigger value="titleJob">By Title & Job</TabsTrigger>
           <TabsTrigger value="dateName">By Date & Name</TabsTrigger>
           <TabsTrigger value="rentals">Rentals</TabsTrigger>
