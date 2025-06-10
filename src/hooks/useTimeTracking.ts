@@ -90,6 +90,10 @@ export function useTimeTracking() {
     getDefaultAppData(),
   );
 
+  // Autosave hooks - must be at the top to follow Rules of Hooks
+  const lastSaveRef = useRef<string>("");
+  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Ensure backward compatibility and data migrations
   const appData = useMemo(() => {
     const migratedData = { ...rawAppData };
