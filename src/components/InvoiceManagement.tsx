@@ -826,7 +826,7 @@ export function InvoiceManagement() {
                   Profit Margin
                 </p>
                 <p
-                  className={`text-xl font-bold truncate ${(() => {
+                  className={`text-lg font-bold break-words ${(() => {
                     const totalBillable = jobStats.reduce(
                       (sum, stat) => sum + (stat.totalBillable || 0),
                       0,
