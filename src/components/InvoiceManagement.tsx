@@ -455,6 +455,92 @@ export function InvoiceManagement() {
                           </DialogHeader>
 
                           <div className="space-y-4">
+                            {/* Financial Summary Cards */}
+                            {(() => {
+                              const jobDates = getJobDates(stat.job);
+                              const totalBillable = jobDates.reduce(
+                                (sum, d) => sum + d.totalBillable,
+                                0,
+                              );
+                              const totalCost = jobDates.reduce(
+                                (sum, d) => sum + d.totalCost,
+                                0,
+                              );
+                              const profitAmount = totalBillable - totalCost;
+                              const profitMargin =
+                                totalBillable > 0
+                                  ? (profitAmount / totalBillable) * 100
+                                  : 0;
+
+                              return (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                  <Card className="modern-card">
+                                    <CardContent className="p-4">
+                                      <div className="flex items-center gap-2">
+                                        <DollarSign className="h-5 w-5 text-green-500" />
+                                        <div>
+                                          <p className="text-sm font-medium text-muted-foreground">
+                                            Total Billable
+                                          </p>
+                                          <p className="text-xl font-bold text-green-600">
+                                            ${totalBillable.toFixed(2)}
+                                          </p>
+                                          <p className="text-xs text-muted-foreground">
+                                            Labor + Rentals + LOA
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  <Card className="modern-card">
+                                    <CardContent className="p-4">
+                                      <div className="flex items-center gap-2">
+                                        <DollarSign className="h-5 w-5 text-red-500" />
+                                        <div>
+                                          <p className="text-sm font-medium text-muted-foreground">
+                                            Total Cost
+                                          </p>
+                                          <p className="text-xl font-bold text-red-600">
+                                            ${totalCost.toFixed(2)}
+                                          </p>
+                                          <p className="text-xs text-muted-foreground">
+                                            Labor + Equipment
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  <Card className="modern-card">
+                                    <CardContent className="p-4">
+                                      <div className="flex items-center gap-2">
+                                        <DollarSign
+                                          className={`h-5 w-5 ${profitMargin >= 0 ? "text-blue-500" : "text-red-500"}`}
+                                        />
+                                        <div>
+                                          <p className="text-sm font-medium text-muted-foreground">
+                                            Profit Margin
+                                          </p>
+                                          <p
+                                            className={`text-xl font-bold ${profitMargin >= 0 ? "text-blue-600" : "text-red-600"}`}
+                                          >
+                                            {profitMargin.toFixed(1)}%
+                                          </p>
+                                          <p
+                                            className={`text-xs ${profitAmount >= 0 ? "text-blue-600" : "text-red-600"}`}
+                                          >
+                                            ${profitAmount >= 0 ? "+" : ""}$
+                                            {profitAmount.toFixed(2)}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                </div>
+                              );
+                            })()}
+
                             {/* Bulk Actions */}
                             <Card className="p-4">
                               <div className="flex items-center gap-4">
