@@ -1303,7 +1303,7 @@ export function SummaryReports() {
                       .map((summary, index) => (
                         <TableRow key={index}>
                           <TableCell>
-                            {new Date(summary.date).toLocaleDateString()}
+                            {parseLocalDate(summary.date).toLocaleDateString()}
                           </TableCell>
                           <TableCell className="font-medium">
                             {summary.employeeName}
