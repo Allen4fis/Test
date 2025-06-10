@@ -334,6 +334,61 @@ export function TimeEntryViewer() {
     }
   };
 
+  const handleEdit = (entry: TimeEntry) => {
+    setEditingEntry(entry);
+    setEditForm({
+      employeeId: entry.employeeId,
+      jobId: entry.jobId,
+      hourTypeId: entry.hourTypeId,
+      provinceId: entry.provinceId,
+      date: entry.date,
+      hours: entry.hours.toString(),
+      loaCount: (entry.loaCount || 0).toString(),
+      description: entry.description || "",
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditSubmit = () => {
+    if (!editingEntry) return;
+
+    const employee = employees.find((emp) => emp.id === editForm.employeeId);
+    if (!employee) return;
+
+    const updatedEntry: Partial<TimeEntry> = {
+      employeeId: editForm.employeeId,
+      jobId: editForm.jobId,
+      hourTypeId: editForm.hourTypeId,
+      provinceId: editForm.provinceId,
+      date: editForm.date,
+      hours: parseFloat(editForm.hours) || 0,
+      loaCount: parseInt(editForm.loaCount) || 0,
+      title: employee.title,
+      billableWageUsed: employee.billableWage,
+      costWageUsed: employee.costWage,
+      description: editForm.description,
+    };
+
+    updateTimeEntry(editingEntry.id, updatedEntry);
+    setIsEditDialogOpen(false);
+    setEditingEntry(null);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditDialogOpen(false);
+    setEditingEntry(null);
+    setEditForm({
+      employeeId: "",
+      jobId: "",
+      hourTypeId: "",
+      provinceId: "",
+      date: "",
+      hours: "",
+      loaCount: "",
+      description: "",
+    });
+  };
+
   const handleDateRangeChange = (range: string) => {
     setDateRange(range);
     if (range !== "custom") {
