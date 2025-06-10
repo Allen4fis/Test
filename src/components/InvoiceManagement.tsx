@@ -538,7 +538,7 @@ export function InvoiceManagement() {
                                           </div>
                                         ) : (
                                           <span className="text-gray-400 text-sm">
-                                            —
+                                            ���
                                           </span>
                                         )}
                                       </TableCell>
@@ -681,6 +681,300 @@ export function InvoiceManagement() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Day Breakdown Dialog */}
+      <Dialog
+        open={isBreakdownDialogOpen}
+        onOpenChange={setIsBreakdownDialogOpen}
+      >
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-blue-600" />
+              Day Breakdown -{" "}
+              {selectedDateForBreakdown &&
+                parseLocalDate(selectedDateForBreakdown).toLocaleDateString()}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedJobForBreakdown &&
+                `Detailed breakdown for ${selectedJobForBreakdown.jobNumber} - ${selectedJobForBreakdown.name}`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedDateForBreakdown && selectedJobForBreakdown && (
+            <div className="space-y-6">
+              {(() => {
+                const breakdown = getDayBreakdown(
+                  selectedJobForBreakdown,
+                  selectedDateForBreakdown,
+                );
+
+                return (
+                  <>
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <Card>
+                        <CardContent className="p-4">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-600">Total Hours</p>
+                            <p className="text-2xl font-bold text-blue-600">
+                              {breakdown.totalHours.toFixed(2)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="p-4">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-600">Labor Cost</p>
+                            <p className="text-2xl font-bold text-green-600">
+                              ${breakdown.totalLaborCost.toFixed(2)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="p-4">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-600">Rental Cost</p>
+                            <p className="text-2xl font-bold text-orange-600">
+                              ${breakdown.totalRentalCost.toFixed(2)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="p-4">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-600">LOA Count</p>
+                            <p className="text-2xl font-bold text-purple-600">
+                              {breakdown.totalLoaCount}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Time Entries by Title */}
+                    {Object.keys(breakdown.timeEntriesByTitle).length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-lg">
+                            Time Entries by Employee Title
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            {Object.entries(breakdown.timeEntriesByTitle).map(
+                              ([title, entries]) => (
+                                <div
+                                  key={title}
+                                  className="border rounded-lg p-4"
+                                >
+                                  <h4 className="font-semibold text-blue-700 mb-3">
+                                    {title}
+                                  </h4>
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead>Employee</TableHead>
+                                        <TableHead>Hour Type</TableHead>
+                                        <TableHead>Hours</TableHead>
+                                        <TableHead className="text-purple-600">
+                                          LOA
+                                        </TableHead>
+                                        <TableHead>Billable Rate</TableHead>
+                                        <TableHead>Cost Rate</TableHead>
+                                        <TableHead>Total Cost</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {entries.map((entry, index) => (
+                                        <TableRow key={index}>
+                                          <TableCell className="font-medium">
+                                            {entry.employeeName}
+                                          </TableCell>
+                                          <TableCell>
+                                            <Badge variant="secondary">
+                                              {entry.hourTypeName}
+                                            </Badge>
+                                          </TableCell>
+                                          <TableCell>
+                                            {entry.hours.toFixed(2)}h
+                                          </TableCell>
+                                          <TableCell>
+                                            {entry.loaCount &&
+                                            entry.loaCount > 0 ? (
+                                              <Badge
+                                                variant="secondary"
+                                                className="bg-purple-100 text-purple-800"
+                                              >
+                                                {entry.loaCount}
+                                              </Badge>
+                                            ) : (
+                                              <span className="text-gray-400">
+                                                —
+                                              </span>
+                                            )}
+                                          </TableCell>
+                                          <TableCell className="text-green-600">
+                                            ${entry.billableWage.toFixed(2)}
+                                          </TableCell>
+                                          <TableCell className="text-red-600">
+                                            ${entry.costWage.toFixed(2)}
+                                          </TableCell>
+                                          <TableCell className="font-bold">
+                                            ${entry.totalCost.toFixed(2)}
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                      <TableRow className="bg-gray-50 font-bold">
+                                        <TableCell colSpan={2}>
+                                          Subtotal for {title}
+                                        </TableCell>
+                                        <TableCell>
+                                          {entries
+                                            .reduce(
+                                              (sum, e) => sum + e.hours,
+                                              0,
+                                            )
+                                            .toFixed(2)}
+                                          h
+                                        </TableCell>
+                                        <TableCell className="text-purple-600">
+                                          {entries.reduce(
+                                            (sum, e) => sum + (e.loaCount || 0),
+                                            0,
+                                          )}
+                                        </TableCell>
+                                        <TableCell colSpan={2}></TableCell>
+                                        <TableCell>
+                                          $
+                                          {entries
+                                            .reduce(
+                                              (sum, e) => sum + e.totalCost,
+                                              0,
+                                            )
+                                            .toFixed(2)}
+                                        </TableCell>
+                                      </TableRow>
+                                    </TableBody>
+                                  </Table>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Rental Entries by Category */}
+                    {Object.keys(breakdown.rentalsByCategory).length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-lg">
+                            Rental Entries by Category
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            {Object.entries(breakdown.rentalsByCategory).map(
+                              ([category, rentals]) => (
+                                <div
+                                  key={category}
+                                  className="border rounded-lg p-4"
+                                >
+                                  <h4 className="font-semibold text-orange-700 mb-3">
+                                    {category}
+                                  </h4>
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead>Item</TableHead>
+                                        <TableHead>Employee</TableHead>
+                                        <TableHead>Duration</TableHead>
+                                        <TableHead>Rate</TableHead>
+                                        <TableHead>Quantity</TableHead>
+                                        <TableHead>Total Cost</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {rentals.map((rental, index) => (
+                                        <TableRow key={index}>
+                                          <TableCell className="font-medium">
+                                            {rental.rentalItemName}
+                                          </TableCell>
+                                          <TableCell>
+                                            {rental.employeeName}
+                                          </TableCell>
+                                          <TableCell>
+                                            {rental.duration}{" "}
+                                            {rental.billingUnit}
+                                            {rental.duration !== 1 ? "s" : ""}
+                                          </TableCell>
+                                          <TableCell>
+                                            ${rental.rateUsed.toFixed(2)}/
+                                            {rental.billingUnit}
+                                          </TableCell>
+                                          <TableCell>
+                                            {rental.quantity}
+                                          </TableCell>
+                                          <TableCell className="font-bold text-orange-600">
+                                            ${rental.totalCost.toFixed(2)}
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                      <TableRow className="bg-gray-50 font-bold">
+                                        <TableCell colSpan={5}>
+                                          Subtotal for {category}
+                                        </TableCell>
+                                        <TableCell>
+                                          $
+                                          {rentals
+                                            .reduce(
+                                              (sum, r) => sum + r.totalCost,
+                                              0,
+                                            )
+                                            .toFixed(2)}
+                                        </TableCell>
+                                      </TableRow>
+                                    </TableBody>
+                                  </Table>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* No Data Message */}
+                    {Object.keys(breakdown.timeEntriesByTitle).length === 0 &&
+                      Object.keys(breakdown.rentalsByCategory).length === 0 && (
+                        <Card>
+                          <CardContent className="p-8 text-center">
+                            <p className="text-gray-500">
+                              No time entries or rentals found for this date.
+                            </p>
+                          </CardContent>
+                        </Card>
+                      )}
+                  </>
+                );
+              })()}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsBreakdownDialogOpen(false)}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
