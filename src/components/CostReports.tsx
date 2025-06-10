@@ -43,12 +43,12 @@ export function CostReports() {
     (sum, summary) => sum + summary.totalBillableAmount,
     0,
   );
-  const totalRentalCost = rentalSummaries.reduce(
+  const totalRentalRevenue = rentalSummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
   );
-  const totalCost = totalLaborCost + totalRentalCost;
-  const totalRevenue = totalBillableAmount + totalRentalCost; // Rentals are typically billable at cost
+  const totalCost = totalLaborCost; // Only labor costs, rentals are revenue
+  const totalRevenue = totalBillableAmount + totalRentalRevenue; // Labor billable + rental revenue
   const profit = totalRevenue - totalCost;
   const totalEffectiveHours = timeEntrySummaries.reduce(
     (sum, summary) => sum + summary.effectiveHours,
