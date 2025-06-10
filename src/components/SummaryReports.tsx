@@ -1100,7 +1100,7 @@ export function SummaryReports() {
                     {filteredDateNameSummaries.map((summary) => (
                       <TableRow key={`${summary.date}-${summary.employeeName}`}>
                         <TableCell className="font-medium">
-                          {new Date(summary.date).toLocaleDateString()}
+                          {parseLocalDate(summary.date).toLocaleDateString()}
                         </TableCell>
                         <TableCell>{summary.employeeName}</TableCell>
                         <TableCell>
