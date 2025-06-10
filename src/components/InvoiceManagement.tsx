@@ -908,7 +908,7 @@ export function InvoiceManagement() {
                 <p className="text-sm font-medium text-muted-foreground truncate">
                   Pending Days
                 </p>
-                <p className="text-xl font-bold text-foreground truncate">
+                <p className="text-lg font-bold text-foreground break-words">
                   {jobStats.reduce(
                     (sum, stat) => sum + stat.uninvoicedDates,
                     0,
