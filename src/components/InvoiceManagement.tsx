@@ -804,10 +804,10 @@ export function InvoiceManagement() {
         </Card>
 
         <Card className="modern-card">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
               <DollarSign
-                className={`h-5 w-5 ${(() => {
+                className={`h-5 w-5 mt-1 flex-shrink-0 ${(() => {
                   const totalBillable = jobStats.reduce(
                     (sum, stat) => sum + (stat.totalBillable || 0),
                     0,
@@ -821,12 +821,12 @@ export function InvoiceManagement() {
                     : "text-red-500";
                 })()} `}
               />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-muted-foreground truncate">
                   Profit Margin
                 </p>
                 <p
-                  className={`text-2xl font-bold ${(() => {
+                  className={`text-xl font-bold truncate ${(() => {
                     const totalBillable = jobStats.reduce(
                       (sum, stat) => sum + (stat.totalBillable || 0),
                       0,
