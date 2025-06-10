@@ -301,6 +301,18 @@ export function InvoiceManagement() {
 
     if (datesToInvoice.length > 0) {
       addInvoicedDates(selectedJob.id, datesToInvoice);
+
+      toast({
+        title: "✅ Dates Marked as Invoiced",
+        description: `Successfully marked ${datesToInvoice.length} date${datesToInvoice.length !== 1 ? "s" : ""} as invoiced for ${selectedJob.jobNumber} - ${selectedJob.name}`,
+      });
+    } else {
+      toast({
+        title: "ℹ️ No Dates to Invoice",
+        description:
+          "All dates in the selected range are already marked as invoiced.",
+        variant: "default",
+      });
     }
 
     // Clear the date range inputs after invoicing
