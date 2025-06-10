@@ -217,6 +217,16 @@ export function Dashboard() {
         <p className="text-muted-foreground">
           Monitor your team's productivity and project performance
         </p>
+        {/* Autosave Status Indicator */}
+        {autosaveInfo.length > 0 && (
+          <div className="flex items-center justify-center gap-2 text-xs text-green-600">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span>
+              Autosave active • Last:{" "}
+              {new Date(autosaveInfo[0]?.timestamp).toLocaleTimeString()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Overview Stats */}
