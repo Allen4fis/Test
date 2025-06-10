@@ -576,44 +576,57 @@ export function BackupManagement() {
                 )}
               </Button>
               {importConfirmationData ? (
-                <DeleteConfirmationDialog
-                  item={{
-                    id: importConfirmationData.id,
-                    name: importConfirmationData.name,
-                    type: "import",
-                    associatedData: {
-                      backupSize: `${((selectedFile?.size || 0) / 1024).toFixed(2)} KB`,
-                      recordCounts: [
-                        `${importConfirmationData.recordCounts?.employees || 0} employees`,
-                        `${importConfirmationData.recordCounts?.jobs || 0} jobs`,
-                        `${importConfirmationData.recordCounts?.timeEntries || 0} time entries`,
-                        `${importConfirmationData.recordCounts?.rentalItems || 0} rental items`,
-                        `${importConfirmationData.recordCounts?.rentalEntries || 0} rental entries`,
-                      ],
-                    },
-                  }}
-                  trigger={
-                    <Button
-                      disabled={isImporting}
-                      variant="outline"
-                      className="border-2 border-yellow-500 text-yellow-700 hover:bg-yellow-50"
-                    >
-                      {isImporting ? (
-                        <>
-                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Importing...
-                        </>
-                      ) : (
-                        <>
-                          <AlertCircle className="h-4 w-4 mr-2" />
-                          Confirm Import: "{importConfirmationData.name}"
-                        </>
-                      )}
-                    </Button>
-                  }
-                  onConfirm={performImport}
-                  isDeleting={isImporting}
-                />
+                <div className="flex gap-2">
+                  <DeleteConfirmationDialog
+                    item={{
+                      id: importConfirmationData.id,
+                      name: importConfirmationData.name,
+                      type: "import",
+                      associatedData: {
+                        backupSize: `${((selectedFile?.size || 0) / 1024).toFixed(2)} KB`,
+                        recordCounts: [
+                          `${importConfirmationData.recordCounts?.employees || 0} employees`,
+                          `${importConfirmationData.recordCounts?.jobs || 0} jobs`,
+                          `${importConfirmationData.recordCounts?.timeEntries || 0} time entries`,
+                          `${importConfirmationData.recordCounts?.rentalItems || 0} rental items`,
+                          `${importConfirmationData.recordCounts?.rentalEntries || 0} rental entries`,
+                        ],
+                      },
+                    }}
+                    trigger={
+                      <Button
+                        disabled={isImporting}
+                        variant="outline"
+                        className="border-2 border-yellow-500 text-yellow-700 hover:bg-yellow-50"
+                      >
+                        {isImporting ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                            Importing...
+                          </>
+                        ) : (
+                          <>
+                            <AlertCircle className="h-4 w-4 mr-2" />
+                            Confirm Import: "{importConfirmationData.name}"
+                          </>
+                        )}
+                      </Button>
+                    }
+                    onConfirm={performImport}
+                    isDeleting={isImporting}
+                  />
+                  <Button
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setImportConfirmationData(null);
+                    }}
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-500"
+                  >
+                    Cancel
+                  </Button>
+                </div>
               ) : (
                 <Button
                   onClick={selectImportFile}
@@ -965,7 +978,7 @@ export function BackupManagement() {
                                           </p>
                                           <div className="mt-3 p-4 bg-yellow-100 border-2 border-yellow-400 rounded">
                                             <p className="text-yellow-900 font-bold text-center">
-                                              ��� CLICKING NEXT WILL IMMEDIATELY
+                                              ⚡ CLICKING NEXT WILL IMMEDIATELY
                                               START THE DESTRUCTIVE PROCESS ⚡
                                             </p>
                                           </div>
