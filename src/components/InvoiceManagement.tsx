@@ -436,7 +436,7 @@ export function InvoiceManagement() {
                                   {getJobDates(stat.job).map((dateInfo) => (
                                     <TableRow key={dateInfo.date}>
                                       <TableCell className="font-medium">
-                                        {new Date(
+                                        {parseLocalDate(
                                           dateInfo.date,
                                         ).toLocaleDateString()}
                                       </TableCell>
