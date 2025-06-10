@@ -773,7 +773,7 @@ export function InvoiceManagement() {
                 <p className="text-sm font-medium text-muted-foreground truncate">
                   Total Billable
                 </p>
-                <p className="text-xl font-bold text-green-600 truncate">
+                <p className="text-lg font-bold text-green-600 break-words">
                   $
                   {jobStats
                     .reduce((sum, stat) => sum + (stat.totalBillable || 0), 0)
