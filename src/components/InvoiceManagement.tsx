@@ -132,13 +132,13 @@ export function InvoiceManagement() {
         (sum, entry) => sum + entry.totalBillableAmount,
         0,
       );
-      const rentalCost = dayRentalEntries.reduce(
+      const rentalBillable = dayRentalEntries.reduce(
         (sum, entry) => sum + entry.totalCost,
         0,
       );
       const loaCost = totalLoaCount * 200; // LOA is billable at $200 each
-      const totalCost = laborCost + rentalCost;
-      const totalBillable = laborBillable + rentalCost + loaCost; // Rentals are typically billed at cost, LOA is additional billable
+      const totalCost = laborCost; // Only labor is a cost, rentals are billable revenue
+      const totalBillable = laborBillable + rentalBillable + loaCost; // Labor billable + rental revenue + LOA
 
       return {
         date,
