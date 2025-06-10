@@ -146,8 +146,19 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                 onClick={() => {
                   const result = manualSave();
                   if (result.success) {
-                    // Show visual feedback - you could add a toast here
-                    console.log(`Data saved at ${result.timestamp}`);
+                    toast({
+                      title: "💾 Data Saved Successfully!",
+                      description: `All your data has been safely saved at ${new Date(result.timestamp).toLocaleTimeString()}`,
+                      duration: 3000,
+                    });
+                  } else {
+                    toast({
+                      title: "❌ Save Failed",
+                      description:
+                        "There was an issue saving your data. Please try again.",
+                      variant: "destructive",
+                      duration: 5000,
+                    });
                   }
                 }}
                 className="bg-[#FF00FF] hover:bg-[#E600E6] text-white font-bold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-[#FF00FF] hover:border-[#E600E6] animate-pulse"
