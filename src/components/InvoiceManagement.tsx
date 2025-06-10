@@ -595,9 +595,15 @@ export function InvoiceManagement() {
                                     <TableHead className="text-purple-600">
                                       LOA Count
                                     </TableHead>
-                                    <TableHead>Labor Cost</TableHead>
-                                    <TableHead>Rental Cost</TableHead>
-                                    <TableHead>Total Cost</TableHead>
+                                    <TableHead className="text-green-600">
+                                      Billable
+                                    </TableHead>
+                                    <TableHead className="text-red-600">
+                                      Cost
+                                    </TableHead>
+                                    <TableHead className="text-blue-600">
+                                      Profit
+                                    </TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Action</TableHead>
                                   </TableRow>
