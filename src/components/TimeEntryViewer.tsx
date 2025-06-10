@@ -327,9 +327,9 @@ export function TimeEntryViewer() {
     return sum + hourlyCost + loaCost;
   }, 0);
 
-  const handleDelete = async (entry: TimeEntry) => {
+  const handleDelete = async (entryId: string) => {
     try {
-      await deleteTimeEntry(entry.id);
+      await deleteTimeEntry(entryId);
     } catch (error) {
       console.error("Error deleting time entry:", error);
     }
