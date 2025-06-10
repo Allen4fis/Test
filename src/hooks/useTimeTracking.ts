@@ -1045,5 +1045,6 @@ export function useTimeTracking() {
 
     // Autosave utilities
     getAutosaveInfo,
+    manualSave,
   };
 }
