@@ -46,6 +46,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { toast } from "@/hooks/use-toast";
 import { Job } from "@/types";
 
 // Helper function to parse date string as local date (fixes timezone issues)
