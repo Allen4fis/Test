@@ -554,8 +554,8 @@ export function CostReports() {
                                     {summary.rentalCount} rentals
                                   </div>
                                 </div>
-                                <div className="text-2xl font-bold text-orange-600">
-                                  ${summary.totalCost.toFixed(2)}
+                                <div className="text-2xl font-bold text-green-600">
+                                  ${summary.totalRevenue.toFixed(2)}
                                 </div>
                               </CardTitle>
                             </CardHeader>
