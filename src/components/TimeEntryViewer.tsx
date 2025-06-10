@@ -100,6 +100,20 @@ export function TimeEntryViewer() {
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
+  // Edit states
+  const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    employeeId: "",
+    jobId: "",
+    hourTypeId: "",
+    provinceId: "",
+    date: "",
+    hours: "",
+    loaCount: "",
+    description: "",
+  });
+
   // Calculate date ranges
   const getDateRange = (range: string) => {
     const today = new Date();
