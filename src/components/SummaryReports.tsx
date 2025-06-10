@@ -260,16 +260,38 @@ export function SummaryReports() {
     const breakdown: HourTypeBreakdown = {};
 
     summaries.forEach((summary) => {
+      // Initialize hour type if it doesn't exist
       if (!breakdown[summary.hourTypeName]) {
         breakdown[summary.hourTypeName] = {
           hours: 0,
           effectiveHours: 0,
           cost: 0,
+          provinces: {},
         };
       }
+
+      // Initialize province within hour type if it doesn't exist
+      if (!breakdown[summary.hourTypeName].provinces[summary.provinceName]) {
+        breakdown[summary.hourTypeName].provinces[summary.provinceName] = {
+          hours: 0,
+          effectiveHours: 0,
+          cost: 0,
+        };
+      }
+
+      // Add to hour type totals
       breakdown[summary.hourTypeName].hours += summary.hours;
       breakdown[summary.hourTypeName].effectiveHours += summary.effectiveHours;
       breakdown[summary.hourTypeName].cost += summary.totalCost;
+
+      // Add to province-specific totals within hour type
+      breakdown[summary.hourTypeName].provinces[summary.provinceName].hours +=
+        summary.hours;
+      breakdown[summary.hourTypeName].provinces[
+        summary.provinceName
+      ].effectiveHours += summary.effectiveHours;
+      breakdown[summary.hourTypeName].provinces[summary.provinceName].cost +=
+        summary.totalCost;
     });
 
     return breakdown;
