@@ -587,8 +587,28 @@ export function TimeEntryForm() {
             Recent Time Entries
           </CardTitle>
           <CardDescription>
-            Your last 50 time entries (sorted by latest input). Click on an
-            entry to edit.
+            Your recent time entries (sorted by latest input). Click on an entry
+            to edit.
+            {!showAllEntries && recentEntries.length > 10 && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => setShowAllEntries(true)}
+                className="p-0 ml-2 h-auto text-blue-600 underline"
+              >
+                Show all {recentEntries.length} entries
+              </Button>
+            )}
+            {showAllEntries && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => setShowAllEntries(false)}
+                className="p-0 ml-2 h-auto text-blue-600 underline"
+              >
+                Show fewer
+              </Button>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
