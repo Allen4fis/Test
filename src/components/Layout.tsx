@@ -126,7 +126,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                     4Front Trackity-doo
                   </h1>
                   <p className="text-xs text-sidebar-foreground/70">
-                    Professional Time Management
+                    Not Changing It
                   </p>
                 </div>
               </div>
