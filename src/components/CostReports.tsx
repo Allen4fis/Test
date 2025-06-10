@@ -528,12 +528,12 @@ export function CostReports() {
                               acc[key] = {
                                 jobNumber: rental.jobNumber,
                                 jobName: rental.jobName,
-                                totalCost: 0,
+                                totalRevenue: 0,
                                 rentalCount: 0,
                                 rentals: [],
                               };
                             }
-                            acc[key].totalCost += rental.totalCost;
+                            acc[key].totalRevenue += rental.totalCost;
                             acc[key].rentalCount += 1;
                             acc[key].rentals.push(rental);
                             return acc;
