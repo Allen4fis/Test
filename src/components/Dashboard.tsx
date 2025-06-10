@@ -74,30 +74,29 @@ export function Dashboard() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 50);
 
-  // Top employees by hours this month (excluding LOA from hours totals) - Memoized for performance
-  const { thisMonthEntries, employeeHours } = useMemo(() => {
-    const monthStart = new Date();
-    monthStart.setDate(1);
-    const filteredEntries = summaries.filter(
-      (summary) => new Date(summary.date) >= monthStart,
-    );
+  // Top employees by hours this month (excluding LOA from hours totals)
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  const thisMonthEntries = summaries.filter(
+    (summary) => new Date(summary.date) >= monthStart,
+  );
 
-    const employeeData = filteredEntries.reduce(
-      (acc, summary) => {
-        if (!acc[summary.employeeName]) {
-          acc[summary.employeeName] = {
-            name: summary.employeeName,
-            title: summary.employeeTitle,
-            hours: 0,
-            effectiveHours: 0,
-            cost: 0,
-          };
-        }
-        // Don't include LOA hours in employee hours totals
-        if (summary.hourTypeName !== "LOA") {
-          acc[summary.employeeName].hours += summary.hours;
-          acc[summary.employeeName].effectiveHours += summary.effectiveHours;
-        }
+  const employeeHours = thisMonthEntries.reduce(
+    (acc, summary) => {
+      if (!acc[summary.employeeName]) {
+        acc[summary.employeeName] = {
+          name: summary.employeeName,
+          title: summary.employeeTitle,
+          hours: 0,
+          effectiveHours: 0,
+          cost: 0,
+        };
+      }
+      // Don't include LOA hours in employee hours totals
+      if (summary.hourTypeName !== "LOA") {
+        acc[summary.employeeName].hours += summary.hours;
+        acc[summary.employeeName].effectiveHours += summary.effectiveHours;
+      }
       acc[summary.employeeName].cost += summary.totalCost;
       return acc;
     },
