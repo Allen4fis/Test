@@ -476,15 +476,22 @@ export function SummaryReports() {
       return matchesDate && matchesEmployee && matchesInvoiceFilter;
     });
 
-    // Then add hour type breakdown to each summary
+    // Pre-group filteredSummaries by date-employee key for O(1) lookup (Performance Optimization)
+    const summariesByDateEmployee = filteredSummaries.reduce(
+      (acc, summary) => {
+        const key = `${summary.date}-${summary.employeeName}`;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(summary);
+        return acc;
+      },
+      {} as Record<string, typeof filteredSummaries>,
+    );
+
+    // Then add hour type breakdown to each summary with optimized lookup
     return filtered.map((summary) => {
       const hourTypeBreakdown: HourTypeBreakdown = {};
-
-      // Get the relevant filtered summaries for this date/employee combination
-      const relevantSummaries = filteredSummaries.filter(
-        (fs) =>
-          fs.date === summary.date && fs.employeeName === summary.employeeName,
-      );
+      const key = `${summary.date}-${summary.employeeName}`;
+      const relevantSummaries = summariesByDateEmployee[key] || [];
 
       relevantSummaries.forEach((fs) => {
         if (!hourTypeBreakdown[fs.hourTypeName]) {
