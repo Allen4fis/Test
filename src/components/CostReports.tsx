@@ -613,11 +613,11 @@ export function CostReports() {
                             if (!acc[key]) {
                               acc[key] = {
                                 category: rental.category,
-                                totalCost: 0,
+                                totalRevenue: 0,
                                 rentalCount: 0,
                               };
                             }
-                            acc[key].totalCost += rental.totalCost;
+                            acc[key].totalRevenue += rental.totalCost;
                             acc[key].rentalCount += 1;
                             return acc;
                           },
