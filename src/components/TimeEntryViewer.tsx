@@ -347,6 +347,7 @@ export function TimeEntryViewer() {
       hours: entry.hours.toString(),
       loaCount: (entry.loaCount || 0).toString(),
       description: entry.description || "",
+      title: entry.title || "",
     });
     setIsEditDialogOpen(true);
   };
