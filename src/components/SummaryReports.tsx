@@ -297,12 +297,15 @@ export function SummaryReports() {
     return breakdown;
   };
 
-  // Enhanced summaries by employee with hour type breakdown
+  // Enhanced summaries by employee AND title with hour type breakdown
   const employeeSummariesWithHourTypes = useMemo(() => {
     const grouped = filteredSummaries.reduce(
       (acc, summary) => {
-        if (!acc[summary.employeeName]) {
-          acc[summary.employeeName] = {
+        // Create unique key for employee + title combination
+        const key = `${summary.employeeName}|${summary.employeeTitle}`;
+
+        if (!acc[key]) {
+          acc[key] = {
             employeeName: summary.employeeName,
             employeeTitle: summary.employeeTitle,
             totalHours: 0,
@@ -315,7 +318,7 @@ export function SummaryReports() {
           };
         }
 
-        const emp = acc[summary.employeeName];
+        const emp = acc[key];
         emp.totalHours += summary.hours;
         emp.totalEffectiveHours += summary.effectiveHours;
         emp.totalCost += summary.totalCost;
