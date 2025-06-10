@@ -207,6 +207,77 @@ export function useTimeTracking() {
     return migratedData;
   }, [rawAppData]);
 
+  // Autosave useEffect - must come after appData is available
+  useEffect(() => {
+    // Autosave constants
+    const AUTOSAVE_INTERVAL = 10 * 60 * 1000; // 10 minutes
+    const AUTOSAVE_KEY = "timeTrackingApp-autosave";
+    const MAX_AUTOSAVES = 3;
+
+    // Generate a data hash for change detection
+    const generateDataHash = (data: AppData): string => {
+      return JSON.stringify({
+        employeesCount: data.employees.length,
+        jobsCount: data.jobs.length,
+        timeEntriesCount: data.timeEntries.length,
+        rentalItemsCount: data.rentalItems.length,
+        rentalEntriesCount: data.rentalEntries.length,
+        lastModified:
+          data.timeEntries[0]?.createdAt || data.employees[0]?.createdAt || "",
+      });
+    };
+
+    // Autosave function
+    const performAutosave = () => {
+      try {
+        const currentHash = generateDataHash(appData);
+
+        // Only save if data has changed
+        if (currentHash === lastSaveRef.current) {
+          return;
+        }
+
+        const autosave = {
+          timestamp: new Date().toISOString(),
+          data: appData,
+          hash: currentHash,
+        };
+
+        // Get existing autosaves
+        const existingAutosaves = JSON.parse(
+          localStorage.getItem(AUTOSAVE_KEY) || "[]",
+        );
+
+        // Add new autosave and keep only the last MAX_AUTOSAVES
+        const updatedAutosaves = [autosave, ...existingAutosaves].slice(
+          0,
+          MAX_AUTOSAVES,
+        );
+
+        // Save to localStorage
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(updatedAutosaves));
+        lastSaveRef.current = currentHash;
+
+        console.log(`Autosave completed at ${autosave.timestamp}`);
+      } catch (error) {
+        console.error("Autosave failed:", error);
+      }
+    };
+
+    // Initial hash
+    lastSaveRef.current = generateDataHash(appData);
+
+    // Setup periodic autosave
+    autosaveTimerRef.current = setInterval(performAutosave, AUTOSAVE_INTERVAL);
+
+    // Cleanup on unmount
+    return () => {
+      if (autosaveTimerRef.current) {
+        clearInterval(autosaveTimerRef.current);
+      }
+    };
+  }, [appData]);
+
   const setAppData = (data: AppData | ((prev: AppData) => AppData)) => {
     if (typeof data === "function") {
       setRawAppData((prev) => {
