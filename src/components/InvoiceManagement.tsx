@@ -270,15 +270,26 @@ export function InvoiceManagement() {
   const handleBulkInvoice = () => {
     if (!selectedJob || !dateRange.startDate || !dateRange.endDate) return;
 
-    const jobDates = getJobDates(selectedJob);
-    const datesToInvoice = jobDates
-      .filter(
-        (d) =>
-          d.date >= dateRange.startDate &&
-          d.date <= dateRange.endDate &&
-          !d.isInvoiced,
-      )
-      .map((d) => d.date);
+    // Generate all dates in the range
+    const startDate = new Date(dateRange.startDate);
+    const endDate = new Date(dateRange.endDate);
+    const allDatesInRange: string[] = [];
+
+    for (
+      let date = new Date(startDate);
+      date <= endDate;
+      date.setDate(date.getDate() + 1)
+    ) {
+      allDatesInRange.push(date.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+    }
+
+    // Get existing invoiced dates for this job
+    const existingInvoicedDates = selectedJob.invoicedDates || [];
+
+    // Filter out dates that are already invoiced
+    const datesToInvoice = allDatesInRange.filter(
+      (date) => !existingInvoicedDates.includes(date),
+    );
 
     if (datesToInvoice.length > 0) {
       addInvoicedDates(selectedJob.id, datesToInvoice);
