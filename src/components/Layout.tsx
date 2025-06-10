@@ -138,6 +138,24 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                 </Badge>
               </div>
             </div>
+
+            {/* Bright Pink Manual Save Button - Extremely Convenient Spot! */}
+            <div className="flex items-center">
+              <Button
+                onClick={() => {
+                  const result = manualSave();
+                  if (result.success) {
+                    // Show visual feedback - you could add a toast here
+                    console.log(`Data saved at ${result.timestamp}`);
+                  }
+                }}
+                className="bg-[#FF00FF] hover:bg-[#E600E6] text-white font-bold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-[#FF00FF] hover:border-[#E600E6] animate-pulse"
+                size="lg"
+              >
+                <Save className="h-5 w-5 mr-2 drop-shadow-sm" />
+                <span className="font-bold tracking-wide">SAVE NOW</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
