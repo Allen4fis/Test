@@ -920,8 +920,28 @@ export function TimeEntryViewer() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
+                            <DeleteConfirmationDialog
+                              item={{
+                                id: entry.id,
+                                name: `${employee?.name || "Unknown Employee"} - ${parseLocalDate(entry.date).toLocaleDateString()}`,
+                                type: "time-entry",
+                                associatedData: {
+                                  additionalInfo: [
+                                    `Date: ${parseLocalDate(entry.date).toLocaleDateString()}`,
+                                    `Hours: ${entry.hours}`,
+                                    `Job: ${job?.jobNumber} - ${job?.name}`,
+                                    `Hour Type: ${hourType?.name}`,
+                                    `Province: ${province?.name}`,
+                                    entry.loaCount
+                                      ? `LOA Count: ${entry.loaCount}`
+                                      : null,
+                                    entry.description
+                                      ? `Description: ${entry.description}`
+                                      : null,
+                                  ].filter(Boolean) as string[],
+                                },
+                              }}
+                              trigger={
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -929,35 +949,9 @@ export function TimeEntryViewer() {
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-red-600">
-                                    ⚠️ Delete Time Entry
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription className="text-lg font-semibold text-red-700">
-                                    If Deleted, This Time Entry Will Be Gone
-                                    FOREVER AND EVER AND EVER!
-                                  </AlertDialogDescription>
-                                  <AlertDialogDescription className="text-sm text-gray-600 mt-2">
-                                    Time entry for {employee?.name} on{" "}
-                                    {parseLocalDate(
-                                      entry.date,
-                                    ).toLocaleDateString()}{" "}
-                                    - {entry.hours} hours
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(entry)}
-                                    className="bg-red-500 hover:bg-red-600"
-                                  >
-                                    Delete Forever
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                              }
+                              onConfirm={handleDelete}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>
