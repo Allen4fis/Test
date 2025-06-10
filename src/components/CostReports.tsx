@@ -94,8 +94,7 @@ export function CostReports() {
                   ${totalCost.toFixed(2)}
                 </p>
                 <div className="text-xs text-gray-500 mt-1">
-                  Labor: ${totalLaborCost.toFixed(2)} | Rentals: $
-                  {totalRentalCost.toFixed(2)}
+                  Labor Costs Only (Rentals are Revenue)
                 </div>
               </div>
             </div>
