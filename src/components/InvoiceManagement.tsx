@@ -147,8 +147,11 @@ export function InvoiceManagement() {
         totalHours,
         totalLoaCount,
         laborCost,
+        laborBillable,
         rentalCost,
+        loaCost,
         totalCost,
+        totalBillable,
       };
     });
   };
