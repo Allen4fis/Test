@@ -96,6 +96,7 @@ export function TimeEntryForm() {
 
   const [formError, setFormError] = useState("");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+  const [showAllEntries, setShowAllEntries] = useState(false);
 
   // Update title and wages when employee is selected
   useEffect(() => {
