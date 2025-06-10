@@ -575,23 +575,55 @@ export function BackupManagement() {
                   </>
                 )}
               </Button>
-              <Button
-                onClick={importBackupFromFile}
-                disabled={isImporting}
-                variant="outline"
-              >
-                {isImporting ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Importing...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Import from File
-                  </>
-                )}
-              </Button>
+              {importConfirmationData ? (
+                <DeleteConfirmationDialog
+                  item={{
+                    id: importConfirmationData.id,
+                    name: importConfirmationData.name,
+                    type: "import",
+                    associatedData: {
+                      backupSize: `${((selectedFile?.size || 0) / 1024).toFixed(2)} KB`,
+                      recordCounts: [
+                        `${importConfirmationData.recordCounts?.employees || 0} employees`,
+                        `${importConfirmationData.recordCounts?.jobs || 0} jobs`,
+                        `${importConfirmationData.recordCounts?.timeEntries || 0} time entries`,
+                        `${importConfirmationData.recordCounts?.rentalItems || 0} rental items`,
+                        `${importConfirmationData.recordCounts?.rentalEntries || 0} rental entries`,
+                      ],
+                    },
+                  }}
+                  trigger={
+                    <Button
+                      disabled={isImporting}
+                      variant="outline"
+                      className="border-2 border-yellow-500 text-yellow-700 hover:bg-yellow-50"
+                    >
+                      {isImporting ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                          Importing...
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-4 w-4 mr-2" />
+                          Confirm Import: "{importConfirmationData.name}"
+                        </>
+                      )}
+                    </Button>
+                  }
+                  onConfirm={performImport}
+                  isDeleting={isImporting}
+                />
+              ) : (
+                <Button
+                  onClick={selectImportFile}
+                  disabled={isImporting}
+                  variant="outline"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import from File
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
