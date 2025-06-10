@@ -91,6 +91,7 @@ export function InvoiceManagement() {
   const [selectedJobForBreakdown, setSelectedJobForBreakdown] =
     useState<Job | null>(null);
   const [isBreakdownDialogOpen, setIsBreakdownDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
