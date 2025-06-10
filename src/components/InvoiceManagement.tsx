@@ -77,6 +77,7 @@ export function InvoiceManagement() {
   } = useTimeTracking();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [dateRange, setDateRange] = useState({
     startDate: "",
     endDate: "",
@@ -87,7 +88,6 @@ export function InvoiceManagement() {
   const [selectedJobForBreakdown, setSelectedJobForBreakdown] =
     useState<Job | null>(null);
   const [isBreakdownDialogOpen, setIsBreakdownDialogOpen] = useState(false);
-
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
@@ -538,7 +538,7 @@ export function InvoiceManagement() {
                                           </div>
                                         ) : (
                                           <span className="text-gray-400 text-sm">
-                                            ���
+                                            —
                                           </span>
                                         )}
                                       </TableCell>
