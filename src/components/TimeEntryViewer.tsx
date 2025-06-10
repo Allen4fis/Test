@@ -389,6 +389,7 @@ export function TimeEntryViewer() {
       hours: "",
       loaCount: "",
       description: "",
+      title: "",
     });
   };
 
