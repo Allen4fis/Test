@@ -606,7 +606,7 @@ export function SummaryReports() {
                     key={provinceName}
                     className="flex justify-between text-xs"
                   >
-                    <span className="text-gray-600">📍 {provinceName}:</span>
+                    <span className="text-gray-600">���� {provinceName}:</span>
                     <div className="text-right">
                       <span className="text-gray-700 font-medium">
                         {provinceData.hours.toFixed(1)}h
@@ -1188,8 +1188,10 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredDateNameSummaries.map((summary) => (
-                      <TableRow key={`${summary.date}-${summary.employeeName}`}>
+                    {filteredDateNameSummaries.map((summary, index) => (
+                      <TableRow
+                        key={`${summary.date}-${summary.employeeName}-${index}`}
+                      >
                         <TableCell className="font-medium">
                           {parseLocalDate(summary.date).toLocaleDateString()}
                         </TableCell>
