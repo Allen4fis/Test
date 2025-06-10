@@ -179,6 +179,25 @@ export function DeleteConfirmationDialog({
           confirmWord: "DELETE BACKUP",
           emoji: "💾",
         };
+      case "import":
+        return {
+          destructionMessage:
+            "This will IMPORT backup data and may OVERWRITE existing information",
+          dataLoss: [
+            `Importing backup file "${item.name}"`,
+            "This will add the backup to your stored backups list",
+            ...(item.associatedData?.recordCounts || []),
+            "Backup will be available for future restore operations",
+          ],
+          consequences: [
+            "The imported backup will be added to your backup storage",
+            "You can restore from this backup at any time after import",
+            "Import does NOT immediately change your current data",
+            "Imported backup will count toward your storage limit",
+          ],
+          confirmWord: "IMPORT BACKUP",
+          emoji: "📂",
+        };
     }
   };
 
