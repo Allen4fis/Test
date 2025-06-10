@@ -53,6 +53,13 @@ interface HourTypeBreakdown {
     hours: number;
     effectiveHours: number;
     cost: number;
+    provinces: {
+      [provinceName: string]: {
+        hours: number;
+        effectiveHours: number;
+        cost: number;
+      };
+    };
   };
 }
 
