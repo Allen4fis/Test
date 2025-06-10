@@ -139,7 +139,9 @@ export function InvoiceManagement() {
       );
       const loaCost = totalLoaCount * 200; // LOA is billable at $200 each
       const totalCost = laborCost; // Only labor is a cost, rentals are billable revenue
-      const totalBillable = laborBillable + rentalBillable + loaCost; // Labor billable + rental revenue + LOA
+      // CRITICAL FIX: LOA is already included in laborBillable from timeEntrySummaries
+      // So we should NOT add loaCost again to avoid double-counting
+      const totalBillable = laborBillable + rentalBillable; // Labor billable (includes LOA) + rental revenue
 
       return {
         date,
