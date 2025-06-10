@@ -270,17 +270,24 @@ export function InvoiceManagement() {
   const handleBulkInvoice = () => {
     if (!selectedJob || !dateRange.startDate || !dateRange.endDate) return;
 
-    // Generate all dates in the range
-    const startDate = new Date(dateRange.startDate);
-    const endDate = new Date(dateRange.endDate);
+    // Parse dates safely to avoid timezone issues
+    const parseDate = (dateString: string) => {
+      const [year, month, day] = dateString.split("-").map(Number);
+      return new Date(year, month - 1, day); // month is 0-indexed
+    };
+
+    const startDate = parseDate(dateRange.startDate);
+    const endDate = parseDate(dateRange.endDate);
     const allDatesInRange: string[] = [];
 
-    for (
-      let date = new Date(startDate);
-      date <= endDate;
-      date.setDate(date.getDate() + 1)
-    ) {
-      allDatesInRange.push(date.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+    // Generate all dates in the range
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const year = currentDate.getFullYear();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+      const day = currentDate.getDate().toString().padStart(2, "0");
+      allDatesInRange.push(`${year}-${month}-${day}`);
+      currentDate.setDate(currentDate.getDate() + 1);
     }
 
     // Get existing invoiced dates for this job
@@ -290,6 +297,15 @@ export function InvoiceManagement() {
     const datesToInvoice = allDatesInRange.filter(
       (date) => !existingInvoicedDates.includes(date),
     );
+
+    console.log("Bulk Invoice Debug:", {
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate,
+      allDatesInRange,
+      existingInvoicedDates,
+      datesToInvoice,
+      jobId: selectedJob.id,
+    });
 
     if (datesToInvoice.length > 0) {
       addInvoicedDates(selectedJob.id, datesToInvoice);
