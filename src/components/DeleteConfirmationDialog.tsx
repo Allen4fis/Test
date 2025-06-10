@@ -22,7 +22,8 @@ interface DeleteItem {
     | "rental-item"
     | "rental-entry"
     | "backup"
-    | "import";
+    | "import"
+    | "time-entry";
   associatedData?: {
     timeEntries?: number;
     jobs?: number;
