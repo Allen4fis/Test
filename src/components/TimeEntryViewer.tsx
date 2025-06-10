@@ -981,9 +981,16 @@ export function TimeEntryViewer() {
               <Label htmlFor="edit-employee">Employee</Label>
               <Select
                 value={editForm.employeeId}
-                onValueChange={(value) =>
-                  setEditForm({ ...editForm, employeeId: value })
-                }
+                onValueChange={(value) => {
+                  const selectedEmployee = employees.find(
+                    (emp) => emp.id === value,
+                  );
+                  setEditForm({
+                    ...editForm,
+                    employeeId: value,
+                    title: selectedEmployee?.title || editForm.title, // Auto-fill title when employee changes, but keep custom title if already set
+                  });
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select employee" />
@@ -996,6 +1003,18 @@ export function TimeEntryViewer() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-title">Title</Label>
+              <Input
+                id="edit-title"
+                value={editForm.title}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, title: e.target.value })
+                }
+                placeholder="Employee title for this entry"
+              />
             </div>
 
             <div className="space-y-2">
