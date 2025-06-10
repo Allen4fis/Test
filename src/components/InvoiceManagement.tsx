@@ -63,7 +63,7 @@ interface JobDateInfo {
   totalLoaCount: number;
   laborCost: number;
   laborBillable: number;
-  rentalCost: number;
+  rentalBillable: number;
   loaCost: number;
   totalCost: number;
   totalBillable: number;
