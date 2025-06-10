@@ -763,19 +763,19 @@ export function InvoiceManagement() {
       </Card>
 
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <Card className="modern-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-500" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Total Invoiced
+                  Total Billable
                 </p>
                 <p className="text-2xl font-bold text-green-600">
                   $
                   {jobStats
-                    .reduce((sum, stat) => sum + stat.invoicedCost, 0)
+                    .reduce((sum, stat) => sum + (stat.totalBillable || 0), 0)
                     .toFixed(2)}
                 </p>
               </div>
@@ -789,12 +789,93 @@ export function InvoiceManagement() {
               <DollarSign className="h-5 w-5 text-red-500" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Pending Invoice
+                  Total Cost
                 </p>
                 <p className="text-2xl font-bold text-red-600">
                   $
                   {jobStats
-                    .reduce((sum, stat) => sum + stat.uninvoicedCost, 0)
+                    .reduce((sum, stat) => sum + stat.totalCost, 0)
+                    .toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <DollarSign
+                className={`h-5 w-5 ${(() => {
+                  const totalBillable = jobStats.reduce(
+                    (sum, stat) => sum + (stat.totalBillable || 0),
+                    0,
+                  );
+                  const totalCost = jobStats.reduce(
+                    (sum, stat) => sum + stat.totalCost,
+                    0,
+                  );
+                  return totalBillable - totalCost >= 0
+                    ? "text-blue-500"
+                    : "text-red-500";
+                })()} `}
+              />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Profit Margin
+                </p>
+                <p
+                  className={`text-2xl font-bold ${(() => {
+                    const totalBillable = jobStats.reduce(
+                      (sum, stat) => sum + (stat.totalBillable || 0),
+                      0,
+                    );
+                    const totalCost = jobStats.reduce(
+                      (sum, stat) => sum + stat.totalCost,
+                      0,
+                    );
+                    return totalBillable - totalCost >= 0
+                      ? "text-blue-600"
+                      : "text-red-600";
+                  })()}`}
+                >
+                  {(() => {
+                    const totalBillable = jobStats.reduce(
+                      (sum, stat) => sum + (stat.totalBillable || 0),
+                      0,
+                    );
+                    const totalCost = jobStats.reduce(
+                      (sum, stat) => sum + stat.totalCost,
+                      0,
+                    );
+                    const profitMargin =
+                      totalBillable > 0
+                        ? ((totalBillable - totalCost) / totalBillable) * 100
+                        : 0;
+                    return profitMargin.toFixed(1);
+                  })()}
+                  %
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-500" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Invoiced Revenue
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  $
+                  {jobStats
+                    .reduce(
+                      (sum, stat) => sum + (stat.invoicedBillable || 0),
+                      0,
+                    )
                     .toFixed(2)}
                 </p>
               </div>
