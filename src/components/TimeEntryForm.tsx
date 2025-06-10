@@ -643,7 +643,7 @@ export function TimeEntryForm() {
                         onClick={() => handleEdit(entry)}
                       >
                         <TableCell>
-                          {new Date(entry.date).toLocaleDateString()}
+                          {parseLocalDate(entry.date).toLocaleDateString()}
                         </TableCell>
                         <TableCell>{employee?.name || "Unknown"}</TableCell>
                         <TableCell>
