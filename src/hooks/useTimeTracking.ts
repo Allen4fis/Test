@@ -316,20 +316,6 @@ export function useTimeTracking() {
     }
   };
 
-  const [selectedView, setSelectedView] = useState<
-    | "dashboard"
-    | "timeEntry"
-    | "viewer"
-    | "employees"
-    | "jobs"
-    | "reports"
-    | "costs"
-    | "invoices"
-    | "rentals"
-    | "export"
-    | "backup"
-  >("dashboard");
-
   // Employee operations
   const addEmployee = (employee: Omit<Employee, "id" | "createdAt">) => {
     const newEmployee: Employee = {
