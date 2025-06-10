@@ -183,7 +183,7 @@ export function CostReports() {
         <TabsList>
           <TabsTrigger value="employees">Cost by Employee</TabsTrigger>
           <TabsTrigger value="jobs">Cost by Job</TabsTrigger>
-          <TabsTrigger value="rentals">Rental Costs</TabsTrigger>
+          <TabsTrigger value="rentals">Rental Revenue</TabsTrigger>
         </TabsList>
 
         <TabsContent value="employees">
