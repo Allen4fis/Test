@@ -73,15 +73,12 @@ export function CostReports() {
             <div className="flex items-center gap-2">
               <Banknote className="h-5 w-5 text-green-500" />
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Revenue
+                <p className="text-sm font-medium text-muted-foreground">
+                  Rental Revenue
                 </p>
                 <p className="text-2xl font-bold text-green-600">
-                  ${totalRevenue.toFixed(2)}
+                  ${totalRentalRevenue.toFixed(2)}
                 </p>
-                <div className="text-xs text-gray-500 mt-1">
-                  Labor: ${totalBillableAmount.toFixed(2)} | Rentals: $
-                  {totalRentalCost.toFixed(2)}
                 </div>
               </div>
             </div>
