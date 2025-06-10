@@ -16,7 +16,13 @@ import { AlertCircle, Trash2, RefreshCw } from "lucide-react";
 interface DeleteItem {
   id: string;
   name: string;
-  type: "employee" | "job" | "rental-item" | "rental-entry" | "backup";
+  type:
+    | "employee"
+    | "job"
+    | "rental-item"
+    | "rental-entry"
+    | "backup"
+    | "import";
   associatedData?: {
     timeEntries?: number;
     jobs?: number;
