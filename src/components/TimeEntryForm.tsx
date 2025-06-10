@@ -634,7 +634,10 @@ export function TimeEntryForm() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentEntries.map((entry) => {
+                  {(showAllEntries
+                    ? recentEntries
+                    : recentEntries.slice(0, 10)
+                  ).map((entry) => {
                     const employee = employees.find(
                       (emp) => emp.id === entry.employeeId,
                     );
