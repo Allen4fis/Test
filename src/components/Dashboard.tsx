@@ -253,12 +253,12 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Top Employees This Month */}
+        {/* The Most Overworked Employees This Month */}
         <Card className="modern-card border-border shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Award className="h-5 w-5 text-primary" />
-              Top Employees This Month
+              The Most Overworked Employees This Month
             </CardTitle>
             <CardDescription>Ranked by effective hours worked</CardDescription>
           </CardHeader>
