@@ -57,6 +57,7 @@ import {
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { AppData } from "@/types";
+import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 
 interface BackupMetadata {
   id: string;
