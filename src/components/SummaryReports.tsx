@@ -535,7 +535,7 @@ export function SummaryReports() {
     setJobFilter("");
     setProvinceFilter("all-provinces");
     setPeriodFilter("month");
-    setIncludeInvoiced(true);
+    setIncludeInvoiced(false);
   };
 
   const handlePrint = () => {
