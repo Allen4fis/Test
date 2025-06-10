@@ -506,7 +506,7 @@ export function InvoiceManagement() {
                                             ${totalCost.toFixed(2)}
                                           </p>
                                           <p className="text-xs text-muted-foreground">
-                                            Labor + Equipment
+                                            Labor Costs Only
                                           </p>
                                         </div>
                                       </div>
