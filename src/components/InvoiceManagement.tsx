@@ -724,13 +724,14 @@ export function InvoiceManagement() {
                                         <Button
                                           variant="outline"
                                           size="sm"
-                                          onClick={() =>
+                                          onClick={(e) => {
+                                            e.stopPropagation();
                                             toggleDateInvoiced(
                                               stat.job,
                                               dateInfo.date,
                                               dateInfo.isInvoiced,
-                                            )
-                                          }
+                                            );
+                                          }}
                                         >
                                           {dateInfo.isInvoiced ? (
                                             <>
