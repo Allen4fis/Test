@@ -298,20 +298,11 @@ export function InvoiceManagement() {
       (date) => !existingInvoicedDates.includes(date),
     );
 
-    console.log("Bulk Invoice Debug:", {
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-      allDatesInRange,
-      existingInvoicedDates,
-      datesToInvoice,
-      jobId: selectedJob.id,
-    });
-
     if (datesToInvoice.length > 0) {
       addInvoicedDates(selectedJob.id, datesToInvoice);
     }
 
-    setIsDialogOpen(false);
+    // Clear the date range inputs after invoicing
     setDateRange({ startDate: "", endDate: "" });
   };
 
