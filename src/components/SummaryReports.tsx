@@ -876,13 +876,13 @@ export function SummaryReports() {
                         <TableCell>
                           <div className="text-xs text-gray-600">
                             <div>
-                              {new Date(
+                              {parseLocalDate(
                                 employee.dateRange.earliest,
                               ).toLocaleDateString()}
                             </div>
                             <div>
                               to{" "}
-                              {new Date(
+                              {parseLocalDate(
                                 employee.dateRange.latest,
                               ).toLocaleDateString()}
                             </div>
