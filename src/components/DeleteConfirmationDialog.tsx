@@ -154,6 +154,25 @@ export function DeleteConfirmationDialog({
           confirmWord: "DELETE ENTRY",
           emoji: "📋",
         };
+      case "backup":
+        return {
+          destructionMessage:
+            "This will PERMANENTLY DELETE this backup and ALL stored data",
+          dataLoss: [
+            `Complete backup snapshot "${item.name}"`,
+            "All historical data contained in this backup",
+            ...(item.associatedData?.recordCounts || []),
+            "Ability to restore from this backup point",
+          ],
+          consequences: [
+            "This backup recovery point will be permanently lost",
+            "You cannot undo this backup deletion",
+            "If you need this data later, you'll have to recreate it manually",
+            "Other backups are NOT affected by this deletion",
+          ],
+          confirmWord: "DELETE BACKUP",
+          emoji: "💾",
+        };
     }
   };
 
