@@ -766,7 +766,7 @@ export function InvoiceManagement() {
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         <Card className="modern-card">
-          <CardContent className="p-4">
+          <CardContent className="p-5">
             <div className="flex items-start gap-3">
               <DollarSign className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
               <div className="min-w-0 flex-1">
