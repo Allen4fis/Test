@@ -911,23 +911,9 @@ export function SummaryReports() {
                         </TableCell>
                         <TableCell>{employee.employeeTitle}</TableCell>
                         <TableCell>
-                          <div className="space-y-1">
-                            {Object.entries(employee.hourTypeBreakdown)
-                              .sort(([, a], [, b]) => b.hours - a.hours)
-                              .map(([hourType, data]) => (
-                                <div
-                                  key={hourType}
-                                  className="flex justify-between text-xs bg-gray-50 px-2 py-1 rounded"
-                                >
-                                  <span className="font-medium text-gray-700">
-                                    {hourType}:
-                                  </span>
-                                  <span className="font-bold text-gray-900">
-                                    {data.hours.toFixed(1)}h
-                                  </span>
-                                </div>
-                              ))}
-                          </div>
+                          <HourTypeBreakdownDisplay
+                            breakdown={employee.hourTypeBreakdown}
+                          />
                         </TableCell>
                         <TableCell className="font-medium">
                           {employee.totalHours.toFixed(2)}
