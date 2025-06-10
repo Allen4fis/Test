@@ -965,7 +965,7 @@ export function BackupManagement() {
                                           </p>
                                           <div className="mt-3 p-4 bg-yellow-100 border-2 border-yellow-400 rounded">
                                             <p className="text-yellow-900 font-bold text-center">
-                                              ⚡ CLICKING NEXT WILL IMMEDIATELY
+                                              ��� CLICKING NEXT WILL IMMEDIATELY
                                               START THE DESTRUCTIVE PROCESS ⚡
                                             </p>
                                           </div>
