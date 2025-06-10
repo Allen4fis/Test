@@ -252,14 +252,12 @@ export function TimeEntryForm() {
     }
   };
 
-  // Get recent time entries (last 50, sorted by latest input time)
-  const recentEntries = timeEntries
-    .slice()
-    .sort((a, b) => {
-      // Sort by creation time (latest input first)
-      return b.createdAt.localeCompare(a.createdAt);
-    })
-    .slice(0, 50);
+  // Get recent time entries (last 50, sorted by latest input time) - Memoized for performance
+  const recentEntries = useMemo(() => {
+    return timeEntries
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .slice(0, 50);
+  }, [timeEntries]);
 
   const selectedEmployee = employees.find(
     (emp) => emp.id === formData.employeeId,
