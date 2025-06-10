@@ -330,18 +330,47 @@ export function SummaryReports() {
           emp.dateRange.latest = summary.date;
         }
 
-        // Update hour type breakdown
+        // Update hour type breakdown - using enhanced structure with provinces
         if (!emp.hourTypeBreakdown[summary.hourTypeName]) {
           emp.hourTypeBreakdown[summary.hourTypeName] = {
             hours: 0,
             effectiveHours: 0,
             cost: 0,
+            provinces: {},
           };
         }
+
+        // Initialize province if it doesn't exist
+        if (
+          !emp.hourTypeBreakdown[summary.hourTypeName].provinces[
+            summary.provinceName
+          ]
+        ) {
+          emp.hourTypeBreakdown[summary.hourTypeName].provinces[
+            summary.provinceName
+          ] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+
+        // Add to hour type totals
         emp.hourTypeBreakdown[summary.hourTypeName].hours += summary.hours;
         emp.hourTypeBreakdown[summary.hourTypeName].effectiveHours +=
           summary.effectiveHours;
         emp.hourTypeBreakdown[summary.hourTypeName].cost += summary.totalCost;
+
+        // Add to province-specific totals
+        emp.hourTypeBreakdown[summary.hourTypeName].provinces[
+          summary.provinceName
+        ].hours += summary.hours;
+        emp.hourTypeBreakdown[summary.hourTypeName].provinces[
+          summary.provinceName
+        ].effectiveHours += summary.effectiveHours;
+        emp.hourTypeBreakdown[summary.hourTypeName].provinces[
+          summary.provinceName
+        ].cost += summary.totalCost;
 
         return acc;
       },
