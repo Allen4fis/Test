@@ -70,9 +70,9 @@ export function Dashboard() {
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
   const recentEntries = timeEntries
-    .filter((entry) => new Date(entry.date) >= threeDaysAgo)
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, 10);
+    .slice()
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 50);
 
   // Top employees by hours this month (excluding LOA from hours totals)
   const monthStart = new Date();
