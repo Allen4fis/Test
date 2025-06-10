@@ -45,7 +45,10 @@ export function Dashboard() {
     provinces,
     timeEntrySummaries,
     summaryByTitleAndJob,
+    getAutosaveInfo,
   } = useTimeTracking();
+
+  const autosaveInfo = getAutosaveInfo();
 
   const summaries = timeEntrySummaries;
   const titleJobSummaries = summaryByTitleAndJob;
