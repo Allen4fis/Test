@@ -199,6 +199,27 @@ export function DeleteConfirmationDialog({
           confirmWord: "IMPORT BACKUP",
           emoji: "📂",
         };
+      case "time-entry":
+        return {
+          destructionMessage:
+            "This will PERMANENTLY DELETE this time entry and ALL associated data",
+          dataLoss: [
+            `Time entry for ${item.name}`,
+            "Hours worked and LOA count data",
+            "Billable and cost calculations for this entry",
+            "Employee time tracking record",
+            ...(item.associatedData?.additionalInfo || []),
+          ],
+          consequences: [
+            "Employee time reports will lose this entry",
+            "Job cost calculations will be affected",
+            "Payroll and billing records will be incomplete",
+            "Time tracking history will have gaps",
+            "This cannot be recovered once deleted",
+          ],
+          confirmWord: "DELETE TIME ENTRY",
+          emoji: "⏰",
+        };
     }
   };
 
