@@ -988,5 +988,8 @@ export function useTimeTracking() {
         hourTypes: defaultHourTypes,
       }));
     },
+
+    // Autosave utilities
+    getAutosaveInfo,
   };
 }
