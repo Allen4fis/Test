@@ -804,7 +804,7 @@ export function InvoiceManagement() {
         </Card>
 
         <Card className="modern-card">
-          <CardContent className="p-4">
+          <CardContent className="p-5">
             <div className="flex items-start gap-3">
               <DollarSign
                 className={`h-5 w-5 mt-1 flex-shrink-0 ${(() => {
