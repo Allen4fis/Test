@@ -586,7 +586,8 @@ export function TimeEntryForm() {
             Recent Time Entries
           </CardTitle>
           <CardDescription>
-            Your last 10 time entries. Click on an entry to edit.
+            Your last 50 time entries (sorted by latest input). Click on an
+            entry to edit.
           </CardDescription>
         </CardHeader>
         <CardContent>
