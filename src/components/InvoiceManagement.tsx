@@ -149,7 +149,7 @@ export function InvoiceManagement() {
         totalLoaCount,
         laborCost,
         laborBillable,
-        rentalCost,
+        rentalBillable,
         loaCost,
         totalCost,
         totalBillable,
