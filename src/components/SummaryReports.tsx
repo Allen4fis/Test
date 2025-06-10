@@ -886,7 +886,7 @@ export function SummaryReports() {
 
         <TabsContent value="employee">
           <div className="print-only print-section-header">
-            Summary by Employee
+            Summary by Employee & Title
           </div>
           <Card className="page-break-avoid">
             <CardHeader>
