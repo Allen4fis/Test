@@ -106,7 +106,7 @@ export function SummaryReports() {
   const [jobFilter, setJobFilter] = useState("");
   const [provinceFilter, setProvinceFilter] = useState("all-provinces");
   const [periodFilter, setPeriodFilter] = useState("month"); // Default to last 30 days
-  const [includeInvoiced, setIncludeInvoiced] = useState(true); // New toggle for invoiced entries
+  const [includeInvoiced, setIncludeInvoiced] = useState(false); // New toggle for invoiced entries - default to off
 
   // Quick period filters
   const setQuickPeriod = (period: string) => {
