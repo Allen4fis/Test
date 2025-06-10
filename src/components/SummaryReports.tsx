@@ -890,10 +890,11 @@ export function SummaryReports() {
           </div>
           <Card className="page-break-avoid">
             <CardHeader>
-              <CardTitle>Summary by Employee</CardTitle>
+              <CardTitle>Summary by Employee & Title</CardTitle>
               <CardDescription>
-                Total hours by employee with hour type breakdown for selected
-                period {!includeInvoiced && "(excluding invoiced entries)"}
+                Total hours by employee and title with hour type and province
+                breakdown for selected period{" "}
+                {!includeInvoiced && "(excluding invoiced entries)"}
               </CardDescription>
             </CardHeader>
             <CardContent>
