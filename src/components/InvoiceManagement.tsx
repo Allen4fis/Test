@@ -43,6 +43,7 @@ import {
   X,
   Plus,
   Minus,
+  Eye,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Job } from "@/types";
