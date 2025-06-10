@@ -87,6 +87,7 @@ export function TimeEntryViewer() {
     provinces,
     timeEntries,
     deleteTimeEntry,
+    updateTimeEntry,
   } = useTimeTracking();
 
   // Filter states
