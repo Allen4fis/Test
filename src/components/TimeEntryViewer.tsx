@@ -929,34 +929,35 @@ export function TimeEntryViewer() {
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle className="text-red-600">
-                                  ⚠️ Delete Time Entry
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className="text-lg font-semibold text-red-700">
-                                  If Deleted, This Time Entry Will Be Gone
-                                  FOREVER AND EVER AND EVER!
-                                </AlertDialogDescription>
-                                <AlertDialogDescription className="text-sm text-gray-600 mt-2">
-                                  Time entry for {employee?.name} on{" "}
-                                  {parseLocalDate(
-                                    entry.date,
-                                  ).toLocaleDateString()}{" "}
-                                  - {entry.hours} hours
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(entry)}
-                                  className="bg-red-500 hover:bg-red-600"
-                                >
-                                  Delete Forever
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-red-600">
+                                    ⚠️ Delete Time Entry
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-lg font-semibold text-red-700">
+                                    If Deleted, This Time Entry Will Be Gone
+                                    FOREVER AND EVER AND EVER!
+                                  </AlertDialogDescription>
+                                  <AlertDialogDescription className="text-sm text-gray-600 mt-2">
+                                    Time entry for {employee?.name} on{" "}
+                                    {parseLocalDate(
+                                      entry.date,
+                                    ).toLocaleDateString()}{" "}
+                                    - {entry.hours} hours
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(entry)}
+                                    className="bg-red-500 hover:bg-red-600"
+                                  >
+                                    Delete Forever
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -967,6 +968,162 @@ export function TimeEntryViewer() {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Time Entry</DialogTitle>
+            <DialogDescription>
+              Modify the details of this time entry.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-employee">Employee</Label>
+              <Select
+                value={editForm.employeeId}
+                onValueChange={(value) =>
+                  setEditForm({ ...editForm, employeeId: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select employee" />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id}>
+                      {employee.name} - {employee.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-job">Job</Label>
+              <Select
+                value={editForm.jobId}
+                onValueChange={(value) =>
+                  setEditForm({ ...editForm, jobId: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select job" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobs
+                    .filter((job) => job.isActive)
+                    .map((job) => (
+                      <SelectItem key={job.id} value={job.id}>
+                        {job.jobNumber} - {job.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-hourType">Hour Type</Label>
+              <Select
+                value={editForm.hourTypeId}
+                onValueChange={(value) =>
+                  setEditForm({ ...editForm, hourTypeId: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select hour type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {hourTypes.map((hourType) => (
+                    <SelectItem key={hourType.id} value={hourType.id}>
+                      {hourType.name} (x{hourType.multiplier})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-province">Province</Label>
+              <Select
+                value={editForm.provinceId}
+                onValueChange={(value) =>
+                  setEditForm({ ...editForm, provinceId: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select province" />
+                </SelectTrigger>
+                <SelectContent>
+                  {provinces.map((province) => (
+                    <SelectItem key={province.id} value={province.id}>
+                      {province.name} ({province.code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-date">Date</Label>
+              <Input
+                id="edit-date"
+                type="date"
+                value={editForm.date}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, date: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-hours">Hours</Label>
+              <Input
+                id="edit-hours"
+                type="number"
+                step="0.25"
+                min="0"
+                value={editForm.hours}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, hours: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-loa">LOA Count</Label>
+              <Input
+                id="edit-loa"
+                type="number"
+                min="0"
+                value={editForm.loaCount}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, loaCount: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-description">Description</Label>
+              <Input
+                id="edit-description"
+                value={editForm.description}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, description: e.target.value })
+                }
+                placeholder="Optional description"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleEditCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditSubmit}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
