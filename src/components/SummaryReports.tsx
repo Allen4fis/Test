@@ -817,7 +817,7 @@ export function SummaryReports() {
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
                       <TableHead>LOA Count</TableHead>
-                      <TableHead>Total Cost</TableHead>
+                      <TableHead>Total Revenue</TableHead>
                       <TableHead>Date Range</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
