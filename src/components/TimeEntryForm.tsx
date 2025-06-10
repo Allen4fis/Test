@@ -601,6 +601,7 @@ export function TimeEntryForm() {
                     <TableHead>Job</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Hours</TableHead>
+                    <TableHead className="text-purple-600">LOA</TableHead>
                     <TableHead>Billable</TableHead>
                     <TableHead>Cost</TableHead>
                     <TableHead>Actions</TableHead>
