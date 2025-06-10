@@ -851,8 +851,10 @@ export function TimeEntryViewer() {
                                 </AlertDialogDescription>
                                 <AlertDialogDescription className="text-sm text-gray-600 mt-2">
                                   Time entry for {employee?.name} on{" "}
-                                  {new Date(entry.date).toLocaleDateString()} -{" "}
-                                  {entry.hours} hours
+                                  {parseLocalDate(
+                                    entry.date,
+                                  ).toLocaleDateString()}{" "}
+                                  - {entry.hours} hours
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
