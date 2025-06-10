@@ -465,11 +465,11 @@ export function SummaryReports() {
     (sum, summary) => sum + summary.totalCost,
     0,
   );
-  const totalRentalCost = filteredRentalSummaries.reduce(
+  const totalRentalRevenue = filteredRentalSummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
   );
-  const totalCost = totalLaborCost + totalRentalCost;
+  const totalCost = totalLaborCost; // Only labor costs, rentals are revenue
 
   const clearFilters = () => {
     setDateFilter(getInitialDateFilter());
