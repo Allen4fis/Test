@@ -885,7 +885,7 @@ export function InvoiceManagement() {
         </Card>
 
         <Card className="modern-card">
-          <CardContent className="p-4">
+          <CardContent className="p-5">
             <div className="flex items-start gap-3">
               <Check className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
               <div className="min-w-0 flex-1">
