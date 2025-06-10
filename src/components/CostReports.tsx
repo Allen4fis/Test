@@ -638,13 +638,13 @@ export function CostReports() {
                                   </p>
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-xl font-bold text-orange-600">
-                                    ${summary.totalCost.toFixed(2)}
+                                  <div className="text-xl font-bold text-green-600">
+                                    ${summary.totalRevenue.toFixed(2)}
                                   </div>
                                   <div className="text-xs text-gray-500">
                                     {totalRentalRevenue > 0
                                       ? (
-                                          (summary.totalCost /
+                                          (summary.totalRevenue /
                                             totalRentalRevenue) *
                                           100
                                         ).toFixed(1)
