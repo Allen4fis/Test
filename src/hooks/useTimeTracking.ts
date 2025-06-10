@@ -220,9 +220,6 @@ export function useTimeTracking() {
   const AUTOSAVE_KEY = "timeTrackingApp-autosave";
   const MAX_AUTOSAVES = 3; // Keep only the last 3 autosaves to save storage
 
-  const lastSaveRef = useRef<string>("");
-  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
-
   // Generate a data hash for change detection
   const generateDataHash = (data: AppData): string => {
     return JSON.stringify({
