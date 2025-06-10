@@ -501,9 +501,9 @@ export function CostReports() {
         <TabsContent value="rentals">
           <Card>
             <CardHeader>
-              <CardTitle>Rental Costs Analysis</CardTitle>
+              <CardTitle>Rental Revenue Analysis</CardTitle>
               <CardDescription>
-                Equipment and rental costs breakdown by job and category
+                Equipment and rental revenue breakdown by job and category
               </CardDescription>
             </CardHeader>
             <CardContent>
