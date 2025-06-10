@@ -1078,33 +1078,29 @@ export function BackupManagement() {
                             <Download className="h-4 w-4" />
                           </Button>
 
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
+                          <DeleteConfirmationDialog
+                            item={{
+                              id: backup.id,
+                              name: backup.name,
+                              type: "backup",
+                              associatedData: {
+                                backupSize: `${(backup.dataSize / 1024).toFixed(2)} KB`,
+                                recordCounts: [
+                                  `${backup.recordCounts.employees} employees`,
+                                  `${backup.recordCounts.jobs} jobs`,
+                                  `${backup.recordCounts.timeEntries} time entries`,
+                                  `${backup.recordCounts.rentalItems} rental items`,
+                                  `${backup.recordCounts.rentalEntries} rental entries`,
+                                ],
+                              },
+                            }}
+                            trigger={
                               <Button variant="ghost" size="sm">
                                 <Trash2 className="h-4 w-4 text-red-500" />
                               </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Delete Backup
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete the backup "
-                                  {backup.name}"? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deleteBackup(backup.id)}
-                                  className="bg-red-500 hover:bg-red-600"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                            }
+                            onConfirm={deleteBackup}
+                          />
                         </div>
                       </TableCell>
                     </TableRow>
