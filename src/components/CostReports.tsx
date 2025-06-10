@@ -79,7 +79,6 @@ export function CostReports() {
                 <p className="text-2xl font-bold text-green-600">
                   ${totalRentalRevenue.toFixed(2)}
                 </p>
-                </div>
               </div>
             </div>
           </CardContent>
