@@ -1024,47 +1024,62 @@ export function SummaryReports() {
                                   ↳
                                 </span>
                                 <span className="text-blue-700">
-                                  {employee.employeeName}
-                                </span>
-                                <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
-                                  Employee of {employee.managerName}
-                                </span>
+                          {(() => {
+                            // Find rentals associated with this employee that match the current date filtering
+                            const employeeRentals = filteredRentalSummaries.filter(
+                              (rental) => {
+                                // Only include rentals for this employee that fall within the same date range
+                                const matchesEmployee = rental.employeeName === employee.employeeName;
+                                const matchesDateRange =
+                                  (!dateFilter.startDate || rental.date >= dateFilter.startDate) &&
+                                  (!dateFilter.endDate || rental.date <= dateFilter.endDate);
+                                return matchesEmployee && matchesDateRange;
+                              }
+                            );
+
+                            if (employeeRentals.length === 0) {
+                              return <span className="text-gray-400 text-xs">No rentals</span>;
+                            }
+
+                            // Calculate total DSP earnings and show rental details
+                            const totalDspEarnings = employeeRentals.reduce((sum, rental) => {
+                              const rentalItem = rentalItems.find(
+                                (item) => item.name === rental.rentalItemName
+                              );
+                              const dspRate = rentalItem?.dspRate || (rentalItem as any)?.paidOutDailyRate || 0;
+                              return sum + (dspRate * rental.duration * rental.quantity);
+                            }, 0);
+
+                            return (
+                              <div className="space-y-1">
+                                <div className="text-xs font-medium text-purple-600">
+                                  DSP Earnings: ${totalDspEarnings.toFixed(2)}
+                                </div>
+                                <div className="space-y-1">
+                                  {employeeRentals.map((rental) => {
+                                    const rentalItem = rentalItems.find(
+                                      (item) => item.name === rental.rentalItemName
+                                    );
+                                    const dspRate = rentalItem?.dspRate || (rentalItem as any)?.paidOutDailyRate;
+
+                                    return (
+                                      <div key={rental.id} className="text-xs bg-purple-50 px-2 py-1 rounded">
+                                        <div className="font-medium text-purple-700">
+                                          {rental.rentalItemName}
+                                        </div>
+                                        <div className="text-purple-600">
+                                          {dspRate ? `$${dspRate.toFixed(2)}/day` : 'No DSP rate'}
+                                          {rental.duration > 1 && ` × ${rental.duration} days`}
+                                          {rental.quantity > 1 && ` × ${rental.quantity} units`}
+                                          <div className="text-xs text-gray-500">({rental.date})</div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
-                            ) : (
-                              // Independent employee or manager
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                    index < 3
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
-                                >
-                                  {index + 1}
-                                </span>
-                                <span className="font-semibold">
-                                  {employee.employeeName}
-                                </span>
-                                {employee.employeeCategory === "dsp" ? (
-                                  <span className="text-xs text-purple-700 bg-purple-50 px-2 py-1 rounded border border-purple-200">
-                                    DSP
-                                  </span>
-                                ) : employee.employeeCategory === "employee" ? (
-                                  <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                                    Employee
-                                  </span>
-                                ) : (
-                                  <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                                    Independent
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>{employee.employeeTitle}</TableCell>
-                        <TableCell>
-                          <HourTypeBreakdownDisplay
+                            );
+                          })()}
                             breakdown={employee.hourTypeBreakdown}
                           />
                         </TableCell>
