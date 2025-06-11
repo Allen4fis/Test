@@ -1021,6 +1021,21 @@ export function RentalManagement() {
                           (item) => item.name === summary.itemName,
                         );
 
+                        // Debug logging
+                        console.log("=== RENTAL RATE DEBUG ===");
+                        console.log("Summary item name:", summary.itemName);
+                        console.log(
+                          "Available rental items:",
+                          rentalItems.map((item) => ({
+                            id: item.id,
+                            name: item.name,
+                            dailyRate: item.dailyRate,
+                            dspRate: item.dspRate,
+                          })),
+                        );
+                        console.log("Found rental item:", rentalItem);
+                        console.log("=== END DEBUG ===");
+
                         return (
                           <TableRow key={summary.id}>
                             <TableCell>
