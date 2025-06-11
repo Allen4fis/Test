@@ -205,7 +205,7 @@ export function DeleteConfirmationDialog({
             "This will PERMANENTLY DELETE this time entry and ALL associated data",
           dataLoss: [
             `Time entry for ${item.name}`,
-            "Hours worked and LOA count data",
+            "Hours worked and Live Out Allowance count data",
             "Billable and cost calculations for this entry",
             "Employee time tracking record",
             ...(item.associatedData?.additionalInfo || []),
