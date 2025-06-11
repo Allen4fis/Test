@@ -6,6 +6,7 @@ export interface Employee {
   billableWage: number; // What we charge clients
   costWage: number; // Internal cost/what we pay employee
   managerId?: string; // ID of the employee who manages this employee
+  category?: string; // "employee", "dsp", or undefined for actual employee relationships
   createdAt: string;
 }
 
