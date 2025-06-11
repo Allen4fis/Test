@@ -914,7 +914,9 @@ export function SummaryReports() {
               <Clock className="h-5 w-5 text-green-500" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Hours</p>
-                <p className="text-2xl font-bold">{totalHours.toFixed(2)}</p>
+                <p className="text-2xl font-bold">
+                  {(totalHours || 0).toFixed(2)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -928,7 +930,7 @@ export function SummaryReports() {
                   Effective Hours
                 </p>
                 <p className="text-2xl font-bold">
-                  {totalEffectiveHours.toFixed(2)}
+                  {(totalEffectiveHours || 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -940,10 +942,12 @@ export function SummaryReports() {
               <DollarSign className="h-5 w-5 text-purple-500" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Cost</p>
-                <p className="text-2xl font-bold">${totalCost.toFixed(2)}</p>
+                <p className="text-2xl font-bold">
+                  ${(totalCost || 0).toFixed(2)}
+                </p>
                 <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                  <span>Labor: ${totalLaborCost.toFixed(2)}</span>
-                  <span>Rentals: ${totalRentalRevenue.toFixed(2)}</span>
+                  <span>Labor: ${(totalLaborCost || 0).toFixed(2)}</span>
+                  <span>Rentals: ${(totalRentalRevenue || 0).toFixed(2)}</span>
                 </div>
               </div>
             </div>
