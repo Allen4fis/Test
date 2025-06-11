@@ -299,7 +299,7 @@ export function TimeEntryViewer() {
     // Calculate hourly billable amount
     const hourlyBillable = effectiveHours * adjustedBillableWage;
 
-    // Add LOA amount separately (fixed $200 per LOA count)
+    // Add Live Out Allowance amount separately (fixed $200 per Live Out Allowance count)
     const loaBillable = (entry.loaCount || 0) * 200;
 
     return sum + hourlyBillable + loaBillable;
@@ -318,7 +318,7 @@ export function TimeEntryViewer() {
     // Calculate hourly cost
     const hourlyCost = effectiveHours * adjustedCostWage;
 
-    // Add LOA cost separately (fixed $200 per LOA count)
+    // Add Live Out Allowance cost separately (fixed $200 per Live Out Allowance count)
     const loaCost = (entry.loaCount || 0) * 200;
 
     return sum + hourlyCost + loaCost;
@@ -932,7 +932,7 @@ export function TimeEntryViewer() {
                                     `Hour Type: ${hourType?.name}`,
                                     `Province: ${province?.name}`,
                                     entry.loaCount
-                                      ? `LOA Count: ${entry.loaCount}`
+                                      ? `Live Out Allowance Count: ${entry.loaCount}`
                                       : null,
                                     entry.description
                                       ? `Description: ${entry.description}`
@@ -1105,7 +1105,7 @@ export function TimeEntryViewer() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-loa">LOA Count</Label>
+              <Label htmlFor="edit-loa">Live Out Allowance Count</Label>
               <Input
                 id="edit-loa"
                 type="number"
