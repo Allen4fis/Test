@@ -133,11 +133,11 @@ export function InvoiceManagement() {
         (sum, entry) => sum + entry.totalCost,
         0,
       );
-      const loaCost = totalLoaCount * 200; // LOA is billable at $200 each
+      const loaCost = totalLoaCount * 200; // Live Out Allowance is billable at $200 each
       const totalCost = laborCost; // Only labor is a cost, rentals are billable revenue
-      // CRITICAL FIX: LOA is already included in laborBillable from timeEntrySummaries
+      // CRITICAL FIX: Live Out Allowance is already included in laborBillable from timeEntrySummaries
       // So we should NOT add loaCost again to avoid double-counting
-      const totalBillable = laborBillable + rentalBillable; // Labor billable (includes LOA) + rental revenue
+      const totalBillable = laborBillable + rentalBillable; // Labor billable (includes Live Out Allowance) + rental revenue
 
       return {
         date,
@@ -368,7 +368,9 @@ export function InvoiceManagement() {
                   <TableHead>Invoice Status</TableHead>
                   <TableHead>Dates</TableHead>
                   <TableHead>Hours</TableHead>
-                  <TableHead className="text-purple-600">LOA Count</TableHead>
+                  <TableHead className="text-purple-600">
+                    Live Out Allowance Count
+                  </TableHead>
                   <TableHead>Cost</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
