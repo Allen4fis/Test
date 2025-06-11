@@ -1017,49 +1017,10 @@ export function RentalManagement() {
                     </TableHeader>
                     <TableBody>
                       {rentalSummaries.map((summary, index) => {
-                        // Enhanced debug logging
-                        console.log("=== SUMMARY DEBUG ===");
-                        console.log("Full summary object:", summary);
-                        console.log(
-                          "Summary properties:",
-                          Object.keys(summary),
+                        // Find the rental item by name
+                        const rentalItem = rentalItems.find(
+                          (item) => item.name === summary.rentalItemName,
                         );
-                        console.log("=== END SUMMARY DEBUG ===");
-
-                        // Try multiple ways to find the rental item
-                        let rentalItem = null;
-
-                        // Try by rentalItemName (most common)
-                        if (summary.rentalItemName) {
-                          rentalItem = rentalItems.find(
-                            (item) => item.name === summary.rentalItemName,
-                          );
-                        }
-
-                        // Try by itemName
-                        if (!rentalItem && summary.itemName) {
-                          rentalItem = rentalItems.find(
-                            (item) => item.name === summary.itemName,
-                          );
-                        }
-
-                        // Try by rentalItemId
-                        if (!rentalItem && summary.rentalItemId) {
-                          rentalItem = rentalItems.find(
-                            (item) => item.id === summary.rentalItemId,
-                          );
-                        }
-
-                        console.log("=== RENTAL ITEM DEBUG ===");
-                        console.log("Rental item found:", rentalItem);
-                        console.log(
-                          "Available rental items:",
-                          rentalItems.map((item) => ({
-                            id: item.id,
-                            name: item.name,
-                          })),
-                        );
-                        console.log("=== END DEBUG ===");
 
                         return (
                           <TableRow key={`${summary.id}-${index}`}>
