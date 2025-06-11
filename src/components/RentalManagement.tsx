@@ -1124,19 +1124,25 @@ export function RentalManagement() {
                               )}
                             </TableCell>
                             <TableCell>
-                              {rentalItem?.dspRate ? (
-                                <div className="flex items-center gap-1">
-                                  <DollarSign className="h-4 w-4 text-purple-600" />
-                                  <span className="font-medium text-purple-600">
-                                    {rentalItem.dspRate.toFixed(2)}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    /day
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="text-gray-400">—</span>
-                              )}
+                              {(() => {
+                                // Check both new (dspRate) and legacy (paidOutDailyRate) property names
+                                const dspRateValue =
+                                  rentalItem?.dspRate ||
+                                  (rentalItem as any)?.paidOutDailyRate;
+                                return dspRateValue ? (
+                                  <div className="flex items-center gap-1">
+                                    <DollarSign className="h-4 w-4 text-purple-600" />
+                                    <span className="font-medium text-purple-600">
+                                      {dspRateValue.toFixed(2)}
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                      /day
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">—</span>
+                                );
+                              })()}
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-1">
