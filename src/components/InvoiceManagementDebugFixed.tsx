@@ -162,7 +162,7 @@ export function InvoiceManagementDebugFixed() {
         rentalEntriesCount: dayRentalEntries.length,
         laborBillableCalc: `${dayTimeEntries.length} entries = $${laborBillable.toFixed(2)}`,
         rentalBillableCalc: `${dayRentalEntries.length} rentals = $${rentalBillable.toFixed(2)}`,
-        loaCostCalc: `${totalLoaCount} LOA × $200 = $${loaCost.toFixed(2)} (already in labor)`,
+        loaCostCalc: `${totalLoaCount} Live Out Allowance × $200 = $${loaCost.toFixed(2)} (already in labor)`,
         totalBillableCalc: `$${laborBillable.toFixed(2)} + $${rentalBillable.toFixed(2)} = $${totalBillable.toFixed(2)}`,
       };
 
@@ -385,7 +385,8 @@ export function InvoiceManagementDebugFixed() {
                     {dateInfo.debugInfo.rentalBillableCalc}
                   </p>
                   <p>
-                    <strong>LOA:</strong> {dateInfo.debugInfo.loaCostCalc}
+                    <strong>Live Out Allowance:</strong>{" "}
+                    {dateInfo.debugInfo.loaCostCalc}
                   </p>
                   <p>
                     <strong>Total Billable:</strong>{" "}
@@ -415,7 +416,7 @@ export function InvoiceManagementDebugFixed() {
               <CardHeader>
                 <CardTitle>Time Entries</CardTitle>
                 <CardDescription>
-                  Labor hours and LOA for this date
+                  Labor hours and Live Out Allowance for this date
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -427,7 +428,7 @@ export function InvoiceManagementDebugFixed() {
                       <TableRow>
                         <TableHead>Employee</TableHead>
                         <TableHead>Hours</TableHead>
-                        <TableHead>LOA</TableHead>
+                        <TableHead>Live Out Allowance</TableHead>
                         <TableHead>Billable</TableHead>
                       </TableRow>
                     </TableHeader>
