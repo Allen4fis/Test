@@ -1415,8 +1415,10 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredDateNameSummaries.map((summary) => (
-                      <TableRow key={`${summary.date}|${summary.employeeName}`}>
+                    {filteredDateNameSummaries.map((summary, index) => (
+                      <TableRow
+                        key={`${summary.date}|${summary.employeeName}|${index}`}
+                      >
                         <TableCell className="font-medium">
                           {parseLocalDate(summary.date).toLocaleDateString()}
                         </TableCell>
