@@ -107,7 +107,13 @@ export function EmployeeManagement() {
       managerId:
         formData.managerId === "no-manager" || formData.managerId === "dsp"
           ? undefined
-          : formData.managerId, // Only include if not "no-manager" or "dsp"
+          : formData.managerId,
+      category:
+        formData.managerId === "no-manager"
+          ? "employee"
+          : formData.managerId === "dsp"
+            ? "dsp"
+            : undefined,
     };
     if (editingEmployee) {
       updateEmployee(editingEmployee.id, employeeData);
