@@ -1129,15 +1129,8 @@ export function SummaryReports() {
                                       <div className="space-y-1">
                                         {dspCalc.rentals.map(
                                           (rental, rentalIndex) => {
-                                            const rentalItem = rentalItems.find(
-                                              (item) =>
-                                                item.name ===
-                                                rental.rentalItemName,
-                                            );
-                                            const dspRate =
-                                              rentalItem?.dspRate ||
-                                              (rentalItem as any)
-                                                ?.paidOutDailyRate;
+                                            // Use the DSP rate from the rental entry itself
+                                            const dspRate = rental.dspRate;
 
                                             return (
                                               <div
