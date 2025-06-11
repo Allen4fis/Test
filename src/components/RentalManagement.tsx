@@ -111,8 +111,6 @@ export function RentalManagement() {
       dailyRate: "",
       hourlyRate: "",
       unit: "day",
-      employeeId: "",
-      dspRate: "",
       isActive: true,
     });
   };
