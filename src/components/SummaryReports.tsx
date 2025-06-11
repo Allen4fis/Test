@@ -462,36 +462,76 @@ export function SummaryReports() {
   const filteredTitleJobSummaries = titleJobSummaries;
   const filteredDateNameSummaries = dateNameSummaries;
 
-  // Optimized hierarchical employee processing
+  // Optimized hierarchical employee processing with proper grouping
   const hierarchicalEmployeeSummaries = useMemo(() => {
     const employeeMap = new Map(employees.map((emp) => [emp.name, emp]));
 
-    return employeeSummariesData
-      .map((emp) => {
-        const employee = employeeMap.get(emp.employeeName);
-        const manager = employee?.managerId
-          ? employees.find((e) => e.id === employee.managerId)
-          : null;
+    // First, enhance all employees with hierarchy data
+    const enhancedEmployees = employeeSummariesData.map((emp) => {
+      const employee = employeeMap.get(emp.employeeName);
+      const manager = employee?.managerId
+        ? employees.find((e) => e.id === employee.managerId)
+        : null;
 
-        return {
-          ...emp,
-          employeeCategory: employee?.category,
-          isSubordinate: !!employee?.managerId,
-          managerName: manager?.name,
-        };
-      })
-      .sort((a, b) => {
-        // Sort by manager first, then subordinates
-        if (a.isSubordinate && !b.isSubordinate) return 1;
-        if (!a.isSubordinate && b.isSubordinate) return -1;
-        if (a.isSubordinate && b.isSubordinate) {
-          const managerCompare = (a.managerName || "").localeCompare(
-            b.managerName || "",
-          );
-          if (managerCompare !== 0) return managerCompare;
-        }
-        return b.totalHours - a.totalHours;
-      });
+      return {
+        ...emp,
+        employeeCategory: employee?.category,
+        isSubordinate: !!employee?.managerId,
+        managerName: manager?.name,
+      };
+    });
+
+    // Group subordinates by their managers
+    const subordinatesByManager = enhancedEmployees
+      .filter((emp) => emp.isSubordinate)
+      .reduce(
+        (acc, emp) => {
+          const managerName = emp.managerName || "Unknown";
+          if (!acc[managerName]) {
+            acc[managerName] = [];
+          }
+          acc[managerName].push(emp);
+          return acc;
+        },
+        {} as Record<string, typeof enhancedEmployees>,
+      );
+
+    // Sort subordinates within each group by total hours
+    Object.keys(subordinatesByManager).forEach((managerName) => {
+      subordinatesByManager[managerName].sort(
+        (a, b) => b.totalHours - a.totalHours,
+      );
+    });
+
+    // Get all managers (employees without managerId) and sort by total hours
+    const managers = enhancedEmployees
+      .filter((emp) => !emp.isSubordinate)
+      .sort((a, b) => b.totalHours - a.totalHours);
+
+    // Build final hierarchical list: manager followed by their subordinates
+    const hierarchicalList: typeof enhancedEmployees = [];
+
+    managers.forEach((manager) => {
+      // Add the manager
+      hierarchicalList.push(manager);
+
+      // Add their subordinates immediately after
+      const subordinates = subordinatesByManager[manager.employeeName] || [];
+      hierarchicalList.push(...subordinates);
+    });
+
+    // Add any orphaned subordinates (whose managers aren't in the current data)
+    const managersInData = new Set(managers.map((m) => m.employeeName));
+    const orphanedSubordinates = enhancedEmployees
+      .filter(
+        (emp) =>
+          emp.isSubordinate && !managersInData.has(emp.managerName || ""),
+      )
+      .sort((a, b) => b.totalHours - a.totalHours);
+
+    hierarchicalList.push(...orphanedSubordinates);
+
+    return hierarchicalList;
   }, [employeeSummariesData, employees]);
 
   // Optimized DSP calculations with memoization
