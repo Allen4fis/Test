@@ -439,6 +439,27 @@ export function RentalManagement() {
 
                         // If still not found, try to find by ID
                         if (!rentalItem && summary.rentalItemId) {
+                      {rentalSummaries.map((summary) => {
+                        // Debug logging to see what properties the summary has
+                        console.log("=== SUMMARY DEBUG ===");
+                        console.log("Full summary object:", summary);
+                        console.log("Summary properties:", Object.keys(summary));
+                        console.log("=== END SUMMARY DEBUG ===");
+
+                        // Try to find the rental item using different possible property names
+                        let rentalItem = rentalItems.find(
+                          (item) => item.name === summary.itemName,
+                        );
+
+                        // If not found with itemName, try other possible properties
+                        if (!rentalItem) {
+                          rentalItem = rentalItems.find(
+                            (item) => item.name === summary.rentalItemName,
+                          );
+                        }
+
+                        // If still not found, try to find by ID
+                        if (!rentalItem && summary.rentalItemId) {
                           rentalItem = rentalItems.find(
                             (item) => item.id === summary.rentalItemId,
                           );
@@ -451,39 +472,8 @@ export function RentalManagement() {
                         console.log("Available rental items:", rentalItems.map(item => ({ id: item.id, name: item.name, dailyRate: item.dailyRate, dspRate: item.dspRate })));
                         console.log("Found rental item:", rentalItem);
                         console.log("=== END DEBUG ===");
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="description" className="text-right">
-                            Description
-                          </Label>
-                          <Textarea
-                            id="description"
-                            value={formData.description}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                description: e.target.value,
-                              })
-                            }
-                            className="col-span-3"
-                            placeholder="Optional description"
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="isActive" className="text-right">
-                            Active
-                          </Label>
-                          <Switch
-                            id="isActive"
-                            checked={formData.isActive}
-                            onCheckedChange={(checked) =>
-                              setFormData({ ...formData, isActive: checked })
-                            }
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit">Add Item</Button>
+
+                        return (
                       </DialogFooter>
                     </form>
                   </DialogContent>
