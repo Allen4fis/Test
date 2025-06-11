@@ -78,11 +78,8 @@ interface EnhancedSummary {
 // Optimized DSP calculation helper
 const calculateDspEarnings = (employeeRentals: any[], rentalItems: any[]) => {
   return employeeRentals.reduce((sum, rental) => {
-    const rentalItem = rentalItems.find(
-      (item) => item.name === rental.rentalItemName,
-    );
-    const dspRate =
-      rentalItem?.dspRate || (rentalItem as any)?.paidOutDailyRate || 0;
+    // Use the DSP rate from the rental entry itself, not from the rental item template
+    const dspRate = rental.dspRate || 0;
     return sum + dspRate * rental.duration * rental.quantity;
   }, 0);
 };
@@ -544,9 +541,8 @@ export function SummaryReports() {
       );
 
       const dspEarnings = employeeRentals.reduce((sum, rental) => {
-        const rentalItem = rentalItemMap.get(rental.rentalItemName);
-        const dspRate =
-          rentalItem?.dspRate || (rentalItem as any)?.paidOutDailyRate || 0;
+        // Use the DSP rate from the rental entry itself, not from the rental item template
+        const dspRate = rental.dspRate || 0;
         return sum + dspRate * rental.duration * rental.quantity;
       }, 0);
 
