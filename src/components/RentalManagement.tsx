@@ -186,6 +186,13 @@ export function RentalManagement() {
         ? parseFloat(itemFormData.hourlyRate)
         : undefined,
       unit: itemFormData.unit,
+      employeeId:
+        itemFormData.employeeId === "no-employee"
+          ? undefined
+          : itemFormData.employeeId,
+      paidOutDailyRate: itemFormData.paidOutDailyRate
+        ? parseFloat(itemFormData.paidOutDailyRate)
+        : undefined,
       isActive: itemFormData.isActive,
     };
 
