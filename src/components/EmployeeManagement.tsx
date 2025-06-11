@@ -391,6 +391,9 @@ export function EmployeeManagement() {
                   const profitMargin =
                     employee.billableWage > 0
                       ? ((employee.billableWage - employee.costWage) /
+                          employee.billableWage) *
+                        100
+                      : 0;
                   const employeeTimeEntries = timeEntries.filter(
                     (entry) => entry.employeeId === employee.id,
                   );
