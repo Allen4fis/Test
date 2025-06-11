@@ -85,6 +85,7 @@ export function SummaryReports() {
     timeEntries,
     timeEntrySummaries,
     rentalSummaries,
+    rentalItems,
     summaryByTitleAndJob,
     summaryByDateAndName,
   } = useTimeTracking();
