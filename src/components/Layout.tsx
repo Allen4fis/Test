@@ -69,13 +69,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       description: "Summary reports",
       color: "text-orange-400",
     },
-    {
-      id: "costs" as const,
-      label: "Cost Reports",
-      icon: FileText,
-      description: "Labor cost analysis",
-      color: "text-red-400",
-    },
+
     {
       id: "invoices" as const,
       label: "Invoices",
