@@ -1321,12 +1321,31 @@ export function RentalManagement() {
                               const rentalItem = rentalItems.find(
                                 (item) => item.name === summary.itemName,
                               );
+                              return rentalItem ? (
+                                <div className="flex items-center gap-1">
+                                  <DollarSign className="h-4 w-4 text-green-600" />
+                                  <span className="font-medium text-green-600">
+                                    {rentalItem.dailyRate.toFixed(2)}
+                                  </span>
+                                  <span className="text-xs text-gray-500">/{rentalItem.unit}</span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">—</span>
+                              );
+                            })()}
+                          </TableCell>
+                          <TableCell>
+                            {(() => {
+                              const rentalItem = rentalItems.find(
+                                (item) => item.name === summary.itemName,
+                              );
                               return rentalItem?.dspRate ? (
                                 <div className="flex items-center gap-1">
                                   <DollarSign className="h-4 w-4 text-purple-600" />
                                   <span className="font-medium text-purple-600">
                                     {rentalItem.dspRate.toFixed(2)}
                                   </span>
+                                  <span className="text-xs text-gray-500">/day</span>
                                 </div>
                               ) : (
                                 <span className="text-gray-400">—</span>
