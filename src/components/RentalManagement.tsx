@@ -1272,6 +1272,16 @@ export function RentalManagement() {
                               const rentalItem = rentalItems.find(
                                 (item) => item.name === summary.itemName,
                               );
+                              // Debug logging
+                              console.log("Debug - Looking for rental rate:", {
+                                summaryItemName: summary.itemName,
+                                rentalItemsCount: rentalItems.length,
+                                rentalItemsNames: rentalItems.map(
+                                  (item) => item.name,
+                                ),
+                                foundItem: rentalItem,
+                                foundItemRate: rentalItem?.dailyRate,
+                              });
                               return rentalItem ? (
                                 <div className="flex items-center gap-1">
                                   <DollarSign className="h-4 w-4 text-green-600" />
@@ -1292,6 +1302,12 @@ export function RentalManagement() {
                               const rentalItem = rentalItems.find(
                                 (item) => item.name === summary.itemName,
                               );
+                              // Debug logging
+                              console.log("Debug - Looking for DSP rate:", {
+                                summaryItemName: summary.itemName,
+                                foundItem: rentalItem,
+                                foundItemDspRate: rentalItem?.dspRate,
+                              });
                               return rentalItem?.dspRate ? (
                                 <div className="flex items-center gap-1">
                                   <DollarSign className="h-4 w-4 text-purple-600" />
