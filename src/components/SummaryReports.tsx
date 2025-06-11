@@ -1002,6 +1002,7 @@ export function SummaryReports() {
                       <TableHead>Effective Hours</TableHead>
                       <TableHead>LOA Count</TableHead>
                       <TableHead>Total Revenue</TableHead>
+                      <TableHead>Rental DSP</TableHead>
                       <TableHead>Date Range</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
