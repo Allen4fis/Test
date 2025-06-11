@@ -826,7 +826,7 @@ export function TimeEntryViewer() {
                     return (
                       <TableRow key={entry.id}>
                         <TableCell className="font-medium">
-                          {parseLocalDate(entry.date).toLocaleDateString()}
+                          {formatLocalDate(entry.date)}
                         </TableCell>
                         <TableCell>{employee?.name || "Unknown"}</TableCell>
                         <TableCell>
