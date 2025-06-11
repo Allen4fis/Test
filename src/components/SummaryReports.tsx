@@ -922,7 +922,7 @@ export function SummaryReports() {
       <div className="modern-card rounded-2xl overflow-hidden">
         <Tabs defaultValue="employees" className="space-y-6 p-6">
           <TabsList
-            className="grid w-full grid-cols-5 no-print rounded-xl p-1 bg-gray-800/50"
+            className="grid w-full grid-cols-1 no-print rounded-xl p-1 bg-gray-800/50"
             style={{
               background:
                 "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
@@ -935,34 +935,6 @@ export function SummaryReports() {
             >
               <Users className="h-4 w-4 mr-2" />
               Employees
-            </TabsTrigger>
-            <TabsTrigger
-              value="title-job"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
-            >
-              <Briefcase className="h-4 w-4 mr-2" />
-              Title & Job
-            </TabsTrigger>
-            <TabsTrigger
-              value="date-name"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
-            >
-              <Calendar className="h-4 w-4 mr-2" />
-              Date & Name
-            </TabsTrigger>
-            <TabsTrigger
-              value="rentals"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
-            >
-              <Truck className="h-4 w-4 mr-2" />
-              Rentals
-            </TabsTrigger>
-            <TabsTrigger
-              value="entries"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Entries
             </TabsTrigger>
           </TabsList>
 
