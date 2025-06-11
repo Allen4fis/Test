@@ -401,6 +401,7 @@ export function SummaryReports() {
         managerName: emp.managerId
           ? employees.find((m) => m.id === emp.managerId)?.name
           : null,
+        category: emp.category, // Include the category field
       });
     });
 
@@ -411,6 +412,7 @@ export function SummaryReports() {
     employeeSummariesWithHourTypes.forEach((empSummary) => {
       const relationship = employeeRelationships.get(empSummary.employeeName);
       const managerName = relationship?.managerName;
+      const category = relationship?.category;
 
       if (managerName) {
         // This employee works under someone
@@ -421,13 +423,15 @@ export function SummaryReports() {
           ...empSummary,
           isSubordinate: true,
           managerName: managerName,
+          employeeCategory: category,
         });
       } else {
-        // Independent employee or manager
+        // Independent employee, DSP, or manager
         independentEmployees.push({
           ...empSummary,
           isSubordinate: false,
           managerName: null,
+          employeeCategory: category,
         });
       }
     });
