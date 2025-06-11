@@ -937,20 +937,20 @@ export function RentalManagement() {
                   </div>
                   {itemFormData.employeeId !== "no-employee" && (
                     <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-paidOutRate" className="text-right">
-                        Paid Out Daily Rate
+                      <Label htmlFor="edit-dspRate" className="text-right">
+                        DSP Rate
                       </Label>
                       <div className="col-span-3 relative">
                         <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
-                          id="edit-paidOutRate"
+                          id="edit-dspRate"
                           type="number"
                           step="0.01"
-                          value={itemFormData.paidOutDailyRate}
+                          value={itemFormData.dspRate}
                           onChange={(e) =>
                             setItemFormData({
                               ...itemFormData,
-                              paidOutDailyRate: e.target.value,
+                              dspRate: e.target.value,
                             })
                           }
                           className="pl-10"
