@@ -237,19 +237,59 @@ export function RentalManagement() {
     setEntryFormData({ ...entryFormData, rentalItemId: value });
   };
 
-  // Get rental summaries (already filtered by the useTimeTracking hook)
-  const rentalSummaries = useTimeTracking().rentalSummaries.map((summary) => {
-    // Get the original rental entry for full details
-    const entry = rentalEntries.find((re) => {
-      const item = rentalItems.find((item) => item.id === re.rentalItemId);
-      return item?.name === summary.rentalItemName;
-    });
+  // Calculate rental summaries directly to ensure immediate updates
+  const rentalSummaries = useMemo(() => {
+    return rentalEntries.map((entry) => {
+      const item = rentalItems.find((item) => item.id === entry.rentalItemId);
+      const job = jobs.find((job) => job.id === entry.jobId);
+      const employee = entry.employeeId
+        ? employees.find((emp) => emp.id === entry.employeeId)
+        : null;
 
-    return {
-      ...summary,
-      id: entry?.id || summary.id || `summary-${Math.random()}`,
-    };
-  });
+      // Calculate duration based on billing unit
+      const startDate = new Date(entry.startDate);
+      const endDate = new Date(entry.endDate);
+      const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+
+      let duration = 1;
+      switch (entry.billingUnit) {
+        case "hour":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60));
+          break;
+        case "day":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both start and end days
+          break;
+        case "week":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+          break;
+        case "month":
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+          break;
+      }
+
+      const totalCost = duration * entry.quantity * entry.rateUsed;
+
+      return {
+        id: entry.id,
+        rentalItemName: item?.name || "Unknown Item",
+        itemName: item?.name || "Unknown Item", // Add this for backward compatibility
+        category: item?.category || "Unknown",
+        jobNumber: job?.jobNumber || "Unknown Job",
+        jobName: job?.name || "Unknown Job Name",
+        employeeName: employee?.name || "Unassigned",
+        employeeTitle: employee?.title || "N/A",
+        startDate: entry.startDate,
+        endDate: entry.endDate,
+        duration,
+        quantity: entry.quantity,
+        billingUnit: entry.billingUnit,
+        rateUsed: entry.rateUsed,
+        totalCost,
+        description: entry.description,
+        date: entry.startDate, // Use start date for filtering compatibility
+      };
+    });
+  }, [rentalEntries, rentalItems, jobs, employees]);
 
   const activeItems = rentalItems.filter((item) => item.isActive);
   const activeJobs = jobs.filter((job) => job.isActive);
