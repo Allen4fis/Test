@@ -362,7 +362,7 @@ export function EmployeeManagement() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Title</TableHead>
-                  <TableHead>Manager</TableHead>
+                  <TableHead>Employee Of</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Billable Rate</TableHead>
                   <TableHead>Cost Rate</TableHead>
