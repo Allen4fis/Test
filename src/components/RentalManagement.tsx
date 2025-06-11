@@ -140,8 +140,6 @@ export function RentalManagement() {
         ? parseFloat(formData.hourlyRate)
         : undefined,
       unit: formData.unit,
-      employeeId: formData.employeeId || undefined,
-      dspRate: formData.dspRate ? parseFloat(formData.dspRate) : undefined,
       isActive: formData.isActive,
     };
 
