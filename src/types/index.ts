@@ -5,6 +5,7 @@ export interface Employee {
   email?: string;
   billableWage: number; // What we charge clients
   costWage: number; // Internal cost/what we pay employee
+  managerId?: string; // ID of the employee who manages this employee
   createdAt: string;
 }
 
