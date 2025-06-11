@@ -198,8 +198,6 @@ export function RentalManagement() {
       dailyRate: item.dailyRate.toString(),
       hourlyRate: item.hourlyRate?.toString() || "",
       unit: item.unit,
-      employeeId: item.employeeId || "",
-      dspRate: item.dspRate?.toString() || "",
       isActive: item.isActive,
     });
   };
