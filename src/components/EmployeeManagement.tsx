@@ -232,7 +232,7 @@ export function EmployeeManagement() {
                           htmlFor="manager"
                           className="text-sm font-medium"
                         >
-                          Reports To (Manager)
+                          Employee Of
                         </Label>
                         <Select
                           value={formData.managerId}
