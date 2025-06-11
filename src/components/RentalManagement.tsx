@@ -120,6 +120,8 @@ export function RentalManagement() {
     dailyRate: "",
     hourlyRate: "",
     unit: "day" as "day" | "hour" | "week" | "month",
+    employeeId: "no-employee", // Employee attachment
+    paidOutDailyRate: "", // Paid out daily rate
     isActive: true,
   });
 
