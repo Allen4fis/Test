@@ -1081,6 +1081,7 @@ export function SummaryReports() {
                             );
                           })()}
                         </TableCell>
+                        <TableCell>{employee.employeeTitle}</TableCell>
                         <TableCell>
                           <HourTypeBreakdownDisplay
                             breakdown={employee.hourTypeBreakdown}
