@@ -242,9 +242,8 @@ export function EmployeeManagement() {
                             <SelectValue placeholder="Select employee (optional)" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="no-manager">
-                              Independent Employee
-                            </SelectItem>
+                            <SelectItem value="no-manager">Employee</SelectItem>
+                            <SelectItem value="dsp">DSP</SelectItem>
                             {getAvailableEmployees().map((employee) => (
                               <SelectItem key={employee.id} value={employee.id}>
                                 {employee.name} - {employee.title}
