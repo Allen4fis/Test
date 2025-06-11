@@ -486,9 +486,7 @@ export function RentalManagement() {
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Category</TableHead>
-                        <TableHead>Attached Employee</TableHead>
                         <TableHead>Rate</TableHead>
-                        <TableHead>DSP Rate</TableHead>
                         <TableHead>Unit</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
