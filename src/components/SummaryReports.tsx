@@ -1102,7 +1102,7 @@ export function SummaryReports() {
                                   DSP Earnings: ${totalDspEarnings.toFixed(2)}
                                 </div>
                                 <div className="space-y-1">
-                                  {employeeRentals.map((rental) => {
+                                  {employeeRentals.map((rental, index) => {
                                     const rentalItem = rentalItems.find(
                                       (item) =>
                                         item.name === rental.rentalItemName,
@@ -1113,7 +1113,7 @@ export function SummaryReports() {
 
                                     return (
                                       <div
-                                        key={rental.id}
+                                        key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${index}`}
                                         className="text-xs bg-purple-50 px-2 py-1 rounded"
                                       >
                                         <div className="font-medium text-purple-700">
