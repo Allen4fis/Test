@@ -440,36 +440,20 @@ export function RentalManagement() {
                         // If still not found, try to find by ID
                         if (!rentalItem && summary.rentalItemId) {
                       {rentalSummaries.map((summary) => {
-                        // Debug logging to see what properties the summary has
+                        // Enhanced debug logging
                         console.log("=== SUMMARY DEBUG ===");
                         console.log("Full summary object:", summary);
                         console.log("Summary properties:", Object.keys(summary));
                         console.log("=== END SUMMARY DEBUG ===");
 
-                        // Try to find the rental item using different possible property names
-                        let rentalItem = rentalItems.find(
-                          (item) => item.name === summary.itemName,
+                        // Try multiple approaches to find the rental item
+                        const rentalItem = rentalItems.find(
+                          (item) => item.name === summary.itemName ||
+                                   item.name === summary.rentalItemName ||
+                                   item.id === summary.rentalItemId
                         );
 
-                        // If not found with itemName, try other possible properties
-                        if (!rentalItem) {
-                          rentalItem = rentalItems.find(
-                            (item) => item.name === summary.rentalItemName,
-                          );
-                        }
-
-                        // If still not found, try to find by ID
-                        if (!rentalItem && summary.rentalItemId) {
-                          rentalItem = rentalItems.find(
-                            (item) => item.id === summary.rentalItemId,
-                          );
-                        }
-
                         console.log("=== RENTAL RATE DEBUG ===");
-                        console.log("Summary item name:", summary.itemName);
-                        console.log("Summary rental item name:", summary.rentalItemName);
-                        console.log("Summary rental item ID:", summary.rentalItemId);
-                        console.log("Available rental items:", rentalItems.map(item => ({ id: item.id, name: item.name, dailyRate: item.dailyRate, dspRate: item.dspRate })));
                         console.log("Found rental item:", rentalItem);
                         console.log("=== END DEBUG ===");
 
