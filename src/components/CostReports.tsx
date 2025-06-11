@@ -449,9 +449,11 @@ export function CostReports() {
                               return (
                                 <TableRow key={emp.employeeName}>
                                   <TableCell>{emp.employeeName}</TableCell>
-                                  <TableCell>{emp.hours.toFixed(1)}</TableCell>
                                   <TableCell>
-                                    {emp.effectiveHours.toFixed(1)}
+                                    {(emp.hours || 0).toFixed(1)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {(emp.effectiveHours || 0).toFixed(1)}
                                   </TableCell>
                                   <TableCell>
                                     {empLoaCount > 0 ? (
@@ -473,12 +475,13 @@ export function CostReports() {
                                     )}
                                   </TableCell>
                                   <TableCell className="font-medium text-red-600">
-                                    ${emp.cost.toFixed(2)}
+                                    ${(emp.cost || 0).toFixed(2)}
                                   </TableCell>
                                   <TableCell>
                                     <Badge variant="outline">
                                       {(
-                                        (emp.cost / job.totalCost) *
+                                        ((emp.cost || 0) /
+                                          (job.totalCost || 1)) *
                                         100
                                       ).toFixed(1)}
                                       %
