@@ -988,7 +988,7 @@ export function InvoiceManagement() {
                           <div className="text-center">
                             <p className="text-sm text-gray-600">Total Hours</p>
                             <p className="text-2xl font-bold text-blue-600">
-                              {breakdown.totalHours.toFixed(2)}
+                              {(breakdown.totalHours || 0).toFixed(2)}
                             </p>
                           </div>
                         </CardContent>
@@ -998,7 +998,7 @@ export function InvoiceManagement() {
                           <div className="text-center">
                             <p className="text-sm text-gray-600">Labor Cost</p>
                             <p className="text-2xl font-bold text-green-600">
-                              ${breakdown.totalLaborCost.toFixed(2)}
+                              ${(breakdown.totalLaborCost || 0).toFixed(2)}
                             </p>
                           </div>
                         </CardContent>
@@ -1008,7 +1008,7 @@ export function InvoiceManagement() {
                           <div className="text-center">
                             <p className="text-sm text-gray-600">Rental Cost</p>
                             <p className="text-2xl font-bold text-orange-600">
-                              ${breakdown.totalRentalCost.toFixed(2)}
+                              ${(breakdown.totalRentalCost || 0).toFixed(2)}
                             </p>
                           </div>
                         </CardContent>
