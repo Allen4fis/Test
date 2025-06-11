@@ -66,7 +66,7 @@ export function Dashboard() {
 
   // Calculate active metrics
   const todaysEntries = timeEntrySummaries.filter(
-    (summary) => summary.date === new Date().toISOString().split("T")[0],
+    (summary) => summary.date === getTodayString(),
   );
 
   const thisWeekEntries = timeEntrySummaries.filter((summary) => {
