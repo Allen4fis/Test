@@ -1170,16 +1170,15 @@ export function RentalManagement() {
                               const rentalItem = rentalItems.find(
                                 (item) => item.name === summary.itemName,
                               );
-                              // Debug logging
-                              console.log("Debug - Looking for rental rate:", {
-                                summaryItemName: summary.itemName,
-                                rentalItemsCount: rentalItems.length,
-                                rentalItemsNames: rentalItems.map(
-                                  (item) => item.name,
-                                ),
-                                foundItem: rentalItem,
-                                foundItemRate: rentalItem?.dailyRate,
-                              });
+                              // Enhanced debug logging
+                              console.log("=== RENTAL RATE DEBUG ===");
+                              console.log("Summary item name:", summary.itemName);
+                              console.log("Rental items count:", rentalItems.length);
+                              console.log("All rental item names:", rentalItems.map(item => item.name));
+                              console.log("Found rental item:", rentalItem);
+                              console.log("Found item daily rate:", rentalItem?.dailyRate);
+                              console.log("Found item unit:", rentalItem?.unit);
+                              console.log("=== END RENTAL RATE DEBUG ===");
                               return rentalItem ? (
                                 <div className="flex items-center gap-1">
                                   <DollarSign className="h-4 w-4 text-green-600" />
