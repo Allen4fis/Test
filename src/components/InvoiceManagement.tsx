@@ -1161,7 +1161,7 @@ export function InvoiceManagement() {
                                         <TableCell>
                                           {entries
                                             .reduce(
-                                              (sum, e) => sum + e.hours,
+                                              (sum, e) => sum + (e.hours || 0),
                                               0,
                                             )
                                             .toFixed(2)}
@@ -1180,7 +1180,9 @@ export function InvoiceManagement() {
                                               {entries
                                                 .reduce(
                                                   (sum, e) =>
-                                                    sum + e.totalBillableAmount,
+                                                    sum +
+                                                    (e.totalBillableAmount ||
+                                                      0),
                                                   0,
                                                 )
                                                 .toFixed(2)}
