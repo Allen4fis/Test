@@ -215,7 +215,7 @@ export function RentalManagement() {
       hourlyRate: item.hourlyRate?.toString() || "",
       unit: item.unit,
       employeeId: item.employeeId || "no-employee",
-      paidOutDailyRate: item.paidOutDailyRate?.toString() || "",
+      dspRate: item.dspRate?.toString() || "",
       isActive: item.isActive,
     });
   };
