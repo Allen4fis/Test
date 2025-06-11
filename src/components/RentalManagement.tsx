@@ -419,45 +419,55 @@ export function RentalManagement() {
                           <Label htmlFor="unit" className="text-right">
                             Unit *
                           </Label>
-                        // Debug logging to see what properties the summary has
-                        console.log("=== SUMMARY DEBUG ===");
-                        console.log("Full summary object:", summary);
-                        console.log("Summary properties:", Object.keys(summary));
-                        console.log("=== END SUMMARY DEBUG ===");
-
-                        // Try to find the rental item using different possible property names
-                        let rentalItem = rentalItems.find(
-                          (item) => item.name === summary.itemName,
-                        );
-
-                        // If not found with itemName, try other possible properties
-                        if (!rentalItem) {
-                          rentalItem = rentalItems.find(
-                            (item) => item.name === summary.rentalItemName,
-                          );
-                        }
-
-                        // If still not found, try to find by ID
-                        if (!rentalItem && summary.rentalItemId) {
-                      {rentalSummaries.map((summary) => {
-                        // Enhanced debug logging
-                        console.log("=== SUMMARY DEBUG ===");
-                        console.log("Full summary object:", summary);
-                        console.log("Summary properties:", Object.keys(summary));
-                        console.log("=== END SUMMARY DEBUG ===");
-
-                        // Try multiple approaches to find the rental item
-                        const rentalItem = rentalItems.find(
-                          (item) => item.name === summary.itemName ||
-                                   item.name === summary.rentalItemName ||
-                                   item.id === summary.rentalItemId
-                        );
-
-                        console.log("=== RENTAL RATE DEBUG ===");
-                        console.log("Found rental item:", rentalItem);
-                        console.log("=== END DEBUG ===");
-
-                        return (
+                          <Select
+                            value={formData.unit}
+                            onValueChange={(value: any) =>
+                              setFormData({ ...formData, unit: value })
+                            }
+                          >
+                            <SelectTrigger className="col-span-3">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="day">Day</SelectItem>
+                              <SelectItem value="hour">Hour</SelectItem>
+                              <SelectItem value="week">Week</SelectItem>
+                              <SelectItem value="month">Month</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="description" className="text-right">
+                            Description
+                          </Label>
+                          <Textarea
+                            id="description"
+                            value={formData.description}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                description: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            placeholder="Optional description"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="isActive" className="text-right">
+                            Active
+                          </Label>
+                          <Switch
+                            id="isActive"
+                            checked={formData.isActive}
+                            onCheckedChange={(checked) =>
+                              setFormData({ ...formData, isActive: checked })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Add Item</Button>
                       </DialogFooter>
                     </form>
                   </DialogContent>
@@ -1006,49 +1016,78 @@ export function RentalManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {rentalSummaries.map((summary) => {
-                        const rentalItem = rentalItems.find(
-                          (item) => item.name === summary.itemName,
+                      {rentalSummaries.map((summary, index) => {
+                        // Enhanced debug logging
+                        console.log("=== SUMMARY DEBUG ===");
+                        console.log("Full summary object:", summary);
+                        console.log(
+                          "Summary properties:",
+                          Object.keys(summary),
                         );
+                        console.log("=== END SUMMARY DEBUG ===");
 
-                        // Debug logging
-                        console.log("=== RENTAL RATE DEBUG ===");
-                        console.log("Summary item name:", summary.itemName);
+                        // Try multiple ways to find the rental item
+                        let rentalItem = null;
+
+                        // Try by rentalItemName (most common)
+                        if (summary.rentalItemName) {
+                          rentalItem = rentalItems.find(
+                            (item) => item.name === summary.rentalItemName,
+                          );
+                        }
+
+                        // Try by itemName
+                        if (!rentalItem && summary.itemName) {
+                          rentalItem = rentalItems.find(
+                            (item) => item.name === summary.itemName,
+                          );
+                        }
+
+                        // Try by rentalItemId
+                        if (!rentalItem && summary.rentalItemId) {
+                          rentalItem = rentalItems.find(
+                            (item) => item.id === summary.rentalItemId,
+                          );
+                        }
+
+                        console.log("=== RENTAL ITEM DEBUG ===");
+                        console.log("Rental item found:", rentalItem);
                         console.log(
                           "Available rental items:",
                           rentalItems.map((item) => ({
                             id: item.id,
                             name: item.name,
-                            dailyRate: item.dailyRate,
-                            dspRate: item.dspRate,
                           })),
                         );
-                        console.log("Found rental item:", rentalItem);
                         console.log("=== END DEBUG ===");
 
                         return (
-                          <TableRow key={summary.id}>
+                          <TableRow key={`${summary.id}-${index}`}>
                             <TableCell>
                               <div>
                                 <p className="font-medium">
-                                  {summary.itemName}
+                                  {summary.itemName ||
+                                    summary.rentalItemName ||
+                                    "Unknown Item"}
                                 </p>
                                 <Badge variant="outline" className="text-xs">
-                                  {summary.category}
+                                  {summary.category || "Unknown"}
                                 </Badge>
                               </div>
                             </TableCell>
                             <TableCell>
                               <div>
                                 <p className="font-medium">
-                                  {summary.jobNumber}
+                                  {summary.jobNumber || "Unknown Job"}
                                 </p>
                                 <p className="text-sm text-gray-500">
-                                  {summary.jobName}
+                                  {summary.jobName || ""}
                                 </p>
                               </div>
                             </TableCell>
-                            <TableCell>{summary.employeeName}</TableCell>
+                            <TableCell>
+                              {summary.employeeName || "No Employee"}
+                            </TableCell>
                             <TableCell>
                               <div className="text-sm">
                                 <p>{summary.startDate}</p>
@@ -1103,7 +1142,7 @@ export function RentalManagement() {
                               <div className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4 text-green-600" />
                                 <span className="font-medium">
-                                  {summary.totalCost.toFixed(2)}
+                                  {summary.totalCost?.toFixed(2) || "0.00"}
                                 </span>
                               </div>
                             </TableCell>
@@ -1119,17 +1158,17 @@ export function RentalManagement() {
                                 <DeleteConfirmationDialog
                                   item={{
                                     id: summary.id,
-                                    name: `${summary.itemName} - ${summary.jobNumber}`,
+                                    name: `${summary.itemName || summary.rentalItemName} - ${summary.jobNumber}`,
                                     type: "rental-entry",
                                     associatedData: {
                                       additionalInfo: [
-                                        `Item: ${summary.itemName}`,
+                                        `Item: ${summary.itemName || summary.rentalItemName}`,
                                         `Job: ${summary.jobNumber} - ${summary.jobName}`,
                                         `Employee: ${summary.employeeName}`,
                                         `Period: ${summary.startDate} to ${summary.endDate}`,
                                         `Duration: ${summary.duration} ${summary.billingUnit}${summary.duration !== 1 ? "s" : ""}`,
                                         `Quantity: ${summary.quantity}`,
-                                        `Total cost: $${summary.totalCost.toFixed(2)}`,
+                                        `Total cost: $${summary.totalCost?.toFixed(2) || "0.00"}`,
                                       ],
                                     },
                                   }}
