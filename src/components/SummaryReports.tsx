@@ -999,22 +999,47 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {employeeSummariesWithHourTypes.map((employee, index) => (
+                    {hierarchicalEmployeeSummaries.map((employee, index) => (
                       <TableRow
                         key={`${employee.employeeName}|${employee.employeeTitle}`}
+                        className={employee.isSubordinate ? "bg-blue-25" : ""}
                       >
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            <span
-                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                index < 3
-                                  ? "bg-blue-100 text-blue-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {index + 1}
-                            </span>
-                            {employee.employeeName}
+                            {employee.isSubordinate ? (
+                              // Subordinate employee - indented with different styling
+                              <div className="flex items-center gap-2 ml-4">
+                                <div className="w-4 h-4 border-l-2 border-b-2 border-gray-300"></div>
+                                <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium bg-blue-50 text-blue-600 border border-blue-200">
+                                  ↳
+                                </span>
+                                <span className="text-blue-700">
+                                  {employee.employeeName}
+                                </span>
+                                <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
+                                  Employee of {employee.managerName}
+                                </span>
+                              </div>
+                            ) : (
+                              // Independent employee or manager
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                    index < 3
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  }`}
+                                >
+                                  {index + 1}
+                                </span>
+                                <span className="font-semibold">
+                                  {employee.employeeName}
+                                </span>
+                                <span className="text-xs text-gray-500 bg-green-50 px-2 py-1 rounded">
+                                  Independent
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>{employee.employeeTitle}</TableCell>
