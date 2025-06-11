@@ -62,6 +62,7 @@ export function EmployeeManagement() {
     email: "",
     billableWage: "",
     costWage: "",
+    managerId: "", // New field for manager selection
   });
 
   const resetForm = () => {
