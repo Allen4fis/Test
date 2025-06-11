@@ -1085,7 +1085,7 @@ export function SummaryReports() {
                     <TableRow className="bg-gray-50 font-bold">
                       <TableCell colSpan={3}>Total</TableCell>
                       <TableCell>
-                        {employeeSummariesWithHourTypes
+                        {hierarchicalEmployeeSummaries
                           .reduce((sum, emp) => sum + emp.totalHours, 0)
                           .toFixed(2)}
                       </TableCell>
