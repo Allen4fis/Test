@@ -256,10 +256,10 @@ export function CostReports() {
                             ${(employee.costWage || 0).toFixed(2)}/hr
                           </TableCell>
                           <TableCell>
-                            {employee.totalHours.toFixed(1)}
+                            {(employee.totalHours || 0).toFixed(1)}
                           </TableCell>
                           <TableCell>
-                            {employee.totalEffectiveHours.toFixed(1)}
+                            {(employee.totalEffectiveHours || 0).toFixed(1)}
                           </TableCell>
                           <TableCell>
                             {employeeLoaCount > 0 ? (
@@ -279,10 +279,10 @@ export function CostReports() {
                             )}
                           </TableCell>
                           <TableCell className="font-bold text-green-600">
-                            ${employee.totalBillableAmount.toFixed(2)}
+                            ${(employee.totalBillableAmount || 0).toFixed(2)}
                           </TableCell>
                           <TableCell className="font-bold text-red-600">
-                            ${employee.totalCost.toFixed(2)}
+                            ${(employee.totalCost || 0).toFixed(2)}
                           </TableCell>
                           <TableCell
                             className={`font-bold ${employeeProfit >= 0 ? "text-green-600" : "text-red-600"}`}
