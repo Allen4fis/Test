@@ -62,11 +62,7 @@ const getLocalDateString = (date: Date = new Date()) => {
   return `${year}-${month}-${day}`;
 };
 
-// Helper function to parse date string as local date (fixes timezone issues)
-const parseLocalDate = (dateString: string) => {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day); // month is 0-indexed in JavaScript
-};
+import { parseLocalDate, formatLocalDate } from "@/utils/dateUtils";
 
 export function TimeEntryForm() {
   const {
