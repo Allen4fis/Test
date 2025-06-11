@@ -163,6 +163,11 @@ export function EmployeeManagement() {
     return "Employee"; // Default fallback for existing employees without category
   };
 
+  // Get direct reports for an employee (who works under them)
+  const getDirectReports = (employeeId: string) => {
+    return employees.filter((emp) => emp.managerId === employeeId);
+  };
+
   return (
     <Card>
       <CardHeader>
