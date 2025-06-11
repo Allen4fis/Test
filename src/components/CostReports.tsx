@@ -401,15 +401,15 @@ export function CostReports() {
                                 {job.jobNumber} - {job.jobName}
                               </span>
                               <div className="text-sm text-gray-500 font-normal">
-                                {job.totalHours.toFixed(1)} hours •{" "}
-                                {job.totalEffectiveHours.toFixed(1)} effective
-                                hours
+                                {(job.totalHours || 0).toFixed(1)} hours •{" "}
+                                {(job.totalEffectiveHours || 0).toFixed(1)}{" "}
+                                effective hours
                               </div>
                             </div>
                           </div>
                           <div className="text-right">
                             <div className="text-2xl font-bold text-red-600">
-                              ${job.totalCost.toFixed(2)}
+                              ${(job.totalCost || 0).toFixed(2)}
                             </div>
                             <div className="text-sm text-gray-500">
                               {job.entries.length} entries
