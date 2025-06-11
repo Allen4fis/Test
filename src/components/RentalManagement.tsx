@@ -162,6 +162,16 @@ export function RentalManagement() {
   const handleEntrySubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Find the selected rental item to get its rate and unit
+    const selectedRentalItem = rentalItems.find(
+      (item) => item.id === entryFormData.rentalItemId,
+    );
+
+    if (!selectedRentalItem) {
+      console.error("Selected rental item not found");
+      return;
+    }
+
     const entryData = {
       rentalItemId: entryFormData.rentalItemId,
       jobId: entryFormData.jobId,
@@ -169,6 +179,8 @@ export function RentalManagement() {
       startDate: entryFormData.startDate,
       endDate: entryFormData.endDate,
       quantity: entryFormData.quantity,
+      billingUnit: selectedRentalItem.unit, // Use the rental item's unit
+      rateUsed: selectedRentalItem.dailyRate, // Use the current daily rate
       description: entryFormData.description,
     };
 
