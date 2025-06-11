@@ -922,7 +922,7 @@ export function TimeEntryViewer() {
                             <DeleteConfirmationDialog
                               item={{
                                 id: entry.id,
-                                name: `${employee?.name || "Unknown Employee"} - ${parseLocalDate(entry.date).toLocaleDateString()}`,
+                                name: `${employee?.name || "Unknown Employee"} - ${formatLocalDate(entry.date)}`,
                                 type: "time-entry",
                                 associatedData: {
                                   additionalInfo: [
