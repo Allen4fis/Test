@@ -165,7 +165,7 @@ export function useTimeTracking() {
       );
       if (hourType?.name === "LOA") {
         // Convert LOA hour entry to regular time entry with LOA count
-        migratedEntry.loaCount = entry.hours; // Use hours as LOA count
+        migratedEntry.loaCount = entry.hours; // Use hours as Live Out Allowance count
         migratedEntry.hours = 0; // Set hours to 0 for LOA entries
         // Change to regular time hour type
         migratedEntry.hourTypeId = "1"; // Regular Time

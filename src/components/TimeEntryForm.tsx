@@ -160,7 +160,9 @@ export function TimeEntryForm() {
     }
 
     if (hours === 0 && loaCount === 0) {
-      setFormError("Please enter either hours worked or LOA count.");
+      setFormError(
+        "Please enter either hours worked or Live Out Allowance count.",
+      );
       return;
     }
 
@@ -170,7 +172,9 @@ export function TimeEntryForm() {
     }
 
     if (loaCount < 0 || (loaCount > 0 && !Number.isInteger(loaCount))) {
-      setFormError("LOA count must be a whole number (0 or greater).");
+      setFormError(
+        "Live Out Allowance count must be a whole number (0 or greater).",
+      );
       return;
     }
 
