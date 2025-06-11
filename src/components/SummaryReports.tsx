@@ -473,25 +473,40 @@ export function SummaryReports() {
         group.totalLoaCount += summary.totalLoaCount || 0;
         group.entries.push(summary);
 
-        // Aggregate hour type breakdown
-        if (summary.hourTypeBreakdown) {
-          Object.entries(summary.hourTypeBreakdown).forEach(
-            ([hourType, data]) => {
-              if (!group.hourTypeBreakdown[hourType]) {
-                group.hourTypeBreakdown[hourType] = {
-                  hours: 0,
-                  effectiveHours: 0,
-                  cost: 0,
-                  provinces: {},
-                };
-              }
-              group.hourTypeBreakdown[hourType].hours += data.hours || 0;
-              group.hourTypeBreakdown[hourType].effectiveHours +=
-                data.effectiveHours || 0;
-              group.hourTypeBreakdown[hourType].cost += data.cost || 0;
-            },
-          );
+        // Build hour type breakdown from individual summary data
+        const hourTypeName = summary.hourTypeName || "Unknown";
+        const provinceName = summary.provinceName || "Unknown";
+
+        if (!group.hourTypeBreakdown[hourTypeName]) {
+          group.hourTypeBreakdown[hourTypeName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+            provinces: {},
+          };
         }
+
+        group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
+        group.hourTypeBreakdown[hourTypeName].effectiveHours +=
+          summary.effectiveHours || 0;
+        group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+
+        // Add province breakdown
+        if (!group.hourTypeBreakdown[hourTypeName].provinces[provinceName]) {
+          group.hourTypeBreakdown[hourTypeName].provinces[provinceName] = {
+            hours: 0,
+            effectiveHours: 0,
+            cost: 0,
+          };
+        }
+
+        group.hourTypeBreakdown[hourTypeName].provinces[provinceName].hours +=
+          summary.hours || 0;
+        group.hourTypeBreakdown[hourTypeName].provinces[
+          provinceName
+        ].effectiveHours += summary.effectiveHours || 0;
+        group.hourTypeBreakdown[hourTypeName].provinces[provinceName].cost +=
+          summary.totalCost || 0;
 
         return acc;
       },
