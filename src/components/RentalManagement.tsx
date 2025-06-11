@@ -190,12 +190,11 @@ export function RentalManagement() {
         itemFormData.employeeId === "no-employee"
           ? undefined
           : itemFormData.employeeId,
-      paidOutDailyRate: itemFormData.paidOutDailyRate
-        ? parseFloat(itemFormData.paidOutDailyRate)
+      dspRate: itemFormData.dspRate
+        ? parseFloat(itemFormData.dspRate)
         : undefined,
       isActive: itemFormData.isActive,
     };
-
     if (editingItem) {
       updateRentalItem(editingItem.id, itemData);
       setEditingItem(null);
