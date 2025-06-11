@@ -153,11 +153,14 @@ export function EmployeeManagement() {
   };
 
   // Get employee's category or manager name
-  const getManagerName = (managerId?: string) => {
-    if (!managerId) return null;
-    if (managerId === "dsp") return "DSP";
-    const manager = employees.find((emp) => emp.id === managerId);
-    return manager ? manager.name : "Unknown Manager";
+  const getEmployeeCategory = (employee: Employee) => {
+    if (employee.category === "employee") return "Employee";
+    if (employee.category === "dsp") return "DSP";
+    if (employee.managerId) {
+      const manager = employees.find((emp) => emp.id === employee.managerId);
+      return manager ? manager.name : "Unknown Manager";
+    }
+    return "Employee"; // Default fallback for existing employees without category
   };
 
   return (
