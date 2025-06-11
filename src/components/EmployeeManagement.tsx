@@ -226,6 +226,38 @@ export function EmployeeManagement() {
                           placeholder="employee@company.com"
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="manager"
+                          className="text-sm font-medium"
+                        >
+                          Reports To (Manager)
+                        </Label>
+                        <Select
+                          value={formData.managerId}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, managerId: value })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select manager (optional)" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">
+                              No Manager (Top Level)
+                            </SelectItem>
+                            {getAvailableManagers().map((manager) => (
+                              <SelectItem key={manager.id} value={manager.id}>
+                                {manager.name} - {manager.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-gray-500">
+                          Select who this employee reports to in the
+                          organizational hierarchy
+                        </p>
+                      </div>
                     </div>
                   </div>
 
