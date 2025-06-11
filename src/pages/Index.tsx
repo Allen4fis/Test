@@ -4,7 +4,7 @@ import { Dashboard } from "@/components/Dashboard";
 import { TimeEntryForm } from "@/components/TimeEntryForm";
 import { TimeEntryViewer } from "@/components/TimeEntryViewer";
 import { SummaryReports } from "@/components/SummaryReports";
-import { CostReports } from "@/components/CostReports";
+
 import { InvoiceManagement } from "@/components/InvoiceManagement";
 import { EmployeeManagement } from "@/components/EmployeeManagement";
 import { JobManagement } from "@/components/JobManagement";
@@ -106,9 +106,7 @@ const Index = () => {
       case "reports":
         component = <SummaryReports />;
         break;
-      case "costs":
-        component = <CostReports />;
-        break;
+
       case "invoices":
         component = <InvoiceManagement />;
         break;
