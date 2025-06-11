@@ -1100,27 +1100,27 @@ export function SummaryReports() {
                       <TableCell colSpan={3}>Total</TableCell>
                       <TableCell>
                         {hierarchicalEmployeeSummaries
-                          .reduce((sum, emp) => sum + emp.totalHours, 0)
+                          .reduce((sum, emp) => sum + (emp.totalHours || 0), 0)
                           .toFixed(2)}
                       </TableCell>
                       <TableCell>
                         {hierarchicalEmployeeSummaries
                           .reduce(
-                            (sum, emp) => sum + emp.totalEffectiveHours,
+                            (sum, emp) => sum + (emp.totalEffectiveHours || 0),
                             0,
                           )
                           .toFixed(2)}
                       </TableCell>
                       <TableCell className="font-medium text-purple-600">
                         {hierarchicalEmployeeSummaries.reduce(
-                          (sum, emp) => sum + emp.totalLoaCount,
+                          (sum, emp) => sum + (emp.totalLoaCount || 0),
                           0,
                         )}
                       </TableCell>
                       <TableCell className="text-green-600">
                         $
                         {hierarchicalEmployeeSummaries
-                          .reduce((sum, emp) => sum + emp.totalCost, 0)
+                          .reduce((sum, emp) => sum + (emp.totalCost || 0), 0)
                           .toFixed(2)}
                       </TableCell>
                       <TableCell></TableCell>
