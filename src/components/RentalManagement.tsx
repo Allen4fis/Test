@@ -687,12 +687,37 @@ export function RentalManagement() {
                             <Badge variant="outline">{item.category}</Badge>
                           </TableCell>
                           <TableCell>
+                            {item.employeeId ? (
+                              <div className="flex items-center gap-1">
+                                <span className="text-sm text-blue-700">
+                                  {employees.find(
+                                    (emp) => emp.id === item.employeeId,
+                                  )?.name || "Unknown Employee"}
+                                </span>
+                              </div>
+                            ) : (
+                              <Badge variant="secondary">No Employee</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
                             <div className="flex items-center gap-1">
                               <DollarSign className="h-4 w-4 text-green-600" />
                               <span className="font-medium">
                                 {item.dailyRate.toFixed(2)}
                               </span>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            {item.paidOutDailyRate ? (
+                              <div className="flex items-center gap-1">
+                                <DollarSign className="h-4 w-4 text-orange-600" />
+                                <span className="font-medium text-orange-600">
+                                  {item.paidOutDailyRate.toFixed(2)}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
                           </TableCell>
                           <TableCell>
                             <Badge variant="secondary">Per {item.unit}</Badge>
