@@ -1569,7 +1569,10 @@ export function SummaryReports() {
                         </TableCell>
                       </TableRow>
                     ))}
-                    <TableRow className="bg-gray-50 font-bold">
+                    <TableRow
+                      key="rental-summary-total"
+                      className="bg-gray-50 font-bold"
+                    >
                       <TableCell colSpan={6}>Total Rental Revenue</TableCell>
                       <TableCell className="text-green-600">
                         ${(totalRentalRevenue || 0).toFixed(2)}
