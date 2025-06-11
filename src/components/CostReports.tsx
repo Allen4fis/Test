@@ -297,7 +297,7 @@ export function CostReports() {
                         </TableRow>
                       );
                     })}
-                    <TableRow className="bg-gray-50 font-bold">
+                    <TableRow className="bg-gray-50 font-bold border-t-2 border-orange-500/30">
                       <TableCell colSpan={5}>Total</TableCell>
                       <TableCell>
                         {costSummaryByEmployee
