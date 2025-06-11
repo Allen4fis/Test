@@ -27,6 +27,9 @@ import {
   Award,
   Target,
   Zap,
+  BarChart3,
+  Activity,
+  DollarSign,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -48,457 +51,400 @@ export function Dashboard() {
     getAutosaveInfo,
   } = useTimeTracking();
 
-  const autosaveInfo = getAutosaveInfo();
+  // Get recent entries (last 7 days)
+  const getRecentEntries = () => {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const summaries = timeEntrySummaries;
-  const titleJobSummaries = summaryByTitleAndJob;
+    return timeEntrySummaries
+      .filter((summary) => {
+        const entryDate = parseLocalDate(summary.date);
+        return entryDate >= sevenDaysAgo;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+  };
 
-  // Calculate statistics (excluding LOA from hours totals)
-  const totalHours = summaries
+  // Calculate active metrics
+  const todaysEntries = timeEntrySummaries.filter(
+    (summary) => summary.date === new Date().toISOString().split("T")[0],
+  );
+
+  const thisWeekEntries = timeEntrySummaries.filter((summary) => {
+    const entryDate = parseLocalDate(summary.date);
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return entryDate >= weekAgo;
+  });
+
+  const totalHours = timeEntrySummaries
     .filter((summary) => summary.hourTypeName !== "LOA")
     .reduce((sum, summary) => sum + summary.hours, 0);
-  const totalEffectiveHours = summaries
+
+  const totalCost = timeEntrySummaries
     .filter((summary) => summary.hourTypeName !== "LOA")
-    .reduce((sum, summary) => sum + summary.effectiveHours, 0);
-  const totalCost = summaries.reduce(
-    (sum, summary) => sum + summary.totalCost,
-    0,
-  );
-  const activeJobs = jobs.filter((job) => job.isActive);
+    .reduce((sum, summary) => sum + summary.totalCost, 0);
 
-  // Recent activity (last 3 days)
-  const threeDaysAgo = new Date();
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-  const recentEntries = timeEntries
-    .slice()
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, 50);
+  const activeJobs = jobs.filter((job) => job.isActive).length;
+  const activeEmployees = employees.length;
 
-  // Top employees by hours this month (excluding LOA from hours totals)
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  const thisMonthEntries = summaries.filter(
-    (summary) => new Date(summary.date) >= monthStart,
-  );
-
-  const employeeHours = thisMonthEntries.reduce(
-    (acc, summary) => {
-      if (!acc[summary.employeeName]) {
-        acc[summary.employeeName] = {
-          name: summary.employeeName,
-          title: summary.employeeTitle,
-          hours: 0,
-          effectiveHours: 0,
-          cost: 0,
-        };
-      }
-      // Don't include LOA hours in employee hours totals
-      if (summary.hourTypeName !== "LOA") {
-        acc[summary.employeeName].hours += summary.hours;
-        acc[summary.employeeName].effectiveHours += summary.effectiveHours;
-      }
-      acc[summary.employeeName].cost += summary.totalCost;
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        name: string;
-        title: string;
-        hours: number;
-        effectiveHours: number;
-        cost: number;
-      }
-    >,
-  );
-
-  const topEmployees = Object.values(employeeHours)
-    .sort((a, b) => b.effectiveHours - a.effectiveHours)
+  // Top performers (by hours this week)
+  const topPerformers = timeEntrySummaries
+    .filter((summary) => {
+      const entryDate = parseLocalDate(summary.date);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return entryDate >= weekAgo && summary.hourTypeName !== "LOA";
+    })
+    .reduce(
+      (acc, summary) => {
+        const key = summary.employeeName;
+        if (!acc[key]) {
+          acc[key] = { name: key, hours: 0, cost: 0 };
+        }
+        acc[key].hours += summary.hours;
+        acc[key].cost += summary.totalCost;
+        return acc;
+      },
+      {} as Record<string, { name: string; hours: number; cost: number }>,
+    )
+    .pipe(Object.values)
+    .sort((a, b) => b.hours - a.hours)
     .slice(0, 5);
 
-  // Top jobs by hours this month (excluding LOA from hours totals)
-  const jobHours = thisMonthEntries.reduce(
-    (acc, summary) => {
-      if (!acc[summary.jobNumber]) {
-        acc[summary.jobNumber] = {
-          jobNumber: summary.jobNumber,
-          jobName: summary.jobName,
-          hours: 0,
-          effectiveHours: 0,
-          cost: 0,
-        };
-      }
-      // Don't include LOA hours in job hours totals
-      if (summary.hourTypeName !== "LOA") {
-        acc[summary.jobNumber].hours += summary.hours;
-        acc[summary.jobNumber].effectiveHours += summary.effectiveHours;
-      }
-      acc[summary.jobNumber].cost += summary.totalCost;
-      return acc;
-    },
-    {} as Record<
-      string,
-      {
-        jobNumber: string;
-        jobName: string;
-        hours: number;
-        effectiveHours: number;
-        cost: number;
-      }
-    >,
-  );
-
-  const topJobs = Object.values(jobHours)
-    .sort((a, b) => b.effectiveHours - a.effectiveHours)
+  // Fix the pipe issue
+  const performersArray = Object.values(
+    timeEntrySummaries
+      .filter((summary) => {
+        const entryDate = parseLocalDate(summary.date);
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return entryDate >= weekAgo && summary.hourTypeName !== "LOA";
+      })
+      .reduce(
+        (acc, summary) => {
+          const key = summary.employeeName;
+          if (!acc[key]) {
+            acc[key] = { name: key, hours: 0, cost: 0 };
+          }
+          acc[key].hours += summary.hours;
+          acc[key].cost += summary.totalCost;
+          return acc;
+        },
+        {} as Record<string, { name: string; hours: number; cost: number }>,
+      ),
+  )
+    .sort((a, b) => b.hours - a.hours)
     .slice(0, 5);
-
-  const getEmployeeName = (employeeId: string) => {
-    const employee = employees.find((emp) => emp.id === employeeId);
-    return employee ? employee.name : "Unknown Employee";
-  };
-
-  const getJobNumber = (jobId: string) => {
-    const job = jobs.find((j) => j.id === jobId);
-    return job ? job.jobNumber : "Unknown Job";
-  };
 
   const getHourTypeName = (hourTypeId: string) => {
     const hourType = hourTypes.find((ht) => ht.id === hourTypeId);
     return hourType ? hourType.name : "Unknown Type";
   };
 
-  const getProvinceName = (provinceId: string) => {
-    const province = provinces.find((p) => p.id === provinceId);
-    return province ? province.code : "Unknown";
-  };
-
-  const StatCard = ({
-    icon: Icon,
-    title,
-    value,
-    description,
-    gradient,
-    iconColor,
-  }: {
-    icon: any;
-    title: string;
-    value: string | number;
-    description: string;
-    gradient: string;
-    iconColor: string;
-  }) => (
-    <Card className="modern-card border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden group">
-      <CardContent className="p-6">
-        <div className="flex items-center gap-4">
-          <div
-            className={`p-3 rounded-xl ${gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}
-          >
-            <Icon className={`h-6 w-6 ${iconColor}`} />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground mb-1">
-              {title}
-            </p>
-            <p className="text-2xl font-bold text-foreground">{value}</p>
-            <p className="text-xs text-muted-foreground mt-1">{description}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+  const autosaveInfo = getAutosaveInfo();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-gradient flex items-center justify-center gap-3">
+          <div className="p-3 orange-gradient rounded-2xl shadow-2xl">
+            <BarChart3 className="h-8 w-8 text-white" />
+          </div>
           Dashboard Overview
         </h1>
-        <p className="text-muted-foreground">
-          Monitor your team's productivity and project performance
+        <p className="text-gray-400 text-lg">
+          Real-time insights into your workforce and project metrics
         </p>
-        {/* Autosave Status Indicator */}
-        {autosaveInfo.length > 0 && (
-          <div className="flex items-center justify-center gap-2 text-xs text-green-600">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span>
-              Autosave active • Last:{" "}
-              {new Date(autosaveInfo[0]?.timestamp).toLocaleTimeString()}
-            </span>
-          </div>
-        )}
       </div>
 
-      {/* Overview Stats */}
+      {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          icon={Users}
-          title="Total Employees"
-          value={employees.length}
-          description="Active team members"
-          gradient="bg-gradient-to-br from-blue-500 to-blue-600"
-          iconColor="text-white"
-        />
-        <StatCard
-          icon={Briefcase}
-          title="Active Jobs"
-          value={activeJobs.length}
-          description="Current projects"
-          gradient="bg-gradient-to-br from-green-500 to-green-600"
-          iconColor="text-white"
-        />
-        <StatCard
-          icon={Clock}
-          title="Total Hours"
-          value={totalHours.toFixed(0)}
-          description="Hours logged"
-          gradient="orange-gradient"
-          iconColor="text-white"
-        />
-        <StatCard
-          icon={TrendingUp}
-          title="Total Cost"
-          value={`$${totalCost.toFixed(0)}`}
-          description="Labor expenses"
-          gradient="dark-gradient"
-          iconColor="text-white"
-        />
+        <Card className="modern-card hover-scale group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Total Hours
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
+              <Clock className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-blue-400">
+              {totalHours.toFixed(1)}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <TrendingUp className="h-3 w-3 mr-1 text-blue-400" />
+              {thisWeekEntries.length} entries this week
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card hover-scale group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Labor Cost
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
+              <DollarSign className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-400">
+              ${totalCost.toFixed(0)}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <Activity className="h-3 w-3 mr-1 text-green-400" />
+              Across all projects
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card hover-scale group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Active Employees
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
+              <Users className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-purple-400">
+              {activeEmployees}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <Target className="h-3 w-3 mr-1 text-purple-400" />
+              Team members
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card hover-scale group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Active Jobs
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300">
+              <Briefcase className="h-5 w-5 text-white" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-orange-400">
+              {activeJobs}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <Zap className="h-3 w-3 mr-1 text-orange-400" />
+              Active projects
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* The Most Overworked Employees This Month */}
-        <Card className="modern-card border-border shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Award className="h-5 w-5 text-primary" />
-              The Most Overworked Employees This Month
+        {/* Recent Activity */}
+        <Card className="modern-card">
+          <CardHeader
+            className="border-b border-gray-700/50"
+            style={{
+              background:
+                "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
+            }}
+          >
+            <CardTitle className="flex items-center gap-3 text-gray-100">
+              <Calendar className="h-5 w-5 text-blue-400" />
+              Recent Activity
             </CardTitle>
-            <CardDescription>Ranked by effective hours worked</CardDescription>
+            <CardDescription className="text-gray-300">
+              Latest time entries from the past 7 days
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            {topEmployees.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No time entries this month.
+          <CardContent className="p-0">
+            {getRecentEntries().length === 0 ? (
+              <div className="p-6 text-center text-gray-500">
+                <Clock className="h-8 w-8 mx-auto mb-2" />
+                <p>No recent entries</p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topEmployees.map((employee, index) => (
-                    <TableRow
-                      key={employee.name}
-                      className="hover:bg-muted/50 transition-colors"
-                    >
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0
-                                ? "bg-gradient-to-br from-yellow-400 to-yellow-500 text-yellow-900"
-                                : index === 1
-                                  ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800"
-                                  : index === 2
-                                    ? "bg-gradient-to-br from-orange-400 to-orange-500 text-orange-900"
-                                    : "bg-gradient-to-br from-blue-400 to-blue-500 text-blue-900"
-                            } shadow-md`}
-                          >
-                            {index + 1}
+              <div className="divide-y divide-gray-800">
+                {getRecentEntries().map((entry, index) => (
+                  <div
+                    key={`${entry.employeeName}-${entry.date}-${index}`}
+                    className="p-4 hover:bg-gray-800/50 smooth-transition"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-gray-100">
+                            {entry.employeeName}
                           </span>
-                          <span>{employee.name}</span>
+                          <Badge
+                            variant="outline"
+                            className="bg-blue-900/30 border-blue-500/50 text-blue-300"
+                          >
+                            {entry.hourTypeName}
+                          </Badge>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className="bg-muted text-muted-foreground"
-                        >
-                          {employee.title}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {employee.effectiveHours.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="font-bold text-primary">
-                        ${employee.cost.toFixed(0)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                        <div className="text-sm text-gray-400">
+                          {entry.jobNumber} - {entry.jobName}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {parseLocalDate(entry.date).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-blue-400">
+                          {entry.hours.toFixed(1)}h
+                        </div>
+                        <div className="text-sm text-green-400">
+                          ${entry.totalCost.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Top Jobs This Month */}
-        <Card className="modern-card border-border shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Target className="h-5 w-5 text-primary" />
-              Top Jobs This Month
+        {/* Top Performers */}
+        <Card className="modern-card">
+          <CardHeader
+            className="border-b border-gray-700/50"
+            style={{
+              background:
+                "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
+            }}
+          >
+            <CardTitle className="flex items-center gap-3 text-gray-100">
+              <Award className="h-5 w-5 text-yellow-400" />
+              Top Performers (This Week)
             </CardTitle>
-            <CardDescription>Ranked by effective hours worked</CardDescription>
+            <CardDescription className="text-gray-300">
+              Employees ranked by hours worked this week
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            {topJobs.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No time entries this month.
+          <CardContent className="p-0">
+            {performersArray.length === 0 ? (
+              <div className="p-6 text-center text-gray-500">
+                <Users className="h-8 w-8 mx-auto mb-2" />
+                <p>No data available</p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Job Number</TableHead>
-                    <TableHead>Job Name</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead>Cost</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topJobs.map((job, index) => (
-                    <TableRow
-                      key={job.jobNumber}
-                      className="hover:bg-muted/50 transition-colors"
-                    >
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0
-                                ? "bg-gradient-to-br from-yellow-400 to-yellow-500 text-yellow-900"
-                                : index === 1
-                                  ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800"
-                                  : index === 2
-                                    ? "bg-gradient-to-br from-orange-400 to-orange-500 text-orange-900"
-                                    : "bg-gradient-to-br from-blue-400 to-blue-500 text-blue-900"
-                            } shadow-md`}
-                          >
-                            {index + 1}
-                          </span>
-                          <span>{job.jobNumber}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-medium text-foreground">
-                          {job.jobName}
+              <div className="divide-y divide-gray-800">
+                {performersArray.map((performer, index) => (
+                  <div
+                    key={performer.name}
+                    className="p-4 hover:bg-gray-800/50 smooth-transition"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
+                            index === 0
+                              ? "bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900"
+                              : index === 1
+                                ? "bg-gradient-to-br from-gray-300 to-gray-500 text-gray-900"
+                                : index === 2
+                                  ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white"
+                                  : "bg-gradient-to-br from-gray-600 to-gray-800 text-white"
+                          }`}
+                        >
+                          {index + 1}
                         </span>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {job.effectiveHours.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="font-bold text-primary">
-                        ${job.cost.toFixed(0)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                        <span className="font-semibold text-gray-100">
+                          {performer.name}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-blue-400">
+                          {performer.hours.toFixed(1)}h
+                        </div>
+                        <div className="text-sm text-green-400">
+                          ${performer.cost.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Activity */}
-      <Card className="modern-card border-border shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-foreground">
-            <Zap className="h-5 w-5 text-primary" />
-            Recent Activity
+      {/* System Status */}
+      <Card className="modern-card">
+        <CardHeader
+          className="border-b border-gray-700/50"
+          style={{
+            background:
+              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
+          }}
+        >
+          <CardTitle className="flex items-center gap-3 text-gray-100">
+            <Zap className="h-5 w-5 text-green-400" />
+            System Status
           </CardTitle>
-          <CardDescription>
-            Latest time entries from the past 3 days
+          <CardDescription className="text-gray-300">
+            Application health and data insights
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {recentEntries.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No recent activity in the past 3 days.
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="glass-card p-4 rounded-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Data Storage</p>
+                  <p className="text-lg font-bold text-green-400">Healthy</p>
+                </div>
+                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              </div>
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Job</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Province</TableHead>
-                  <TableHead>Hours</TableHead>
-                  <TableHead className="text-purple-600">
-                    Live Out Allowance
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentEntries.map((entry) => (
-                  <TableRow
-                    key={entry.id}
-                    className="hover:bg-muted/50 transition-colors"
-                  >
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">
-                          {parseLocalDate(entry.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium text-foreground">
-                      {getEmployeeName(entry.employeeId)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="border-primary/20 text-primary"
-                      >
-                        {getJobNumber(entry.jobId)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className="bg-muted text-muted-foreground"
-                      >
-                        {getHourTypeName(entry.hourTypeId)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span>{getProvinceName(entry.provinceId)}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-bold text-primary">
-                      {entry.hours.toFixed(2)}h
-                    </TableCell>
-                    <TableCell>
-                      {entry.loaCount && entry.loaCount > 0 ? (
-                        <div className="flex items-center gap-1">
-                          <Badge
-                            variant="secondary"
-                            className="bg-purple-100 text-purple-800"
-                          >
-                            {entry.loaCount} × $200
-                          </Badge>
-                          <span className="text-xs text-purple-600 font-medium">
-                            = ${(entry.loaCount * 200).toFixed(2)}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-sm">—</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+
+            <div className="glass-card p-4 rounded-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Last Autosave</p>
+                  <p className="text-lg font-bold text-blue-400">
+                    {autosaveInfo.lastSaveTime
+                      ? new Date(autosaveInfo.lastSaveTime).toLocaleTimeString()
+                      : "Never"}
+                  </p>
+                </div>
+                <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+
+            <div className="glass-card p-4 rounded-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Total Records</p>
+                  <p className="text-lg font-bold text-purple-400">
+                    {timeEntries.length}
+                  </p>
+                </div>
+                <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 flex items-center justify-between">
+            <div className="text-sm text-gray-400">
+              Last updated: {new Date().toLocaleString()}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.location.reload()}
+              className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 smooth-transition"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
