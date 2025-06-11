@@ -1080,6 +1080,9 @@ export function SummaryReports() {
                               </div>
                             );
                           })()}
+                        </TableCell>
+                        <TableCell>
+                          <HourTypeBreakdownDisplay
                             breakdown={employee.hourTypeBreakdown}
                           />
                         </TableCell>
