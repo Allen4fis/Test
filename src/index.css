@@ -192,6 +192,24 @@
     box-shadow:
       0 25px 50px rgba(0, 0, 0, 0.4),
       0 0 30px hsl(24, 100%, 50%, 0.1);
+    color: hsl(210, 20%, 98%);
+  }
+
+  /* Ensure table elements have proper dark theme colors */
+  .dark table,
+  .dark th,
+  .dark td {
+    background-color: transparent !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
+  .dark .bg-white {
+    background-color: hsl(220, 15%, 12%) !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
+  .dark .text-black {
+    color: hsl(210, 20%, 98%) !important;
   }
 
   .hover-scale {
