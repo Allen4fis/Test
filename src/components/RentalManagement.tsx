@@ -707,11 +707,11 @@ export function RentalManagement() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {item.paidOutDailyRate ? (
+                            {item.dspRate ? (
                               <div className="flex items-center gap-1">
-                                <DollarSign className="h-4 w-4 text-orange-600" />
-                                <span className="font-medium text-orange-600">
-                                  {item.paidOutDailyRate.toFixed(2)}
+                                <DollarSign className="h-4 w-4 text-purple-600" />
+                                <span className="font-medium text-purple-600">
+                                  {item.dspRate.toFixed(2)}
                                 </span>
                               </div>
                             ) : (
