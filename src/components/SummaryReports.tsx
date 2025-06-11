@@ -1283,9 +1283,9 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredTitleJobSummaries.map((summary) => (
+                    {filteredTitleJobSummaries.map((summary, index) => (
                       <TableRow
-                        key={`${summary.employeeTitle}|${summary.jobNumber}`}
+                        key={`${summary.employeeTitle}|${summary.jobNumber}|${index}`}
                       >
                         <TableCell className="font-medium">
                           {summary.employeeTitle}
