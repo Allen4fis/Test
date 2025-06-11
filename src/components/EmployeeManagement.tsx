@@ -408,13 +408,22 @@ export function EmployeeManagement() {
                         <Badge variant="outline">{employee.title}</Badge>
                       </TableCell>
                       <TableCell>
-                        {managerName ? (
+                        {employee.category === "dsp" ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-purple-50 text-purple-700 border-purple-200"
+                          >
+                            DSP
+                          </Badge>
+                        ) : employee.category === "employee" ? (
+                          <Badge variant="secondary">Employee</Badge>
+                        ) : employee.managerId ? (
                           <div className="flex items-center gap-1">
                             <UserCheck className="h-3 w-3 text-blue-500" />
-                            <span className="text-sm">{managerName}</span>
+                            <span className="text-sm">{categoryOrManager}</span>
                           </div>
                         ) : (
-                          <Badge variant="secondary">Independent</Badge>
+                          <Badge variant="secondary">Employee</Badge>
                         )}
                       </TableCell>
                       <TableCell>{employee.email || "—"}</TableCell>
