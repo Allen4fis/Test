@@ -104,6 +104,7 @@ export function EmployeeManagement() {
       email: formData.email,
       billableWage: billableWage,
       costWage: costWage,
+      managerId: formData.managerId || undefined, // Only include if selected
     };
 
     if (editingEmployee) {
