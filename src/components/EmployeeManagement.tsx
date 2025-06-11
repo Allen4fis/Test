@@ -141,9 +141,10 @@ export function EmployeeManagement() {
     return employees; // Allow selection of any employee
   };
 
-  // Get employee's manager name
+  // Get employee's category or manager name
   const getManagerName = (managerId?: string) => {
     if (!managerId) return null;
+    if (managerId === "dsp") return "DSP";
     const manager = employees.find((emp) => emp.id === managerId);
     return manager ? manager.name : "Unknown Manager";
   };
