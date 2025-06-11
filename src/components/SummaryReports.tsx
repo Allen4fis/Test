@@ -664,9 +664,10 @@ export function SummaryReports() {
               By Province:
             </div>
             {sortedEntries.slice(0, 1).map(
-              ([hourType, data]: [string, any], index) =>
-                data.provinces &&
-                Object.entries(data.provinces).map(
+              ([hourType, data]: [string, any]) =>
+                data.provinces && (
+                  <div key={`province-breakdown-${hourType}`}>
+                    {Object.entries(data.provinces).map(
                   ([province, provinceData]: [string, any]) => (
                     <div
                       key={`${hourType}-${province}`}
