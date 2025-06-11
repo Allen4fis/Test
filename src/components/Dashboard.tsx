@@ -89,30 +89,6 @@ export function Dashboard() {
   const activeEmployees = employees.length;
 
   // Top performers (by hours this week)
-  const topPerformers = timeEntrySummaries
-    .filter((summary) => {
-      const entryDate = parseLocalDate(summary.date);
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return entryDate >= weekAgo && summary.hourTypeName !== "LOA";
-    })
-    .reduce(
-      (acc, summary) => {
-        const key = summary.employeeName;
-        if (!acc[key]) {
-          acc[key] = { name: key, hours: 0, cost: 0 };
-        }
-        acc[key].hours += summary.hours;
-        acc[key].cost += summary.totalCost;
-        return acc;
-      },
-      {} as Record<string, { name: string; hours: number; cost: number }>,
-    )
-    .pipe(Object.values)
-    .sort((a, b) => b.hours - a.hours)
-    .slice(0, 5);
-
-  // Fix the pipe issue
   const performersArray = Object.values(
     timeEntrySummaries
       .filter((summary) => {
