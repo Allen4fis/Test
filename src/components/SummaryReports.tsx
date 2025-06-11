@@ -542,11 +542,11 @@ export function SummaryReports() {
           >
             <span className="font-semibold text-gray-200">{hourType}:</span>
             <div className="flex items-center gap-2">
-              <div className="bg-orange-500 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">
+              <div className="bg-orange-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">
                 {(data.hours || 0).toFixed(1)}h
               </div>
               {data.effectiveHours !== data.hours && (
-                <div className="bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-medium shadow-sm">
+                <div className="bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium shadow-sm">
                   ({(data.effectiveHours || 0).toFixed(1)}h eff)
                 </div>
               )}
