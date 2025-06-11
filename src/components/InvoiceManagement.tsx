@@ -1198,7 +1198,8 @@ export function InvoiceManagement() {
                                               $
                                               {entries
                                                 .reduce(
-                                                  (sum, e) => sum + e.totalCost,
+                                                  (sum, e) =>
+                                                    sum + (e.totalCost || 0),
                                                   0,
                                                 )
                                                 .toFixed(2)}
@@ -1215,11 +1216,14 @@ export function InvoiceManagement() {
                                               {(
                                                 entries.reduce(
                                                   (sum, e) =>
-                                                    sum + e.totalBillableAmount,
+                                                    sum +
+                                                    (e.totalBillableAmount ||
+                                                      0),
                                                   0,
                                                 ) -
                                                 entries.reduce(
-                                                  (sum, e) => sum + e.totalCost,
+                                                  (sum, e) =>
+                                                    sum + (e.totalCost || 0),
                                                   0,
                                                 )
                                               ).toFixed(2)}
