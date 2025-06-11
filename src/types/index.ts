@@ -139,6 +139,7 @@ export interface RentalEntry {
   quantity: number; // Number of items rented
   billingUnit: "day" | "hour" | "week" | "month";
   rateUsed: number; // Rate that was used for this rental (in case rates change)
+  dspRate?: number; // DSP rate for this rental entry
   description?: string;
   createdAt: string;
 }
