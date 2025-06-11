@@ -990,7 +990,7 @@ export function SummaryReports() {
                   <TableBody>
                     {hierarchicalEmployeeSummaries.map((employee, index) => (
                       <TableRow
-                        key={`${employee.employeeName}|${employee.employeeTitle}`}
+                        key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
                         className={employee.isSubordinate ? "bg-blue-25" : ""}
                       >
                         <TableCell className="font-medium">
