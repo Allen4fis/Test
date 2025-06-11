@@ -887,6 +887,26 @@ export function RentalManagement() {
                               />
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="dspRate" className="text-right">
+                                DSP Rate
+                              </Label>
+                              <Input
+                                id="dspRate"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={entryFormData.dspRate}
+                                onChange={(e) =>
+                                  setEntryFormData({
+                                    ...entryFormData,
+                                    dspRate: e.target.value,
+                                  })
+                                }
+                                className="col-span-3"
+                                placeholder="Enter DSP rate (optional)"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
                               <Label
                                 htmlFor="description"
                                 className="text-right"
