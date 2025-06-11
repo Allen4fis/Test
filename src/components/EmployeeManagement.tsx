@@ -134,6 +134,20 @@ export function EmployeeManagement() {
     deleteEmployee(employeeId);
   };
 
+  // Get available managers (exclude the employee being edited to prevent circular relationships)
+  const getAvailableManagers = () => {
+    return employees.filter((emp) =>
+      editingEmployee ? emp.id !== editingEmployee.id : true,
+    );
+  };
+
+  // Get employee's manager name
+  const getManagerName = (managerId?: string) => {
+    if (!managerId) return null;
+    const manager = employees.find((emp) => emp.id === managerId);
+    return manager ? manager.name : "Unknown Manager";
+  };
+
   return (
     <Card>
       <CardHeader>
