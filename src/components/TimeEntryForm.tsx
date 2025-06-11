@@ -659,9 +659,7 @@ export function TimeEntryForm() {
                         }`}
                         onClick={() => handleEdit(entry)}
                       >
-                        <TableCell>
-                          {parseLocalDate(entry.date).toLocaleDateString()}
-                        </TableCell>
+                        <TableCell>{formatLocalDate(entry.date)}</TableCell>
                         <TableCell>{employee?.name || "Unknown"}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
