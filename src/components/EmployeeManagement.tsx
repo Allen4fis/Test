@@ -380,12 +380,25 @@ export function EmployeeManagement() {
                           employee.billableWage) *
                         100
                       : 0;
+                  const managerName = getManagerName(employee.managerId);
                   return (
                     <TableRow key={employee.id}>
                       <TableCell className="font-medium">
                         {employee.name}
                       </TableCell>
-                      <TableCell>{employee.title}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{employee.title}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {managerName ? (
+                          <div className="flex items-center gap-1">
+                            <UserCheck className="h-3 w-3 text-blue-500" />
+                            <span className="text-sm">{managerName}</span>
+                          </div>
+                        ) : (
+                          <Badge variant="secondary">Top Level</Badge>
+                        )}
+                      </TableCell>
                       <TableCell>{employee.email || "—"}</TableCell>
                       <TableCell className="font-medium text-green-600">
                         ${employee.billableWage?.toFixed(2) || "0.00"}/hr
