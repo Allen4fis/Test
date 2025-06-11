@@ -1338,14 +1338,15 @@ export function InvoiceManagement() {
                                             {rental.duration !== 1 ? "s" : ""}
                                           </TableCell>
                                           <TableCell>
-                                            ${rental.rateUsed.toFixed(2)}/
-                                            {rental.billingUnit}
+                                            ${(rental.rateUsed || 0).toFixed(2)}
+                                            /{rental.billingUnit}
                                           </TableCell>
                                           <TableCell>
                                             {rental.quantity}
                                           </TableCell>
                                           <TableCell className="font-bold text-orange-600">
-                                            ${rental.totalCost.toFixed(2)}
+                                            $
+                                            {(rental.totalCost || 0).toFixed(2)}
                                           </TableCell>
                                         </TableRow>
                                       ))}
