@@ -105,9 +105,10 @@ export function EmployeeManagement() {
       billableWage: billableWage,
       costWage: costWage,
       managerId:
-        formData.managerId === "no-manager" ? undefined : formData.managerId, // Only include if not "no-manager"
+        formData.managerId === "no-manager" || formData.managerId === "dsp"
+          ? undefined
+          : formData.managerId, // Only include if not "no-manager" or "dsp"
     };
-
     if (editingEmployee) {
       updateEmployee(editingEmployee.id, employeeData);
     } else {
