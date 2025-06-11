@@ -1461,7 +1461,10 @@ export function SummaryReports() {
                         </TableCell>
                       </TableRow>
                     ))}
-                    <TableRow className="bg-gray-50 font-bold">
+                    <TableRow
+                      key="date-name-summary-total"
+                      className="bg-gray-50 font-bold"
+                    >
                       <TableCell colSpan={3}>Total</TableCell>
                       <TableCell>
                         {filteredDateNameSummaries
