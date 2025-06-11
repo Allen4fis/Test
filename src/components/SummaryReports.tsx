@@ -1203,6 +1203,46 @@ export function SummaryReports() {
                           .reduce((sum, emp) => sum + (emp.totalCost || 0), 0)
                           .toFixed(2)}
                       </TableCell>
+                      <TableCell className="text-purple-600 font-medium">
+                        $
+                        {(() => {
+                          // Calculate total DSP earnings across all employees
+                          const totalDspEarnings =
+                            hierarchicalEmployeeSummaries.reduce(
+                              (totalSum, employee) => {
+                                const employeeRentals =
+                                  filteredRentalSummaries.filter(
+                                    (rental) =>
+                                      rental.employeeName ===
+                                      employee.employeeName,
+                                  );
+
+                                const employeeDspEarnings =
+                                  employeeRentals.reduce((sum, rental) => {
+                                    const rentalItem = rentalItems.find(
+                                      (item) =>
+                                        item.name === rental.rentalItemName,
+                                    );
+                                    const dspRate =
+                                      rentalItem?.dspRate ||
+                                      (rentalItem as any)?.paidOutDailyRate ||
+                                      0;
+                                    return (
+                                      sum +
+                                      dspRate *
+                                        rental.duration *
+                                        rental.quantity
+                                    );
+                                  }, 0);
+
+                                return totalSum + employeeDspEarnings;
+                              },
+                              0,
+                            );
+
+                          return totalDspEarnings.toFixed(2);
+                        })()}
+                      </TableCell>
                       <TableCell></TableCell>
                       <TableCell>
                         {hierarchicalEmployeeSummaries.reduce(
