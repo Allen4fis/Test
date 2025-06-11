@@ -84,8 +84,6 @@ export function RentalManagement() {
     dailyRate: "",
     hourlyRate: "",
     unit: "day" as const,
-    employeeId: "",
-    dspRate: "",
     isActive: true,
   });
 
