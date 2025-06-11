@@ -216,6 +216,7 @@ export function RentalManagement() {
       startDate: entry.startDate,
       endDate: entry.endDate,
       quantity: entry.quantity,
+      dspRate: entry.dspRate?.toString() || "",
       description: entry.description || "",
     });
   };
