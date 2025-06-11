@@ -245,9 +245,9 @@ export function EmployeeManagement() {
                             <SelectItem value="no-manager">
                               Independent Employee
                             </SelectItem>
-                            {getAvailableManagers().map((manager) => (
-                              <SelectItem key={manager.id} value={manager.id}>
-                                {manager.name} - {manager.title}
+                            {getAvailableEmployees().map((employee) => (
+                              <SelectItem key={employee.id} value={employee.id}>
+                                {employee.name} - {employee.title}
                               </SelectItem>
                             ))}
                           </SelectContent>
