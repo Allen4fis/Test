@@ -668,25 +668,28 @@ export function SummaryReports() {
                 data.provinces && (
                   <div key={`province-breakdown-${hourType}`}>
                     {Object.entries(data.provinces).map(
-                  ([province, provinceData]: [string, any]) => (
-                    <div
-                      key={`${hourType}-${province}`}
-                      className="flex items-center justify-between text-xs"
-                    >
-                      <span className="text-gray-600">{province}:</span>
-                      <div className="flex items-center gap-1">
-                        <span className="text-blue-600">
-                          {(provinceData.hours || 0).toFixed(1)}h
-                        </span>
-                        {provinceData.effectiveHours !== provinceData.hours && (
-                          <span className="text-orange-600">
-                            ({(provinceData.effectiveHours || 0).toFixed(1)}h
-                            eff.)
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ),
+                      ([province, provinceData]: [string, any]) => (
+                        <div
+                          key={`${hourType}-${province}`}
+                          className="flex items-center justify-between text-xs"
+                        >
+                          <span className="text-gray-600">{province}:</span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-blue-600">
+                              {(provinceData.hours || 0).toFixed(1)}h
+                            </span>
+                            {provinceData.effectiveHours !==
+                              provinceData.hours && (
+                              <span className="text-orange-600">
+                                ({(provinceData.effectiveHours || 0).toFixed(1)}
+                                h eff.)
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ),
+                    )}
+                  </div>
                 ),
             )}
           </div>
