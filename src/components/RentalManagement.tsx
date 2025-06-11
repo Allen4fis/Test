@@ -177,6 +177,9 @@ export function RentalManagement() {
       quantity: entryFormData.quantity,
       billingUnit: selectedRentalItem.unit, // Use the rental item's unit
       rateUsed: selectedRentalItem.dailyRate, // Use the current daily rate
+      dspRate: entryFormData.dspRate
+        ? parseFloat(entryFormData.dspRate)
+        : undefined,
       description: entryFormData.description,
     };
 
