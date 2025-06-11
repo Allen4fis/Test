@@ -41,7 +41,7 @@ export interface TimeEntry {
   provinceId: string;
   date: string; // YYYY-MM-DD format
   hours: number;
-  loaCount?: number; // LOA count as separate field (not hourly)
+  loaCount?: number; // Live Out Allowance count as separate field (not hourly)
   title: string; // Employee title at time of entry
   billableWageUsed: number; // Billable wage at time of entry
   costWageUsed: number; // Cost wage at time of entry
@@ -59,7 +59,7 @@ export interface TimeEntrySummary {
   date: string;
   hours: number;
   effectiveHours: number; // hours * multiplier
-  loaCount?: number; // LOA count
+  loaCount?: number; // Live Out Allowance count
   billableWage: number;
   costWage: number;
   totalBillableAmount: number; // effectiveHours * billableWage

@@ -469,7 +469,7 @@ export function TimeEntryForm() {
                   placeholder="0"
                 />
                 <p className="text-xs text-gray-500">
-                  Leave of Absence count ($200 per LOA)
+                  Live Out Allowance count ($200 per LOA)
                 </p>
               </div>
 
