@@ -245,7 +245,7 @@ export function EmployeeManagement() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="no-manager">
-                              No Manager (Top Level)
+                              Independent Employee
                             </SelectItem>
                             {getAvailableManagers().map((manager) => (
                               <SelectItem key={manager.id} value={manager.id}>
