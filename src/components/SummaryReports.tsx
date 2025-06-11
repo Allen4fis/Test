@@ -1610,8 +1610,10 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredSummaries.map((summary) => (
-                      <TableRow key={summary.id}>
+                    {filteredSummaries.map((summary, index) => (
+                      <TableRow
+                        key={`${summary.employeeName}-${summary.date}-${summary.hourTypeName}-${index}`}
+                      >
                         <TableCell>{summary.date}</TableCell>
                         <TableCell>{summary.employeeName}</TableCell>
                         <TableCell>
