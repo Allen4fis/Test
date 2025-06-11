@@ -243,7 +243,7 @@ export function EmployeeManagement() {
                             <SelectValue placeholder="Select manager (optional)" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">
+                            <SelectItem value="no-manager">
                               No Manager (Top Level)
                             </SelectItem>
                             {getAvailableManagers().map((manager) => (
