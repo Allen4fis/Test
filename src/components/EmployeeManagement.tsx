@@ -241,7 +241,7 @@ export function EmployeeManagement() {
                           }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select manager (optional)" />
+                            <SelectValue placeholder="Select employee (optional)" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="no-manager">
