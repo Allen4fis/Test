@@ -1338,7 +1338,10 @@ export function SummaryReports() {
                         </TableCell>
                       </TableRow>
                     ))}
-                    <TableRow className="bg-gray-50 font-bold">
+                    <TableRow
+                      key="title-job-summary-total"
+                      className="bg-gray-50 font-bold"
+                    >
                       <TableCell colSpan={4}>Total</TableCell>
                       <TableCell>
                         {filteredTitleJobSummaries
