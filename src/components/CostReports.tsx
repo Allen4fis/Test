@@ -77,7 +77,7 @@ export function CostReports() {
                   Rental Revenue
                 </p>
                 <p className="text-2xl font-bold text-green-600">
-                  ${totalRentalRevenue.toFixed(2)}
+                  ${(totalRentalRevenue || 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -90,7 +90,7 @@ export function CostReports() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Cost</p>
                 <p className="text-2xl font-bold text-red-600">
-                  ${totalCost.toFixed(2)}
+                  ${(totalCost || 0).toFixed(2)}
                 </p>
                 <div className="text-xs text-gray-500 mt-1">
                   Labor Costs Only (Rentals are Revenue)
@@ -103,18 +103,18 @@ export function CostReports() {
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
               <TrendingUp
-                className={`h-5 w-5 ${profit >= 0 ? "text-green-500" : "text-red-500"}`}
+                className={`h-5 w-5 ${(profit || 0) >= 0 ? "text-green-500" : "text-red-500"}`}
               />
               <div>
                 <p className="text-sm font-medium text-gray-600">Profit</p>
                 <p
-                  className={`text-2xl font-bold ${profit >= 0 ? "text-green-600" : "text-red-600"}`}
+                  className={`text-2xl font-bold ${(profit || 0) >= 0 ? "text-green-600" : "text-red-600"}`}
                 >
-                  ${profit.toFixed(2)}
+                  ${(profit || 0).toFixed(2)}
                 </p>
                 <div className="text-xs text-gray-500 mt-1">
-                  {totalRevenue > 0
-                    ? ((profit / totalRevenue) * 100).toFixed(1)
+                  {(totalRevenue || 0) > 0
+                    ? (((profit || 0) / (totalRevenue || 1)) * 100).toFixed(1)
                     : "0.0"}
                   % margin
                 </div>
@@ -131,10 +131,10 @@ export function CostReports() {
                   Avg Cost Rate
                 </p>
                 <p className="text-2xl font-bold text-red-600">
-                  ${averageCostRate.toFixed(2)}
+                  ${(averageCostRate || 0).toFixed(2)}
                 </p>
                 <div className="text-xs text-gray-500 mt-1">
-                  Billable: ${averageBillableRate.toFixed(2)}
+                  Billable: ${(averageBillableRate || 0).toFixed(2)}
                 </div>
               </div>
             </div>
