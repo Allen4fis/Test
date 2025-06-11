@@ -1236,18 +1236,21 @@ export function SummaryReports() {
                       <TableCell colSpan={4}>Total</TableCell>
                       <TableCell>
                         {filteredTitleJobSummaries
-                          .reduce((sum, s) => sum + s.totalHours, 0)
+                          .reduce((sum, s) => sum + (s.totalHours || 0), 0)
                           .toFixed(2)}
                       </TableCell>
                       <TableCell>
                         {filteredTitleJobSummaries
-                          .reduce((sum, s) => sum + s.totalEffectiveHours, 0)
+                          .reduce(
+                            (sum, s) => sum + (s.totalEffectiveHours || 0),
+                            0,
+                          )
                           .toFixed(2)}
                       </TableCell>
                       <TableCell className="text-green-600">
                         $
                         {filteredTitleJobSummaries
-                          .reduce((sum, s) => sum + s.totalCost, 0)
+                          .reduce((sum, s) => sum + (s.totalCost || 0), 0)
                           .toFixed(2)}
                       </TableCell>
                       <TableCell>
