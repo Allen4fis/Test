@@ -265,7 +265,7 @@ export function Dashboard() {
                           {entry.jobNumber} - {entry.jobName}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {parseLocalDate(entry.date).toLocaleDateString()}
+                          {formatLocalDate(entry.date)}
                         </div>
                       </div>
                       <div className="text-right">
