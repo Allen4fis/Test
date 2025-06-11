@@ -868,7 +868,7 @@ export function SummaryReports() {
                             Effective Hours
                           </TableHead>
                           <TableHead className="text-gray-200 font-semibold">
-                            LOA Count
+                            Live Out Allowance Count
                           </TableHead>
                           <TableHead className="text-gray-200 font-semibold">
                             Total Revenue
