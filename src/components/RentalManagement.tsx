@@ -1007,163 +1007,61 @@ export function RentalManagement() {
                         <form onSubmit={handleEntrySubmit}>
                           <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-4 items-center gap-4">
-                              <Label
-                                htmlFor="rentalItem"
-                                className="text-right"
-                              >
-                                Rental Item *
-                              </Label>
-                              <Select
-                                value={entryFormData.rentalItemId}
-                                onValueChange={handleRentalItemChange}
-                              >
-                                <SelectTrigger className="col-span-3">
-                                  <SelectValue placeholder="Select rental item" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {activeItems.map((item) => (
-                                    <SelectItem key={item.id} value={item.id}>
-                                      {item.name} - ${item.dailyRate.toFixed(2)}
-                                      /{item.unit}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="job" className="text-right">
-                                Job *
-                              </Label>
-                              <Select
-                                value={entryFormData.jobId}
-                                onValueChange={(value) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    jobId: value,
-                                  })
-                                }
-                              >
-                                <SelectTrigger className="col-span-3">
-                                  <SelectValue placeholder="Select job" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {jobs
-                                    .filter((job) => job.isActive)
-                                    .map((job) => (
-                                      <SelectItem key={job.id} value={job.id}>
-                                        {job.jobNumber} - {job.name}
-                                      </SelectItem>
-                                    ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="employee" className="text-right">
-                                Employee
-                              </Label>
-                              <Select
-                                value={entryFormData.employeeId}
-                                onValueChange={(value) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    employeeId: value,
-                                  })
-                                }
-                              >
-                                <SelectTrigger className="col-span-3">
-                                  <SelectValue placeholder="Select employee (optional)" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="unassigned">
-                                    Unassigned
-                                  </SelectItem>
-                                  {employees.map((employee) => (
-                                    <SelectItem
-                                      key={employee.id}
-                                      value={employee.id}
-                                    >
-                                      {employee.name} - {employee.title}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="startDate">Start Date *</Label>
-                                <Input
-                                  id="startDate"
-                                  type="date"
-                                  value={entryFormData.startDate}
-                                  onChange={(e) =>
-                                    setEntryFormData({
-                                      ...entryFormData,
-                                      startDate: e.target.value,
-                                    })
-                                  }
-                                  required
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="endDate">End Date *</Label>
-                                <Input
-                                  id="endDate"
-                                  type="date"
-                                  value={entryFormData.endDate}
-                                  onChange={(e) =>
-                                    setEntryFormData({
-                                      ...entryFormData,
-                                      endDate: e.target.value,
-                                    })
-                                  }
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="quantity" className="text-right">
-                                Quantity *
-                              </Label>
-                              <Input
-                                id="quantity"
-                                type="number"
-                                min="1"
-                                value={entryFormData.quantity}
-                                onChange={(e) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    quantity: e.target.value,
-                                  })
-                                }
-                                className="col-span-3"
-                                required
-                              />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="rateUsed" className="text-right">
-                                Rate Used *
-                              </Label>
-                              <div className="col-span-3 relative">
-                                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                <Input
-                                  id="rateUsed"
-                                  type="number"
-                                  step="0.01"
-                                  value={entryFormData.rateUsed}
-                                  onChange={(e) =>
-                                    setEntryFormData({
-                                      ...entryFormData,
-                                      rateUsed: e.target.value,
-                                    })
-                                  }
-                                  className="pl-10"
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label
-                                htmlFor="entryDescription"
+                          <TableCell>
+                            {(() => {
+                              const rentalItem = rentalItems.find(
+                                (item) => item.name === summary.itemName,
+                              );
+                              // Enhanced debug logging
+                              console.log('=== RENTAL RATE DEBUG ===');
+                              console.log('Summary item name:', summary.itemName);
+                              console.log('All rental items:', rentalItems.map(item => ({ id: item.id, name: item.name, dailyRate: item.dailyRate })));
+                              console.log('Found rental item:', rentalItem ? { id: rentalItem.id, name: rentalItem.name, dailyRate: rentalItem.dailyRate, unit: rentalItem.unit } : 'NOT FOUND');
+                              console.log('=== END RENTAL RATE DEBUG ===');
+
+                              return rentalItem ? (
+                                <div className="flex items-center gap-1">
+                                  <DollarSign className="h-4 w-4 text-green-600" />
+                                  <span className="font-medium text-green-600">
+                                    {rentalItem.dailyRate.toFixed(2)}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    /{rentalItem.unit}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">—</span>
+                              );
+                            })()}
+                          </TableCell>
+                          <TableCell>
+                            {(() => {
+                              const rentalItem = rentalItems.find(
+                                (item) => item.name === summary.itemName,
+                              );
+                              // Enhanced debug logging
+                              console.log('=== DSP RATE DEBUG ===');
+                              console.log('Summary item name:', summary.itemName);
+                              console.log('Found rental item:', rentalItem ? { id: rentalItem.id, name: rentalItem.name, dspRate: rentalItem.dspRate, employeeId: rentalItem.employeeId } : 'NOT FOUND');
+                              console.log('DSP Rate value:', rentalItem?.dspRate);
+                              console.log('DSP Rate exists?', !!rentalItem?.dspRate);
+                              console.log('=== END DSP RATE DEBUG ===');
+
+                              return rentalItem?.dspRate ? (
+                                <div className="flex items-center gap-1">
+                                  <DollarSign className="h-4 w-4 text-purple-600" />
+                                  <span className="font-medium text-purple-600">
+                                    {rentalItem.dspRate.toFixed(2)}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    /day
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">—</span>
+                              );
+                            })()}
+                          </TableCell>
                                 className="text-right"
                               >
                                 Description
