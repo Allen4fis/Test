@@ -654,9 +654,7 @@ export function InvoiceManagement() {
                                       <TableCell className="font-medium text-blue-600 hover:text-blue-800">
                                         <div className="flex items-center gap-2">
                                           <span>
-                                            {parseLocalDate(
-                                              dateInfo.date,
-                                            ).toLocaleDateString()}
+                                            {formatLocalDate(dateInfo.date)}
                                           </span>
                                           <Eye className="h-4 w-4 opacity-50" />
                                         </div>
