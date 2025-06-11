@@ -72,6 +72,7 @@ export function EmployeeManagement() {
       email: "",
       billableWage: "",
       costWage: "",
+      managerId: "",
     });
     setEditingEmployee(null);
   };
