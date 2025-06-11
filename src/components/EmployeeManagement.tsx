@@ -135,11 +135,9 @@ export function EmployeeManagement() {
     deleteEmployee(employeeId);
   };
 
-  // Get available managers (exclude the employee being edited to prevent circular relationships)
-  const getAvailableManagers = () => {
-    return employees.filter((emp) =>
-      editingEmployee ? emp.id !== editingEmployee.id : true,
-    );
+  // Get all employees for "Employee Of" selection (allow anyone to be selected)
+  const getAvailableEmployees = () => {
+    return employees; // Allow selection of any employee
   };
 
   // Get employee's manager name
