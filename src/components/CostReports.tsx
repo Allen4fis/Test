@@ -170,7 +170,7 @@ export function CostReports() {
                   {totalLoaCount}
                 </p>
                 <div className="text-xs text-gray-500 mt-1">
-                  ${totalLoaAmount.toFixed(2)} total
+                  ${(totalLoaAmount || 0).toFixed(2)} total
                 </div>
               </div>
             </div>
