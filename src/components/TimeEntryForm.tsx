@@ -208,7 +208,7 @@ export function TimeEntryForm() {
         resetForm(); // Full reset when editing
       } else {
         addTimeEntry(entryData);
-        // Preserve form data but clear hours, LOA count, and description for next entry
+        // Preserve form data but clear hours, Live Out Allowance count, and description for next entry
         setFormData((prev) => ({
           ...prev,
           hours: "",
@@ -459,7 +459,7 @@ export function TimeEntryForm() {
               {/* LOA Count */}
               <div className="space-y-2">
                 <Label htmlFor="loaCount" className="text-sm font-medium">
-                  LOA Count
+                  Live Out Allowance Count
                 </Label>
                 <Input
                   id="loaCount"
@@ -632,7 +632,9 @@ export function TimeEntryForm() {
                     <TableHead>Job</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Hours</TableHead>
-                    <TableHead className="text-purple-600">LOA</TableHead>
+                    <TableHead className="text-purple-600">
+                      Live Out Allowance
+                    </TableHead>
                     <TableHead>Billable</TableHead>
                     <TableHead>Cost</TableHead>
                     <TableHead>Actions</TableHead>
