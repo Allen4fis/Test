@@ -152,7 +152,7 @@ export function RentalManagement() {
       hourlyRate: "",
       unit: "day",
       employeeId: "no-employee",
-      paidOutDailyRate: "",
+      dspRate: "",
       isActive: true,
     });
     setEditingItem(null);
