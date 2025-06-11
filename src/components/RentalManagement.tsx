@@ -282,6 +282,7 @@ export function RentalManagement() {
         quantity: entry.quantity,
         billingUnit: entry.billingUnit,
         rateUsed: entry.rateUsed,
+        dspRate: entry.dspRate, // Include DSP rate from the entry
         totalCost,
         description: entry.description,
         date: entry.startDate, // Use start date for filtering compatibility
