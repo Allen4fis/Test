@@ -1306,6 +1306,7 @@ export function RentalManagement() {
                         <TableHead>Employee</TableHead>
                         <TableHead>Period</TableHead>
                         <TableHead>Duration</TableHead>
+                        <TableHead>DSP Rate</TableHead>
                         <TableHead>Total Cost</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
