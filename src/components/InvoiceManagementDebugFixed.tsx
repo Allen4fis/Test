@@ -148,13 +148,13 @@ export function InvoiceManagementDebugFixed() {
         (sum, entry) => sum + entry.totalCost,
         0,
       );
-      const loaCost = totalLoaCount * 200; // LOA is billable at $200 each
+      const loaCost = totalLoaCount * 200; // Live Out Allowance is billable at $200 each
       const totalCost = laborCost; // Only labor is a cost, rentals are billable revenue
 
-      // CRITICAL FIX: The issue might be here - we should NOT double-count LOA
-      // LOA is already included in laborBillable from timeEntrySummaries
+      // CRITICAL FIX: The issue might be here - we should NOT double-count Live Out Allowance
+      // Live Out Allowance is already included in laborBillable from timeEntrySummaries
       // So we should NOT add loaCost again
-      const totalBillable = laborBillable + rentalBillable; // LOA already included in laborBillable
+      const totalBillable = laborBillable + rentalBillable; // Live Out Allowance already included in laborBillable
 
       // Debug information
       const debugInfo = {
