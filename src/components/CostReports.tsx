@@ -298,7 +298,12 @@ export function CostReports() {
                       );
                     })}
                     <TableRow className="bg-gray-50 font-bold border-t-2 border-orange-500/30">
-                      <TableCell colSpan={5}>Total</TableCell>
+                      <TableCell
+                        colSpan={5}
+                        className="text-orange-400 font-semibold"
+                      >
+                        Total
+                      </TableCell>
                       <TableCell>
                         {costSummaryByEmployee
                           .reduce(
