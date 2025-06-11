@@ -1532,8 +1532,10 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredRentalSummaries.map((rental) => (
-                      <TableRow key={rental.id}>
+                    {filteredRentalSummaries.map((rental, index) => (
+                      <TableRow
+                        key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${index}`}
+                      >
                         <TableCell className="font-medium">
                           {rental.rentalItemName}
                         </TableCell>
