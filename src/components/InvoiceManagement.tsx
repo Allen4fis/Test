@@ -49,11 +49,7 @@ import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { toast } from "@/hooks/use-toast";
 import { Job } from "@/types";
 
-// Helper function to parse date string as local date (fixes timezone issues)
-const parseLocalDate = (dateString: string) => {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day); // month is 0-indexed in JavaScript
-};
+import { parseLocalDate, formatLocalDate } from "@/utils/dateUtils";
 
 interface JobDateInfo {
   date: string;
