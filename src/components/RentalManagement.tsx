@@ -121,7 +121,7 @@ export function RentalManagement() {
     hourlyRate: "",
     unit: "day" as "day" | "hour" | "week" | "month",
     employeeId: "no-employee", // Employee attachment
-    paidOutDailyRate: "", // Paid out daily rate
+    dspRate: "", // DSP rate
     isActive: true,
   });
 
