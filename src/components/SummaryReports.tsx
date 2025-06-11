@@ -39,6 +39,9 @@ import {
   Truck,
   Receipt,
   Printer,
+  TrendingUp,
+  Activity,
+  Target,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -527,7 +530,7 @@ export function SummaryReports() {
   // Memoized Hour Type Breakdown Display Component
   const HourTypeBreakdownDisplay = ({ breakdown }: { breakdown: any }) => {
     if (!breakdown || Object.keys(breakdown).length === 0) {
-      return <span className="text-gray-400 text-sm">No breakdown</span>;
+      return <span className="text-gray-400 text-sm italic">No breakdown</span>;
     }
 
     const sortedEntries = Object.entries(breakdown)
@@ -535,20 +538,20 @@ export function SummaryReports() {
       .slice(0, 3); // Show top 3
 
     return (
-      <div className="space-y-1">
+      <div className="space-y-2">
         {sortedEntries.map(([hourType, data]: [string, any]) => (
           <div
             key={hourType}
-            className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1 rounded"
+            className="flex items-center justify-between text-xs bg-gradient-to-r from-orange-50 to-orange-100 px-3 py-2 rounded-lg border border-orange-200/50 shadow-sm"
           >
-            <span className="font-medium text-gray-700">{hourType}:</span>
+            <span className="font-semibold text-gray-800">{hourType}:</span>
             <div className="flex items-center gap-2">
-              <div className="text-blue-600">
+              <div className="bg-orange-500 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">
                 {(data.hours || 0).toFixed(1)}h
               </div>
               {data.effectiveHours !== data.hours && (
-                <div className="text-orange-600">
-                  ({(data.effectiveHours || 0).toFixed(1)}h effective)
+                <div className="bg-gradient-to-r from-orange-400 to-red-400 text-white px-2 py-1 rounded-md text-xs font-medium shadow-sm">
+                  ({(data.effectiveHours || 0).toFixed(1)}h eff)
                 </div>
               )}
             </div>
@@ -556,7 +559,7 @@ export function SummaryReports() {
         ))}
 
         {Object.keys(breakdown).length > 3 && (
-          <div className="text-xs text-gray-500 italic">
+          <div className="text-xs text-gray-500 italic text-center py-1">
             +{Object.keys(breakdown).length - 3} more types...
           </div>
         )}
@@ -566,30 +569,35 @@ export function SummaryReports() {
           ([, data]) =>
             data.provinces && Object.keys(data.provinces).length > 0,
         ) && (
-          <div className="mt-2 pt-1 border-t border-gray-200">
-            <div className="text-xs font-medium text-gray-600 mb-1">
+          <div className="mt-3 pt-2 border-t border-orange-200">
+            <div className="text-xs font-semibold text-orange-600 mb-2">
               By Province:
             </div>
             {sortedEntries.slice(0, 1).map(
               ([hourType, data]: [string, any]) =>
                 data.provinces && (
-                  <div key={`province-breakdown-${hourType}`}>
+                  <div
+                    key={`province-breakdown-${hourType}`}
+                    className="space-y-1"
+                  >
                     {Object.entries(data.provinces).map(
                       ([province, provinceData]: [string, any]) => (
                         <div
                           key={`${hourType}-${province}`}
-                          className="flex items-center justify-between text-xs"
+                          className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1 rounded-md"
                         >
-                          <span className="text-gray-600">{province}:</span>
+                          <span className="text-gray-600 font-medium">
+                            {province}:
+                          </span>
                           <div className="flex items-center gap-1">
-                            <span className="text-blue-600">
+                            <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-medium">
                               {(provinceData.hours || 0).toFixed(1)}h
                             </span>
                             {provinceData.effectiveHours !==
                               provinceData.hours && (
-                              <span className="text-orange-600">
+                              <span className="bg-orange-200 text-orange-800 px-2 py-0.5 rounded text-xs">
                                 ({(provinceData.effectiveHours || 0).toFixed(1)}
-                                h eff.)
+                                h eff)
                               </span>
                             )}
                           </div>
@@ -618,62 +626,121 @@ export function SummaryReports() {
   };
 
   return (
-    <div className="space-y-6 print-container">
+    <div
+      className="min-h-screen p-6 space-y-8"
+      style={{
+        background:
+          "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
+      }}
+    >
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 no-print">
+        <Card
+          className="group hover:scale-105 transition-all duration-300"
+          style={{
+            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
+            border: "1px solid rgba(255, 102, 0, 0.3)",
+            boxShadow:
+              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
+          }}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Total Hours
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg">
+              <Clock className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totals.hours.toFixed(1)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+              {totals.hours.toFixed(1)}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <TrendingUp className="h-3 w-3 mr-1 text-orange-400" />
               {totals.effectiveHours.toFixed(1)} effective hours
             </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Labor Cost</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+        <Card
+          className="group hover:scale-105 transition-all duration-300"
+          style={{
+            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
+            border: "1px solid rgba(255, 102, 0, 0.3)",
+            boxShadow:
+              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
+          }}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Labor Cost
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg">
+              <DollarSign className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totals.cost.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+              ${totals.cost.toFixed(0)}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <Activity className="h-3 w-3 mr-1 text-green-400" />
               LOA Count: {totals.loaCount}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+        <Card
+          className="group hover:scale-105 transition-all duration-300"
+          style={{
+            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
+            border: "1px solid rgba(255, 102, 0, 0.3)",
+            boxShadow:
+              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
+          }}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
               Rental Revenue
             </CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg">
+              <Truck className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${totals.rentalRevenue.toFixed(2)}
+            <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+              ${totals.rentalRevenue.toFixed(0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              DSP: ${totalDspEarnings.toFixed(2)}
+            <p className="text-xs text-gray-400 mt-1 flex items-center">
+              <Target className="h-3 w-3 mr-1 text-purple-400" />
+              DSP: ${totalDspEarnings.toFixed(0)}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
-            <Receipt className="h-4 w-4 text-muted-foreground" />
+        <Card
+          className="group hover:scale-105 transition-all duration-300"
+          style={{
+            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
+            border: "1px solid rgba(255, 102, 0, 0.3)",
+            boxShadow:
+              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
+          }}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold text-gray-200">
+              Total Cost
+            </CardTitle>
+            <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-lg">
+              <Receipt className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${totals.totalCost.toFixed(2)}
+            <div className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+              ${totals.totalCost.toFixed(0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-400 mt-1">
               {filteredSummaries.length} entries
             </p>
           </CardContent>
@@ -681,108 +748,182 @@ export function SummaryReports() {
       </div>
 
       {/* Filters */}
-      <Card className="no-print">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters
+      <Card
+        className="no-print shadow-2xl"
+        style={{
+          background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
+          border: "1px solid rgba(255, 102, 0, 0.3)",
+          boxShadow:
+            "0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 102, 0, 0.1)",
+        }}
+      >
+        <CardHeader
+          className="border-b border-orange-500/20"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+          }}
+        >
+          <CardTitle className="flex items-center gap-3 text-xl text-gray-100">
+            <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg">
+              <Filter className="h-5 w-5 text-white" />
+            </div>
+            Advanced Filters
           </CardTitle>
-          <CardDescription>
-            Filter the summary reports by date range, employee, job, and more.
+          <CardDescription className="text-gray-300">
+            Fine-tune your data analysis with precision filters and real-time
+            results.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label>Start Date</Label>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-200">
+                Start Date
+              </Label>
               <Input
                 type="date"
                 value={dateFilter.start}
                 onChange={(e) =>
                   setDateFilter({ ...dateFilter, start: e.target.value })
                 }
+                className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400 focus:ring-orange-400/30 transition-all duration-200"
               />
             </div>
-            <div className="space-y-2">
-              <Label>End Date</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-200">
+                End Date
+              </Label>
               <Input
                 type="date"
                 value={dateFilter.end}
                 onChange={(e) =>
                   setDateFilter({ ...dateFilter, end: e.target.value })
                 }
+                className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400 focus:ring-orange-400/30 transition-all duration-200"
               />
             </div>
-            <div className="space-y-2">
-              <Label>Employee</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-200">
+                Employee
+              </Label>
               <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-employees">All Employees</SelectItem>
+                <SelectContent className="bg-gray-800 border-orange-500/30">
+                  <SelectItem
+                    value="all-employees"
+                    className="text-gray-100 focus:bg-orange-500/20"
+                  >
+                    All Employees
+                  </SelectItem>
                   {employees.map((employee) => (
-                    <SelectItem key={employee.id} value={employee.name}>
+                    <SelectItem
+                      key={employee.id}
+                      value={employee.name}
+                      className="text-gray-100 focus:bg-orange-500/20"
+                    >
                       {employee.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Job</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-200">Job</Label>
               <Select value={jobFilter} onValueChange={setJobFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-jobs">All Jobs</SelectItem>
+                <SelectContent className="bg-gray-800 border-orange-500/30">
+                  <SelectItem
+                    value="all-jobs"
+                    className="text-gray-100 focus:bg-orange-500/20"
+                  >
+                    All Jobs
+                  </SelectItem>
                   {jobs.map((job) => (
-                    <SelectItem key={job.id} value={job.jobNumber}>
+                    <SelectItem
+                      key={job.id}
+                      value={job.jobNumber}
+                      className="text-gray-100 focus:bg-orange-500/20"
+                    >
                       {job.jobNumber} - {job.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Province</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-200">
+                Province
+              </Label>
               <Select value={provinceFilter} onValueChange={setProvinceFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-provinces">All Provinces</SelectItem>
+                <SelectContent className="bg-gray-800 border-orange-500/30">
+                  <SelectItem
+                    value="all-provinces"
+                    className="text-gray-100 focus:bg-orange-500/20"
+                  >
+                    All Provinces
+                  </SelectItem>
                   {provinces.map((province) => (
-                    <SelectItem key={province.id} value={province.code}>
+                    <SelectItem
+                      key={province.id}
+                      value={province.code}
+                      className="text-gray-100 focus:bg-orange-500/20"
+                    >
                       {province.name} ({province.code})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <Switch
                 id="include-invoiced"
                 checked={includeInvoiced}
                 onCheckedChange={setIncludeInvoiced}
+                className="data-[state=checked]:bg-orange-500"
               />
-              <Label htmlFor="include-invoiced">Include Invoiced</Label>
+              <Label
+                htmlFor="include-invoiced"
+                className="text-sm font-medium text-gray-200"
+              >
+                Include Invoiced
+              </Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <Switch
                 id="show-empty"
                 checked={showEmptyResults}
                 onCheckedChange={setShowEmptyResults}
+                className="data-[state=checked]:bg-orange-500"
               />
-              <Label htmlFor="show-empty">Show Empty Results</Label>
+              <Label
+                htmlFor="show-empty"
+                className="text-sm font-medium text-gray-200"
+              >
+                Show Empty Results
+              </Label>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={resetFilters}>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                className="bg-gray-700/50 border-orange-500/30 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 transition-all duration-200"
+              >
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Reset
               </Button>
-              <Button variant="outline" onClick={handlePrint}>
+              <Button
+                variant="outline"
+                onClick={handlePrint}
+                className="bg-gray-700/50 border-orange-500/30 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 transition-all duration-200"
+              >
                 <Printer className="h-4 w-4 mr-2" />
                 Print
               </Button>
@@ -792,616 +933,958 @@ export function SummaryReports() {
       </Card>
 
       {/* Tabbed Summary Views */}
-      <Tabs defaultValue="employees" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 no-print">
-          <TabsTrigger value="employees">
-            <Users className="h-4 w-4 mr-2" />
-            Employees
-          </TabsTrigger>
-          <TabsTrigger value="title-job">
-            <Briefcase className="h-4 w-4 mr-2" />
-            Title & Job
-          </TabsTrigger>
-          <TabsTrigger value="date-name">
-            <Calendar className="h-4 w-4 mr-2" />
-            Date & Name
-          </TabsTrigger>
-          <TabsTrigger value="rentals">
-            <Truck className="h-4 w-4 mr-2" />
-            Rentals
-          </TabsTrigger>
-          <TabsTrigger value="entries">
-            <FileText className="h-4 w-4 mr-2" />
-            Entries
-          </TabsTrigger>
-        </TabsList>
+      <div
+        className="rounded-2xl shadow-2xl"
+        style={{
+          background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
+          border: "1px solid rgba(255, 102, 0, 0.3)",
+          boxShadow:
+            "0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 102, 0, 0.1)",
+        }}
+      >
+        <Tabs defaultValue="employees" className="space-y-6 p-6">
+          <TabsList
+            className="grid w-full grid-cols-5 no-print rounded-xl p-1"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+              border: "1px solid rgba(255, 102, 0, 0.2)",
+            }}
+          >
+            <TabsTrigger
+              value="employees"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Employees
+            </TabsTrigger>
+            <TabsTrigger
+              value="title-job"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+            >
+              <Briefcase className="h-4 w-4 mr-2" />
+              Title & Job
+            </TabsTrigger>
+            <TabsTrigger
+              value="date-name"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Date & Name
+            </TabsTrigger>
+            <TabsTrigger
+              value="rentals"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+            >
+              <Truck className="h-4 w-4 mr-2" />
+              Rentals
+            </TabsTrigger>
+            <TabsTrigger
+              value="entries"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Entries
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Employee Summary Tab */}
-        <TabsContent value="employees">
-          <Card>
-            <CardHeader>
-              <CardTitle>Employee Summary</CardTitle>
-              <CardDescription>
-                Summary of hours and costs by employee with hierarchical
-                relationships and rental DSP information.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {hierarchicalEmployeeSummaries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No employee data found for the selected filters.
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Employee Name</TableHead>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Hour Type Breakdown</TableHead>
-                      <TableHead>Total Hours</TableHead>
-                      <TableHead>Effective Hours</TableHead>
-                      <TableHead>LOA Count</TableHead>
-                      <TableHead>Total Revenue</TableHead>
-                      <TableHead>Rental DSP</TableHead>
-                      <TableHead>Date Range</TableHead>
-                      <TableHead>Entries</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {hierarchicalEmployeeSummaries.map((employee, index) => {
-                      const dspCalc = dspCalculations.find(
-                        (calc) => calc.employeeName === employee.employeeName,
-                      );
-
-                      return (
+          {/* Employee Summary Tab */}
+          <TabsContent value="employees">
+            <Card
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255, 102, 0, 0.2)",
+              }}
+            >
+              <CardHeader
+                className="border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                }}
+              >
+                <CardTitle className="text-xl text-gray-100">
+                  Employee Performance Dashboard
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Comprehensive analysis of employee hours, costs, and rental
+                  DSP earnings with hierarchical relationships.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {hierarchicalEmployeeSummaries.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <Users className="h-12 w-12 mx-auto mb-4 text-gray-500" />
+                    <p className="text-lg">
+                      No employee data found for the selected filters.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-hidden">
+                    <Table>
+                      <TableHeader>
                         <TableRow
-                          key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
-                          className={employee.isSubordinate ? "bg-blue-25" : ""}
+                          className="border-b border-orange-500/20 hover:bg-orange-500/5"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                          }}
                         >
-                          <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              {employee.isSubordinate ? (
-                                // Subordinate employee - indented with different styling
-                                <div className="flex items-center gap-2 ml-4">
-                                  <div className="w-4 h-4 border-l-2 border-b-2 border-gray-300"></div>
-                                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium bg-blue-50 text-blue-600 border border-blue-200">
-                                    ↳
-                                  </span>
-                                  <span className="text-blue-700">
-                                    {employee.employeeName}
-                                  </span>
-                                  <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
-                                    Employee of {employee.managerName}
-                                  </span>
-                                </div>
-                              ) : (
-                                // Independent employee or manager
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                      index < 3
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-gray-100 text-gray-800"
-                                    }`}
-                                  >
-                                    {index + 1}
-                                  </span>
-                                  <span className="font-semibold">
-                                    {employee.employeeName}
-                                  </span>
-                                  {employee.employeeCategory === "dsp" ? (
-                                    <span className="text-xs text-purple-700 bg-purple-50 px-2 py-1 rounded border border-purple-200">
-                                      DSP
-                                    </span>
-                                  ) : employee.employeeCategory ===
-                                    "employee" ? (
-                                    <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                                      Employee
-                                    </span>
-                                  ) : (
-                                    <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                                      Independent
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>{employee.employeeTitle}</TableCell>
-                          <TableCell>
-                            <HourTypeBreakdownDisplay
-                              breakdown={employee.hourTypeBreakdown}
-                            />
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {employee.totalHours.toFixed(2)}
-                          </TableCell>
-                          <TableCell>
-                            {employee.totalEffectiveHours.toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-purple-600">
-                            {employee.totalLoaCount}
-                          </TableCell>
-                          <TableCell className="text-green-600 font-medium">
-                            ${employee.totalCost.toFixed(2)}
-                          </TableCell>
-                          <TableCell>
-                            {dspCalc && dspCalc.rentals.length > 0 ? (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-purple-600">
-                                  DSP Earnings: $
-                                  {dspCalc.dspEarnings.toFixed(2)}
-                                </div>
-                                <div className="space-y-1">
-                                  {dspCalc.rentals.map(
-                                    (rental, rentalIndex) => {
-                                      const rentalItem = rentalItems.find(
-                                        (item) =>
-                                          item.name === rental.rentalItemName,
-                                      );
-                                      const dspRate =
-                                        rentalItem?.dspRate ||
-                                        (rentalItem as any)?.paidOutDailyRate;
+                          <TableHead className="text-gray-200 font-semibold">
+                            Employee Name
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Hour Type Breakdown
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Effective Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            LOA Count
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Revenue
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Rental DSP
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Date Range
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Entries
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {hierarchicalEmployeeSummaries.map(
+                          (employee, index) => {
+                            const dspCalc = dspCalculations.find(
+                              (calc) =>
+                                calc.employeeName === employee.employeeName,
+                            );
 
-                                      return (
-                                        <div
-                                          key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${rentalIndex}`}
-                                          className="text-xs bg-purple-50 px-2 py-1 rounded"
+                            return (
+                              <TableRow
+                                key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
+                                className={`
+                                border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200
+                                ${employee.isSubordinate ? "bg-blue-900/20" : ""}
+                              `}
+                              >
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center gap-3">
+                                    {employee.isSubordinate ? (
+                                      // Subordinate employee - indented with different styling
+                                      <div className="flex items-center gap-3 ml-6">
+                                        <div className="w-4 h-4 border-l-2 border-b-2 border-orange-300"></div>
+                                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white shadow-lg">
+                                          ↳
+                                        </span>
+                                        <span className="text-blue-300 font-semibold">
+                                          {employee.employeeName}
+                                        </span>
+                                        <span className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/30">
+                                          Employee of {employee.managerName}
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      // Independent employee or manager
+                                      <div className="flex items-center gap-3">
+                                        <span
+                                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
+                                            index < 3
+                                              ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white"
+                                              : "bg-gradient-to-br from-gray-500 to-gray-700 text-white"
+                                          }`}
                                         >
-                                          <div className="font-medium text-purple-700">
-                                            {rental.rentalItemName}
-                                          </div>
-                                          <div className="text-purple-600">
-                                            {dspRate
-                                              ? `$${dspRate.toFixed(2)}/day`
-                                              : "No DSP rate"}
-                                            {rental.duration > 1 &&
-                                              ` × ${rental.duration} days`}
-                                            {rental.quantity > 1 &&
-                                              ` × ${rental.quantity} units`}
-                                            <div className="text-xs text-gray-500">
-                                              ({rental.startDate})
-                                            </div>
-                                          </div>
-                                        </div>
-                                      );
-                                    },
+                                          {index + 1}
+                                        </span>
+                                        <span className="font-bold text-gray-100">
+                                          {employee.employeeName}
+                                        </span>
+                                        {employee.employeeCategory === "dsp" ? (
+                                          <span className="text-xs text-purple-200 bg-gradient-to-r from-purple-600 to-purple-700 px-3 py-1 rounded-full border border-purple-400/30 shadow-md">
+                                            DSP
+                                          </span>
+                                        ) : employee.employeeCategory ===
+                                          "employee" ? (
+                                          <span className="text-xs text-gray-200 bg-gradient-to-r from-gray-600 to-gray-700 px-3 py-1 rounded-full shadow-md">
+                                            Employee
+                                          </span>
+                                        ) : (
+                                          <span className="text-xs text-green-200 bg-gradient-to-r from-green-600 to-green-700 px-3 py-1 rounded-full border border-green-400/30 shadow-md">
+                                            Independent
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-gray-200">
+                                  {employee.employeeTitle}
+                                </TableCell>
+                                <TableCell>
+                                  <HourTypeBreakdownDisplay
+                                    breakdown={employee.hourTypeBreakdown}
+                                  />
+                                </TableCell>
+                                <TableCell className="font-bold text-orange-300">
+                                  {employee.totalHours.toFixed(2)}
+                                </TableCell>
+                                <TableCell className="text-gray-200">
+                                  {employee.totalEffectiveHours.toFixed(2)}
+                                </TableCell>
+                                <TableCell className="text-purple-300 font-semibold">
+                                  {employee.totalLoaCount}
+                                </TableCell>
+                                <TableCell className="text-green-300 font-bold">
+                                  ${employee.totalCost.toFixed(2)}
+                                </TableCell>
+                                <TableCell>
+                                  {dspCalc && dspCalc.rentals.length > 0 ? (
+                                    <div className="space-y-2">
+                                      <div className="text-xs font-bold text-purple-300 bg-purple-900/30 px-2 py-1 rounded-md">
+                                        DSP Earnings: $
+                                        {dspCalc.dspEarnings.toFixed(2)}
+                                      </div>
+                                      <div className="space-y-1">
+                                        {dspCalc.rentals.map(
+                                          (rental, rentalIndex) => {
+                                            const rentalItem = rentalItems.find(
+                                              (item) =>
+                                                item.name ===
+                                                rental.rentalItemName,
+                                            );
+                                            const dspRate =
+                                              rentalItem?.dspRate ||
+                                              (rentalItem as any)
+                                                ?.paidOutDailyRate;
+
+                                            return (
+                                              <div
+                                                key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${rentalIndex}`}
+                                                className="text-xs bg-gradient-to-r from-purple-800/30 to-purple-900/30 px-2 py-1 rounded-md border border-purple-500/20"
+                                              >
+                                                <div className="font-semibold text-purple-200">
+                                                  {rental.rentalItemName}
+                                                </div>
+                                                <div className="text-purple-300">
+                                                  {dspRate
+                                                    ? `$${dspRate.toFixed(2)}/day`
+                                                    : "No DSP rate"}
+                                                  {rental.duration > 1 &&
+                                                    ` × ${rental.duration} days`}
+                                                  {rental.quantity > 1 &&
+                                                    ` × ${rental.quantity} units`}
+                                                  <div className="text-xs text-gray-400">
+                                                    ({rental.startDate})
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            );
+                                          },
+                                        )}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <span className="text-gray-500 text-sm italic">
+                                      No rentals
+                                    </span>
                                   )}
-                                </div>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400 text-sm">
-                                No rentals
-                              </span>
+                                </TableCell>
+                                <TableCell className="text-sm text-gray-300">
+                                  {employee.dateRange.earliest} to{" "}
+                                  {employee.dateRange.latest}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-orange-900/30 border-orange-500/50 text-orange-200"
+                                  >
+                                    {employee.entryCount}
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          },
+                        )}
+                        <TableRow
+                          key="employee-summary-total"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                          }}
+                          className="border-t-2 border-orange-500/50 font-bold"
+                        >
+                          <TableCell
+                            colSpan={3}
+                            className="text-orange-200 font-bold text-lg"
+                          >
+                            Total
+                          </TableCell>
+                          <TableCell className="text-orange-300 font-bold text-lg">
+                            {hierarchicalEmployeeSummaries
+                              .reduce(
+                                (sum, emp) => sum + (emp.totalHours || 0),
+                                0,
+                              )
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-gray-200 font-bold">
+                            {hierarchicalEmployeeSummaries
+                              .reduce(
+                                (sum, emp) =>
+                                  sum + (emp.totalEffectiveHours || 0),
+                                0,
+                              )
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="font-bold text-purple-300">
+                            {hierarchicalEmployeeSummaries.reduce(
+                              (sum, emp) => sum + (emp.totalLoaCount || 0),
+                              0,
                             )}
                           </TableCell>
-                          <TableCell className="text-sm text-gray-600">
-                            {employee.dateRange.earliest} to{" "}
-                            {employee.dateRange.latest}
+                          <TableCell className="text-green-300 font-bold text-lg">
+                            $
+                            {hierarchicalEmployeeSummaries
+                              .reduce(
+                                (sum, emp) => sum + (emp.totalCost || 0),
+                                0,
+                              )
+                              .toFixed(2)}
                           </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">
-                              {employee.entryCount}
-                            </Badge>
+                          <TableCell className="text-purple-300 font-bold text-lg">
+                            ${totalDspEarnings.toFixed(2)}
+                          </TableCell>
+                          <TableCell></TableCell>
+                          <TableCell className="text-orange-200 font-bold">
+                            {hierarchicalEmployeeSummaries.reduce(
+                              (sum, emp) => sum + emp.entryCount,
+                              0,
+                            )}
                           </TableCell>
                         </TableRow>
-                      );
-                    })}
-                    <TableRow
-                      key="employee-summary-total"
-                      className="bg-gray-50 font-bold"
-                    >
-                      <TableCell colSpan={3}>Total</TableCell>
-                      <TableCell>
-                        {hierarchicalEmployeeSummaries
-                          .reduce((sum, emp) => sum + (emp.totalHours || 0), 0)
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {hierarchicalEmployeeSummaries
-                          .reduce(
-                            (sum, emp) => sum + (emp.totalEffectiveHours || 0),
-                            0,
-                          )
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell className="font-medium text-purple-600">
-                        {hierarchicalEmployeeSummaries.reduce(
-                          (sum, emp) => sum + (emp.totalLoaCount || 0),
-                          0,
-                        )}
-                      </TableCell>
-                      <TableCell className="text-green-600">
-                        $
-                        {hierarchicalEmployeeSummaries
-                          .reduce((sum, emp) => sum + (emp.totalCost || 0), 0)
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-purple-600 font-medium">
-                        ${totalDspEarnings.toFixed(2)}
-                      </TableCell>
-                      <TableCell></TableCell>
-                      <TableCell>
-                        {hierarchicalEmployeeSummaries.reduce(
-                          (sum, emp) => sum + emp.entryCount,
-                          0,
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Title & Job Summary Tab */}
-        <TabsContent value="title-job">
-          <Card>
-            <CardHeader>
-              <CardTitle>Title & Job Summary</CardTitle>
-              <CardDescription>
-                Summary of hours and costs grouped by employee title and job.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredTitleJobSummaries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No title & job data found for the selected filters.
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Job</TableHead>
-                      <TableHead>Hour Type Breakdown</TableHead>
-                      <TableHead>Total Hours</TableHead>
-                      <TableHead>Effective Hours</TableHead>
-                      <TableHead>LOA Count</TableHead>
-                      <TableHead>Total Cost</TableHead>
-                      <TableHead>Entries</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredTitleJobSummaries.map((summary, index) => (
-                      <TableRow
-                        key={`${summary.employeeTitle}|${summary.jobNumber}|${index}`}
-                      >
-                        <TableCell className="font-medium">
-                          {summary.employeeTitle}
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{summary.jobNumber}</p>
-                            <p className="text-sm text-gray-500">
-                              {summary.jobName}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            {Object.entries(summary.hourTypeBreakdown || {})
-                              .sort(([, a], [, b]) => b.hours - a.hours)
-                              .map(([hourType, data]) => (
-                                <div
-                                  key={hourType}
-                                  className="flex justify-between text-xs bg-gray-50 px-2 py-1 rounded"
-                                >
-                                  <span className="font-medium text-gray-700">
-                                    {hourType}:
-                                  </span>
-                                  <span className="font-bold text-gray-900">
-                                    {(data.hours || 0).toFixed(1)}h
-                                  </span>
-                                </div>
-                              ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
-                        <TableCell>
-                          {summary.totalEffectiveHours.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="font-medium text-purple-600">
-                          {summary.totalLoaCount}
-                        </TableCell>
-                        <TableCell className="text-green-600 font-medium">
-                          ${summary.totalCost.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {summary.entries.length}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow
-                      key="title-job-summary-total"
-                      className="bg-gray-50 font-bold"
-                    >
-                      <TableCell colSpan={4}>Total</TableCell>
-                      <TableCell>
-                        {filteredTitleJobSummaries
-                          .reduce((sum, s) => sum + (s.totalHours || 0), 0)
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {filteredTitleJobSummaries
-                          .reduce(
-                            (sum, s) => sum + (s.totalEffectiveHours || 0),
-                            0,
-                          )
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-green-600">
-                        $
-                        {filteredTitleJobSummaries
-                          .reduce((sum, s) => sum + (s.totalCost || 0), 0)
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {filteredTitleJobSummaries.reduce(
-                          (sum, s) => sum + s.entries.length,
-                          0,
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+          {/* Title & Job Summary Tab */}
+          <TabsContent value="title-job">
+            <Card
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255, 102, 0, 0.2)",
+              }}
+            >
+              <CardHeader
+                className="border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                }}
+              >
+                <CardTitle className="text-xl text-gray-100">
+                  Title & Job Analysis
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Detailed breakdown of hours and costs organized by employee
+                  title and job assignments.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {filteredTitleJobSummaries.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <Briefcase className="h-12 w-12 mx-auto mb-4 text-gray-500" />
+                    <p className="text-lg">
+                      No title & job data found for the selected filters.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow
+                          className="border-b border-orange-500/20"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                          }}
+                        >
+                          <TableHead className="text-gray-200 font-semibold">
+                            Title
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Job
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Hour Type Breakdown
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Effective Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            LOA Count
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Cost
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Entries
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredTitleJobSummaries.map((summary, index) => (
+                          <TableRow
+                            key={`${summary.employeeTitle}|${summary.jobNumber}|${index}`}
+                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                          >
+                            <TableCell className="font-bold text-gray-100">
+                              {summary.employeeTitle}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <p className="font-semibold text-orange-300">
+                                  {summary.jobNumber}
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                  {summary.jobName}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                {Object.entries(summary.hourTypeBreakdown || {})
+                                  .sort(([, a], [, b]) => b.hours - a.hours)
+                                  .map(([hourType, data]) => (
+                                    <div
+                                      key={hourType}
+                                      className="flex justify-between text-xs bg-gradient-to-r from-orange-50 to-orange-100 px-2 py-1 rounded-md border border-orange-200/30"
+                                    >
+                                      <span className="font-semibold text-gray-800">
+                                        {hourType}:
+                                      </span>
+                                      <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-xs font-bold">
+                                        {(data.hours || 0).toFixed(1)}h
+                                      </span>
+                                    </div>
+                                  ))}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-bold text-orange-300">
+                              {summary.totalHours.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {summary.totalEffectiveHours.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="font-semibold text-purple-300">
+                              {summary.totalLoaCount}
+                            </TableCell>
+                            <TableCell className="text-green-300 font-bold">
+                              ${summary.totalCost.toFixed(2)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="bg-orange-900/30 border-orange-500/50 text-orange-200"
+                              >
+                                {summary.entries.length}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow
+                          key="title-job-summary-total"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                          }}
+                          className="border-t-2 border-orange-500/50 font-bold"
+                        >
+                          <TableCell
+                            colSpan={4}
+                            className="text-orange-200 font-bold text-lg"
+                          >
+                            Total
+                          </TableCell>
+                          <TableCell className="text-orange-300 font-bold text-lg">
+                            {filteredTitleJobSummaries
+                              .reduce((sum, s) => sum + (s.totalHours || 0), 0)
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-gray-200 font-bold">
+                            {filteredTitleJobSummaries
+                              .reduce(
+                                (sum, s) => sum + (s.totalEffectiveHours || 0),
+                                0,
+                              )
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-green-300 font-bold text-lg">
+                            $
+                            {filteredTitleJobSummaries
+                              .reduce((sum, s) => sum + (s.totalCost || 0), 0)
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-orange-200 font-bold">
+                            {filteredTitleJobSummaries.reduce(
+                              (sum, s) => sum + s.entries.length,
+                              0,
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Date & Name Summary Tab */}
-        <TabsContent value="date-name">
-          <Card>
-            <CardHeader>
-              <CardTitle>Date & Name Summary</CardTitle>
-              <CardDescription>
-                Summary of hours and costs grouped by date and employee name.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredDateNameSummaries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No date & name data found for the selected filters.
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Employee</TableHead>
-                      <TableHead>Hour Type Breakdown</TableHead>
-                      <TableHead>Total Hours</TableHead>
-                      <TableHead>Effective Hours</TableHead>
-                      <TableHead>LOA Count</TableHead>
-                      <TableHead>Total Cost</TableHead>
-                      <TableHead>Entries</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredDateNameSummaries.map((summary, index) => (
-                      <TableRow
-                        key={`${summary.date}|${summary.employeeName}|${index}`}
-                      >
-                        <TableCell className="font-medium">
-                          {parseLocalDate(summary.date).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>{summary.employeeName}</TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            {Object.entries(summary.hourTypeBreakdown || {})
-                              .sort(([, a], [, b]) => b.hours - a.hours)
-                              .map(([hourType, data]) => (
-                                <div
-                                  key={hourType}
-                                  className="flex justify-between text-xs bg-gray-50 px-2 py-1 rounded"
-                                >
-                                  <span className="font-medium text-gray-700">
-                                    {hourType}:
-                                  </span>
-                                  <span className="font-bold text-gray-900">
-                                    {(data.hours || 0).toFixed(1)}h
-                                  </span>
-                                </div>
-                              ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
-                        <TableCell>
-                          {summary.totalEffectiveHours.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-purple-600">
-                          {summary.totalLoaCount}
-                        </TableCell>
-                        <TableCell className="text-green-600 font-medium">
-                          ${summary.totalCost.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {summary.entries.length}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow
-                      key="date-name-summary-total"
-                      className="bg-gray-50 font-bold"
-                    >
-                      <TableCell colSpan={3}>Total</TableCell>
-                      <TableCell>
-                        {filteredDateNameSummaries
-                          .reduce((sum, s) => sum + (s.totalHours || 0), 0)
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {filteredDateNameSummaries
-                          .reduce(
-                            (sum, s) => sum + (s.totalEffectiveHours || 0),
-                            0,
-                          )
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-purple-600">
-                        {filteredDateNameSummaries.reduce(
-                          (sum, s) => sum + (s.totalLoaCount || 0),
-                          0,
-                        )}
-                      </TableCell>
-                      <TableCell className="text-green-600">
-                        $
-                        {filteredDateNameSummaries
-                          .reduce((sum, s) => sum + (s.totalCost || 0), 0)
-                          .toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {filteredDateNameSummaries.reduce(
-                          (sum, s) => sum + s.entries.length,
-                          0,
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+          {/* Date & Name Summary Tab */}
+          <TabsContent value="date-name">
+            <Card
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255, 102, 0, 0.2)",
+              }}
+            >
+              <CardHeader
+                className="border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                }}
+              >
+                <CardTitle className="text-xl text-gray-100">
+                  Date & Name Timeline
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Chronological analysis of hours and costs organized by date
+                  and employee name.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {filteredDateNameSummaries.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-500" />
+                    <p className="text-lg">
+                      No date & name data found for the selected filters.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow
+                          className="border-b border-orange-500/20"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                          }}
+                        >
+                          <TableHead className="text-gray-200 font-semibold">
+                            Date
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Employee
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Hour Type Breakdown
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Effective Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            LOA Count
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Cost
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Entries
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredDateNameSummaries.map((summary, index) => (
+                          <TableRow
+                            key={`${summary.date}|${summary.employeeName}|${index}`}
+                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                          >
+                            <TableCell className="font-bold text-orange-300">
+                              {parseLocalDate(
+                                summary.date,
+                              ).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell className="text-gray-100 font-semibold">
+                              {summary.employeeName}
+                            </TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                {Object.entries(summary.hourTypeBreakdown || {})
+                                  .sort(([, a], [, b]) => b.hours - a.hours)
+                                  .map(([hourType, data]) => (
+                                    <div
+                                      key={hourType}
+                                      className="flex justify-between text-xs bg-gradient-to-r from-orange-50 to-orange-100 px-2 py-1 rounded-md border border-orange-200/30"
+                                    >
+                                      <span className="font-semibold text-gray-800">
+                                        {hourType}:
+                                      </span>
+                                      <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-xs font-bold">
+                                        {(data.hours || 0).toFixed(1)}h
+                                      </span>
+                                    </div>
+                                  ))}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-bold text-orange-300">
+                              {summary.totalHours.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {summary.totalEffectiveHours.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-purple-300 font-semibold">
+                              {summary.totalLoaCount}
+                            </TableCell>
+                            <TableCell className="text-green-300 font-bold">
+                              ${summary.totalCost.toFixed(2)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="bg-orange-900/30 border-orange-500/50 text-orange-200"
+                              >
+                                {summary.entries.length}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow
+                          key="date-name-summary-total"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                          }}
+                          className="border-t-2 border-orange-500/50 font-bold"
+                        >
+                          <TableCell
+                            colSpan={3}
+                            className="text-orange-200 font-bold text-lg"
+                          >
+                            Total
+                          </TableCell>
+                          <TableCell className="text-orange-300 font-bold text-lg">
+                            {filteredDateNameSummaries
+                              .reduce((sum, s) => sum + (s.totalHours || 0), 0)
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-gray-200 font-bold">
+                            {filteredDateNameSummaries
+                              .reduce(
+                                (sum, s) => sum + (s.totalEffectiveHours || 0),
+                                0,
+                              )
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-purple-300 font-semibold">
+                            {filteredDateNameSummaries.reduce(
+                              (sum, s) => sum + (s.totalLoaCount || 0),
+                              0,
+                            )}
+                          </TableCell>
+                          <TableCell className="text-green-300 font-bold text-lg">
+                            $
+                            {filteredDateNameSummaries
+                              .reduce((sum, s) => sum + (s.totalCost || 0), 0)
+                              .toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-orange-200 font-bold">
+                            {filteredDateNameSummaries.reduce(
+                              (sum, s) => sum + s.entries.length,
+                              0,
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Rentals Tab */}
-        <TabsContent value="rentals">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rental Summary</CardTitle>
-              <CardDescription>
-                Summary of rental items with costs and duration.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredRentalSummaries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No rental data found for the selected filters.
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Job</TableHead>
-                      <TableHead>Employee</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Rate</TableHead>
-                      <TableHead>Total Cost</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredRentalSummaries.map((rental, index) => (
-                      <TableRow
-                        key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${index}`}
-                      >
-                        <TableCell className="font-medium">
-                          {rental.rentalItemName}
-                        </TableCell>
-                        <TableCell>{rental.category}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{rental.jobNumber}</p>
-                            <p className="text-sm text-gray-500">
-                              {rental.jobName}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {rental.employeeName || "Unassigned"}
-                        </TableCell>
-                        <TableCell>
-                          {rental.duration}{" "}
-                          {rental.duration === 1 ? "day" : "days"}
-                          {rental.quantity > 1 && ` × ${rental.quantity}`}
-                        </TableCell>
-                        <TableCell>
-                          ${rental.rateUsed.toFixed(2)}/ day
-                        </TableCell>
-                        <TableCell className="font-medium text-green-600">
-                          ${rental.totalCost.toFixed(2)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow
-                      key="rental-summary-total"
-                      className="bg-gray-50 font-bold"
-                    >
-                      <TableCell colSpan={6}>Total Rental Revenue</TableCell>
-                      <TableCell className="text-green-600">
-                        ${totals.rentalRevenue.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+          {/* Rentals Tab */}
+          <TabsContent value="rentals">
+            <Card
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255, 102, 0, 0.2)",
+              }}
+            >
+              <CardHeader
+                className="border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                }}
+              >
+                <CardTitle className="text-xl text-gray-100">
+                  Rental Equipment Dashboard
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Comprehensive overview of rental items with costs, duration,
+                  and utilization metrics.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {filteredRentalSummaries.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <Truck className="h-12 w-12 mx-auto mb-4 text-gray-500" />
+                    <p className="text-lg">
+                      No rental data found for the selected filters.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow
+                          className="border-b border-orange-500/20"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                          }}
+                        >
+                          <TableHead className="text-gray-200 font-semibold">
+                            Item
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Category
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Job
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Employee
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Duration
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Rate
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Cost
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredRentalSummaries.map((rental, index) => (
+                          <TableRow
+                            key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${index}`}
+                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                          >
+                            <TableCell className="font-bold text-gray-100">
+                              {rental.rentalItemName}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {rental.category}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <p className="font-semibold text-orange-300">
+                                  {rental.jobNumber}
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                  {rental.jobName}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {rental.employeeName || (
+                                <span className="text-gray-500 italic">
+                                  Unassigned
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {rental.duration}{" "}
+                              {rental.duration === 1 ? "day" : "days"}
+                              {rental.quantity > 1 && ` × ${rental.quantity}`}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              ${rental.rateUsed.toFixed(2)}/day
+                            </TableCell>
+                            <TableCell className="font-bold text-green-300">
+                              ${rental.totalCost.toFixed(2)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow
+                          key="rental-summary-total"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                          }}
+                          className="border-t-2 border-orange-500/50 font-bold"
+                        >
+                          <TableCell
+                            colSpan={6}
+                            className="text-orange-200 font-bold text-lg"
+                          >
+                            Total Rental Revenue
+                          </TableCell>
+                          <TableCell className="text-green-300 font-bold text-lg">
+                            ${totals.rentalRevenue.toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Individual Entries Tab */}
-        <TabsContent value="entries">
-          <Card>
-            <CardHeader>
-              <CardTitle>Individual Time Entries</CardTitle>
-              <CardDescription>
-                Detailed view of all individual time entries.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredSummaries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No time entries found for the selected filters.
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Employee</TableHead>
-                      <TableHead>Job</TableHead>
-                      <TableHead>Hour Type</TableHead>
-                      <TableHead>Province</TableHead>
-                      <TableHead>Hours</TableHead>
-                      <TableHead>Effective Hours</TableHead>
-                      <TableHead>Total Cost</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSummaries.map((summary, index) => (
-                      <TableRow
-                        key={`${summary.employeeName}-${summary.date}-${summary.hourTypeName}-${index}`}
-                      >
-                        <TableCell>{summary.date}</TableCell>
-                        <TableCell>{summary.employeeName}</TableCell>
-                        <TableCell>
-                          {summary.jobNumber} - {summary.jobName}
-                        </TableCell>
-                        <TableCell>{summary.hourTypeName}</TableCell>
-                        <TableCell>{summary.provinceName}</TableCell>
-                        <TableCell>{summary.hours.toFixed(2)}</TableCell>
-                        <TableCell>
-                          {summary.effectiveHours.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-green-600">
-                          ${summary.totalCost.toFixed(2)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          {/* Individual Entries Tab */}
+          <TabsContent value="entries">
+            <Card
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255, 102, 0, 0.2)",
+              }}
+            >
+              <CardHeader
+                className="border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                }}
+              >
+                <CardTitle className="text-xl text-gray-100">
+                  Individual Time Entries
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Granular view of all individual time entries with detailed
+                  breakdown and analysis.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {filteredSummaries.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <FileText className="h-12 w-12 mx-auto mb-4 text-gray-500" />
+                    <p className="text-lg">
+                      No time entries found for the selected filters.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow
+                          className="border-b border-orange-500/20"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                          }}
+                        >
+                          <TableHead className="text-gray-200 font-semibold">
+                            Date
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Employee
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Job
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Hour Type
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Province
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Effective Hours
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
+                            Total Cost
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredSummaries.map((summary, index) => (
+                          <TableRow
+                            key={`${summary.employeeName}-${summary.date}-${summary.hourTypeName}-${index}`}
+                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                          >
+                            <TableCell className="text-orange-300 font-semibold">
+                              {summary.date}
+                            </TableCell>
+                            <TableCell className="text-gray-100">
+                              {summary.employeeName}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {summary.jobNumber} - {summary.jobName}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {summary.hourTypeName}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {summary.provinceName}
+                            </TableCell>
+                            <TableCell className="font-bold text-orange-300">
+                              {summary.hours.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-gray-200">
+                              {summary.effectiveHours.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-green-300 font-bold">
+                              ${summary.totalCost.toFixed(2)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
