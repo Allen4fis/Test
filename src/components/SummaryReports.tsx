@@ -353,7 +353,7 @@ export function SummaryReports() {
       {} as Record<string, any>,
     );
 
-    return filteredDateNameSummaries.sort((a, b) => {
+    return Object.values(dateNameGroups).sort((a, b) => {
       const dateCompare = a.date.localeCompare(b.date);
       if (dateCompare !== 0) return dateCompare;
       return a.employeeName.localeCompare(b.employeeName);
