@@ -697,7 +697,7 @@ export function InvoiceManagement() {
                                             {dateInfo.laborBillable.toFixed(2)}{" "}
                                             + Rentals: $
                                             {dateInfo.rentalBillable.toFixed(2)}{" "}
-                                            + LOA: $
+                                            + Live Out Allowance: $
                                             {dateInfo.loaCost.toFixed(2)}
                                           </div>
                                         </div>
@@ -1013,7 +1013,9 @@ export function InvoiceManagement() {
                       <Card>
                         <CardContent className="p-4">
                           <div className="text-center">
-                            <p className="text-sm text-gray-600">LOA Count</p>
+                            <p className="text-sm text-gray-600">
+                              Live Out Allowance Count
+                            </p>
                             <p className="text-2xl font-bold text-purple-600">
                               {breakdown.totalLoaCount}
                             </p>
@@ -1048,7 +1050,7 @@ export function InvoiceManagement() {
                                         <TableHead>Hour Type</TableHead>
                                         <TableHead>Hours</TableHead>
                                         <TableHead className="text-purple-600">
-                                          LOA
+                                          Live Out Allowance
                                         </TableHead>
                                         <TableHead>Billable Rate</TableHead>
                                         <TableHead>Cost Rate</TableHead>
