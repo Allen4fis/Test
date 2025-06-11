@@ -1043,10 +1043,9 @@ export function RentalManagement() {
                                     /day
                                   </span>
                                 </div>
-                                ) : (
-                                  <span className="text-gray-400">—</span>
-                                );
-                              })()}
+                              ) : (
+                                <span className="text-gray-400">—</span>
+                              )}
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-1">
