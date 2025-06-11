@@ -1062,10 +1062,163 @@ export function RentalManagement() {
                               );
                             })()}
                           </TableCell>
-                                className="text-right"
-                              >
-                                Description
-                              </Label>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Edit Entry Dialog */}
+          <Dialog
+            open={editingEntry !== null}
+            onOpenChange={(open) => {
+              if (!open) {
+                setEditingEntry(null);
+                resetEntryForm();
+              }
+            }}
+          >
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Edit Rental Entry</DialogTitle>
+                <DialogDescription>
+                  Update the rental entry information.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleEntrySubmit}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-rentalItem" className="text-right">
+                      Rental Item *
+                    </Label>
+                    <Select
+                      value={entryFormData.rentalItemId}
+                      onValueChange={handleRentalItemChange}
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select rental item" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {activeItems.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.name} - ${item.dailyRate.toFixed(2)}/
+                            {item.unit}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-job" className="text-right">
+                      Job *
+                    </Label>
+                    <Select
+                      value={entryFormData.jobId}
+                      onValueChange={(value) =>
+                        setEntryFormData({ ...entryFormData, jobId: value })
+                      }
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select job" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {activeJobs.map((job) => (
+                          <SelectItem key={job.id} value={job.id}>
+                            {job.jobNumber} - {job.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-employee" className="text-right">
+                      Employee
+                    </Label>
+                    <Select
+                      value={entryFormData.employeeId}
+                      onValueChange={(value) =>
+                        setEntryFormData({
+                          ...entryFormData,
+                          employeeId: value === "none" ? "" : value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select employee (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No Employee</SelectItem>
+                        {employees.map((employee) => (
+                          <SelectItem key={employee.id} value={employee.id}>
+                            {employee.name} - {employee.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-startDate" className="text-right">
+                      Start Date *
+                    </Label>
+                    <Input
+                      id="edit-startDate"
+                      type="date"
+                      value={entryFormData.startDate}
+                      onChange={(e) =>
+                        setEntryFormData({
+                          ...entryFormData,
+                          startDate: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-endDate" className="text-right">
+                      End Date *
+                    </Label>
+                    <Input
+                      id="edit-endDate"
+                      type="date"
+                      value={entryFormData.endDate}
+                      onChange={(e) =>
+                        setEntryFormData({
+                          ...entryFormData,
+                          endDate: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-quantity" className="text-right">
+                      Quantity *
+                    </Label>
+                    <Input
+                      id="edit-quantity"
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={entryFormData.quantity}
+                      onChange={(e) =>
+                        setEntryFormData({
+                          ...entryFormData,
+                          quantity: parseInt(e.target.value) || 1,
+                        })
+                      }
+                      className="col-span-3"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-description" className="text-right">
+                      Description
+                    </Label>
                               <Textarea
                                 id="entryDescription"
                                 value={entryFormData.description}
