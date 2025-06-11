@@ -391,6 +391,72 @@ export function SummaryReports() {
     return Object.values(grouped).sort((a, b) => b.totalCost - a.totalCost);
   }, [filteredSummaries]);
 
+  // Hierarchical employee summaries organized by "Employee Of" relationships
+  const hierarchicalEmployeeSummaries = useMemo(() => {
+    // First, get employee relationships from the employees data
+    const employeeRelationships = new Map();
+    employees.forEach((emp) => {
+      employeeRelationships.set(emp.name, {
+        managerId: emp.managerId,
+        managerName: emp.managerId
+          ? employees.find((m) => m.id === emp.managerId)?.name
+          : null,
+      });
+    });
+
+    // Group summaries by their "Employee Of" relationship
+    const hierarchyGroups = new Map();
+    const independentEmployees = [];
+
+    employeeSummariesWithHourTypes.forEach((empSummary) => {
+      const relationship = employeeRelationships.get(empSummary.employeeName);
+      const managerName = relationship?.managerName;
+
+      if (managerName) {
+        // This employee works under someone
+        if (!hierarchyGroups.has(managerName)) {
+          hierarchyGroups.set(managerName, []);
+        }
+        hierarchyGroups.get(managerName).push({
+          ...empSummary,
+          isSubordinate: true,
+          managerName: managerName,
+        });
+      } else {
+        // Independent employee or manager
+        independentEmployees.push({
+          ...empSummary,
+          isSubordinate: false,
+          managerName: null,
+        });
+      }
+    });
+
+    // Build the final hierarchical structure
+    const result = [];
+
+    // Add independent employees first
+    independentEmployees.forEach((emp) => {
+      result.push(emp);
+
+      // Add their subordinates right after them
+      if (hierarchyGroups.has(emp.employeeName)) {
+        const subordinates = hierarchyGroups.get(emp.employeeName);
+        subordinates.sort((a, b) => b.totalCost - a.totalCost);
+        result.push(...subordinates);
+        hierarchyGroups.delete(emp.employeeName); // Remove to avoid duplicates
+      }
+    });
+
+    // Add any remaining orphaned subordinates (in case their manager isn't in the filtered results)
+    hierarchyGroups.forEach((subordinates) => {
+      subordinates.sort((a, b) => b.totalCost - a.totalCost);
+      result.push(...subordinates);
+    });
+
+    return result;
+  }, [employeeSummariesWithHourTypes, employees]);
+
   // Enhanced filtering for title/job summaries with hour type breakdown
   const filteredTitleJobSummaries = useMemo(() => {
     // First filter the base summaries
