@@ -395,7 +395,7 @@ export function EmployeeManagement() {
                             <span className="text-sm">{managerName}</span>
                           </div>
                         ) : (
-                          <Badge variant="secondary">Top Level</Badge>
+                          <Badge variant="secondary">Independent</Badge>
                         )}
                       </TableCell>
                       <TableCell>{employee.email || "—"}</TableCell>
