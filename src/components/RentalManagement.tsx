@@ -663,7 +663,7 @@ export function RentalManagement() {
                         <TableHead>Category</TableHead>
                         <TableHead>Attached Employee</TableHead>
                         <TableHead>Rate</TableHead>
-                        <TableHead>Paid Out Rate</TableHead>
+                        <TableHead>DSP Rate</TableHead>
                         <TableHead>Unit</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
