@@ -1445,9 +1445,7 @@ export function SummaryReports() {
                             className="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition"
                           >
                             <TableCell className="font-bold text-green-400">
-                              {parseLocalDate(
-                                summary.date,
-                              ).toLocaleDateString()}
+                              {formatLocalDate(summary.date)}
                             </TableCell>
                             <TableCell className="text-gray-100 font-semibold">
                               {summary.employeeName}
