@@ -15,6 +15,8 @@ import {
   Download,
   Database,
   Save,
+  Activity,
+  TrendingUp,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
@@ -42,13 +44,15 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       id: "dashboard" as const,
       label: "Dashboard",
       icon: Home,
-      description: "Overview and statistics",
+      description: "Overview and analytics",
+      color: "text-blue-400",
     },
     {
       id: "timeEntry" as const,
       label: "Time Entry",
       icon: Clock,
       description: "Log work hours",
+      color: "text-green-400",
     },
     {
       id: "viewer" as const,
@@ -56,24 +60,28 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       icon: Eye,
       description: "View & manage entries",
       count: timeEntries.length,
+      color: "text-purple-400",
     },
     {
       id: "reports" as const,
       label: "Reports",
       icon: BarChart3,
       description: "Summary reports",
+      color: "text-orange-400",
     },
     {
       id: "costs" as const,
       label: "Cost Reports",
       icon: FileText,
       description: "Labor cost analysis",
+      color: "text-red-400",
     },
     {
       id: "invoices" as const,
       label: "Invoices",
       icon: Receipt,
       description: "Manage invoiced dates",
+      color: "text-yellow-400",
     },
     {
       id: "rentals" as const,
@@ -81,6 +89,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       icon: Truck,
       description: "Equipment & item rentals",
       count: rentalItems.filter((item) => item.isActive).length,
+      color: "text-cyan-400",
     },
     {
       id: "employees" as const,
@@ -88,6 +97,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       icon: Users,
       description: "Manage staff",
       count: employees.length,
+      color: "text-pink-400",
     },
     {
       id: "jobs" as const,
@@ -95,52 +105,67 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       icon: Briefcase,
       description: "Manage projects",
       count: jobs.filter((job) => job.isActive).length,
+      color: "text-indigo-400",
     },
     {
       id: "export" as const,
       label: "Data Export",
       icon: Download,
       description: "Export for accountant",
+      color: "text-emerald-400",
     },
     {
       id: "backup" as const,
       label: "Backup & Restore",
       icon: Database,
       description: "Manage data backups",
+      color: "text-amber-400",
     },
   ];
 
   return (
     <div className="min-h-screen modern-gradient">
       {/* Header */}
-      <header className="bg-sidebar border-b border-sidebar-border/20 shadow-lg">
+      <header
+        className="border-b border-orange-500/20 shadow-2xl"
+        style={{
+          background:
+            "linear-gradient(135deg, hsl(220, 20%, 8%) 0%, hsl(220, 15%, 12%) 100%)",
+          boxShadow:
+            "0 10px 40px rgba(0, 0, 0, 0.3), 0 0 20px hsl(24, 100%, 50%, 0.1)",
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary rounded-xl shadow-lg">
-                  <Clock className="h-6 w-6 text-primary-foreground" />
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="p-3 orange-gradient rounded-2xl shadow-2xl animate-glow">
+                  <Clock className="h-8 w-8 text-white drop-shadow-lg" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-sidebar-foreground">
+                  <h1 className="text-2xl font-bold text-gradient">
                     4Front Trackity-doo
                   </h1>
-                  <p className="text-xs text-sidebar-foreground/70">
-                    Not Changing It
+                  <p className="text-sm text-gray-400 font-medium">
+                    Modern Time Tracking System
                   </p>
                 </div>
               </div>
-              <div className="ml-4">
+              <div className="ml-6">
                 <Badge
-                  variant="secondary"
-                  className="bg-primary/10 text-primary border-primary/20 font-medium"
+                  className="bg-orange-500/20 text-orange-300 border-orange-500/30 font-bold px-4 py-2 text-sm shadow-lg"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, hsl(24, 100%, 50%, 0.2) 0%, hsl(24, 100%, 60%, 0.2) 100%)",
+                  }}
                 >
+                  <Activity className="h-4 w-4 mr-2" />
                   {timeEntries.length} entries
                 </Badge>
               </div>
             </div>
 
-            {/* Bright Pink Manual Save Button - Extremely Convenient Spot! */}
+            {/* Enhanced Save Button */}
             <div className="flex items-center">
               <Button
                 onClick={() => {
@@ -161,11 +186,13 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                     });
                   }
                 }}
-                className="bg-[#FF00FF] hover:bg-[#E600E6] text-white font-bold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-[#FF00FF] hover:border-[#E600E6]"
+                className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold px-8 py-3 rounded-2xl shadow-2xl hover:shadow-pink-500/25 transform hover:scale-105 transition-all duration-300 border border-pink-400/30"
                 size="lg"
               >
-                <Save className="h-5 w-5 mr-2 drop-shadow-sm" />
-                <span className="font-bold tracking-wide">SAVE NOW</span>
+                <Save className="h-5 w-5 mr-3 drop-shadow-sm" />
+                <span className="font-bold tracking-wide text-lg">
+                  SAVE NOW
+                </span>
               </Button>
             </div>
           </div>
@@ -176,12 +203,22 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-3">
-            <Card className="modern-card bg-sidebar border-sidebar-border shadow-xl overflow-hidden">
-              <div className="p-6">
-                <h2 className="text-lg font-semibold text-sidebar-foreground mb-4">
+            <Card className="modern-card hover-scale overflow-hidden">
+              <div
+                className="p-6 border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
+                }}
+              >
+                <h2 className="text-xl font-bold text-gray-100 mb-2 flex items-center gap-3">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
                   Navigation
                 </h2>
-                <nav className="space-y-2">
+                <p className="text-gray-400 text-sm">Choose your workspace</p>
+              </div>
+              <div className="p-6">
+                <nav className="space-y-3">
                   {navigationItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = selectedView === item.id;
@@ -190,10 +227,10 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                       <Button
                         key={item.id}
                         variant={isActive ? "default" : "ghost"}
-                        className={`w-full justify-start gap-3 h-auto p-4 transition-all duration-200 ${
+                        className={`w-full justify-start gap-4 h-auto p-4 smooth-transition group ${
                           isActive
-                            ? "orange-gradient text-primary-foreground shadow-lg transform scale-105 font-semibold"
-                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-105"
+                            ? "orange-gradient text-white shadow-2xl transform scale-105 font-bold border border-orange-400/30"
+                            : "text-gray-300 hover:bg-gray-800/50 hover:text-white hover:scale-105 border border-transparent hover:border-orange-500/20"
                         }`}
                         onClick={() => {
                           console.log("Navigating to:", item.id);
@@ -201,18 +238,23 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                         }}
                       >
                         <Icon
-                          className={`h-5 w-5 ${isActive ? "drop-shadow-sm" : ""}`}
+                          className={`h-6 w-6 ${
+                            isActive
+                              ? "drop-shadow-lg"
+                              : `${item.color} group-hover:text-orange-400`
+                          }`}
                         />
                         <div className="flex-1 text-left">
                           <div className="flex items-center justify-between">
-                            <span className="font-medium">{item.label}</span>
+                            <span className="font-semibold text-base">
+                              {item.label}
+                            </span>
                             {item.count !== undefined && (
                               <Badge
-                                variant="secondary"
                                 className={`ml-2 ${
                                   isActive
-                                    ? "bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
-                                    : "bg-primary/10 text-primary border-primary/20"
+                                    ? "bg-white/20 text-white border-white/30"
+                                    : "bg-orange-500/20 text-orange-300 border-orange-500/30"
                                 }`}
                               >
                                 {item.count}
@@ -220,10 +262,10 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                             )}
                           </div>
                           <p
-                            className={`text-xs mt-1 ${
+                            className={`text-sm mt-1 ${
                               isActive
-                                ? "text-primary-foreground/80"
-                                : "text-sidebar-foreground/60"
+                                ? "text-white/80"
+                                : "text-gray-400 group-hover:text-gray-300"
                             }`}
                           >
                             {item.description}
@@ -236,47 +278,73 @@ export function Layout({ children, timeTracking }: LayoutProps) {
               </div>
             </Card>
 
-            {/* Quick Stats */}
-            <Card className="modern-card mt-6 bg-card border-border shadow-lg overflow-hidden">
-              <div className="p-6">
-                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  Quick Stats
+            {/* Enhanced Quick Stats */}
+            <Card className="modern-card mt-8 hover-scale overflow-hidden">
+              <div
+                className="p-6 border-b border-orange-500/20"
+                style={{
+                  background:
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
+                }}
+              >
+                <h3 className="font-bold text-gray-100 text-lg flex items-center gap-3">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
+                  Quick Analytics
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <span className="text-muted-foreground font-medium">
-                      Total Employees:
-                    </span>
-                    <span className="font-bold text-foreground text-lg">
-                      {employees.length}
-                    </span>
+              </div>
+              <div className="p-6">
+                <div className="space-y-4">
+                  <div className="glass-card p-4 rounded-xl">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 font-semibold flex items-center gap-2">
+                        <Users className="h-4 w-4 text-pink-400" />
+                        Total Employees:
+                      </span>
+                      <span className="font-bold text-gray-100 text-xl">
+                        {employees.length}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <span className="text-muted-foreground font-medium">
-                      Active Jobs:
-                    </span>
-                    <span className="font-bold text-foreground text-lg">
-                      {jobs.filter((j) => j.isActive).length}
-                    </span>
+                  <div className="glass-card p-4 rounded-xl">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 font-semibold flex items-center gap-2">
+                        <Briefcase className="h-4 w-4 text-indigo-400" />
+                        Active Jobs:
+                      </span>
+                      <span className="font-bold text-gray-100 text-xl">
+                        {jobs.filter((j) => j.isActive).length}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <span className="text-muted-foreground font-medium">
-                      Time Entries:
-                    </span>
-                    <span className="font-bold text-foreground text-lg">
-                      {timeEntries.length}
-                    </span>
+                  <div className="glass-card p-4 rounded-xl">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 font-semibold flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-purple-400" />
+                        Time Entries:
+                      </span>
+                      <span className="font-bold text-gray-100 text-xl">
+                        {timeEntries.length}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg border border-primary/20">
-                    <span className="text-foreground font-medium">
-                      Total Hours:
-                    </span>
-                    <span className="font-bold text-primary text-lg">
-                      {timeEntries
-                        .reduce((sum, entry) => sum + entry.hours, 0)
-                        .toFixed(1)}
-                    </span>
+                  <div
+                    className="p-4 rounded-xl border border-orange-500/30"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
+                    }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="text-orange-200 font-bold flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-orange-400" />
+                        Total Hours:
+                      </span>
+                      <span className="font-bold text-orange-300 text-2xl">
+                        {timeEntries
+                          .reduce((sum, entry) => sum + entry.hours, 0)
+                          .toFixed(1)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -285,7 +353,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <div className="modern-card bg-card border-border shadow-xl rounded-2xl overflow-hidden">
+            <div className="modern-card rounded-3xl overflow-hidden animate-fade-in">
               <div className="p-8">{children}</div>
             </div>
           </div>
