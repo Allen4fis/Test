@@ -1137,13 +1137,17 @@ export function InvoiceManagement() {
                                               >
                                                 {(() => {
                                                   const profitMargin =
-                                                    entry.billableWage > 0
-                                                      ? ((entry.billableWage -
-                                                          entry.costWage) /
-                                                          entry.billableWage) *
+                                                    (entry.billableWage || 0) >
+                                                    0
+                                                      ? (((entry.billableWage ||
+                                                          0) -
+                                                          (entry.costWage ||
+                                                            0)) /
+                                                          (entry.billableWage ||
+                                                            1)) *
                                                         100
                                                       : 0;
-                                                  return `${profitMargin.toFixed(1)}% margin`;
+                                                  return `${(profitMargin || 0).toFixed(1)}% margin`;
                                                 })()}
                                               </div>
                                             </div>
