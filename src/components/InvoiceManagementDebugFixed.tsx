@@ -684,7 +684,7 @@ export function InvoiceManagementDebugFixed() {
                 <TableHead>Job</TableHead>
                 <TableHead>Progress</TableHead>
                 <TableHead>Hours</TableHead>
-                <TableHead>LOA</TableHead>
+                <TableHead>Live Out Allowance</TableHead>
                 <TableHead>Revenue</TableHead>
                 <TableHead>Cost</TableHead>
                 <TableHead>Profit</TableHead>
@@ -876,7 +876,7 @@ export function InvoiceManagementDebugFixed() {
                   <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Hours</TableHead>
-                    <TableHead>LOA</TableHead>
+                    <TableHead>Live Out Allowance</TableHead>
                     <TableHead>Revenue</TableHead>
                     <TableHead>Cost</TableHead>
                     <TableHead>Profit</TableHead>
