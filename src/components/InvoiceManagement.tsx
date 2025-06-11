@@ -1070,7 +1070,7 @@ export function InvoiceManagement() {
                                             </Badge>
                                           </TableCell>
                                           <TableCell>
-                                            {entry.hours.toFixed(2)}h
+                                            {(entry.hours || 0).toFixed(2)}h
                                           </TableCell>
                                           <TableCell>
                                             {entry.loaCount &&
@@ -1090,7 +1090,10 @@ export function InvoiceManagement() {
                                           <TableCell className="text-green-600">
                                             <div className="text-sm">
                                               <div className="font-medium">
-                                                ${entry.billableWage.toFixed(2)}
+                                                $
+                                                {(
+                                                  entry.billableWage || 0
+                                                ).toFixed(2)}
                                               </div>
                                               <div className="text-xs text-gray-500">
                                                 Billable/hr
@@ -1100,7 +1103,10 @@ export function InvoiceManagement() {
                                           <TableCell className="text-red-600">
                                             <div className="text-sm">
                                               <div className="font-medium">
-                                                ${entry.costWage.toFixed(2)}
+                                                $
+                                                {(entry.costWage || 0).toFixed(
+                                                  2,
+                                                )}
                                               </div>
                                               <div className="text-xs text-gray-500">
                                                 Cost/hr
@@ -1110,7 +1116,10 @@ export function InvoiceManagement() {
                                           <TableCell>
                                             <div className="text-sm">
                                               <div className="font-bold">
-                                                ${entry.totalCost.toFixed(2)}
+                                                $
+                                                {(entry.totalCost || 0).toFixed(
+                                                  2,
+                                                )}
                                               </div>
                                               <div
                                                 className={`text-xs ${(() => {
