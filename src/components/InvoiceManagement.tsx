@@ -518,7 +518,8 @@ export function InvoiceManagement() {
                                             ${totalBillable.toFixed(2)}
                                           </p>
                                           <p className="text-xs text-muted-foreground">
-                                            Labor + Rental Revenue + LOA
+                                            Labor + Rental Revenue + Live Out
+                                            Allowance
                                           </p>
                                         </div>
                                       </div>
@@ -625,7 +626,7 @@ export function InvoiceManagement() {
                                     <TableHead>Date</TableHead>
                                     <TableHead>Hours</TableHead>
                                     <TableHead className="text-purple-600">
-                                      LOA Count
+                                      Live Out Allowance Count
                                     </TableHead>
                                     <TableHead className="text-green-600">
                                       Billable
