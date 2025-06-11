@@ -1063,18 +1063,18 @@ export function SummaryReports() {
                           />
                         </TableCell>
                         <TableCell className="font-medium">
-                          {employee.totalHours.toFixed(2)}
+                          {(employee.totalHours || 0).toFixed(2)}
                         </TableCell>
                         <TableCell>
-                          {employee.totalEffectiveHours.toFixed(2)}
+                          {(employee.totalEffectiveHours || 0).toFixed(2)}
                         </TableCell>
                         <TableCell className="font-medium text-purple-600">
-                          {employee.totalLoaCount > 0
+                          {(employee.totalLoaCount || 0) > 0
                             ? employee.totalLoaCount
                             : "—"}
                         </TableCell>
                         <TableCell className="font-medium text-green-600">
-                          ${employee.totalCost.toFixed(2)}
+                          ${(employee.totalCost || 0).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <div className="text-xs text-gray-600">
