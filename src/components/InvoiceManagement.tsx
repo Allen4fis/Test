@@ -1260,13 +1260,14 @@ export function InvoiceManagement() {
                                                   entries.reduce(
                                                     (sum, e) =>
                                                       sum +
-                                                      e.totalBillableAmount,
+                                                      (e.totalBillableAmount ||
+                                                        0),
                                                     0,
                                                   );
                                                 const totalCost =
                                                   entries.reduce(
                                                     (sum, e) =>
-                                                      sum + e.totalCost,
+                                                      sum + (e.totalCost || 0),
                                                     0,
                                                   );
                                                 const profitMargin =
@@ -1276,7 +1277,7 @@ export function InvoiceManagement() {
                                                         totalBillable) *
                                                       100
                                                     : 0;
-                                                return `${profitMargin.toFixed(1)}% margin`;
+                                                return `${(profitMargin || 0).toFixed(1)}% margin`;
                                               })()}
                                             </div>
                                           </div>
