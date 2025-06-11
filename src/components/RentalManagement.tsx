@@ -151,6 +151,8 @@ export function RentalManagement() {
       dailyRate: "",
       hourlyRate: "",
       unit: "day",
+      employeeId: "no-employee",
+      paidOutDailyRate: "",
       isActive: true,
     });
     setEditingItem(null);
