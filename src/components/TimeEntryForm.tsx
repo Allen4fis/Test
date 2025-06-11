@@ -201,11 +201,18 @@ export function TimeEntryForm() {
 
       if (editingEntry) {
         updateTimeEntry(editingEntry.id, entryData);
+        resetForm(); // Full reset when editing
       } else {
         addTimeEntry(entryData);
+        // Preserve form data but clear hours, LOA count, and description for next entry
+        setFormData((prev) => ({
+          ...prev,
+          hours: "",
+          loaCount: "",
+          description: "",
+        }));
+        setFormError("");
       }
-
-      resetForm();
     } catch (error) {
       setFormError("Error saving time entry. Please try again.");
       console.error("Error saving time entry:", error);
