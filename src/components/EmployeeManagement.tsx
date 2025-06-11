@@ -133,7 +133,12 @@ export function EmployeeManagement() {
       email: employee.email || "",
       billableWage: employee.billableWage?.toString() || "0",
       costWage: employee.costWage?.toString() || "0",
-      managerId: employee.managerId || "no-manager",
+      managerId:
+        employee.category === "employee"
+          ? "no-manager"
+          : employee.category === "dsp"
+            ? "dsp"
+            : employee.managerId || "no-manager",
     });
     setIsDialogOpen(true);
   };
