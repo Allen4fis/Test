@@ -971,7 +971,7 @@ export function SummaryReports() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {employeeSummariesWithHourTypes.length === 0 ? (
+              {hierarchicalEmployeeSummaries.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   No data matches the current filters for the selected time
                   period.
