@@ -1039,9 +1039,19 @@ export function SummaryReports() {
                                 <span className="font-semibold">
                                   {employee.employeeName}
                                 </span>
-                                <span className="text-xs text-gray-500 bg-green-50 px-2 py-1 rounded">
-                                  Independent
-                                </span>
+                                {employee.employeeCategory === "dsp" ? (
+                                  <span className="text-xs text-purple-700 bg-purple-50 px-2 py-1 rounded border border-purple-200">
+                                    DSP
+                                  </span>
+                                ) : employee.employeeCategory === "employee" ? (
+                                  <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                                    Employee
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                                    Independent
+                                  </span>
+                                )}
                               </div>
                             )}
                           </div>
