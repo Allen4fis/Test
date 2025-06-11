@@ -104,7 +104,8 @@ export function EmployeeManagement() {
       email: formData.email,
       billableWage: billableWage,
       costWage: costWage,
-      managerId: formData.managerId || undefined, // Only include if selected
+      managerId:
+        formData.managerId === "no-manager" ? undefined : formData.managerId, // Only include if not "no-manager"
     };
 
     if (editingEmployee) {
