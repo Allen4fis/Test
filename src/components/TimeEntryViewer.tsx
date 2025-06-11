@@ -926,7 +926,7 @@ export function TimeEntryViewer() {
                                 type: "time-entry",
                                 associatedData: {
                                   additionalInfo: [
-                                    `Date: ${parseLocalDate(entry.date).toLocaleDateString()}`,
+                                    `Date: ${formatLocalDate(entry.date)}`,
                                     `Hours: ${entry.hours}`,
                                     `Job: ${job?.jobNumber} - ${job?.name}`,
                                     `Hour Type: ${hourType?.name}`,
