@@ -1081,6 +1081,81 @@ export function SummaryReports() {
                           ${(employee.totalCost || 0).toFixed(2)}
                         </TableCell>
                         <TableCell>
+                          {(() => {
+                            // Find rentals associated with this employee
+                            const employeeRentals =
+                              filteredRentalSummaries.filter(
+                                (rental) =>
+                                  rental.employeeName === employee.employeeName,
+                              );
+
+                            if (employeeRentals.length === 0) {
+                              return (
+                                <span className="text-gray-400 text-xs">
+                                  No rentals
+                                </span>
+                              );
+                            }
+
+                            // Calculate total DSP earnings and show rental details
+                            const totalDspEarnings = employeeRentals.reduce(
+                              (sum, rental) => {
+                                const rentalItem = rentalItems.find(
+                                  (item) => item.name === rental.rentalItemName,
+                                );
+                                const dspRate =
+                                  rentalItem?.dspRate ||
+                                  (rentalItem as any)?.paidOutDailyRate ||
+                                  0;
+                                return (
+                                  sum +
+                                  dspRate * rental.duration * rental.quantity
+                                );
+                              },
+                              0,
+                            );
+
+                            return (
+                              <div className="space-y-1">
+                                <div className="text-xs font-medium text-purple-600">
+                                  DSP Earnings: ${totalDspEarnings.toFixed(2)}
+                                </div>
+                                <div className="space-y-1">
+                                  {employeeRentals.map((rental) => {
+                                    const rentalItem = rentalItems.find(
+                                      (item) =>
+                                        item.name === rental.rentalItemName,
+                                    );
+                                    const dspRate =
+                                      rentalItem?.dspRate ||
+                                      (rentalItem as any)?.paidOutDailyRate;
+
+                                    return (
+                                      <div
+                                        key={rental.id}
+                                        className="text-xs bg-purple-50 px-2 py-1 rounded"
+                                      >
+                                        <div className="font-medium text-purple-700">
+                                          {rental.rentalItemName}
+                                        </div>
+                                        <div className="text-purple-600">
+                                          {dspRate
+                                            ? `$${dspRate.toFixed(2)}/day`
+                                            : "No DSP rate"}
+                                          {rental.duration > 1 &&
+                                            ` × ${rental.duration} days`}
+                                          {rental.quantity > 1 &&
+                                            ` × ${rental.quantity} units`}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </TableCell>
+                        <TableCell>
                           <div className="text-xs text-gray-600">
                             <div>
                               {parseLocalDate(
