@@ -124,7 +124,7 @@ export interface RentalItem {
   hourlyRate?: number;
   unit: "day" | "hour" | "week" | "month"; // Primary billing unit
   employeeId?: string; // Employee this rental item is attached to
-  paidOutDailyRate?: number; // Daily rate paid out to the employee
+  dspRate?: number; // DSP rate paid out to the employee
   isActive: boolean;
   createdAt: string;
 }
