@@ -1330,23 +1330,25 @@ export function SummaryReports() {
                                     {hourType}:
                                   </span>
                                   <span className="font-bold text-gray-900">
-                                    {data.hours.toFixed(1)}h
+                                    {(data.hours || 0).toFixed(1)}h
                                   </span>
                                 </div>
                               ))}
                           </div>
                         </TableCell>
-                        <TableCell>{summary.totalHours.toFixed(2)}</TableCell>
                         <TableCell>
-                          {summary.totalEffectiveHours.toFixed(2)}
+                          {(summary.totalHours || 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          {(summary.totalEffectiveHours || 0).toFixed(2)}
                         </TableCell>
                         <TableCell className="font-medium text-purple-600">
-                          {summary.totalLoaCount > 0
+                          {(summary.totalLoaCount || 0) > 0
                             ? summary.totalLoaCount
                             : "—"}
                         </TableCell>
                         <TableCell className="font-medium text-green-600">
-                          ${summary.totalCost.toFixed(2)}
+                          ${(summary.totalCost || 0).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
