@@ -1361,12 +1361,15 @@ export function SummaryReports() {
                       <TableCell colSpan={3}>Total</TableCell>
                       <TableCell>
                         {filteredDateNameSummaries
-                          .reduce((sum, s) => sum + s.totalHours, 0)
+                          .reduce((sum, s) => sum + (s.totalHours || 0), 0)
                           .toFixed(2)}
                       </TableCell>
                       <TableCell>
                         {filteredDateNameSummaries
-                          .reduce((sum, s) => sum + s.totalEffectiveHours, 0)
+                          .reduce(
+                            (sum, s) => sum + (s.totalEffectiveHours || 0),
+                            0,
+                          )
                           .toFixed(2)}
                       </TableCell>
                       <TableCell className="text-purple-600">
@@ -1378,7 +1381,7 @@ export function SummaryReports() {
                       <TableCell className="text-green-600">
                         $
                         {filteredDateNameSummaries
-                          .reduce((sum, s) => sum + s.totalCost, 0)
+                          .reduce((sum, s) => sum + (s.totalCost || 0), 0)
                           .toFixed(2)}
                       </TableCell>
                       <TableCell>
