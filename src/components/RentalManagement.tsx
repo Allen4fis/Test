@@ -95,6 +95,7 @@ export function RentalManagement() {
     startDate: "",
     endDate: "",
     quantity: 1,
+    dspRate: "",
     description: "",
   });
 
@@ -123,6 +124,7 @@ export function RentalManagement() {
       startDate: "",
       endDate: "",
       quantity: 1,
+      dspRate: "",
       description: "",
     });
   };
