@@ -77,11 +77,11 @@ export function Dashboard() {
   });
 
   const totalHours = timeEntrySummaries
-    .filter((summary) => summary.hourTypeName !== "LOA")
+    .filter((summary) => summary.hourTypeName !== "Live Out Allowance")
     .reduce((sum, summary) => sum + summary.hours, 0);
 
   const totalCost = timeEntrySummaries
-    .filter((summary) => summary.hourTypeName !== "LOA")
+    .filter((summary) => summary.hourTypeName !== "Live Out Allowance")
     .reduce((sum, summary) => sum + summary.totalCost, 0);
 
   const activeJobs = jobs.filter((job) => job.isActive).length;
@@ -94,7 +94,9 @@ export function Dashboard() {
         const entryDate = parseLocalDate(summary.date);
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
-        return entryDate >= weekAgo && summary.hourTypeName !== "LOA";
+        return (
+          entryDate >= weekAgo && summary.hourTypeName !== "Live Out Allowance"
+        );
       })
       .reduce(
         (acc, summary) => {
