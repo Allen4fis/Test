@@ -909,6 +909,58 @@ export function RentalManagement() {
                     </div>
                   )}
                   <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit-employee" className="text-right">
+                      Attached to Employee
+                    </Label>
+                    <Select
+                      value={itemFormData.employeeId}
+                      onValueChange={(value) =>
+                        setItemFormData({
+                          ...itemFormData,
+                          employeeId: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select employee (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="no-employee">
+                          No Employee Attachment
+                        </SelectItem>
+                        {employees.map((employee) => (
+                          <SelectItem key={employee.id} value={employee.id}>
+                            {employee.name} - {employee.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {itemFormData.employeeId !== "no-employee" && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-paidOutRate" className="text-right">
+                        Paid Out Daily Rate
+                      </Label>
+                      <div className="col-span-3 relative">
+                        <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="edit-paidOutRate"
+                          type="number"
+                          step="0.01"
+                          value={itemFormData.paidOutDailyRate}
+                          onChange={(e) =>
+                            setItemFormData({
+                              ...itemFormData,
+                              paidOutDailyRate: e.target.value,
+                            })
+                          }
+                          className="pl-10"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="edit-description" className="text-right">
                       Description
                     </Label>
