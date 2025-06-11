@@ -253,8 +253,8 @@ export function EmployeeManagement() {
                           </SelectContent>
                         </Select>
                         <p className="text-xs text-gray-500">
-                          Select who this employee reports to in the
-                          organizational hierarchy
+                          Select which employee this person works under or is
+                          employed by
                         </p>
                       </div>
                     </div>
