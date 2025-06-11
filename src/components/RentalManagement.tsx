@@ -670,24 +670,7 @@ export function RentalManagement() {
                       required
                     />
                   </div>
-                  {formData.employeeId && (
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-dspRate" className="text-right">
-                        DSP Rate
-                      </Label>
-                      <Input
-                        id="edit-dspRate"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={formData.dspRate}
-                        onChange={(e) =>
-                          setFormData({ ...formData, dspRate: e.target.value })
-                        }
-                        className="col-span-3"
-                      />
-                    </div>
-                  )}
+
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="edit-hourlyRate" className="text-right">
                       Hourly Rate
