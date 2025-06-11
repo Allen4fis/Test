@@ -591,11 +591,11 @@ export function CostReports() {
                                           ` × ${rental.quantity}`}
                                       </TableCell>
                                       <TableCell>
-                                        ${rental.rateUsed.toFixed(2)}/
+                                        ${(rental.rateUsed || 0).toFixed(2)}/
                                         {rental.billingUnit}
                                       </TableCell>
                                       <TableCell className="font-medium text-green-600">
-                                        ${rental.totalCost.toFixed(2)}
+                                        ${(rental.totalCost || 0).toFixed(2)}
                                       </TableCell>
                                     </TableRow>
                                   ))}
