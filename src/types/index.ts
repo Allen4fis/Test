@@ -155,6 +155,7 @@ export interface RentalSummary {
   duration: number; // Calculated duration in billing units
   quantity: number;
   rateUsed: number;
+  dspRate?: number; // DSP rate for this rental
   totalCost: number;
 }
 
