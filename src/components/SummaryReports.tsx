@@ -121,6 +121,14 @@ export function SummaryReports() {
           endDate: today.toISOString().split("T")[0],
         });
         break;
+      case "yesterday":
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        setDateFilter({
+          startDate: yesterday.toISOString().split("T")[0],
+          endDate: yesterday.toISOString().split("T")[0],
+        });
+        break;
       case "week":
         startDate.setDate(today.getDate() - 7);
         setDateFilter({
@@ -129,14 +137,14 @@ export function SummaryReports() {
         });
         break;
       case "month":
-        startDate.setMonth(today.getMonth() - 1);
+        startDate.setDate(today.getDate() - 30);
         setDateFilter({
           startDate: startDate.toISOString().split("T")[0],
           endDate: today.toISOString().split("T")[0],
         });
         break;
       case "quarter":
-        startDate.setMonth(today.getMonth() - 3);
+        startDate.setDate(today.getDate() - 90);
         setDateFilter({
           startDate: startDate.toISOString().split("T")[0],
           endDate: today.toISOString().split("T")[0],
@@ -149,16 +157,24 @@ export function SummaryReports() {
           endDate: today.toISOString().split("T")[0],
         });
         break;
-      default:
-        setDateFilter({ startDate: "", endDate: "" });
     }
     setPeriodFilter(period);
   };
 
-  // Helper function to check if a date is invoiced for a specific job
-  const isDateInvoiced = (jobId: string, date: string): boolean => {
+  // Reset all filters
+  const resetFilters = () => {
+    setDateFilter(getInitialDateFilter());
+    setEmployeeFilter("");
+    setJobFilter("");
+    setProvinceFilter("all-provinces");
+    setPeriodFilter("month");
+    setIncludeInvoiced(false);
+  };
+
+  // Helper function to check if a date is invoiced
+  const isDateInvoiced = (jobId: string, date: string) => {
     const job = jobs.find((j) => j.id === jobId);
-    return job ? (job.invoicedDates || []).includes(date) : false;
+    return job?.invoicedDates?.includes(date) || false;
   };
 
   // Enhanced filtering logic
@@ -175,22 +191,36 @@ export function SummaryReports() {
       const matchesJob =
         !jobFilter ||
         summary.jobNumber.toLowerCase().includes(jobFilter.toLowerCase());
-      const matchesProvince =
-        !provinceFilter ||
-        provinceFilter === "all-provinces" ||
-        summary.provinceName === provinceFilter;
 
-      // Find the corresponding time entry to get jobId
-      const timeEntry = timeEntries.find(
-        (entry) =>
-          entry.date === summary.date &&
-          entry.employeeId ===
-            employees.find((emp) => emp.name === summary.employeeName)?.id,
-      );
+      // Check province filter
+      const summaryEntry = timeEntries.find((entry) => {
+        const entryEmployee = employees.find(
+          (emp) => emp.id === entry.employeeId,
+        );
+        const entryJob = jobs.find((job) => job.id === entry.jobId);
+        const entryProvince = provinces.find(
+          (prov) => prov.id === entry.provinceId,
+        );
+
+        return (
+          entryEmployee?.name === summary.employeeName &&
+          entryJob?.jobNumber === summary.jobNumber &&
+          entry.date === summary.date
+        );
+      });
+
+      const summaryProvince = summaryEntry
+        ? provinces.find((prov) => prov.id === summaryEntry.provinceId)
+        : null;
+
+      const matchesProvince =
+        provinceFilter === "all-provinces" ||
+        summaryProvince?.code === provinceFilter;
 
       // Check if entry is from an invoiced date
-      const entryIsInvoiced = timeEntry
-        ? isDateInvoiced(timeEntry.jobId, summary.date)
+      const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
+      const entryIsInvoiced = job
+        ? isDateInvoiced(job.id, summary.date)
         : false;
       const matchesInvoiceFilter = includeInvoiced || !entryIsInvoiced;
 
@@ -254,57 +284,30 @@ export function SummaryReports() {
     jobs,
   ]);
 
-  // Helper function to create hour type breakdown
-  const createHourTypeBreakdown = (
-    summaries: typeof filteredSummaries,
-  ): HourTypeBreakdown => {
-    const breakdown: HourTypeBreakdown = {};
+  // Calculate aggregated data
+  const totalHours = filteredSummaries.reduce(
+    (sum, summary) => sum + (summary.totalHours || 0),
+    0,
+  );
+  const totalEffectiveHours = filteredSummaries.reduce(
+    (sum, summary) => sum + (summary.totalEffectiveHours || 0),
+    0,
+  );
+  const totalLaborCost = filteredSummaries.reduce(
+    (sum, summary) => sum + (summary.totalCost || 0),
+    0,
+  );
+  const totalRentalRevenue = filteredRentalSummaries.reduce(
+    (sum, rental) => sum + (rental.totalCost || 0),
+    0,
+  );
+  const totalCost = totalLaborCost + totalRentalRevenue;
 
-    summaries.forEach((summary) => {
-      // Initialize hour type if it doesn't exist
-      if (!breakdown[summary.hourTypeName]) {
-        breakdown[summary.hourTypeName] = {
-          hours: 0,
-          effectiveHours: 0,
-          cost: 0,
-          provinces: {},
-        };
-      }
-
-      // Initialize province within hour type if it doesn't exist
-      if (!breakdown[summary.hourTypeName].provinces[summary.provinceName]) {
-        breakdown[summary.hourTypeName].provinces[summary.provinceName] = {
-          hours: 0,
-          effectiveHours: 0,
-          cost: 0,
-        };
-      }
-
-      // Add to hour type totals
-      breakdown[summary.hourTypeName].hours += summary.hours;
-      breakdown[summary.hourTypeName].effectiveHours += summary.effectiveHours;
-      breakdown[summary.hourTypeName].cost += summary.totalCost;
-
-      // Add to province-specific totals within hour type
-      breakdown[summary.hourTypeName].provinces[summary.provinceName].hours +=
-        summary.hours;
-      breakdown[summary.hourTypeName].provinces[
-        summary.provinceName
-      ].effectiveHours += summary.effectiveHours;
-      breakdown[summary.hourTypeName].provinces[summary.provinceName].cost +=
-        summary.totalCost;
-    });
-
-    return breakdown;
-  };
-
-  // Enhanced summaries by employee AND title with hour type breakdown
-  const employeeSummariesWithHourTypes = useMemo(() => {
-    const grouped = filteredSummaries.reduce(
+  // Employee summaries with hierarchy support
+  const employeeSummariesData = useMemo(() => {
+    const employeeGroups = filteredSummaries.reduce(
       (acc, summary) => {
-        // Create unique key for employee + title combination
         const key = `${summary.employeeName}|${summary.employeeTitle}`;
-
         if (!acc[key]) {
           acc[key] = {
             employeeName: summary.employeeName,
@@ -313,241 +316,207 @@ export function SummaryReports() {
             totalEffectiveHours: 0,
             totalCost: 0,
             totalLoaCount: 0,
-            hourTypeBreakdown: {},
+            totalBillableAmount: 0,
             entryCount: 0,
-            dateRange: { earliest: summary.date, latest: summary.date },
+            hourTypeBreakdown: {},
+            dateRange: {
+              earliest: summary.date,
+              latest: summary.date,
+            },
           };
         }
 
-        const emp = acc[key];
-        emp.totalHours += summary.hours;
-        emp.totalEffectiveHours += summary.effectiveHours;
-        emp.totalCost += summary.totalCost;
-        emp.totalLoaCount += summary.loaCount || 0;
-        emp.entryCount += 1;
+        const group = acc[key];
+        group.totalHours += summary.totalHours || 0;
+        group.totalEffectiveHours += summary.totalEffectiveHours || 0;
+        group.totalCost += summary.totalCost || 0;
+        group.totalLoaCount += summary.totalLoaCount || 0;
+        group.totalBillableAmount += summary.totalBillableAmount || 0;
+        group.entryCount += 1;
 
         // Update date range
-        if (summary.date < emp.dateRange.earliest) {
-          emp.dateRange.earliest = summary.date;
+        if (summary.date < group.dateRange.earliest) {
+          group.dateRange.earliest = summary.date;
         }
-        if (summary.date > emp.dateRange.latest) {
-          emp.dateRange.latest = summary.date;
-        }
-
-        // Update hour type breakdown - using enhanced structure with provinces
-        if (!emp.hourTypeBreakdown[summary.hourTypeName]) {
-          emp.hourTypeBreakdown[summary.hourTypeName] = {
-            hours: 0,
-            effectiveHours: 0,
-            cost: 0,
-            provinces: {},
-          };
+        if (summary.date > group.dateRange.latest) {
+          group.dateRange.latest = summary.date;
         }
 
-        // Initialize province if it doesn't exist
-        if (
-          !emp.hourTypeBreakdown[summary.hourTypeName].provinces[
-            summary.provinceName
-          ]
-        ) {
-          emp.hourTypeBreakdown[summary.hourTypeName].provinces[
-            summary.provinceName
-          ] = {
-            hours: 0,
-            effectiveHours: 0,
-            cost: 0,
-          };
+        // Aggregate hour type breakdown
+        if (summary.hourTypeBreakdown) {
+          Object.entries(summary.hourTypeBreakdown).forEach(
+            ([hourType, data]) => {
+              if (!group.hourTypeBreakdown[hourType]) {
+                group.hourTypeBreakdown[hourType] = {
+                  hours: 0,
+                  effectiveHours: 0,
+                  cost: 0,
+                  provinces: {},
+                };
+              }
+              group.hourTypeBreakdown[hourType].hours += data.hours || 0;
+              group.hourTypeBreakdown[hourType].effectiveHours +=
+                data.effectiveHours || 0;
+              group.hourTypeBreakdown[hourType].cost += data.cost || 0;
+
+              // Aggregate provinces
+              if (data.provinces) {
+                Object.entries(data.provinces).forEach(
+                  ([province, provinceData]) => {
+                    if (
+                      !group.hourTypeBreakdown[hourType].provinces[province]
+                    ) {
+                      group.hourTypeBreakdown[hourType].provinces[province] = {
+                        hours: 0,
+                        effectiveHours: 0,
+                        cost: 0,
+                      };
+                    }
+                    group.hourTypeBreakdown[hourType].provinces[
+                      province
+                    ].hours += provinceData.hours || 0;
+                    group.hourTypeBreakdown[hourType].provinces[
+                      province
+                    ].effectiveHours += provinceData.effectiveHours || 0;
+                    group.hourTypeBreakdown[hourType].provinces[
+                      province
+                    ].cost += provinceData.cost || 0;
+                  },
+                );
+              }
+            },
+          );
         }
-
-        // Add to hour type totals
-        emp.hourTypeBreakdown[summary.hourTypeName].hours += summary.hours;
-        emp.hourTypeBreakdown[summary.hourTypeName].effectiveHours +=
-          summary.effectiveHours;
-        emp.hourTypeBreakdown[summary.hourTypeName].cost += summary.totalCost;
-
-        // Add to province-specific totals
-        emp.hourTypeBreakdown[summary.hourTypeName].provinces[
-          summary.provinceName
-        ].hours += summary.hours;
-        emp.hourTypeBreakdown[summary.hourTypeName].provinces[
-          summary.provinceName
-        ].effectiveHours += summary.effectiveHours;
-        emp.hourTypeBreakdown[summary.hourTypeName].provinces[
-          summary.provinceName
-        ].cost += summary.totalCost;
 
         return acc;
       },
-      {} as Record<
-        string,
-        EnhancedSummary & {
-          employeeName: string;
-          employeeTitle: string;
-          entryCount: number;
-          dateRange: { earliest: string; latest: string };
-        }
-      >,
+      {} as Record<string, any>,
     );
 
-    return Object.values(grouped).sort((a, b) => b.totalCost - a.totalCost);
+    return Object.values(employeeGroups).sort((a, b) =>
+      a.employeeName.localeCompare(b.employeeName),
+    );
   }, [filteredSummaries]);
 
-  // Hierarchical employee summaries organized by "Employee Of" relationships
+  // Enhanced hierarchical employee summaries with category recognition
   const hierarchicalEmployeeSummaries = useMemo(() => {
-    // First, get employee relationships from the employees data
-    const employeeRelationships = new Map();
-    employees.forEach((emp) => {
-      employeeRelationships.set(emp.name, {
-        managerId: emp.managerId,
-        managerName: emp.managerId
-          ? employees.find((m) => m.id === emp.managerId)?.name
-          : null,
-        category: emp.category, // Include the category field
-      });
-    });
+    const summariesWithHierarchy: any[] = [];
 
-    // Group summaries by their "Employee Of" relationship
-    const hierarchyGroups = new Map();
-    const independentEmployees = [];
+    // Helper function to get employee by name
+    const getEmployeeByName = (name: string) => {
+      return employees.find((emp) => emp.name === name);
+    };
 
-    employeeSummariesWithHourTypes.forEach((empSummary) => {
-      const relationship = employeeRelationships.get(empSummary.employeeName);
-      const managerName = relationship?.managerName;
-      const category = relationship?.category;
+    // Helper function to get manager name
+    const getManagerName = (managerId: string) => {
+      return employees.find((emp) => emp.id === managerId)?.name || "Unknown";
+    };
 
-      if (managerName) {
-        // This employee works under someone
-        if (!hierarchyGroups.has(managerName)) {
-          hierarchyGroups.set(managerName, []);
-        }
-        hierarchyGroups.get(managerName).push({
-          ...empSummary,
-          isSubordinate: true,
-          managerName: managerName,
+    // Helper function to get employee category
+    const getEmployeeCategory = (employee: any) => {
+      if (employee?.category === "dsp") return "dsp";
+      if (employee?.category === "employee") return "employee";
+      if (employee?.managerId) return "subordinate";
+      return "independent";
+    };
+
+    // First, add all independent employees and managers
+    employeeSummariesData.forEach((summary) => {
+      const employee = getEmployeeByName(summary.employeeName);
+      const category = getEmployeeCategory(employee);
+
+      if (
+        category === "independent" ||
+        category === "dsp" ||
+        category === "employee"
+      ) {
+        summariesWithHierarchy.push({
+          ...summary,
           employeeCategory: category,
-        });
-      } else {
-        // Independent employee, DSP, or manager
-        independentEmployees.push({
-          ...empSummary,
           isSubordinate: false,
           managerName: null,
-          employeeCategory: category,
         });
       }
     });
 
-    // Build the final hierarchical structure
-    const result = [];
+    // Then, add subordinates under their managers
+    employeeSummariesData.forEach((summary) => {
+      const employee = getEmployeeByName(summary.employeeName);
+      const category = getEmployeeCategory(employee);
 
-    // Add independent employees first
-    independentEmployees.forEach((emp) => {
-      result.push(emp);
-
-      // Add their subordinates right after them
-      if (hierarchyGroups.has(emp.employeeName)) {
-        const subordinates = hierarchyGroups.get(emp.employeeName);
-        subordinates.sort((a, b) => b.totalCost - a.totalCost);
-        result.push(...subordinates);
-        hierarchyGroups.delete(emp.employeeName); // Remove to avoid duplicates
+      if (category === "subordinate" && employee?.managerId) {
+        const managerName = getManagerName(employee.managerId);
+        summariesWithHierarchy.push({
+          ...summary,
+          employeeCategory: "subordinate",
+          isSubordinate: true,
+          managerName,
+        });
       }
     });
 
-    // Add any remaining orphaned subordinates (in case their manager isn't in the filtered results)
-    hierarchyGroups.forEach((subordinates) => {
-      subordinates.sort((a, b) => b.totalCost - a.totalCost);
-      result.push(...subordinates);
-    });
+    return summariesWithHierarchy;
+  }, [employeeSummariesData, employees]);
 
-    return result;
-  }, [employeeSummariesWithHourTypes, employees]);
-
-  // Enhanced filtering for title/job summaries with hour type breakdown
-  const filteredTitleJobSummaries = useMemo(() => {
-    // First filter the base summaries
-    const filtered = summaryByTitleAndJob.filter((summary) => {
-      const matchesJob =
-        !jobFilter ||
-        summary.jobNumber.toLowerCase().includes(jobFilter.toLowerCase());
-
-      // Check if any entries in this summary are from invoiced dates
-      const hasInvoicedEntries = summary.entries.some((entry) => {
-        return isDateInvoiced(entry.jobId, entry.date);
-      });
-
-      const matchesInvoiceFilter = includeInvoiced || !hasInvoicedEntries;
-
-      return matchesJob && matchesInvoiceFilter;
-    });
-
-    // Then add hour type breakdown to each summary
-    return filtered.map((summary) => {
-      const hourTypeBreakdown: HourTypeBreakdown = {};
-
-      // Get the relevant filtered summaries for this title/job combination
-      const relevantSummaries = filteredSummaries.filter(
-        (fs) =>
-          fs.employeeTitle === summary.title &&
-          fs.jobNumber === summary.jobNumber,
-      );
-
-      relevantSummaries.forEach((fs) => {
-        if (!hourTypeBreakdown[fs.hourTypeName]) {
-          hourTypeBreakdown[fs.hourTypeName] = {
-            hours: 0,
-            effectiveHours: 0,
-            cost: 0,
+  // Title & Job summaries
+  const titleJobSummaries = useMemo(() => {
+    const titleJobGroups = filteredSummaries.reduce(
+      (acc, summary) => {
+        const key = `${summary.employeeTitle}|${summary.jobNumber}|${summary.jobName}`;
+        if (!acc[key]) {
+          acc[key] = {
+            employeeTitle: summary.employeeTitle,
+            jobNumber: summary.jobNumber,
+            jobName: summary.jobName,
+            totalHours: 0,
+            totalEffectiveHours: 0,
+            totalCost: 0,
+            totalLoaCount: 0,
+            entries: [],
+            hourTypeBreakdown: {},
           };
         }
-        hourTypeBreakdown[fs.hourTypeName].hours += fs.hours;
-        hourTypeBreakdown[fs.hourTypeName].effectiveHours += fs.effectiveHours;
-        hourTypeBreakdown[fs.hourTypeName].cost += fs.totalCost;
-      });
 
-      // Calculate total LOA count for this title/job combination
-      const totalLoaCount = relevantSummaries.reduce(
-        (sum, fs) => sum + (fs.loaCount || 0),
-        0,
-      );
+        const group = acc[key];
+        group.totalHours += summary.totalHours || 0;
+        group.totalEffectiveHours += summary.totalEffectiveHours || 0;
+        group.totalCost += summary.totalCost || 0;
+        group.totalLoaCount += summary.totalLoaCount || 0;
+        group.entries.push(summary);
 
-      return {
-        ...summary,
-        hourTypeBreakdown,
-        totalLoaCount,
-      };
-    });
-  }, [
-    summaryByTitleAndJob,
-    jobFilter,
-    includeInvoiced,
-    jobs,
-    filteredSummaries,
-  ]);
+        // Aggregate hour type breakdown
+        if (summary.hourTypeBreakdown) {
+          Object.entries(summary.hourTypeBreakdown).forEach(
+            ([hourType, data]) => {
+              if (!group.hourTypeBreakdown[hourType]) {
+                group.hourTypeBreakdown[hourType] = {
+                  hours: 0,
+                  effectiveHours: 0,
+                  cost: 0,
+                  provinces: {},
+                };
+              }
+              group.hourTypeBreakdown[hourType].hours += data.hours || 0;
+              group.hourTypeBreakdown[hourType].effectiveHours +=
+                data.effectiveHours || 0;
+              group.hourTypeBreakdown[hourType].cost += data.cost || 0;
+            },
+          );
+        }
 
-  // Enhanced filtering for date/name summaries with hour type breakdown
-  const filteredDateNameSummaries = useMemo(() => {
-    // First filter the base summaries
-    const filtered = summaryByDateAndName.filter((summary) => {
-      const matchesDate =
-        (!dateFilter.startDate || summary.date >= dateFilter.startDate) &&
-        (!dateFilter.endDate || summary.date <= dateFilter.endDate);
-      const matchesEmployee =
-        !employeeFilter ||
-        summary.employeeName
-          .toLowerCase()
-          .includes(employeeFilter.toLowerCase());
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
-      // Check if any entries in this summary are from invoiced dates
-      const hasInvoicedEntries = summary.entries.some((entry) => {
-        return isDateInvoiced(entry.jobId, entry.date);
-      });
+    return Object.values(titleJobGroups).sort((a, b) =>
+      a.employeeTitle.localeCompare(b.employeeTitle),
+    );
+  }, [filteredSummaries]);
 
-      const matchesInvoiceFilter = includeInvoiced || !hasInvoicedEntries;
-
-      return matchesDate && matchesEmployee && matchesInvoiceFilter;
-    });
-
-    // Pre-group filteredSummaries by date-employee key for O(1) lookup (Performance Optimization)
+  // Date & Name summaries with optimized calculation
+  const dateNameSummaries = useMemo(() => {
+    // Pre-group filteredSummaries by date-employee key for O(1) lookup
     const summariesByDateEmployee = filteredSummaries.reduce(
       (acc, summary) => {
         const key = `${summary.date}-${summary.employeeName}`;
@@ -558,351 +527,324 @@ export function SummaryReports() {
       {} as Record<string, typeof filteredSummaries>,
     );
 
-    // Then add hour type breakdown to each summary with optimized lookup
-    return filtered.map((summary) => {
-      const hourTypeBreakdown: HourTypeBreakdown = {};
-      const key = `${summary.date}-${summary.employeeName}`;
-      const relevantSummaries = summariesByDateEmployee[key] || [];
+    const filteredDateNameSummaries = Object.keys(summariesByDateEmployee).map(
+      (key) => {
+        const [date, employeeName] = key.split("-", 2);
+        const summariesForDateEmployee = summariesByDateEmployee[key];
 
-      relevantSummaries.forEach((fs) => {
-        if (!hourTypeBreakdown[fs.hourTypeName]) {
-          hourTypeBreakdown[fs.hourTypeName] = {
-            hours: 0,
-            effectiveHours: 0,
-            cost: 0,
-          };
-        }
-        hourTypeBreakdown[fs.hourTypeName].hours += fs.hours;
-        hourTypeBreakdown[fs.hourTypeName].effectiveHours += fs.effectiveHours;
-        hourTypeBreakdown[fs.hourTypeName].cost += fs.totalCost;
-      });
+        // Calculate totals for this date-employee combination
+        const totalHours = summariesForDateEmployee.reduce(
+          (sum, s) => sum + (s.totalHours || 0),
+          0,
+        );
+        const totalEffectiveHours = summariesForDateEmployee.reduce(
+          (sum, s) => sum + (s.totalEffectiveHours || 0),
+          0,
+        );
+        const totalCost = summariesForDateEmployee.reduce(
+          (sum, s) => sum + (s.totalCost || 0),
+          0,
+        );
+        const totalLoaCount = summariesForDateEmployee.reduce(
+          (sum, s) => sum + (s.totalLoaCount || 0),
+          0,
+        );
 
-      return {
-        ...summary,
-        hourTypeBreakdown,
-      };
+        // Aggregate hour type breakdown
+        const hourTypeBreakdown: HourTypeBreakdown = {};
+        summariesForDateEmployee.forEach((summary) => {
+          if (summary.hourTypeBreakdown) {
+            Object.entries(summary.hourTypeBreakdown).forEach(
+              ([hourType, data]) => {
+                if (!hourTypeBreakdown[hourType]) {
+                  hourTypeBreakdown[hourType] = {
+                    hours: 0,
+                    effectiveHours: 0,
+                    cost: 0,
+                    provinces: {},
+                  };
+                }
+                hourTypeBreakdown[hourType].hours += data.hours || 0;
+                hourTypeBreakdown[hourType].effectiveHours +=
+                  data.effectiveHours || 0;
+                hourTypeBreakdown[hourType].cost += data.cost || 0;
+              },
+            );
+          }
+        });
+
+        return {
+          date,
+          employeeName,
+          totalHours,
+          totalEffectiveHours,
+          totalCost,
+          totalLoaCount,
+          entries: summariesForDateEmployee,
+          hourTypeBreakdown,
+        };
+      },
+    );
+
+    return filteredDateNameSummaries.sort((a, b) => {
+      const dateCompare = b.date.localeCompare(a.date);
+      return dateCompare !== 0
+        ? dateCompare
+        : a.employeeName.localeCompare(b.employeeName);
     });
-  }, [
-    summaryByDateAndName,
-    dateFilter,
-    employeeFilter,
-    includeInvoiced,
-    jobs,
-    filteredSummaries,
-  ]);
+  }, [filteredSummaries]);
 
-  // Calculate summary statistics
-  const totalHours = filteredSummaries.reduce(
-    (sum, summary) => sum + summary.hours,
-    0,
-  );
-  const totalEffectiveHours = filteredSummaries.reduce(
-    (sum, summary) => sum + summary.effectiveHours,
-    0,
-  );
-  const totalLaborCost = filteredSummaries.reduce(
-    (sum, summary) => sum + summary.totalCost,
-    0,
-  );
-  const totalRentalRevenue = filteredRentalSummaries.reduce(
-    (sum, summary) => sum + summary.totalCost,
-    0,
-  );
-  const totalCost = totalLaborCost; // Only labor costs, rentals are revenue
+  // Use the pre-calculated filteredDateNameSummaries
+  const filteredTitleJobSummaries = titleJobSummaries;
+  const filteredDateNameSummaries = dateNameSummaries;
 
-  const clearFilters = () => {
-    setDateFilter(getInitialDateFilter());
-    setEmployeeFilter("");
-    setJobFilter("");
-    setProvinceFilter("all-provinces");
-    setPeriodFilter("month");
-    setIncludeInvoiced(false);
-  };
+  // Hour Type Breakdown Display Component
+  const HourTypeBreakdownDisplay = ({ breakdown }: { breakdown: any }) => {
+    if (!breakdown || Object.keys(breakdown).length === 0) {
+      return <span className="text-gray-400 text-sm">No breakdown</span>;
+    }
 
-  const handlePrint = () => {
-    // Add print-specific class to body for styling
-    document.body.classList.add("printing");
+    const sortedEntries = Object.entries(breakdown)
+      .sort(([, a]: [string, any], [, b]: [string, any]) => b.hours - a.hours)
+      .slice(0, 3); // Show top 3
 
-    // Trigger print dialog
-    window.print();
-
-    // Remove print class after printing
-    setTimeout(() => {
-      document.body.classList.remove("printing");
-    }, 1000);
-  };
-
-  // Format current filters for print header
-  const getFilterSummaryForPrint = () => {
-    const filters = [];
-    if (dateFilter.startDate)
-      filters.push(
-        `From: ${new Date(dateFilter.startDate).toLocaleDateString()}`,
-      );
-    if (dateFilter.endDate)
-      filters.push(`To: ${new Date(dateFilter.endDate).toLocaleDateString()}`);
-    if (employeeFilter) filters.push(`Employee: ${employeeFilter}`);
-    if (jobFilter) filters.push(`Job: ${jobFilter}`);
-    if (provinceFilter && provinceFilter !== "all-provinces")
-      filters.push(`Province: ${provinceFilter}`);
-    if (!includeInvoiced) filters.push(`Excluding invoiced entries`);
-    return filters.length > 0 ? filters.join(" | ") : "All data";
-  };
-
-  const uniqueProvinceNames = [
-    ...new Set(timeEntrySummaries.map((s) => s.provinceName)),
-  ].sort();
-
-  // Helper component to render hour type breakdown
-  const HourTypeBreakdownDisplay = ({
-    breakdown,
-  }: {
-    breakdown: HourTypeBreakdown;
-  }) => (
-    <div className="space-y-3">
-      {Object.entries(breakdown).map(([hourType, data]) => (
-        <div
-          key={hourType}
-          className="bg-gray-50 rounded-md p-2 border-l-4 border-blue-300"
-        >
-          <div className="flex justify-between items-center text-sm font-semibold mb-2">
-            <span className="text-blue-800">{hourType}</span>
-            <div className="text-right">
-              <div className="text-blue-600">{data.hours.toFixed(1)}h</div>
+    return (
+      <div className="space-y-1">
+        {sortedEntries.map(([hourType, data]: [string, any]) => (
+          <div
+            key={hourType}
+            className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1 rounded"
+          >
+            <span className="font-medium text-gray-700">{hourType}:</span>
+            <div className="flex items-center gap-2">
+              <div className="text-blue-600">
+                {(data.hours || 0).toFixed(1)}h
+              </div>
               {data.effectiveHours !== data.hours && (
-                <div className="text-xs text-gray-500">
-                  ({data.effectiveHours.toFixed(1)}h effective)
+                <div className="text-orange-600">
+                  ({(data.effectiveHours || 0).toFixed(1)}h effective)
                 </div>
               )}
             </div>
           </div>
-          {Object.keys(data.provinces).length > 1 && (
-            <div className="space-y-1 ml-3 border-l-2 border-gray-300 pl-3">
-              {Object.entries(data.provinces).map(
-                ([provinceName, provinceData]) => (
-                  <div
-                    key={provinceName}
-                    className="flex justify-between text-xs"
-                  >
-                    <span className="text-gray-600">📍 {provinceName}:</span>
-                    <div className="text-right">
-                      <span className="text-gray-700 font-medium">
-                        {provinceData.hours.toFixed(1)}h
-                      </span>
-                      {provinceData.effectiveHours !== provinceData.hours && (
-                        <div className="text-xs text-gray-500">
-                          ({provinceData.effectiveHours.toFixed(1)}h eff.)
-                        </div>
-                      )}
+        ))}
+
+        {Object.keys(breakdown).length > 3 && (
+          <div className="text-xs text-gray-500 italic">
+            +{Object.keys(breakdown).length - 3} more types...
+          </div>
+        )}
+
+        {/* Province breakdown if available */}
+        {sortedEntries.some(
+          ([, data]) =>
+            data.provinces && Object.keys(data.provinces).length > 0,
+        ) && (
+          <div className="mt-2 pt-1 border-t border-gray-200">
+            <div className="text-xs font-medium text-gray-600 mb-1">
+              By Province:
+            </div>
+            {sortedEntries.slice(0, 1).map(
+              ([hourType, data]: [string, any]) =>
+                data.provinces &&
+                Object.entries(data.provinces).map(
+                  ([province, provinceData]: [string, any]) => (
+                    <div
+                      key={`${hourType}-${province}`}
+                      className="flex items-center justify-between text-xs"
+                    >
+                      <span className="text-gray-600">{province}:</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-blue-600">
+                          {(provinceData.hours || 0).toFixed(1)}h
+                        </span>
+                        {provinceData.effectiveHours !== provinceData.hours && (
+                          <span className="text-orange-600">
+                            ({(provinceData.effectiveHours || 0).toFixed(1)}h
+                            eff.)
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  ),
                 ),
-              )}
-            </div>
-          )}
-          {Object.keys(data.provinces).length === 1 && (
-            <div className="text-xs text-gray-600 ml-3">
-              📍 {Object.keys(data.provinces)[0]}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Print Header - Only visible when printing */}
-      <div className="print-only">
-        <div className="text-center border-b-2 border-gray-300 pb-4 mb-6">
-          <h1 className="text-2xl font-bold">4Front Trackity-doo</h1>
-          <h2 className="text-xl">Time Tracking Summary Report</h2>
-          <p className="text-sm text-gray-600 mt-2">
-            Generated on {new Date().toLocaleDateString()} at{" "}
-            {new Date().toLocaleTimeString()}
-          </p>
-          <p className="text-sm text-gray-600">
-            Filters: {getFilterSummaryForPrint()}
+    <div className="space-y-6 print-container">
+      {/* Header */}
+      <div className="flex items-center justify-between print-hide">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Summary Reports</h1>
+          <p className="text-muted-foreground">
+            Comprehensive time tracking and cost analysis
           </p>
         </div>
+        <Button
+          onClick={() => window.print()}
+          className="flex items-center gap-2"
+        >
+          <Printer className="h-4 w-4" />
+          Print Report
+        </Button>
       </div>
 
-      {/* Enhanced Filters */}
-      <Card className="print-hidden">
+      {/* Filters */}
+      <Card className="print-hide">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Report Filters
+            Filters
           </CardTitle>
-          <CardDescription>
-            Filter reports by time period, employee, job, province, or invoice
-            status
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {/* Include Invoiced Toggle */}
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Receipt className="h-5 w-5 text-blue-600" />
-                <div>
-                  <Label
-                    htmlFor="include-invoiced"
-                    className="text-sm font-medium text-blue-900"
-                  >
-                    Include Invoiced Entries
-                  </Label>
-                  <p className="text-xs text-blue-700">
-                    Show entries from dates that have already been invoiced
-                  </p>
-                </div>
-              </div>
-              <Switch
-                id="include-invoiced"
-                checked={includeInvoiced}
-                onCheckedChange={setIncludeInvoiced}
-              />
-            </div>
-
-            {/* Quick Period Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {/* Quick Period Buttons */}
             <div className="space-y-2">
-              <Label>Quick Time Periods</Label>
-              <div className="flex flex-wrap gap-2">
+              <Label>Quick Periods</Label>
+              <div className="grid grid-cols-3 gap-1">
                 <Button
-                  variant={periodFilter === "month" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setQuickPeriod("month")}
-                >
-                  Last 30 Days
-                </Button>
-                <Button
                   variant={periodFilter === "today" ? "default" : "outline"}
-                  size="sm"
                   onClick={() => setQuickPeriod("today")}
                 >
                   Today
                 </Button>
                 <Button
-                  variant={periodFilter === "week" ? "default" : "outline"}
                   size="sm"
+                  variant={periodFilter === "week" ? "default" : "outline"}
                   onClick={() => setQuickPeriod("week")}
                 >
-                  Last 7 Days
+                  Week
                 </Button>
                 <Button
-                  variant={periodFilter === "all" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setQuickPeriod("all")}
+                  variant={periodFilter === "month" ? "default" : "outline"}
+                  onClick={() => setQuickPeriod("month")}
                 >
-                  All Time
+                  Month
                 </Button>
                 <Button
-                  variant={periodFilter === "quarter" ? "default" : "outline"}
                   size="sm"
+                  variant={periodFilter === "quarter" ? "default" : "outline"}
                   onClick={() => setQuickPeriod("quarter")}
                 >
-                  Last 3 Months
+                  Quarter
                 </Button>
                 <Button
-                  variant={periodFilter === "year" ? "default" : "outline"}
                   size="sm"
+                  variant={periodFilter === "year" ? "default" : "outline"}
                   onClick={() => setQuickPeriod("year")}
                 >
-                  Last Year
+                  Year
                 </Button>
               </div>
             </div>
 
-            {/* Custom Date Range */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startDate">Start Date</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={dateFilter.startDate}
-                  onChange={(e) =>
-                    setDateFilter({
-                      ...dateFilter,
-                      startDate: e.target.value,
-                    })
-                  }
+            {/* Date Range */}
+            <div className="space-y-2">
+              <Label>Start Date</Label>
+              <Input
+                type="date"
+                value={dateFilter.startDate}
+                onChange={(e) =>
+                  setDateFilter({ ...dateFilter, startDate: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>End Date</Label>
+              <Input
+                type="date"
+                value={dateFilter.endDate}
+                onChange={(e) =>
+                  setDateFilter({ ...dateFilter, endDate: e.target.value })
+                }
+              />
+            </div>
+
+            {/* Employee Filter */}
+            <div className="space-y-2">
+              <Label>Employee</Label>
+              <Input
+                placeholder="Filter by employee name..."
+                value={employeeFilter}
+                onChange={(e) => setEmployeeFilter(e.target.value)}
+              />
+            </div>
+
+            {/* Job Filter */}
+            <div className="space-y-2">
+              <Label>Job</Label>
+              <Input
+                placeholder="Filter by job number..."
+                value={jobFilter}
+                onChange={(e) => setJobFilter(e.target.value)}
+              />
+            </div>
+
+            {/* Province Filter */}
+            <div className="space-y-2">
+              <Label>Province</Label>
+              <Select value={provinceFilter} onValueChange={setProvinceFilter}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all-provinces">All Provinces</SelectItem>
+                  {provinces.map((province) => (
+                    <SelectItem key={province.id} value={province.code}>
+                      {province.name} ({province.code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Include Invoiced Toggle */}
+            <div className="space-y-2">
+              <Label>Include Invoiced Entries</Label>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={includeInvoiced}
+                  onCheckedChange={setIncludeInvoiced}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={dateFilter.endDate}
-                  onChange={(e) =>
-                    setDateFilter({ ...dateFilter, endDate: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="employeeFilter">Employee</Label>
-                <Input
-                  id="employeeFilter"
-                  placeholder="Filter by employee name"
-                  value={employeeFilter}
-                  onChange={(e) => setEmployeeFilter(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="jobFilter">Job</Label>
-                <Input
-                  id="jobFilter"
-                  placeholder="Filter by job number"
-                  value={jobFilter}
-                  onChange={(e) => setJobFilter(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="provinceFilter">Province</Label>
-                <Select
-                  value={provinceFilter}
-                  onValueChange={setProvinceFilter}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All provinces" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all-provinces">All Provinces</SelectItem>
-                    {uniqueProvinceNames.map((province) => (
-                      <SelectItem key={province} value={province}>
-                        {province}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <span className="text-sm text-gray-600">
+                  {includeInvoiced ? "Included" : "Excluded"}
+                </span>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={handlePrint}>
-                <Printer className="h-4 w-4 mr-2" />
-                Print Report
-              </Button>
-              <Button variant="outline" onClick={clearFilters}>
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Clear All Filters
+            {/* Reset Button */}
+            <div className="space-y-2">
+              <Label>&nbsp;</Label>
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                className="w-full flex items-center gap-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset Filters
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 print-stats">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 print-summary-stats">
         <Card className="print-stat-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-500" />
+              <FileText className="h-5 w-5 text-blue-500" />
               <div>
                 <p className="text-sm font-medium text-gray-600">
-                  Filtered Entries
+                  Total Entries
                 </p>
                 <p className="text-2xl font-bold">{filteredSummaries.length}</p>
               </div>
@@ -956,27 +898,41 @@ export function SummaryReports() {
         </Card>
       </div>
 
-      {/* Reports Tabs */}
-      <Tabs defaultValue="employee" className="space-y-4">
-        <TabsList className="print-hidden">
-          <TabsTrigger value="employee">By Employee & Title</TabsTrigger>
-          <TabsTrigger value="titleJob">By Title & Job</TabsTrigger>
-          <TabsTrigger value="dateName">By Date & Name</TabsTrigger>
-          <TabsTrigger value="rentals">Rentals</TabsTrigger>
-          <TabsTrigger value="detailed">Detailed Entries</TabsTrigger>
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="employees" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="employees">
+            <Users className="h-4 w-4 mr-2" />
+            Employee Summary
+          </TabsTrigger>
+          <TabsTrigger value="title-job">
+            <Briefcase className="h-4 w-4 mr-2" />
+            Title & Job
+          </TabsTrigger>
+          <TabsTrigger value="date-name">
+            <Calendar className="h-4 w-4 mr-2" />
+            Date & Name
+          </TabsTrigger>
+          <TabsTrigger value="rentals">
+            <Truck className="h-4 w-4 mr-2" />
+            Rentals
+          </TabsTrigger>
+          <TabsTrigger value="detailed">
+            <Receipt className="h-4 w-4 mr-2" />
+            Detailed
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="employee">
+        <TabsContent value="employees">
           <div className="print-only print-section-header">
-            Summary by Employee & Title
+            Employee Summary
           </div>
           <Card className="page-break-avoid">
             <CardHeader>
-              <CardTitle>Summary by Employee & Title</CardTitle>
+              <CardTitle>Employee Summary</CardTitle>
               <CardDescription>
-                Total hours by employee and title with hour type and province
-                breakdown for selected period{" "}
-                {!includeInvoiced && "(excluding invoiced entries)"}
+                Performance breakdown by employee with hierarchical
+                relationships
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1024,62 +980,43 @@ export function SummaryReports() {
                                   ↳
                                 </span>
                                 <span className="text-blue-700">
-                          {(() => {
-                            // Find rentals associated with this employee that match the current date filtering
-                            const employeeRentals = filteredRentalSummaries.filter(
-                              (rental) => {
-                                // Only include rentals for this employee that fall within the same date range
-                                const matchesEmployee = rental.employeeName === employee.employeeName;
-                                const matchesDateRange =
-                                  (!dateFilter.startDate || rental.date >= dateFilter.startDate) &&
-                                  (!dateFilter.endDate || rental.date <= dateFilter.endDate);
-                                return matchesEmployee && matchesDateRange;
-                              }
-                            );
-
-                            if (employeeRentals.length === 0) {
-                              return <span className="text-gray-400 text-xs">No rentals</span>;
-                            }
-
-                            // Calculate total DSP earnings and show rental details
-                            const totalDspEarnings = employeeRentals.reduce((sum, rental) => {
-                              const rentalItem = rentalItems.find(
-                                (item) => item.name === rental.rentalItemName
-                              );
-                              const dspRate = rentalItem?.dspRate || (rentalItem as any)?.paidOutDailyRate || 0;
-                              return sum + (dspRate * rental.duration * rental.quantity);
-                            }, 0);
-
-                            return (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-purple-600">
-                                  DSP Earnings: ${totalDspEarnings.toFixed(2)}
-                                </div>
-                                <div className="space-y-1">
-                                  {employeeRentals.map((rental) => {
-                                    const rentalItem = rentalItems.find(
-                                      (item) => item.name === rental.rentalItemName
-                                    );
-                                    const dspRate = rentalItem?.dspRate || (rentalItem as any)?.paidOutDailyRate;
-
-                                    return (
-                                      <div key={rental.id} className="text-xs bg-purple-50 px-2 py-1 rounded">
-                                        <div className="font-medium text-purple-700">
-                                          {rental.rentalItemName}
-                                        </div>
-                                        <div className="text-purple-600">
-                                          {dspRate ? `$${dspRate.toFixed(2)}/day` : 'No DSP rate'}
-                                          {rental.duration > 1 && ` × ${rental.duration} days`}
-                                          {rental.quantity > 1 && ` × ${rental.quantity} units`}
-                                          <div className="text-xs text-gray-500">({rental.date})</div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
+                                  {employee.employeeName}
+                                </span>
+                                <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
+                                  Employee of {employee.managerName}
+                                </span>
                               </div>
-                            );
-                          })()}
+                            ) : (
+                              // Independent employee or manager
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                    index < 3
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  }`}
+                                >
+                                  {index + 1}
+                                </span>
+                                <span className="font-semibold">
+                                  {employee.employeeName}
+                                </span>
+                                {employee.employeeCategory === "dsp" ? (
+                                  <span className="text-xs text-purple-700 bg-purple-50 px-2 py-1 rounded border border-purple-200">
+                                    DSP
+                                  </span>
+                                ) : employee.employeeCategory === "employee" ? (
+                                  <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                                    Employee
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                                    Independent
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>{employee.employeeTitle}</TableCell>
                         <TableCell>
@@ -1103,7 +1040,7 @@ export function SummaryReports() {
                         </TableCell>
                         <TableCell>
                           {(() => {
-                            // Find rentals associated with this employee
+                            // Find rentals associated with this employee that match the current date filtering
                             const employeeRentals =
                               filteredRentalSummaries.filter(
                                 (rental) =>
@@ -1167,6 +1104,9 @@ export function SummaryReports() {
                                             ` × ${rental.duration} days`}
                                           {rental.quantity > 1 &&
                                             ` × ${rental.quantity} units`}
+                                          <div className="text-xs text-gray-500">
+                                            ({rental.date})
+                                          </div>
                                         </div>
                                       </div>
                                     );
@@ -1278,16 +1218,15 @@ export function SummaryReports() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="titleJob">
+        <TabsContent value="title-job">
           <div className="print-only print-section-header">
-            Summary by Title and Job Number
+            Title & Job Summary
           </div>
           <Card className="page-break-avoid">
             <CardHeader>
-              <CardTitle>Summary by Title and Job Number</CardTitle>
+              <CardTitle>Title & Job Summary</CardTitle>
               <CardDescription>
-                Hours breakdown by employee title and job number with hour type
-                details {!includeInvoiced && "(excluding invoiced entries)"}
+                Performance breakdown by employee title and job
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1308,8 +1247,7 @@ export function SummaryReports() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Title</TableHead>
-                      <TableHead>Job Number</TableHead>
-                      <TableHead>Job Name</TableHead>
+                      <TableHead>Job</TableHead>
                       <TableHead>Hour Type Breakdown</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
@@ -1319,15 +1257,21 @@ export function SummaryReports() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredTitleJobSummaries.map((summary, index) => (
-                      <TableRow key={`${summary.title}-${summary.jobNumber}`}>
+                    {filteredTitleJobSummaries.map((summary) => (
+                      <TableRow
+                        key={`${summary.employeeTitle}|${summary.jobNumber}`}
+                      >
                         <TableCell className="font-medium">
-                          {summary.title}
+                          {summary.employeeTitle}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline">{summary.jobNumber}</Badge>
+                          <div>
+                            <p className="font-medium">{summary.jobNumber}</p>
+                            <p className="text-sm text-gray-500">
+                              {summary.jobName}
+                            </p>
+                          </div>
                         </TableCell>
-                        <TableCell>{summary.jobName}</TableCell>
                         <TableCell>
                           <div className="space-y-1">
                             {Object.entries(summary.hourTypeBreakdown || {})
@@ -1403,16 +1347,15 @@ export function SummaryReports() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="dateName">
+        <TabsContent value="date-name">
           <div className="print-only print-section-header">
-            Summary by Date and Employee Name
+            Date & Name Summary
           </div>
           <Card className="page-break-avoid">
             <CardHeader>
-              <CardTitle>Summary by Date and Employee Name</CardTitle>
+              <CardTitle>Date & Name Summary</CardTitle>
               <CardDescription>
-                Daily hours breakdown by employee name sorted by most recent
-                {!includeInvoiced && " (excluding invoiced entries)"}
+                Daily performance breakdown by employee
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1433,22 +1376,18 @@ export function SummaryReports() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Date</TableHead>
-                      <TableHead>Employee Name</TableHead>
+                      <TableHead>Employee</TableHead>
                       <TableHead>Hour Type Breakdown</TableHead>
                       <TableHead>Total Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
-                      <TableHead className="text-purple-600">
-                        LOA Count
-                      </TableHead>
+                      <TableHead>LOA Count</TableHead>
                       <TableHead>Total Cost</TableHead>
                       <TableHead>Entries</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredDateNameSummaries.map((summary, index) => (
-                      <TableRow
-                        key={`${summary.date}-${summary.employeeName}-${index}`}
-                      >
+                    {filteredDateNameSummaries.map((summary) => (
+                      <TableRow key={`${summary.date}|${summary.employeeName}`}>
                         <TableCell className="font-medium">
                           {parseLocalDate(summary.date).toLocaleDateString()}
                         </TableCell>
@@ -1538,13 +1477,9 @@ export function SummaryReports() {
           <div className="print-only print-section-header">Rental Summary</div>
           <Card className="page-break-avoid">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Truck className="h-5 w-5" />
-                Rental Summary
-              </CardTitle>
+              <CardTitle>Rental Summary</CardTitle>
               <CardDescription>
-                Equipment and rental revenue for the selected period
-                {!includeInvoiced && " (excluding invoiced entries)"}
+                Equipment rental usage and revenue breakdown
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1603,7 +1538,7 @@ export function SummaryReports() {
                     <TableRow className="bg-gray-50 font-bold">
                       <TableCell colSpan={6}>Total Rental Revenue</TableCell>
                       <TableCell className="text-green-600">
-                        ${totalRentalRevenue.toFixed(2)}
+                        ${(totalRentalRevenue || 0).toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -1621,14 +1556,14 @@ export function SummaryReports() {
             <CardHeader>
               <CardTitle>Detailed Time Entries</CardTitle>
               <CardDescription>
-                Individual time entries matching the current filters
-                {!includeInvoiced && " (excluding invoiced entries)"}
+                Individual time entry details for the selected period
               </CardDescription>
             </CardHeader>
             <CardContent>
               {filteredSummaries.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No detailed entries match the current filters.
+                  No detailed entries match the current filters for the selected
+                  time period.
                   {!includeInvoiced && (
                     <div className="mt-2 text-sm">
                       <span className="text-blue-600">Note:</span> Invoiced
@@ -1643,58 +1578,32 @@ export function SummaryReports() {
                     <TableRow>
                       <TableHead>Date</TableHead>
                       <TableHead>Employee</TableHead>
-                      <TableHead>Title</TableHead>
                       <TableHead>Job</TableHead>
-                      <TableHead>Hour Type</TableHead>
-                      <TableHead>Province</TableHead>
                       <TableHead>Hours</TableHead>
                       <TableHead>Effective Hours</TableHead>
-                      <TableHead>Billable</TableHead>
-                      <TableHead>Cost</TableHead>
+                      <TableHead>Total Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredSummaries
-                      .sort((a, b) => b.date.localeCompare(a.date))
-                      .map((summary, index) => (
-                        <TableRow
-                          key={`${summary.date}-${summary.employeeName}-${summary.employeeTitle}-${summary.jobNumber}-${summary.hourTypeName}-${index}`}
-                        >
-                          <TableCell>
-                            {parseLocalDate(summary.date).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {summary.employeeName}
-                          </TableCell>
-                          <TableCell>{summary.employeeTitle}</TableCell>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">
-                                {summary.jobNumber}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {summary.jobName}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">
-                              {summary.hourTypeName}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{summary.provinceName}</TableCell>
-                          <TableCell>{summary.hours.toFixed(2)}</TableCell>
-                          <TableCell>
-                            {summary.effectiveHours.toFixed(2)}
-                          </TableCell>
-                          <TableCell className="font-medium text-green-600">
-                            ${summary.totalBillableAmount.toFixed(2)}
-                          </TableCell>
-                          <TableCell className="font-medium text-red-600">
-                            ${summary.totalCost.toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                    {filteredSummaries.map((summary) => (
+                      <TableRow key={summary.id}>
+                        <TableCell>{summary.date}</TableCell>
+                        <TableCell>{summary.employeeName}</TableCell>
+                        <TableCell>
+                          {summary.jobNumber} - {summary.jobName}
+                        </TableCell>
+                        <TableCell>{(summary.hours || 0).toFixed(2)}</TableCell>
+                        <TableCell>
+                          {(summary.effectiveHours || 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          ${(summary.totalBillableAmount || 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          ${(summary.totalCost || 0).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               )}
@@ -1702,14 +1611,6 @@ export function SummaryReports() {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Print Footer - Only visible when printing */}
-      <div className="print-only print-footer">
-        <p>
-          4Front Trackity-doo Time Tracking Report | Generated:{" "}
-          {new Date().toLocaleDateString()} | Page {"{page}"}
-        </p>
-      </div>
     </div>
   );
 }
