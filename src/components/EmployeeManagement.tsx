@@ -391,10 +391,11 @@ export function EmployeeManagement() {
                   const profitMargin =
                     employee.billableWage > 0
                       ? ((employee.billableWage - employee.costWage) /
-                          employee.billableWage) *
-                        100
-                      : 0;
-                  const managerName = getManagerName(employee.managerId);
+                  const employeeTimeEntries = timeEntries.filter(
+                    (entry) => entry.employeeId === employee.id,
+                  );
+                  const directReports = getDirectReports(employee.id);
+                  const categoryOrManager = getEmployeeCategory(employee);
                   return (
                     <TableRow key={employee.id}>
                       <TableCell className="font-medium">
