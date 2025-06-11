@@ -212,6 +212,34 @@
     color: hsl(210, 20%, 98%) !important;
   }
 
+  /* Fix bg-gray-50 contrast issues in dark mode */
+  .dark .bg-gray-50 {
+    background-color: hsl(220, 15%, 18%) !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
+  /* Additional light color overrides for dark theme */
+  .dark .bg-gray-100 {
+    background-color: hsl(220, 15%, 16%) !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
+  .dark .bg-gray-200 {
+    background-color: hsl(220, 15%, 20%) !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
+  /* Ensure hover states work properly in dark mode */
+  .dark .hover\:bg-gray-50:hover {
+    background-color: hsl(220, 15%, 22%) !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
+  .dark .hover\:bg-gray-100:hover {
+    background-color: hsl(220, 15%, 20%) !important;
+    color: hsl(210, 20%, 98%) !important;
+  }
+
   .hover-scale {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }

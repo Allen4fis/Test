@@ -1148,8 +1148,11 @@ export function InvoiceManagement() {
                                           </TableCell>
                                         </TableRow>
                                       ))}
-                                      <TableRow className="bg-gray-50 font-bold">
-                                        <TableCell colSpan={2}>
+                                      <TableRow className="bg-gray-50 font-bold border-t-2 border-orange-500/30">
+                                        <TableCell
+                                          colSpan={2}
+                                          className="text-orange-400 font-semibold"
+                                        >
                                           Subtotal for {title}
                                         </TableCell>
                                         <TableCell>
@@ -1344,8 +1347,11 @@ export function InvoiceManagement() {
                                           </TableCell>
                                         </TableRow>
                                       ))}
-                                      <TableRow className="bg-gray-50 font-bold">
-                                        <TableCell colSpan={5}>
+                                      <TableRow className="bg-gray-50 font-bold border-t-2 border-orange-500/30">
+                                        <TableCell
+                                          colSpan={5}
+                                          className="text-orange-400 font-semibold"
+                                        >
                                           Subtotal for {category}
                                         </TableCell>
                                         <TableCell>
