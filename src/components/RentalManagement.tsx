@@ -652,34 +652,7 @@ export function RentalManagement() {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-employee" className="text-right">
-                      Attached Employee
-                    </Label>
-                    <Select
-                      value={formData.employeeId}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          employeeId: value === "no-employee" ? "" : value,
-                        })
-                      }
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select employee (optional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="no-employee">
-                          No Employee Attachment
-                        </SelectItem>
-                        {employees.map((employee) => (
-                          <SelectItem key={employee.id} value={employee.id}>
-                            {employee.name} - {employee.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="edit-dailyRate" className="text-right">
                       Daily Rate *
