@@ -42,6 +42,7 @@ import {
   TrendingUp,
   Activity,
   Target,
+  BarChart3,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
@@ -530,7 +531,7 @@ export function SummaryReports() {
   // Memoized Hour Type Breakdown Display Component
   const HourTypeBreakdownDisplay = ({ breakdown }: { breakdown: any }) => {
     if (!breakdown || Object.keys(breakdown).length === 0) {
-      return <span className="text-gray-400 text-sm italic">No breakdown</span>;
+      return <span className="text-gray-500 text-sm italic">No breakdown</span>;
     }
 
     const sortedEntries = Object.entries(breakdown)
@@ -542,15 +543,15 @@ export function SummaryReports() {
         {sortedEntries.map(([hourType, data]: [string, any]) => (
           <div
             key={hourType}
-            className="flex items-center justify-between text-xs bg-gradient-to-r from-orange-50 to-orange-100 px-3 py-2 rounded-lg border border-orange-200/50 shadow-sm"
+            className="flex items-center justify-between text-xs bg-gray-800/50 px-3 py-2 rounded-lg border border-gray-700/50"
           >
-            <span className="font-semibold text-gray-800">{hourType}:</span>
+            <span className="font-semibold text-gray-200">{hourType}:</span>
             <div className="flex items-center gap-2">
               <div className="bg-orange-500 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">
                 {(data.hours || 0).toFixed(1)}h
               </div>
               {data.effectiveHours !== data.hours && (
-                <div className="bg-gradient-to-r from-orange-400 to-red-400 text-white px-2 py-1 rounded-md text-xs font-medium shadow-sm">
+                <div className="bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-medium shadow-sm">
                   ({(data.effectiveHours || 0).toFixed(1)}h eff)
                 </div>
               )}
@@ -569,8 +570,8 @@ export function SummaryReports() {
           ([, data]) =>
             data.provinces && Object.keys(data.provinces).length > 0,
         ) && (
-          <div className="mt-3 pt-2 border-t border-orange-200">
-            <div className="text-xs font-semibold text-orange-600 mb-2">
+          <div className="mt-3 pt-2 border-t border-gray-700">
+            <div className="text-xs font-semibold text-blue-400 mb-2">
               By Province:
             </div>
             {sortedEntries.slice(0, 1).map(
@@ -584,18 +585,18 @@ export function SummaryReports() {
                       ([province, provinceData]: [string, any]) => (
                         <div
                           key={`${hourType}-${province}`}
-                          className="flex items-center justify-between text-xs bg-gray-50 px-2 py-1 rounded-md"
+                          className="flex items-center justify-between text-xs bg-gray-800/30 px-2 py-1 rounded-md"
                         >
-                          <span className="text-gray-600 font-medium">
+                          <span className="text-gray-400 font-medium">
                             {province}:
                           </span>
                           <div className="flex items-center gap-1">
-                            <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-medium">
+                            <span className="bg-gray-700 text-gray-200 px-2 py-0.5 rounded text-xs font-medium">
                               {(provinceData.hours || 0).toFixed(1)}h
                             </span>
                             {provinceData.effectiveHours !==
                               provinceData.hours && (
-                              <span className="bg-orange-200 text-orange-800 px-2 py-0.5 rounded text-xs">
+                              <span className="bg-gray-600 text-gray-200 px-2 py-0.5 rounded text-xs">
                                 ({(provinceData.effectiveHours || 0).toFixed(1)}
                                 h eff)
                               </span>
@@ -626,62 +627,40 @@ export function SummaryReports() {
   };
 
   return (
-    <div
-      className="min-h-screen p-6 space-y-8"
-      style={{
-        background:
-          "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
-      }}
-    >
+    <div className="space-y-8 animate-fade-in">
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 no-print">
-        <Card
-          className="group hover:scale-105 transition-all duration-300"
-          style={{
-            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
-            border: "1px solid rgba(255, 102, 0, 0.3)",
-            boxShadow:
-              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
-          }}
-        >
+        <Card className="modern-card hover-scale group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-semibold text-gray-200">
               Total Hours
             </CardTitle>
-            <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg">
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
               <Clock className="h-5 w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+            <div className="text-3xl font-bold text-blue-400">
               {totals.hours.toFixed(1)}
             </div>
             <p className="text-xs text-gray-400 mt-1 flex items-center">
-              <TrendingUp className="h-3 w-3 mr-1 text-orange-400" />
+              <TrendingUp className="h-3 w-3 mr-1 text-blue-400" />
               {totals.effectiveHours.toFixed(1)} effective hours
             </p>
           </CardContent>
         </Card>
 
-        <Card
-          className="group hover:scale-105 transition-all duration-300"
-          style={{
-            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
-            border: "1px solid rgba(255, 102, 0, 0.3)",
-            boxShadow:
-              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
-          }}
-        >
+        <Card className="modern-card hover-scale group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-semibold text-gray-200">
               Labor Cost
             </CardTitle>
-            <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg">
+            <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
               <DollarSign className="h-5 w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+            <div className="text-3xl font-bold text-green-400">
               ${totals.cost.toFixed(0)}
             </div>
             <p className="text-xs text-gray-400 mt-1 flex items-center">
@@ -691,25 +670,17 @@ export function SummaryReports() {
           </CardContent>
         </Card>
 
-        <Card
-          className="group hover:scale-105 transition-all duration-300"
-          style={{
-            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
-            border: "1px solid rgba(255, 102, 0, 0.3)",
-            boxShadow:
-              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
-          }}
-        >
+        <Card className="modern-card hover-scale group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-semibold text-gray-200">
               Rental Revenue
             </CardTitle>
-            <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg">
+            <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
               <Truck className="h-5 w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+            <div className="text-3xl font-bold text-purple-400">
               ${totals.rentalRevenue.toFixed(0)}
             </div>
             <p className="text-xs text-gray-400 mt-1 flex items-center">
@@ -719,25 +690,17 @@ export function SummaryReports() {
           </CardContent>
         </Card>
 
-        <Card
-          className="group hover:scale-105 transition-all duration-300"
-          style={{
-            background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
-            border: "1px solid rgba(255, 102, 0, 0.3)",
-            boxShadow:
-              "0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 102, 0, 0.1)",
-          }}
-        >
+        <Card className="modern-card hover-scale group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-semibold text-gray-200">
               Total Cost
             </CardTitle>
-            <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-lg">
+            <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300">
               <Receipt className="h-5 w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+            <div className="text-3xl font-bold text-orange-400">
               ${totals.totalCost.toFixed(0)}
             </div>
             <p className="text-xs text-gray-400 mt-1">
@@ -748,20 +711,12 @@ export function SummaryReports() {
       </div>
 
       {/* Filters */}
-      <Card
-        className="no-print shadow-2xl"
-        style={{
-          background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
-          border: "1px solid rgba(255, 102, 0, 0.3)",
-          boxShadow:
-            "0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 102, 0, 0.1)",
-        }}
-      >
+      <Card className="modern-card no-print">
         <CardHeader
-          className="border-b border-orange-500/20"
+          className="border-b border-gray-700/50"
           style={{
             background:
-              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
           }}
         >
           <CardTitle className="flex items-center gap-3 text-xl text-gray-100">
@@ -787,7 +742,7 @@ export function SummaryReports() {
                 onChange={(e) =>
                   setDateFilter({ ...dateFilter, start: e.target.value })
                 }
-                className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400 focus:ring-orange-400/30 transition-all duration-200"
+                className="bg-gray-800/50 border-gray-600 text-gray-100 focus:border-orange-400 focus:ring-orange-400/30 smooth-transition"
               />
             </div>
             <div className="space-y-3">
@@ -800,7 +755,7 @@ export function SummaryReports() {
                 onChange={(e) =>
                   setDateFilter({ ...dateFilter, end: e.target.value })
                 }
-                className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400 focus:ring-orange-400/30 transition-all duration-200"
+                className="bg-gray-800/50 border-gray-600 text-gray-100 focus:border-orange-400 focus:ring-orange-400/30 smooth-transition"
               />
             </div>
             <div className="space-y-3">
@@ -808,10 +763,10 @@ export function SummaryReports() {
                 Employee
               </Label>
               <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
-                <SelectTrigger className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400">
+                <SelectTrigger className="bg-gray-800/50 border-gray-600 text-gray-100 focus:border-orange-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-orange-500/30">
+                <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem
                     value="all-employees"
                     className="text-gray-100 focus:bg-orange-500/20"
@@ -833,10 +788,10 @@ export function SummaryReports() {
             <div className="space-y-3">
               <Label className="text-sm font-semibold text-gray-200">Job</Label>
               <Select value={jobFilter} onValueChange={setJobFilter}>
-                <SelectTrigger className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400">
+                <SelectTrigger className="bg-gray-800/50 border-gray-600 text-gray-100 focus:border-orange-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-orange-500/30">
+                <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem
                     value="all-jobs"
                     className="text-gray-100 focus:bg-orange-500/20"
@@ -860,10 +815,10 @@ export function SummaryReports() {
                 Province
               </Label>
               <Select value={provinceFilter} onValueChange={setProvinceFilter}>
-                <SelectTrigger className="bg-gray-700/50 border-orange-500/30 text-gray-100 focus:border-orange-400">
+                <SelectTrigger className="bg-gray-800/50 border-gray-600 text-gray-100 focus:border-orange-400">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-orange-500/30">
+                <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem
                     value="all-provinces"
                     className="text-gray-100 focus:bg-orange-500/20"
@@ -914,7 +869,7 @@ export function SummaryReports() {
               <Button
                 variant="outline"
                 onClick={resetFilters}
-                className="bg-gray-700/50 border-orange-500/30 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 transition-all duration-200"
+                className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 smooth-transition"
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Reset
@@ -922,7 +877,7 @@ export function SummaryReports() {
               <Button
                 variant="outline"
                 onClick={handlePrint}
-                className="bg-gray-700/50 border-orange-500/30 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 transition-all duration-200"
+                className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 smooth-transition"
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Print
@@ -933,55 +888,47 @@ export function SummaryReports() {
       </Card>
 
       {/* Tabbed Summary Views */}
-      <div
-        className="rounded-2xl shadow-2xl"
-        style={{
-          background: "linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%)",
-          border: "1px solid rgba(255, 102, 0, 0.3)",
-          boxShadow:
-            "0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 102, 0, 0.1)",
-        }}
-      >
+      <div className="modern-card rounded-2xl overflow-hidden">
         <Tabs defaultValue="employees" className="space-y-6 p-6">
           <TabsList
-            className="grid w-full grid-cols-5 no-print rounded-xl p-1"
+            className="grid w-full grid-cols-5 no-print rounded-xl p-1 bg-gray-800/50"
             style={{
               background:
-                "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
-              border: "1px solid rgba(255, 102, 0, 0.2)",
+                "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
+              border: "1px solid hsl(24, 100%, 50%, 0.1)",
             }}
           >
             <TabsTrigger
               value="employees"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
             >
               <Users className="h-4 w-4 mr-2" />
               Employees
             </TabsTrigger>
             <TabsTrigger
               value="title-job"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
             >
               <Briefcase className="h-4 w-4 mr-2" />
               Title & Job
             </TabsTrigger>
             <TabsTrigger
               value="date-name"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
             >
               <Calendar className="h-4 w-4 mr-2" />
               Date & Name
             </TabsTrigger>
             <TabsTrigger
               value="rentals"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
             >
               <Truck className="h-4 w-4 mr-2" />
               Rentals
             </TabsTrigger>
             <TabsTrigger
               value="entries"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white transition-all duration-200"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg text-gray-300 hover:text-white smooth-transition"
             >
               <FileText className="h-4 w-4 mr-2" />
               Entries
@@ -990,22 +937,16 @@ export function SummaryReports() {
 
           {/* Employee Summary Tab */}
           <TabsContent value="employees">
-            <Card
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 102, 0, 0.2)",
-              }}
-            >
+            <Card className="glass-card overflow-hidden">
               <CardHeader
-                className="border-b border-orange-500/20"
+                className="border-b border-gray-700/50"
                 style={{
                   background:
-                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                 }}
               >
-                <CardTitle className="text-xl text-gray-100">
+                <CardTitle className="text-xl text-gray-100 flex items-center gap-3">
+                  <BarChart3 className="h-6 w-6 text-orange-400" />
                   Employee Performance Dashboard
                 </CardTitle>
                 <CardDescription className="text-gray-300">
@@ -1026,10 +967,10 @@ export function SummaryReports() {
                     <Table>
                       <TableHeader>
                         <TableRow
-                          className="border-b border-orange-500/20 hover:bg-orange-500/5"
+                          className="border-b border-gray-700/50 hover:bg-orange-500/5"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                           }}
                         >
                           <TableHead className="text-gray-200 font-semibold">
@@ -1076,16 +1017,15 @@ export function SummaryReports() {
                               <TableRow
                                 key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
                                 className={`
-                                border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200
-                                ${employee.isSubordinate ? "bg-blue-900/20" : ""}
+                                border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition
+                                ${employee.isSubordinate ? "bg-blue-900/10" : ""}
                               `}
                               >
                                 <TableCell className="font-medium">
                                   <div className="flex items-center gap-3">
                                     {employee.isSubordinate ? (
-                                      // Subordinate employee - indented with different styling
                                       <div className="flex items-center gap-3 ml-6">
-                                        <div className="w-4 h-4 border-l-2 border-b-2 border-orange-300"></div>
+                                        <div className="w-4 h-4 border-l-2 border-b-2 border-blue-400"></div>
                                         <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white shadow-lg">
                                           ↳
                                         </span>
@@ -1097,7 +1037,6 @@ export function SummaryReports() {
                                         </span>
                                       </div>
                                     ) : (
-                                      // Independent employee or manager
                                       <div className="flex items-center gap-3">
                                         <span
                                           className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
@@ -1137,16 +1076,16 @@ export function SummaryReports() {
                                     breakdown={employee.hourTypeBreakdown}
                                   />
                                 </TableCell>
-                                <TableCell className="font-bold text-orange-300">
+                                <TableCell className="font-bold text-blue-400">
                                   {employee.totalHours.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="text-gray-200">
                                   {employee.totalEffectiveHours.toFixed(2)}
                                 </TableCell>
-                                <TableCell className="text-purple-300 font-semibold">
+                                <TableCell className="text-purple-400 font-semibold">
                                   {employee.totalLoaCount}
                                 </TableCell>
-                                <TableCell className="text-green-300 font-bold">
+                                <TableCell className="text-green-400 font-bold">
                                   ${employee.totalCost.toFixed(2)}
                                 </TableCell>
                                 <TableCell>
@@ -1208,7 +1147,7 @@ export function SummaryReports() {
                                 <TableCell>
                                   <Badge
                                     variant="outline"
-                                    className="bg-orange-900/30 border-orange-500/50 text-orange-200"
+                                    className="bg-gray-800/50 border-gray-600 text-gray-200"
                                   >
                                     {employee.entryCount}
                                   </Badge>
@@ -1221,7 +1160,7 @@ export function SummaryReports() {
                           key="employee-summary-total"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
                           }}
                           className="border-t-2 border-orange-500/50 font-bold"
                         >
@@ -1231,7 +1170,7 @@ export function SummaryReports() {
                           >
                             Total
                           </TableCell>
-                          <TableCell className="text-orange-300 font-bold text-lg">
+                          <TableCell className="text-blue-400 font-bold text-lg">
                             {hierarchicalEmployeeSummaries
                               .reduce(
                                 (sum, emp) => sum + (emp.totalHours || 0),
@@ -1248,13 +1187,13 @@ export function SummaryReports() {
                               )
                               .toFixed(2)}
                           </TableCell>
-                          <TableCell className="font-bold text-purple-300">
+                          <TableCell className="font-bold text-purple-400">
                             {hierarchicalEmployeeSummaries.reduce(
                               (sum, emp) => sum + (emp.totalLoaCount || 0),
                               0,
                             )}
                           </TableCell>
-                          <TableCell className="text-green-300 font-bold text-lg">
+                          <TableCell className="text-green-400 font-bold text-lg">
                             $
                             {hierarchicalEmployeeSummaries
                               .reduce(
@@ -1263,7 +1202,7 @@ export function SummaryReports() {
                               )
                               .toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-purple-300 font-bold text-lg">
+                          <TableCell className="text-purple-400 font-bold text-lg">
                             ${totalDspEarnings.toFixed(2)}
                           </TableCell>
                           <TableCell></TableCell>
@@ -1282,24 +1221,18 @@ export function SummaryReports() {
             </Card>
           </TabsContent>
 
-          {/* Title & Job Summary Tab */}
+          {/* Similar structure for other tabs with refined styling */}
           <TabsContent value="title-job">
-            <Card
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 102, 0, 0.2)",
-              }}
-            >
+            <Card className="glass-card overflow-hidden">
               <CardHeader
-                className="border-b border-orange-500/20"
+                className="border-b border-gray-700/50"
                 style={{
                   background:
-                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                 }}
               >
-                <CardTitle className="text-xl text-gray-100">
+                <CardTitle className="text-xl text-gray-100 flex items-center gap-3">
+                  <Briefcase className="h-6 w-6 text-blue-400" />
                   Title & Job Analysis
                 </CardTitle>
                 <CardDescription className="text-gray-300">
@@ -1320,10 +1253,10 @@ export function SummaryReports() {
                     <Table>
                       <TableHeader>
                         <TableRow
-                          className="border-b border-orange-500/20"
+                          className="border-b border-gray-700/50"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                           }}
                         >
                           <TableHead className="text-gray-200 font-semibold">
@@ -1356,14 +1289,14 @@ export function SummaryReports() {
                         {filteredTitleJobSummaries.map((summary, index) => (
                           <TableRow
                             key={`${summary.employeeTitle}|${summary.jobNumber}|${index}`}
-                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                            className="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition"
                           >
                             <TableCell className="font-bold text-gray-100">
                               {summary.employeeTitle}
                             </TableCell>
                             <TableCell>
                               <div>
-                                <p className="font-semibold text-orange-300">
+                                <p className="font-semibold text-blue-400">
                                   {summary.jobNumber}
                                 </p>
                                 <p className="text-sm text-gray-400">
@@ -1372,40 +1305,26 @@ export function SummaryReports() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <div className="space-y-1">
-                                {Object.entries(summary.hourTypeBreakdown || {})
-                                  .sort(([, a], [, b]) => b.hours - a.hours)
-                                  .map(([hourType, data]) => (
-                                    <div
-                                      key={hourType}
-                                      className="flex justify-between text-xs bg-gradient-to-r from-orange-50 to-orange-100 px-2 py-1 rounded-md border border-orange-200/30"
-                                    >
-                                      <span className="font-semibold text-gray-800">
-                                        {hourType}:
-                                      </span>
-                                      <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-xs font-bold">
-                                        {(data.hours || 0).toFixed(1)}h
-                                      </span>
-                                    </div>
-                                  ))}
-                              </div>
+                              <HourTypeBreakdownDisplay
+                                breakdown={summary.hourTypeBreakdown}
+                              />
                             </TableCell>
-                            <TableCell className="font-bold text-orange-300">
+                            <TableCell className="font-bold text-blue-400">
                               {summary.totalHours.toFixed(2)}
                             </TableCell>
                             <TableCell className="text-gray-200">
                               {summary.totalEffectiveHours.toFixed(2)}
                             </TableCell>
-                            <TableCell className="font-semibold text-purple-300">
+                            <TableCell className="font-semibold text-purple-400">
                               {summary.totalLoaCount}
                             </TableCell>
-                            <TableCell className="text-green-300 font-bold">
+                            <TableCell className="text-green-400 font-bold">
                               ${summary.totalCost.toFixed(2)}
                             </TableCell>
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className="bg-orange-900/30 border-orange-500/50 text-orange-200"
+                                className="bg-gray-800/50 border-gray-600 text-gray-200"
                               >
                                 {summary.entries.length}
                               </Badge>
@@ -1416,7 +1335,7 @@ export function SummaryReports() {
                           key="title-job-summary-total"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
                           }}
                           className="border-t-2 border-orange-500/50 font-bold"
                         >
@@ -1426,7 +1345,7 @@ export function SummaryReports() {
                           >
                             Total
                           </TableCell>
-                          <TableCell className="text-orange-300 font-bold text-lg">
+                          <TableCell className="text-blue-400 font-bold text-lg">
                             {filteredTitleJobSummaries
                               .reduce((sum, s) => sum + (s.totalHours || 0), 0)
                               .toFixed(2)}
@@ -1439,7 +1358,7 @@ export function SummaryReports() {
                               )
                               .toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-green-300 font-bold text-lg">
+                          <TableCell className="text-green-400 font-bold text-lg">
                             $
                             {filteredTitleJobSummaries
                               .reduce((sum, s) => sum + (s.totalCost || 0), 0)
@@ -1462,22 +1381,16 @@ export function SummaryReports() {
 
           {/* Date & Name Summary Tab */}
           <TabsContent value="date-name">
-            <Card
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 102, 0, 0.2)",
-              }}
-            >
+            <Card className="glass-card overflow-hidden">
               <CardHeader
-                className="border-b border-orange-500/20"
+                className="border-b border-gray-700/50"
                 style={{
                   background:
-                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                 }}
               >
-                <CardTitle className="text-xl text-gray-100">
+                <CardTitle className="text-xl text-gray-100 flex items-center gap-3">
+                  <Calendar className="h-6 w-6 text-green-400" />
                   Date & Name Timeline
                 </CardTitle>
                 <CardDescription className="text-gray-300">
@@ -1498,10 +1411,10 @@ export function SummaryReports() {
                     <Table>
                       <TableHeader>
                         <TableRow
-                          className="border-b border-orange-500/20"
+                          className="border-b border-gray-700/50"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                           }}
                         >
                           <TableHead className="text-gray-200 font-semibold">
@@ -1534,9 +1447,9 @@ export function SummaryReports() {
                         {filteredDateNameSummaries.map((summary, index) => (
                           <TableRow
                             key={`${summary.date}|${summary.employeeName}|${index}`}
-                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                            className="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition"
                           >
-                            <TableCell className="font-bold text-orange-300">
+                            <TableCell className="font-bold text-green-400">
                               {parseLocalDate(
                                 summary.date,
                               ).toLocaleDateString()}
@@ -1545,40 +1458,26 @@ export function SummaryReports() {
                               {summary.employeeName}
                             </TableCell>
                             <TableCell>
-                              <div className="space-y-1">
-                                {Object.entries(summary.hourTypeBreakdown || {})
-                                  .sort(([, a], [, b]) => b.hours - a.hours)
-                                  .map(([hourType, data]) => (
-                                    <div
-                                      key={hourType}
-                                      className="flex justify-between text-xs bg-gradient-to-r from-orange-50 to-orange-100 px-2 py-1 rounded-md border border-orange-200/30"
-                                    >
-                                      <span className="font-semibold text-gray-800">
-                                        {hourType}:
-                                      </span>
-                                      <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-xs font-bold">
-                                        {(data.hours || 0).toFixed(1)}h
-                                      </span>
-                                    </div>
-                                  ))}
-                              </div>
+                              <HourTypeBreakdownDisplay
+                                breakdown={summary.hourTypeBreakdown}
+                              />
                             </TableCell>
-                            <TableCell className="font-bold text-orange-300">
+                            <TableCell className="font-bold text-blue-400">
                               {summary.totalHours.toFixed(2)}
                             </TableCell>
                             <TableCell className="text-gray-200">
                               {summary.totalEffectiveHours.toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-purple-300 font-semibold">
+                            <TableCell className="text-purple-400 font-semibold">
                               {summary.totalLoaCount}
                             </TableCell>
-                            <TableCell className="text-green-300 font-bold">
+                            <TableCell className="text-green-400 font-bold">
                               ${summary.totalCost.toFixed(2)}
                             </TableCell>
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className="bg-orange-900/30 border-orange-500/50 text-orange-200"
+                                className="bg-gray-800/50 border-gray-600 text-gray-200"
                               >
                                 {summary.entries.length}
                               </Badge>
@@ -1589,7 +1488,7 @@ export function SummaryReports() {
                           key="date-name-summary-total"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
                           }}
                           className="border-t-2 border-orange-500/50 font-bold"
                         >
@@ -1599,7 +1498,7 @@ export function SummaryReports() {
                           >
                             Total
                           </TableCell>
-                          <TableCell className="text-orange-300 font-bold text-lg">
+                          <TableCell className="text-blue-400 font-bold text-lg">
                             {filteredDateNameSummaries
                               .reduce((sum, s) => sum + (s.totalHours || 0), 0)
                               .toFixed(2)}
@@ -1612,13 +1511,13 @@ export function SummaryReports() {
                               )
                               .toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-purple-300 font-semibold">
+                          <TableCell className="text-purple-400 font-semibold">
                             {filteredDateNameSummaries.reduce(
                               (sum, s) => sum + (s.totalLoaCount || 0),
                               0,
                             )}
                           </TableCell>
-                          <TableCell className="text-green-300 font-bold text-lg">
+                          <TableCell className="text-green-400 font-bold text-lg">
                             $
                             {filteredDateNameSummaries
                               .reduce((sum, s) => sum + (s.totalCost || 0), 0)
@@ -1641,22 +1540,16 @@ export function SummaryReports() {
 
           {/* Rentals Tab */}
           <TabsContent value="rentals">
-            <Card
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 102, 0, 0.2)",
-              }}
-            >
+            <Card className="glass-card overflow-hidden">
               <CardHeader
-                className="border-b border-orange-500/20"
+                className="border-b border-gray-700/50"
                 style={{
                   background:
-                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                 }}
               >
-                <CardTitle className="text-xl text-gray-100">
+                <CardTitle className="text-xl text-gray-100 flex items-center gap-3">
+                  <Truck className="h-6 w-6 text-purple-400" />
                   Rental Equipment Dashboard
                 </CardTitle>
                 <CardDescription className="text-gray-300">
@@ -1677,10 +1570,10 @@ export function SummaryReports() {
                     <Table>
                       <TableHeader>
                         <TableRow
-                          className="border-b border-orange-500/20"
+                          className="border-b border-gray-700/50"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                           }}
                         >
                           <TableHead className="text-gray-200 font-semibold">
@@ -1710,7 +1603,7 @@ export function SummaryReports() {
                         {filteredRentalSummaries.map((rental, index) => (
                           <TableRow
                             key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${index}`}
-                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                            className="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition"
                           >
                             <TableCell className="font-bold text-gray-100">
                               {rental.rentalItemName}
@@ -1720,7 +1613,7 @@ export function SummaryReports() {
                             </TableCell>
                             <TableCell>
                               <div>
-                                <p className="font-semibold text-orange-300">
+                                <p className="font-semibold text-blue-400">
                                   {rental.jobNumber}
                                 </p>
                                 <p className="text-sm text-gray-400">
@@ -1743,7 +1636,7 @@ export function SummaryReports() {
                             <TableCell className="text-gray-200">
                               ${rental.rateUsed.toFixed(2)}/day
                             </TableCell>
-                            <TableCell className="font-bold text-green-300">
+                            <TableCell className="font-bold text-green-400">
                               ${rental.totalCost.toFixed(2)}
                             </TableCell>
                           </TableRow>
@@ -1752,7 +1645,7 @@ export function SummaryReports() {
                           key="rental-summary-total"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
                           }}
                           className="border-t-2 border-orange-500/50 font-bold"
                         >
@@ -1762,7 +1655,7 @@ export function SummaryReports() {
                           >
                             Total Rental Revenue
                           </TableCell>
-                          <TableCell className="text-green-300 font-bold text-lg">
+                          <TableCell className="text-green-400 font-bold text-lg">
                             ${totals.rentalRevenue.toFixed(2)}
                           </TableCell>
                         </TableRow>
@@ -1776,22 +1669,16 @@ export function SummaryReports() {
 
           {/* Individual Entries Tab */}
           <TabsContent value="entries">
-            <Card
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(58, 58, 58, 0.8) 100%)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 102, 0, 0.2)",
-              }}
-            >
+            <Card className="glass-card overflow-hidden">
               <CardHeader
-                className="border-b border-orange-500/20"
+                className="border-b border-gray-700/50"
                 style={{
                   background:
-                    "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                 }}
               >
-                <CardTitle className="text-xl text-gray-100">
+                <CardTitle className="text-xl text-gray-100 flex items-center gap-3">
+                  <FileText className="h-6 w-6 text-yellow-400" />
                   Individual Time Entries
                 </CardTitle>
                 <CardDescription className="text-gray-300">
@@ -1812,10 +1699,10 @@ export function SummaryReports() {
                     <Table>
                       <TableHeader>
                         <TableRow
-                          className="border-b border-orange-500/20"
+                          className="border-b border-gray-700/50"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.05) 100%)",
+                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
                           }}
                         >
                           <TableHead className="text-gray-200 font-semibold">
@@ -1848,9 +1735,9 @@ export function SummaryReports() {
                         {filteredSummaries.map((summary, index) => (
                           <TableRow
                             key={`${summary.employeeName}-${summary.date}-${summary.hourTypeName}-${index}`}
-                            className="border-b border-gray-700/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent transition-all duration-200"
+                            className="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition"
                           >
-                            <TableCell className="text-orange-300 font-semibold">
+                            <TableCell className="text-yellow-400 font-semibold">
                               {summary.date}
                             </TableCell>
                             <TableCell className="text-gray-100">
@@ -1865,13 +1752,13 @@ export function SummaryReports() {
                             <TableCell className="text-gray-200">
                               {summary.provinceName}
                             </TableCell>
-                            <TableCell className="font-bold text-orange-300">
+                            <TableCell className="font-bold text-blue-400">
                               {summary.hours.toFixed(2)}
                             </TableCell>
                             <TableCell className="text-gray-200">
                               {summary.effectiveHours.toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-green-300 font-bold">
+                            <TableCell className="text-green-400 font-bold">
                               ${summary.totalCost.toFixed(2)}
                             </TableCell>
                           </TableRow>
