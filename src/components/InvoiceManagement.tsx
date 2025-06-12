@@ -916,7 +916,7 @@ export function InvoiceManagement() {
                         <div className="mb-3 text-center">
                           <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-1 rounded">
                             LOA: {jobStat.totalLoaCount} ($
-                            {(jobStat.totalLoaCount * 200).toFixed(0)})
+                            {(jobStat.totalLoaCount * 200).toFixed(2)})
                           </span>
                         </div>
                       )}
