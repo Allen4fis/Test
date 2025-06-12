@@ -433,6 +433,9 @@ export function InvoiceManagement() {
     return sorted;
   }, [
     jobStats,
+    searchQuery,
+    showBillableJobs,
+    showNonBillableJobs,
     showFullyInvoiced,
     showPartiallyInvoiced,
     showUninvoiced,
