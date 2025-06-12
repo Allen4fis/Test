@@ -785,7 +785,7 @@ export function InvoiceManagement() {
                     $
                     {filteredAndSortedJobStats
                       .reduce((sum, stat) => sum + stat.uninvoicedBillable, 0)
-                      .toFixed(0)}
+                      .toFixed(2)}
                   </div>
                   <div className="text-sm text-gray-300">Uninvoiced</div>
                 </div>
