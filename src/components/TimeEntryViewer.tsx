@@ -292,6 +292,13 @@ export function TimeEntryViewer() {
     hourTypes,
   ]);
 
+  // Pagination for time entries
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+  const pagination = usePagination({
+    data: filteredAndSortedEntries,
+    itemsPerPage,
+  });
+
   // Calculate summary statistics
   const totalEntries = filteredAndSortedEntries.length;
   const totalHours = filteredAndSortedEntries.reduce(
