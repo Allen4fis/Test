@@ -607,17 +607,32 @@ export function SummaryReports() {
                 )}
               </div>
               <div className="text-orange-200 space-y-1">
-                <div>${(data.cost || 0).toFixed(2)}</div>
-                {data.hours > 0 && (
-                  <div className="text-xs text-orange-300">
-                    Average: $
-                    {((data.cost || 0) / (data.hours || 1)).toFixed(2)}/hr
+                <div>Total Cost: ${(data.cost || 0).toFixed(2)}</div>
+                {data.rateEntries && data.rateEntries.length > 0 && (
+                  <div className="text-xs space-y-1">
+                    <div className="text-orange-300">
+                      Avg Hourly Rate: $
+                      {(
+                        data.rateEntries.reduce(
+                          (sum, entry) => sum + entry.hourlyRate * entry.hours,
+                          0,
+                        ) /
+                        data.rateEntries.reduce(
+                          (sum, entry) => sum + entry.hours,
+                          0,
+                        )
+                      ).toFixed(2)}
+                      /hr
+                    </div>
+                    <div className="text-orange-400 text-xs">
+                      (Excludes LOA & non-hourly costs)
+                    </div>
                   </div>
                 )}
                 {data.rateEntries && data.rateEntries.length > 0 && (
                   <div className="text-xs space-y-1 mt-2 pt-2 border-t border-orange-500/30">
                     <div className="font-semibold text-orange-200">
-                      Individual Rates:
+                      Individual Hourly Rates:
                     </div>
                     {data.rateEntries
                       .sort((a, b) => b.hours - a.hours)
@@ -625,14 +640,27 @@ export function SummaryReports() {
                       .map((entry, index) => (
                         <div
                           key={index}
-                          className="flex justify-between items-center bg-orange-800/30 px-2 py-1 rounded"
+                          className="bg-orange-800/30 px-2 py-1 rounded space-y-1"
                         >
-                          <span className="text-orange-200">
-                            {entry.date}: {entry.hours.toFixed(1)}h
-                          </span>
-                          <span className="text-orange-100 font-medium">
-                            ${entry.costRate.toFixed(2)}/hr
-                          </span>
+                          <div className="flex justify-between items-center">
+                            <span className="text-orange-200">
+                              {entry.date}: {entry.hours.toFixed(1)}h
+                            </span>
+                            <span className="text-orange-100 font-medium">
+                              ${entry.hourlyRate.toFixed(2)}/hr
+                            </span>
+                          </div>
+                          <div className="text-xs text-orange-300 flex justify-between">
+                            <span>Base: ${entry.costWage.toFixed(2)}/hr</span>
+                            {entry.effectiveHours !== entry.hours && (
+                              <span>
+                                Effective: {entry.effectiveHours.toFixed(1)}h
+                              </span>
+                            )}
+                            {entry.loaCount > 0 && (
+                              <span>LOA: {entry.loaCount}</span>
+                            )}
+                          </div>
                         </div>
                       ))}
                     {data.rateEntries.length > 5 && (
