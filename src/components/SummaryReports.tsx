@@ -432,32 +432,7 @@ export function SummaryReports() {
       let subordinateGstTotal = 0;
 
       // Find the manager record in the employees list
-      const managerRecord = employees.find(emp => emp.name === manager.employeeName);
-
-      if (managerRecord) {
-        // Find all employees that report to this manager
-        const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
-
-        // For each subordinate, calculate their total GST
-        allSubordinates.forEach(subordinateEmployee => {
-          // Only calculate GST for subordinates that are in non-employee categories
-          if (subordinateEmployee.category && subordinateEmployee.category !== "employee") {
-            // Get ALL time entries for this subordinate across all time periods
-            const subordinateEntries = timeEntrySummaries.filter(entry =>
-              entry.employeeName === subordinateEmployee.name
-            );
-
-            // Calculate total cost for this subordinate
-            const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
-              sum + (entry.totalCost || 0), 0
-            );
-
-            // Calculate 5% GST on their total cost
-            const subordinateGst = subordinateTotalCost * 0.05;
-            subordinateGstTotal += subordinateGst;
-          }
-        });
-      }
+      const managerRecord = employees.find(
         (emp) => emp.name === manager.employeeName,
       );
 
@@ -469,23 +444,26 @@ export function SummaryReports() {
 
         // For each subordinate, calculate their total GST
         allSubordinates.forEach((subordinateEmployee) => {
-          // Get ALL time entries for this subordinate across all time periods
-          const subordinateEntries = timeEntrySummaries.filter(
-            (entry) => entry.employeeName === subordinateEmployee.name,
-          );
+          // Only calculate GST for subordinates that are in non-employee categories
+          if (
+            subordinateEmployee.category &&
+            subordinateEmployee.category !== "employee"
+          ) {
+            // Get ALL time entries for this subordinate across all time periods
+            const subordinateEntries = timeEntrySummaries.filter(
+              (entry) => entry.employeeName === subordinateEmployee.name,
+            );
 
-          // Calculate total cost for this subordinate
-          const subordinateTotalCost = subordinateEntries.reduce(
-            (sum, entry) => sum + (entry.totalCost || 0),
-            0,
-          );
+            // Calculate total cost for this subordinate
+            const subordinateTotalCost = subordinateEntries.reduce(
+              (sum, entry) => sum + (entry.totalCost || 0),
+              0,
+            );
 
-          // Calculate GST for this subordinate if they're in a non-employee category
-          const subordinateGst = calculateGST(
-            subordinateEmployee,
-            subordinateTotalCost,
-          );
-          subordinateGstTotal += subordinateGst;
+            // Calculate 5% GST on their total cost
+            const subordinateGst = subordinateTotalCost * 0.05;
+            subordinateGstTotal += subordinateGst;
+          }
         });
       }
 
