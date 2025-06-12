@@ -1002,6 +1002,39 @@ export function SummaryReports() {
                                   </div>
                                 </TableCell>
                                 <TableCell>
+                                  {employee.gstAmount > 0 ? (
+                                    <div className="space-y-1">
+                                      <div className="flex items-center gap-1">
+                                        <DollarSign className="h-4 w-4 text-orange-600" />
+                                        <span className="font-bold text-orange-400">
+                                          ${employee.gstAmount.toFixed(2)}
+                                        </span>
+                                      </div>
+                                      <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
+                                        5% GST on revenue
+                                      </div>
+                                      {employee.subordinateGstTotal > 0 && (
+                                        <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
+                                          + $
+                                          {employee.subordinateGstTotal.toFixed(
+                                            2,
+                                          )}{" "}
+                                          from subordinates
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : employee.subordinateGstTotal > 0 ? (
+                                    <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
+                                      ${employee.subordinateGstTotal.toFixed(2)}{" "}
+                                      from subordinates
+                                    </div>
+                                  ) : (
+                                    <span className="text-gray-500 text-sm italic">
+                                      No GST applicable
+                                    </span>
+                                  )}
+                                </TableCell>
+                                <TableCell>
                                   {dspCalc && dspCalc.dspEarnings > 0 ? (
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-1">
