@@ -118,6 +118,50 @@ export function JobManagement() {
     updateJob(job.id, { isActive: !job.isActive });
   };
 
+  // Filtered and sorted jobs
+  const filteredAndSortedJobs = useMemo(() => {
+    let filtered = jobs;
+
+    // Apply status filters
+    if (!showActive || !showInactive) {
+      filtered = jobs.filter((job) => {
+        if (!showActive && job.isActive) return false;
+        if (!showInactive && !job.isActive) return false;
+        return true;
+      });
+    }
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortBy) {
+        case "jobNumber":
+          aValue = a.jobNumber.toLowerCase();
+          bValue = b.jobNumber.toLowerCase();
+          break;
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "createdAt":
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
+        default:
+          aValue = a.jobNumber.toLowerCase();
+          bValue = b.jobNumber.toLowerCase();
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  }, [jobs, showActive, showInactive, sortBy, sortDirection]);
+
   return (
     <Card>
       <CardHeader>
