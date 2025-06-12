@@ -722,6 +722,9 @@ export function InvoiceManagement() {
                   <SelectItem value="unpaidBillable" className="text-gray-100">
                     Unpaid $
                   </SelectItem>
+                  <SelectItem value="billableStatus" className="text-gray-100">
+                    Job Type
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
