@@ -66,6 +66,62 @@ export function Dashboard() {
       .slice(0, 5);
   };
 
+  // Get top 5 invoices by billable total
+  const getTopInvoices = () => {
+    const jobInvoiceData = jobs
+      .map((job) => {
+        // Get time entries for this job
+        const jobTimeEntries = timeEntrySummaries.filter(
+          (entry) => entry.jobNumber === job.jobNumber,
+        );
+
+        // Get rental entries for this job
+        const jobRentalEntries = rentalSummaries.filter(
+          (entry) => entry.jobNumber === job.jobNumber,
+        );
+
+        // Calculate total billable (labor + rentals)
+        const laborBillable = jobTimeEntries.reduce(
+          (sum, entry) =>
+            sum + (entry.totalBillableAmount || entry.totalCost || 0),
+          0,
+        );
+
+        const rentalBillable = jobRentalEntries.reduce(
+          (sum, entry) => sum + (entry.totalCost || 0),
+          0,
+        );
+
+        const totalBillable = laborBillable + rentalBillable;
+
+        // Calculate total cost (for profit calculation)
+        const totalCost =
+          jobTimeEntries.reduce(
+            (sum, entry) => sum + (entry.totalCost || 0),
+            0,
+          ) + rentalBillable; // Rental cost equals rental billable
+
+        // Calculate profit percentage
+        const profitAmount = totalBillable - totalCost;
+        const profitPercentage =
+          totalBillable > 0 ? (profitAmount / totalBillable) * 100 : 0;
+
+        return {
+          jobNumber: job.jobNumber,
+          jobName: job.name,
+          totalBillable,
+          totalCost,
+          profitAmount,
+          profitPercentage,
+        };
+      })
+      .filter((invoice) => invoice.totalBillable > 0) // Only jobs with billable amounts
+      .sort((a, b) => b.totalBillable - a.totalBillable) // Sort by highest billable
+      .slice(0, 5); // Top 5
+
+    return jobInvoiceData;
+  };
+
   // Calculate active metrics
   const todaysEntries = timeEntrySummaries.filter(
     (summary) => summary.date === getTodayString(),
