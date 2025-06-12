@@ -464,30 +464,9 @@ export function SummaryReports() {
 
       if (managerRecord) {
         // Find all employees that report to this manager
-        let allSubordinates = employees.filter(
+        const allSubordinates = employees.filter(
           (emp) => emp.managerId === managerRecord.id,
         );
-
-        // Special case for Matt Price TNM - also look for known subordinates by name
-        if (manager.employeeName === "Matt Price TNM") {
-          const knownSubordinateNames = [
-            "Franko A",
-            "Jody R",
-            "Cody H",
-            "Chris H",
-          ];
-          knownSubordinateNames.forEach((subName) => {
-            const subordinateEmployee = employees.find(
-              (emp) => emp.name === subName,
-            );
-            if (
-              subordinateEmployee &&
-              !allSubordinates.find((sub) => sub.id === subordinateEmployee.id)
-            ) {
-              allSubordinates.push(subordinateEmployee);
-            }
-          });
-        }
 
         // For each subordinate, calculate their total GST
         allSubordinates.forEach((subordinateEmployee) => {
