@@ -130,6 +130,10 @@ export function RentalManagement() {
     "asc" | "desc"
   >("desc");
 
+  // Billable job filtering states
+  const [showBillableJobs, setShowBillableJobs] = useState(true);
+  const [showNonBillableJobs, setShowNonBillableJobs] = useState(true);
+
   // Reset forms
   const resetForm = () => {
     setFormData({
