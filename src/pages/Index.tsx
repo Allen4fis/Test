@@ -71,24 +71,6 @@ const Index = () => {
     rentalEntries: timeTracking.rentalEntries,
   });
 
-  // Determine which components to use based on data size
-  const dataMetrics: DataMetrics = useMemo(
-    () => ({
-      employeeCount: regularTimeTracking.employees.length,
-      jobCount: regularTimeTracking.jobs.length,
-      timeEntryCount: regularTimeTracking.timeEntries.length,
-    }),
-    [
-      regularTimeTracking.employees.length,
-      regularTimeTracking.jobs.length,
-      regularTimeTracking.timeEntries.length,
-    ],
-  );
-
-  const useOptimized = shouldUseOptimizedComponents(dataMetrics);
-  const timeTracking = useOptimized
-    ? optimizedTimeTracking
-    : regularTimeTracking;
   const { selectedView } = timeTracking;
 
   // Performance monitoring
