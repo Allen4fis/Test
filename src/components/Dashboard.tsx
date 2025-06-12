@@ -510,8 +510,10 @@ export function Dashboard({
                 <div>
                   <p className="text-sm text-gray-400">Last Autosave</p>
                   <p className="text-lg font-bold text-blue-400">
-                    {autosaveInfo.lastSaveTime
-                      ? new Date(autosaveInfo.lastSaveTime).toLocaleTimeString()
+                    {currentAutosaveInfo.lastSaveTime
+                      ? new Date(
+                          currentAutosaveInfo.lastSaveTime,
+                        ).toLocaleTimeString()
                       : "Never"}
                   </p>
                 </div>
