@@ -1129,6 +1129,104 @@ export function InvoiceManagement() {
                                       </div>
                                     </div>
                                   )}
+
+                                  {/* Rental Entries */}
+                                  {breakdown.rentalEntries.length > 0 && (
+                                    <div>
+                                      <h3 className="text-lg font-semibold text-gray-100 mb-3">
+                                        Rental Entries
+                                      </h3>
+                                      <div className="overflow-x-auto">
+                                        <Table>
+                                          <TableHeader>
+                                            <TableRow>
+                                              <TableHead className="text-gray-200">Employee</TableHead>
+                                              <TableHead className="text-gray-200">Item</TableHead>
+                                              <TableHead className="text-gray-200">Quantity</TableHead>
+                                              <TableHead className="text-gray-200">Duration</TableHead>
+                                              <TableHead className="text-gray-200">Rate</TableHead>
+                                              <TableHead className="text-gray-200">DSP Rate</TableHead>
+                                              <TableHead className="text-gray-200">Total Cost</TableHead>
+                                            </TableRow>
+                                          </TableHeader>
+                                          <TableBody>
+                                            {breakdown.rentalEntries.map((entry, index) => (
+                                              <TableRow key={index}>
+                                                <TableCell className="text-gray-100">
+                                                  {entry.employeeName}
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  {entry.rentalItemName}
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  {entry.quantity}
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  {entry.duration} days
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  ${entry.dailyRate?.toFixed(2) || '0.00'}
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  ${entry.dspRate?.toFixed(2) || '0.00'}
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  ${entry.totalCost.toFixed(2)}
+                                                </TableCell>
+                                              </TableRow>
+                                            ))}
+                                            <TableRow className="border-t-2 border-orange-500/50 font-bold">
+                                              <TableCell colSpan={6} className="text-orange-200">
+                                                Rental Totals:
+                                              </TableCell>
+                                              <TableCell className="text-purple-400">
+                                                ${breakdown.rentalEntries.reduce((sum, entry) => sum + entry.totalCost, 0).toFixed(2)}
+                                              </TableCell>
+                                            </TableRow>
+                                          </TableBody>
+                                        </Table>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Summary */}
+                                  <div className="bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg p-4">
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-3">
+                                      Day Summary
+                                    </h3>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                      <div className="text-center">
+                                        <div className="text-xl font-bold text-blue-400">
+                                          {breakdown.timeEntries.reduce((sum, entry) => sum + entry.hours, 0).toFixed(1)}h
+                                        </div>
+                                        <div className="text-sm text-gray-300">Total Hours</div>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="text-xl font-bold text-purple-400">
+                                          {totalLOA}
+                                        </div>
+                                        <div className="text-sm text-gray-300">LOA Count</div>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="text-xl font-bold text-green-400">
+                                          ${(
+                                            breakdown.timeEntries.reduce((sum, entry) => sum + entry.totalBillableAmount, 0) +
+                                            breakdown.rentalEntries.reduce((sum, entry) => sum + entry.totalCost, 0)
+                                          ).toFixed(2)}
+                                        </div>
+                                        <div className="text-sm text-gray-300">Total Billable</div>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="text-xl font-bold text-orange-400">
+                                          ${breakdown.timeEntries.reduce((sum, entry) => sum + entry.totalCost, 0).toFixed(2)}
+                                        </div>
+                                        <div className="text-sm text-gray-300">Labor Cost</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                         </Dialog>
 
                         <Button
