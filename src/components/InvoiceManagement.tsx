@@ -281,14 +281,20 @@ export function InvoiceManagement() {
           .reduce((sum, d) => sum + d.totalCost, 0);
         const uninvoicedCost = totalCost - invoicedCost;
 
-        const invoicedBillable = jobDates
-          .filter((d) => d.isInvoiced)
-          .reduce((sum, d) => sum + d.totalBillable, 0);
+        const invoicedBillable =
+          job.isBillable === false
+            ? 0
+            : jobDates
+                .filter((d) => d.isInvoiced)
+                .reduce((sum, d) => sum + d.totalBillable, 0);
         const uninvoicedBillable = totalBillable - invoicedBillable;
 
-        const paidBillable = jobDates
-          .filter((d) => d.isPaid)
-          .reduce((sum, d) => sum + d.totalBillable, 0);
+        const paidBillable =
+          job.isBillable === false
+            ? 0
+            : jobDates
+                .filter((d) => d.isPaid)
+                .reduce((sum, d) => sum + d.totalBillable, 0);
         const unpaidBillable = totalBillable - paidBillable;
 
         return {
