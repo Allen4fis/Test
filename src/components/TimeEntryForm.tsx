@@ -961,7 +961,7 @@ export function TimeEntryForm() {
                               item={{
                                 id: entry.id,
                                 name: `${employee?.name || "Unknown"} - ${formatLocalDate(entry.date)} - ${hourType?.name || "Unknown"}`,
-                                type: "time entry",
+                                type: "time-entry",
                                 associatedData: {
                                   additionalInfo: [
                                     `Employee: ${employee?.name || "Unknown"} (${entry.title})`,
