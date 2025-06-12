@@ -409,6 +409,13 @@ export function SummaryReports() {
     return managersWithSubordinateGST;
   }, [employeeSummariesData, employees]);
 
+  // Pagination for employee summaries
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const pagination = usePagination({
+    data: hierarchicalEmployeeSummaries,
+    itemsPerPage,
+  });
+
   const resetFilters = () => {
     setDateFilter(getInitialDateFilter());
     setEmployeeFilter("all-employees");
