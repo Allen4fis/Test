@@ -898,7 +898,7 @@ export function InvoiceManagement() {
                         </div>
                         <div>
                           <div className="text-sm font-bold text-red-400">
-                            ${jobStat.uninvoicedBillable.toFixed(0)}
+                            ${jobStat.uninvoicedBillable.toFixed(2)}
                           </div>
                           <div className="text-xs text-gray-400">
                             Uninvoiced
