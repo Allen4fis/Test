@@ -1086,7 +1086,7 @@ export function InvoiceManagement() {
                                                     return acc;
                                                   }, {});
 
-                                                  return Object.values(groupedEntries).map((group, index) => (
+                                                  const groupedRows = Object.values(groupedEntries).map((group, index) => (
                                                     <TableRow key={index}>
                                                       <TableCell className="text-gray-100">
                                                         <div className="font-semibold">{group.title}</div>
@@ -1123,6 +1123,8 @@ export function InvoiceManagement() {
                                                       </TableCell>
                                                     </TableRow>
                                                   ));
+
+                                                  return groupedRows;
                                                 })()}
                                                 <TableRow className="border-t-2 border-orange-500/50 font-bold">
                                                   <TableCell colSpan={2} className="text-orange-200">
