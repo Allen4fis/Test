@@ -656,7 +656,174 @@ export function InvoiceManagement() {
               settings.
             </div>
           ) : (
-            <Table>
+            <div className="space-y-4">
+              {/* Summary Stats */}
+              <div className="grid grid-cols-4 gap-4 p-4 bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/20 rounded-lg">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-400">
+                    {jobStats.reduce((sum, stat) => sum + stat.totalDates, 0)}
+                  </div>
+                  <div className="text-sm text-gray-300">Total Days</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-400">
+                    ${jobStats.reduce((sum, stat) => sum + stat.totalBillable, 0).toFixed(0)}
+                  </div>
+                  <div className="text-sm text-gray-300">Total Billable</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-red-400">
+                    ${jobStats.reduce((sum, stat) => sum + stat.uninvoicedBillable, 0).toFixed(0)}
+                  </div>
+                  <div className="text-sm text-gray-300">Uninvoiced</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-400">
+                    ${jobStats.reduce((sum, stat) => sum + stat.unpaidBillable, 0).toFixed(0)}
+                  </div>
+                  <div className="text-sm text-gray-300">Unpaid</div>
+                </div>
+              </div>
+
+              {/* Job Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredAndSortedJobStats.map((jobStat) => {
+                  const getInvoiceStatusColor = (percentage: number) => {
+                    if (percentage >= 100) return "bg-green-500";
+                    if (percentage > 0) return "bg-yellow-500";
+                    return "bg-red-500";
+                  };
+
+                  const getPaidStatusColor = (percentage: number) => {
+                    if (percentage >= 100) return "bg-green-500";
+                    if (percentage > 0) return "bg-blue-500";
+                    return "bg-purple-500";
+                  };
+
+                  return (
+                    <div
+                      key={jobStat.job.id}
+                      className="p-4 bg-gray-800/50 border border-gray-600 rounded-lg hover:border-orange-500/50 transition-all"
+                    >
+                      {/* Job Header */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <div className="font-semibold text-gray-100">
+                            {jobStat.job.jobNumber}
+                          </div>
+                          <div className="text-sm text-gray-300 truncate max-w-[200px]">
+                            {jobStat.job.name}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm text-gray-400">{jobStat.totalDates} days</div>
+                          <div className="text-xs text-gray-500">
+                            {jobStat.totalHours.toFixed(1)}h
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Status Metrics */}
+                      <div className="grid grid-cols-2 gap-4 mb-3">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-blue-400">
+                            {jobStat.invoicePercentage.toFixed(0)}%
+                          </div>
+                          <div className="text-xs text-gray-400 mb-1">Invoiced</div>
+                          <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                            <div
+                              className={`h-2 rounded-full transition-all ${getInvoiceStatusColor(jobStat.invoicePercentage)}`}
+                              style={{ width: `${jobStat.invoicePercentage}%` }}
+                            />
+                          </div>
+                          <div className="text-xs space-y-1">
+                            <div className="text-green-400">✓ {jobStat.invoicedDates} days</div>
+                            <div className="text-red-400">✗ {jobStat.uninvoicedDates} days</div>
+                          </div>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-purple-400">
+                            {jobStat.paidPercentage.toFixed(0)}%
+                          </div>
+                          <div className="text-xs text-gray-400 mb-1">Paid</div>
+                          <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                            <div
+                              className={`h-2 rounded-full transition-all ${getPaidStatusColor(jobStat.paidPercentage)}`}
+                              style={{ width: `${jobStat.paidPercentage}%` }}
+                            />
+                          </div>
+                          <div className="text-xs space-y-1">
+                            <div className="text-green-400">✓ {jobStat.paidDates} days</div>
+                            <div className="text-purple-400">◯ {jobStat.unpaidDates} days</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Financial Summary */}
+                      <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-700 pt-3">
+                        <div>
+                          <div className="text-sm font-bold text-green-400">
+                            ${jobStat.totalBillable.toFixed(0)}
+                          </div>
+                          <div className="text-xs text-gray-400">Total</div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-red-400">
+                            ${jobStat.uninvoicedBillable.toFixed(0)}
+                          </div>
+                          <div className="text-xs text-gray-400">Uninvoiced</div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-purple-400">
+                            ${jobStat.unpaidBillable.toFixed(0)}
+                          </div>
+                          <div className="text-xs text-gray-400">Unpaid</div>
+                        </div>
+                      </div>
+
+                      {/* LOA Info if applicable */}
+                      {jobStat.totalLoaCount > 0 && (
+                        <div className="mt-2 pt-2 border-t border-gray-700 text-center">
+                          <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-1 rounded">
+                            LOA: {jobStat.totalLoaCount} (${(jobStat.totalLoaCount * 200).toFixed(0)})
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 mt-3 pt-3 border-t border-gray-700">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedJob(jobStat.job);
+                                setIsDialogOpen(true);
+                              }}
+                              className="flex-1"
+                            >
+                              <FileText className="h-4 w-4 mr-1" />
+                              Manage
+                            </Button>
+                          </DialogTrigger>
+                        </Dialog>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleJobPaidStatus(jobStat.job)}
+                          className="px-3"
+                        >
+                          <CreditCard className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
               <TableHeader>
                 <TableRow>
                   <TableHead
