@@ -474,74 +474,49 @@ export function SummaryReports() {
                 <div className="space-y-3">
                   <Label className="text-sm font-medium">Date Range</Label>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    {/* Date Picker Controls */}
+                    {/* Manual Date Input Controls */}
                     <div className="flex items-center gap-2 flex-1">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="flex-1 justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            <span className="truncate">
-                              {formatLocalDate(
-                                parseLocalDate(dateFilter.start),
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                },
-                              )}
-                            </span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={parseLocalDate(dateFilter.start)}
-                            onSelect={(date) => {
-                              if (date) {
-                                setDateFilter({
-                                  ...dateFilter,
-                                  start: date.toISOString().split("T")[0],
-                                });
-                              }
-                            }}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <span className="text-gray-400 px-1">to</span>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="flex-1 justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            <span className="truncate">
-                              {formatLocalDate(parseLocalDate(dateFilter.end), {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
-                            </span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={parseLocalDate(dateFilter.end)}
-                            onSelect={(date) => {
-                              if (date) {
-                                setDateFilter({
-                                  ...dateFilter,
-                                  end: date.toISOString().split("T")[0],
-                                });
-                              }
-                            }}
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="start-date"
+                          className="text-xs text-gray-400 mb-1 block"
+                        >
+                          From
+                        </Label>
+                        <Input
+                          id="start-date"
+                          type="date"
+                          value={dateFilter.start}
+                          onChange={(e) =>
+                            setDateFilter({
+                              ...dateFilter,
+                              start: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-600 text-gray-100"
+                        />
+                      </div>
+                      <span className="text-gray-400 px-1 mt-5">to</span>
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="end-date"
+                          className="text-xs text-gray-400 mb-1 block"
+                        >
+                          To
+                        </Label>
+                        <Input
+                          id="end-date"
+                          type="date"
+                          value={dateFilter.end}
+                          onChange={(e) =>
+                            setDateFilter({
+                              ...dateFilter,
+                              end: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-600 text-gray-100"
+                        />
+                      </div>
                     </div>
 
                     {/* Quick Date Range Buttons */}
