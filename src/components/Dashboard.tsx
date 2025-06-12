@@ -39,7 +39,23 @@ import {
   getTodayString,
 } from "@/utils/dateUtils";
 
-export function Dashboard() {
+interface DashboardProps {
+  autosaveInfo?: {
+    isEnabled: boolean;
+    lastSaveTime: string | null;
+    autosaveCount: number;
+  };
+  triggerManualSave?: () => {
+    success: boolean;
+    timestamp?: string;
+    error?: string;
+  };
+}
+
+export function Dashboard({
+  autosaveInfo,
+  triggerManualSave,
+}: DashboardProps = {}) {
   const {
     employees,
     jobs,
