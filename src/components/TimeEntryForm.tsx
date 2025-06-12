@@ -48,21 +48,19 @@ import {
   X,
   User,
   Banknote,
-  DollarSign,
+  Clock,
+  FileText,
+  MapPin,
+  Building,
+  Activity,
 } from "lucide-react";
-
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { TimeEntry } from "@/types";
-
-// Helper function to get local date string in YYYY-MM-DD format
-const getLocalDateString = (date: Date = new Date()) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-import { parseLocalDate, formatLocalDate } from "@/utils/dateUtils";
+import {
+  parseLocalDate,
+  formatLocalDate,
+  getTodayString as getLocalDateString,
+} from "@/utils/dateUtils";
 
 export function TimeEntryForm() {
   const {
@@ -79,10 +77,16 @@ export function TimeEntryForm() {
   const [formData, setFormData] = useState({
     employeeId: "",
     jobId: "",
-    hourTypeId: "",
     provinceId: "",
     date: getLocalDateString(),
-    hours: "",
+    hourType1: "",
+    hours1: "",
+    hourType2: "",
+    hours2: "",
+    hourType3: "",
+    hours3: "",
+    hourType4: "",
+    hours4: "",
     loaCount: "",
     title: "",
     billableWageUsed: "",
@@ -93,6 +97,7 @@ export function TimeEntryForm() {
   const [formError, setFormError] = useState("");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
   const [showAllEntries, setShowAllEntries] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Update title and wages when employee is selected
   useEffect(() => {
@@ -115,10 +120,16 @@ export function TimeEntryForm() {
     setFormData({
       employeeId: "",
       jobId: "",
-      hourTypeId: "",
       provinceId: "",
       date: getLocalDateString(),
-      hours: "",
+      hourType1: "",
+      hours1: "",
+      hourType2: "",
+      hours2: "",
+      hourType3: "",
+      hours3: "",
+      hourType4: "",
+      hours4: "",
       loaCount: "",
       title: "",
       billableWageUsed: "",
@@ -129,89 +140,163 @@ export function TimeEntryForm() {
     setEditingEntry(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
-
-    // Validation
-    if (
-      !formData.employeeId ||
-      !formData.jobId ||
-      !formData.hourTypeId ||
-      !formData.provinceId ||
-      !formData.date ||
-      !formData.hours ||
-      !formData.title ||
-      !formData.billableWageUsed ||
-      !formData.costWageUsed
-    ) {
-      setFormError("Please fill in all required fields.");
-      return;
-    }
-
-    const hours = parseFloat(formData.hours);
-    const loaCount = formData.loaCount ? parseFloat(formData.loaCount) : 0;
-    const billableWageUsed = parseFloat(formData.billableWageUsed);
-    const costWageUsed = parseFloat(formData.costWageUsed);
-
-    if (isNaN(hours) || hours < 0) {
-      setFormError("Please enter a valid number of hours (0 or greater).");
-      return;
-    }
-
-    if (hours === 0 && loaCount === 0) {
-      setFormError(
-        "Please enter either hours worked or Live Out Allowance count.",
-      );
-      return;
-    }
-
-    if (hours > 24) {
-      setFormError("Hours cannot exceed 24 for a single day.");
-      return;
-    }
-
-    if (loaCount < 0 || (loaCount > 0 && !Number.isInteger(loaCount))) {
-      setFormError(
-        "Live Out Allowance count must be a whole number (0 or greater).",
-      );
-      return;
-    }
-
-    if (isNaN(billableWageUsed) || billableWageUsed < 0) {
-      setFormError("Please enter a valid billable wage.");
-      return;
-    }
-
-    if (isNaN(costWageUsed) || costWageUsed < 0) {
-      setFormError("Please enter a valid cost wage.");
-      return;
-    }
+    setIsSubmitting(true);
 
     try {
-      const entryData = {
-        employeeId: formData.employeeId,
-        jobId: formData.jobId,
-        hourTypeId: formData.hourTypeId,
-        provinceId: formData.provinceId,
-        date: formData.date,
-        hours: hours,
-        loaCount: loaCount > 0 ? loaCount : undefined,
-        title: formData.title,
-        billableWageUsed: billableWageUsed,
-        costWageUsed: costWageUsed,
-        description: formData.description,
-      };
+      // Validation
+      if (
+        !formData.employeeId ||
+        !formData.jobId ||
+        !formData.provinceId ||
+        !formData.date ||
+        !formData.title ||
+        !formData.billableWageUsed ||
+        !formData.costWageUsed
+      ) {
+        setFormError("Please fill in all required fields.");
+        return;
+      }
+
+      // Collect all hour entries
+      const hourEntries = [
+        { hourTypeId: formData.hourType1, hours: formData.hours1 },
+        { hourTypeId: formData.hourType2, hours: formData.hours2 },
+        { hourTypeId: formData.hourType3, hours: formData.hours3 },
+        { hourTypeId: formData.hourType4, hours: formData.hours4 },
+      ].filter(
+        (entry) =>
+          entry.hourTypeId && entry.hours && parseFloat(entry.hours) > 0,
+      );
+
+      const loaCount = formData.loaCount ? parseFloat(formData.loaCount) : 0;
+      const billableWageUsed = parseFloat(formData.billableWageUsed);
+      const costWageUsed = parseFloat(formData.costWageUsed);
+
+      // Validate at least one hour entry or LOA
+      if (hourEntries.length === 0 && loaCount === 0) {
+        setFormError(
+          "Please enter at least one hour type with hours or a Live Out Allowance count.",
+        );
+        return;
+      }
+
+      // Validate wage inputs
+      if (isNaN(billableWageUsed) || billableWageUsed < 0) {
+        setFormError("Please enter a valid billable wage.");
+        return;
+      }
+
+      if (isNaN(costWageUsed) || costWageUsed < 0) {
+        setFormError("Please enter a valid cost wage.");
+        return;
+      }
+
+      // Validate LOA count
+      if (loaCount < 0 || (loaCount > 0 && !Number.isInteger(loaCount))) {
+        setFormError(
+          "Live Out Allowance count must be a whole number (0 or greater).",
+        );
+        return;
+      }
+
+      // Validate individual hour entries
+      for (const entry of hourEntries) {
+        const hours = parseFloat(entry.hours);
+        if (isNaN(hours) || hours < 0) {
+          setFormError("Please enter valid hour amounts (0 or greater).");
+          return;
+        }
+        if (hours > 24) {
+          setFormError("Hours cannot exceed 24 for a single entry.");
+          return;
+        }
+      }
 
       if (editingEntry) {
+        // For editing, we still use the single entry approach
+        const hours =
+          hourEntries.length > 0 ? parseFloat(hourEntries[0].hours) : 0;
+        const hourTypeId =
+          hourEntries.length > 0
+            ? hourEntries[0].hourTypeId
+            : formData.hourType1;
+
+        const entryData = {
+          employeeId: formData.employeeId,
+          jobId: formData.jobId,
+          hourTypeId: hourTypeId,
+          provinceId: formData.provinceId,
+          date: formData.date,
+          hours: hours,
+          loaCount: loaCount > 0 ? loaCount : undefined,
+          title: formData.title,
+          billableWageUsed: billableWageUsed,
+          costWageUsed: costWageUsed,
+          description: formData.description,
+        };
+
         updateTimeEntry(editingEntry.id, entryData);
-        resetForm(); // Full reset when editing
+        resetForm();
       } else {
-        addTimeEntry(entryData);
-        // Preserve form data but clear hours, Live Out Allowance count, and description for next entry
+        // For new entries, create multiple entries with delays
+        for (let i = 0; i < hourEntries.length; i++) {
+          const entry = hourEntries[i];
+          const hours = parseFloat(entry.hours);
+
+          const entryData = {
+            employeeId: formData.employeeId,
+            jobId: formData.jobId,
+            hourTypeId: entry.hourTypeId,
+            provinceId: formData.provinceId,
+            date: formData.date,
+            hours: hours,
+            loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
+            title: formData.title,
+            billableWageUsed: billableWageUsed,
+            costWageUsed: costWageUsed,
+            description: formData.description,
+          };
+
+          addTimeEntry(entryData);
+
+          // Add 0.5 second delay between entries (except for the last one)
+          if (i < hourEntries.length - 1) {
+            await delay(500);
+          }
+        }
+
+        // If only LOA and no hours, create a single entry with 0 hours
+        if (hourEntries.length === 0 && loaCount > 0) {
+          const entryData = {
+            employeeId: formData.employeeId,
+            jobId: formData.jobId,
+            hourTypeId: formData.hourType1 || hourTypes[0]?.id || "",
+            provinceId: formData.provinceId,
+            date: formData.date,
+            hours: 0,
+            loaCount: loaCount,
+            title: formData.title,
+            billableWageUsed: billableWageUsed,
+            costWageUsed: costWageUsed,
+            description: formData.description,
+          };
+
+          addTimeEntry(entryData);
+        }
+
+        // Preserve form data but clear hours and description for next entry
         setFormData((prev) => ({
           ...prev,
-          hours: "",
+          hours1: "",
+          hours2: "",
+          hours3: "",
+          hours4: "",
           loaCount: "",
           description: "",
         }));
@@ -220,6 +305,8 @@ export function TimeEntryForm() {
     } catch (error) {
       setFormError("Error saving time entry. Please try again.");
       console.error("Error saving time entry:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -228,23 +315,22 @@ export function TimeEntryForm() {
     setFormData({
       employeeId: entry.employeeId,
       jobId: entry.jobId,
-      hourTypeId: entry.hourTypeId,
+      hourType1: entry.hourTypeId,
+      hours1: entry.hours.toString(),
+      hourType2: "",
+      hours2: "",
+      hourType3: "",
+      hours3: "",
+      hourType4: "",
+      hours4: "",
       provinceId: entry.provinceId,
       date: entry.date,
-      hours: entry.hours.toString(),
       loaCount: entry.loaCount?.toString() || "",
       title: entry.title || "",
       billableWageUsed: entry.billableWageUsed?.toString() || "0",
       costWageUsed: entry.costWageUsed?.toString() || "0",
       description: entry.description || "",
     });
-    setFormError("");
-
-    // Scroll to form
-    const formElement = document.getElementById("time-entry-form");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
   };
 
   const handleCancelEdit = () => {
@@ -282,7 +368,7 @@ export function TimeEntryForm() {
           <CardDescription>
             {editingEntry
               ? "Update the time entry details"
-              : "Record hours worked for an employee with custom wage rates"}
+              : "Record hours worked for an employee with custom wage rates - multiple hour types will create separate entries"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -373,30 +459,6 @@ export function TimeEntryForm() {
                 </Select>
               </div>
 
-              {/* Hour Type Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="hourType" className="text-sm font-medium">
-                  Hour Type *
-                </Label>
-                <Select
-                  value={formData.hourTypeId}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, hourTypeId: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select hour type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {hourTypes.map((hourType) => (
-                      <SelectItem key={hourType.id} value={hourType.id}>
-                        {hourType.name} (x{hourType.multiplier})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
               {/* Province Selection */}
               <div className="space-y-2">
                 <Label htmlFor="province" className="text-sm font-medium">
@@ -437,26 +499,7 @@ export function TimeEntryForm() {
                 />
               </div>
 
-              {/* Hours */}
-              <div className="space-y-2">
-                <Label htmlFor="hours" className="text-sm font-medium">
-                  Hours
-                </Label>
-                <Input
-                  id="hours"
-                  type="number"
-                  step="0.25"
-                  min="0"
-                  max="24"
-                  value={formData.hours}
-                  onChange={(e) =>
-                    setFormData({ ...formData, hours: e.target.value })
-                  }
-                  placeholder="8.0"
-                />
-              </div>
-
-              {/* LOA Count */}
+              {/* Live Out Allowance Count */}
               <div className="space-y-2">
                 <Label htmlFor="loaCount" className="text-sm font-medium">
                   Live Out Allowance Count
@@ -473,10 +516,194 @@ export function TimeEntryForm() {
                   placeholder="0"
                 />
                 <p className="text-xs text-gray-500">
-                  Live Out Allowance count ($200 per LOA)
+                  Live Out Allowance count ($200 per LOA) - applies to first
+                  entry only
                 </p>
               </div>
+            </div>
 
+            {/* Hour Type and Hours Section */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">
+                Hour Types & Hours
+              </Label>
+              <p className="text-sm text-gray-600">
+                Enter hours for each hour type. Each filled hour type will
+                create a separate time entry.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Hour Type 1 */}
+                <div className="space-y-2">
+                  <Label htmlFor="hourType1" className="text-sm font-medium">
+                    Hour Type 1
+                  </Label>
+                  <Select
+                    value={formData.hourType1}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, hourType1: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select hour type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hourTypes.map((hourType) => (
+                        <SelectItem key={hourType.id} value={hourType.id}>
+                          {hourType.name} (x{hourType.multiplier})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="hours1" className="text-sm font-medium">
+                    Hours 1
+                  </Label>
+                  <Input
+                    id="hours1"
+                    type="number"
+                    step="0.25"
+                    min="0"
+                    max="24"
+                    value={formData.hours1}
+                    onChange={(e) =>
+                      setFormData({ ...formData, hours1: e.target.value })
+                    }
+                    placeholder="8.0"
+                  />
+                </div>
+
+                {/* Hour Type 2 */}
+                <div className="space-y-2">
+                  <Label htmlFor="hourType2" className="text-sm font-medium">
+                    Hour Type 2
+                  </Label>
+                  <Select
+                    value={formData.hourType2}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, hourType2: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select hour type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hourTypes.map((hourType) => (
+                        <SelectItem key={hourType.id} value={hourType.id}>
+                          {hourType.name} (x{hourType.multiplier})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="hours2" className="text-sm font-medium">
+                    Hours 2
+                  </Label>
+                  <Input
+                    id="hours2"
+                    type="number"
+                    step="0.25"
+                    min="0"
+                    max="24"
+                    value={formData.hours2}
+                    onChange={(e) =>
+                      setFormData({ ...formData, hours2: e.target.value })
+                    }
+                    placeholder="0.0"
+                  />
+                </div>
+
+                {/* Hour Type 3 */}
+                <div className="space-y-2">
+                  <Label htmlFor="hourType3" className="text-sm font-medium">
+                    Hour Type 3
+                  </Label>
+                  <Select
+                    value={formData.hourType3}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, hourType3: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select hour type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hourTypes.map((hourType) => (
+                        <SelectItem key={hourType.id} value={hourType.id}>
+                          {hourType.name} (x{hourType.multiplier})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="hours3" className="text-sm font-medium">
+                    Hours 3
+                  </Label>
+                  <Input
+                    id="hours3"
+                    type="number"
+                    step="0.25"
+                    min="0"
+                    max="24"
+                    value={formData.hours3}
+                    onChange={(e) =>
+                      setFormData({ ...formData, hours3: e.target.value })
+                    }
+                    placeholder="0.0"
+                  />
+                </div>
+
+                {/* Hour Type 4 */}
+                <div className="space-y-2">
+                  <Label htmlFor="hourType4" className="text-sm font-medium">
+                    Hour Type 4
+                  </Label>
+                  <Select
+                    value={formData.hourType4}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, hourType4: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select hour type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hourTypes.map((hourType) => (
+                        <SelectItem key={hourType.id} value={hourType.id}>
+                          {hourType.name} (x{hourType.multiplier})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="hours4" className="text-sm font-medium">
+                    Hours 4
+                  </Label>
+                  <Input
+                    id="hours4"
+                    type="number"
+                    step="0.25"
+                    min="0"
+                    max="24"
+                    value={formData.hours4}
+                    onChange={(e) =>
+                      setFormData({ ...formData, hours4: e.target.value })
+                    }
+                    placeholder="0.0"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Billable Wage */}
               <div className="space-y-2">
                 <Label
@@ -500,16 +727,16 @@ export function TimeEntryForm() {
                       })
                     }
                     className="pl-10"
-                    placeholder="45.00"
+                    placeholder="65.00"
                     required
                   />
                 </div>
                 {selectedEmployee &&
-                  selectedEmployee.billableWage !==
-                    parseFloat(formData.billableWageUsed) &&
-                  formData.billableWageUsed && (
-                    <p className="text-xs text-green-600">
-                      Default: ${selectedEmployee.billableWage.toFixed(2)}/hr
+                  parseFloat(formData.billableWageUsed) &&
+                  parseFloat(formData.billableWageUsed) !==
+                    selectedEmployee.billableWage && (
+                    <p className="text-xs text-blue-600">
+                      Default rate: ${selectedEmployee.billableWage.toFixed(2)}
                     </p>
                   )}
               </div>
@@ -520,7 +747,7 @@ export function TimeEntryForm() {
                   Cost Rate *
                 </Label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
+                  <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
                   <Input
                     id="costWageUsed"
                     type="number"
@@ -528,19 +755,22 @@ export function TimeEntryForm() {
                     min="0"
                     value={formData.costWageUsed}
                     onChange={(e) =>
-                      setFormData({ ...formData, costWageUsed: e.target.value })
+                      setFormData({
+                        ...formData,
+                        costWageUsed: e.target.value,
+                      })
                     }
                     className="pl-10"
-                    placeholder="25.00"
+                    placeholder="45.00"
                     required
                   />
                 </div>
                 {selectedEmployee &&
-                  selectedEmployee.costWage !==
-                    parseFloat(formData.costWageUsed) &&
-                  formData.costWageUsed && (
-                    <p className="text-xs text-red-600">
-                      Default: ${selectedEmployee.costWage.toFixed(2)}/hr
+                  parseFloat(formData.costWageUsed) &&
+                  parseFloat(formData.costWageUsed) !==
+                    selectedEmployee.costWage && (
+                    <p className="text-xs text-blue-600">
+                      Default rate: ${selectedEmployee.costWage.toFixed(2)}
                     </p>
                   )}
               </div>
@@ -549,7 +779,7 @@ export function TimeEntryForm() {
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description" className="text-sm font-medium">
-                Description (Optional)
+                Description
               </Label>
               <Textarea
                 id="description"
@@ -557,26 +787,34 @@ export function TimeEntryForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="Brief description of work performed..."
+                placeholder="Optional description of work performed"
                 rows={3}
               />
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 pt-4">
-              <Button type="submit" className="flex-1">
-                <Save className="h-4 w-4 mr-2" />
-                {editingEntry ? "Update Entry" : "Log Time"}
+            {/* Submit Button */}
+            <div className="flex gap-2">
+              <Button type="submit" disabled={isSubmitting} className="flex-1">
+                {isSubmitting ? (
+                  <>
+                    <Activity className="h-4 w-4 mr-2 animate-spin" />
+                    {editingEntry ? "Updating..." : "Creating Entries..."}
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    {editingEntry ? "Update Entry" : "Log Time"}
+                  </>
+                )}
               </Button>
               {editingEntry && (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancelEdit}
-                  className="flex-1"
                 >
                   <X className="h-4 w-4 mr-2" />
-                  Cancel Edit
+                  Cancel
                 </Button>
               )}
             </div>
@@ -584,200 +822,149 @@ export function TimeEntryForm() {
         </CardContent>
       </Card>
 
-      {/* Recent Time Entries */}
+      {/* Recent Entries Table */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
+            <Clock className="h-5 w-5" />
             Recent Time Entries
           </CardTitle>
           <CardDescription>
-            Your recent time entries (sorted by latest input). Click on an entry
-            to edit.
-            {!showAllEntries && recentEntries.length > 10 && (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={() => setShowAllEntries(true)}
-                className="p-0 ml-2 h-auto text-blue-600 underline"
-              >
-                Show all {recentEntries.length} entries
-              </Button>
-            )}
-            {showAllEntries && (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={() => setShowAllEntries(false)}
-                className="p-0 ml-2 h-auto text-blue-600 underline"
-              >
-                Show fewer
-              </Button>
-            )}
+            Last 50 time entries, sorted by newest first
           </CardDescription>
         </CardHeader>
         <CardContent>
           {recentEntries.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">
-              No time entries yet. Log your first entry above!
+            <p className="text-gray-500 text-center py-8">
+              No time entries yet. Add your first entry above!
             </p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
                     <TableHead>Employee</TableHead>
-                    <TableHead>Title</TableHead>
                     <TableHead>Job</TableHead>
-                    <TableHead>Type</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Hour Type</TableHead>
                     <TableHead>Hours</TableHead>
                     <TableHead className="text-purple-600">
                       Live Out Allowance
                     </TableHead>
-                    <TableHead>Billable</TableHead>
-                    <TableHead>Cost</TableHead>
+                    <TableHead>Total Cost</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {(showAllEntries
-                    ? recentEntries
-                    : recentEntries.slice(0, 10)
-                  ).map((entry) => {
+                  {recentEntries.map((entry) => {
                     const employee = employees.find(
                       (emp) => emp.id === entry.employeeId,
                     );
-                    const job = jobs.find((j) => j.id === entry.jobId);
+                    const job = jobs.find((job) => job.id === entry.jobId);
                     const hourType = hourTypes.find(
                       (ht) => ht.id === entry.hourTypeId,
                     );
                     const province = provinces.find(
-                      (p) => p.id === entry.provinceId,
+                      (prov) => prov.id === entry.provinceId,
                     );
 
-                    const billableWageChanged =
-                      employee &&
-                      entry.billableWageUsed !== employee.billableWage;
-                    const costWageChanged =
-                      employee && entry.costWageUsed !== employee.costWage;
-
                     return (
-                      <TableRow
-                        key={entry.id}
-                        className={`cursor-pointer hover:bg-gray-50 ${
-                          editingEntry?.id === entry.id
-                            ? "bg-blue-50 border-l-4 border-l-blue-500"
-                            : ""
-                        }`}
-                        onClick={() => handleEdit(entry)}
-                      >
-                        <TableCell>{formatLocalDate(entry.date)}</TableCell>
-                        <TableCell>{employee?.name || "Unknown"}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <span>
-                              {entry.title || employee?.title || "Unknown"}
-                            </span>
-                            {entry.title && entry.title !== employee?.title && (
-                              <Badge variant="outline" className="text-xs">
-                                Modified
-                              </Badge>
-                            )}
+                      <TableRow key={entry.id}>
+                        <TableCell className="font-medium">
+                          <div>
+                            <p>{employee?.name || "Unknown"}</p>
+                            <p className="text-sm text-gray-500">
+                              {entry.title}
+                            </p>
                           </div>
                         </TableCell>
                         <TableCell>
-                          {job?.jobNumber || "Unknown"} -{" "}
-                          {job?.name || "Unknown"}
+                          <div>
+                            <p className="font-medium">
+                              {job?.jobNumber || "Unknown"}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {job?.name || ""}
+                            </p>
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="secondary">
+                          {formatLocalDate(entry.date, {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
                             {hourType?.name || "Unknown"}
                           </Badge>
                         </TableCell>
-                        <TableCell>{entry.hours}h</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium">
+                              {entry.hours.toFixed(2)}h
+                            </span>
+                          </div>
+                        </TableCell>
                         <TableCell>
                           {entry.loaCount && entry.loaCount > 0 ? (
-                            <div className="flex items-center gap-1">
-                              <Badge
-                                variant="secondary"
-                                className="bg-purple-100 text-purple-800"
-                              >
-                                {entry.loaCount}
-                              </Badge>
-                              <span className="text-xs text-purple-600 font-medium">
+                            <div className="text-purple-600">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                <span className="font-medium">
+                                  {entry.loaCount}
+                                </span>
+                              </div>
+                              <div className="text-xs">
                                 ${(entry.loaCount * 200).toFixed(2)}
-                              </span>
+                              </div>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-sm">—</span>
+                            <span className="text-gray-400">—</span>
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1">
-                            <span className="text-green-600 font-medium">
-                              ${entry.billableWageUsed?.toFixed(2) || "0.00"}
-                            </span>
-                            {billableWageChanged && (
-                              <Badge variant="outline" className="text-xs">
-                                Modified
-                              </Badge>
-                            )}
+                          <div className="text-green-600 font-medium">
+                            $
+                            {(
+                              entry.hours *
+                                entry.billableWageUsed *
+                                (hourType?.multiplier || 1) +
+                              (entry.loaCount || 0) * 200
+                            ).toFixed(2)}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-1">
-                            <span className="text-red-600 font-medium">
-                              ${entry.costWageUsed?.toFixed(2) || "0.00"}
-                            </span>
-                            {costWageChanged && (
-                              <Badge variant="outline" className="text-xs">
-                                Modified
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
+                          <div className="flex gap-1">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEdit(entry);
-                              }}
+                              onClick={() => handleEdit(entry)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
+                                <Button variant="ghost" size="sm">
                                   <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-red-600">
-                                    ⚠️ Delete Time Entry
+                                  <AlertDialogTitle>
+                                    Delete Entry
                                   </AlertDialogTitle>
-                                  <AlertDialogDescription className="text-lg font-semibold text-red-700">
-                                    If Deleted, This Time Entry Will Be Gone
-                                    FOREVER AND EVER AND EVER!
-                                  </AlertDialogDescription>
-                                  <AlertDialogDescription className="text-sm text-gray-600 mt-2">
-                                    Time entry for {employee?.name} on{" "}
-                                    {entry.date} - {entry.hours} hours
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete this time
+                                    entry? This action cannot be undone.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                                   <AlertDialogAction
                                     onClick={() => handleDelete(entry)}
-                                    className="bg-red-500 hover:bg-red-600"
                                   >
                                     Delete
                                   </AlertDialogAction>
