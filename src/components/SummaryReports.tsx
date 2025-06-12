@@ -58,10 +58,10 @@ const calculateDSPEarnings = (
 };
 
 // Helper function to calculate 5% GST for non-employee categories
-const calculateGST = (employee: any, totalRevenue: number): number => {
+const calculateGST = (employee: any, totalBillable: number): number => {
   // Apply 5% GST to employees marked as anything other than "Employee"
-  if (employee.category && employee.category !== "employee") {
-    return totalRevenue * 0.05;
+  if (employee?.category && employee.category !== "employee") {
+    return totalBillable * 0.05;
   }
   return 0;
 };
@@ -167,8 +167,8 @@ export function SummaryReports() {
 
   // Calculate summary statistics with memoization
   const summaryStats = useMemo(() => {
-    const totalRevenue = filteredSummaries.reduce(
-      (sum, summary) => sum + (summary.totalCost || 0),
+    const totalBillable = filteredSummaries.reduce(
+      (sum, summary) => sum + (summary.totalBillable || 0),
       0,
     );
 
@@ -182,17 +182,17 @@ export function SummaryReports() {
       0,
     );
 
-    const rentalRevenue = filteredRentalSummaries.reduce(
-      (sum, rental) => sum + (rental.totalCost || 0),
+    const rentalBillable = filteredRentalSummaries.reduce(
+      (sum, rental) => sum + (rental.totalBillable || 0),
       0,
     );
 
     return {
-      totalRevenue,
+      totalBillable,
       totalHours,
       totalEffectiveHours,
-      rentalRevenue,
-      totalCombinedRevenue: totalRevenue + rentalRevenue,
+      rentalBillable,
+      totalCombinedBillable: totalBillable + rentalBillable,
     };
   }, [filteredSummaries, filteredRentalSummaries]);
 
@@ -207,7 +207,7 @@ export function SummaryReports() {
             employeeTitle: summary.employeeTitle,
             totalHours: 0,
             totalEffectiveHours: 0,
-            totalCost: 0,
+            totalBillable: 0,
             totalLoaCount: 0,
             entries: [],
             hourTypeBreakdown: {},
@@ -217,7 +217,7 @@ export function SummaryReports() {
         const group = acc[key];
         group.totalHours += summary.hours || 0;
         group.totalEffectiveHours += summary.effectiveHours || 0;
-        group.totalCost += summary.totalCost || 0;
+        group.totalBillable += summary.totalBillable || 0;
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
 
@@ -229,7 +229,7 @@ export function SummaryReports() {
           group.hourTypeBreakdown[hourTypeName] = {
             hours: 0,
             effectiveHours: 0,
-            cost: 0,
+            billable: 0,
             provinces: {},
           };
         }
@@ -237,13 +237,14 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
           summary.effectiveHours || 0;
-        group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+        group.hourTypeBreakdown[hourTypeName].billable +=
+          summary.totalBillable || 0;
 
         if (!group.hourTypeBreakdown[hourTypeName].provinces[provinceName]) {
           group.hourTypeBreakdown[hourTypeName].provinces[provinceName] = {
             hours: 0,
             effectiveHours: 0,
-            cost: 0,
+            billable: 0,
           };
         }
 
@@ -252,8 +253,9 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].provinces[
           provinceName
         ].effectiveHours += summary.effectiveHours || 0;
-        group.hourTypeBreakdown[hourTypeName].provinces[provinceName].cost +=
-          summary.totalCost || 0;
+        group.hourTypeBreakdown[hourTypeName].provinces[
+          provinceName
+        ].billable += summary.totalBillable || 0;
 
         return acc;
       },
@@ -277,7 +279,7 @@ export function SummaryReports() {
             jobName: summary.jobName,
             totalHours: 0,
             totalEffectiveHours: 0,
-            totalCost: 0,
+            totalBillable: 0,
             totalLoaCount: 0,
             entries: [],
             hourTypeBreakdown: {},
@@ -287,7 +289,7 @@ export function SummaryReports() {
         const group = acc[key];
         group.totalHours += summary.hours || 0;
         group.totalEffectiveHours += summary.effectiveHours || 0;
-        group.totalCost += summary.totalCost || 0;
+        group.totalBillable += summary.totalBillable || 0;
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
 
@@ -297,14 +299,15 @@ export function SummaryReports() {
           group.hourTypeBreakdown[hourTypeName] = {
             hours: 0,
             effectiveHours: 0,
-            cost: 0,
+            billable: 0,
           };
         }
 
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
           summary.effectiveHours || 0;
-        group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+        group.hourTypeBreakdown[hourTypeName].billable +=
+          summary.totalBillable || 0;
 
         return acc;
       },
@@ -328,7 +331,7 @@ export function SummaryReports() {
             employeeTitle: summary.employeeTitle,
             totalHours: 0,
             totalEffectiveHours: 0,
-            totalCost: 0,
+            totalBillable: 0,
             totalLoaCount: 0,
             entries: [],
             hourTypeBreakdown: {},
@@ -338,7 +341,7 @@ export function SummaryReports() {
         const group = acc[key];
         group.totalHours += summary.hours || 0;
         group.totalEffectiveHours += summary.effectiveHours || 0;
-        group.totalCost += summary.totalCost || 0;
+        group.totalBillable += summary.totalBillable || 0;
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
 
@@ -348,14 +351,15 @@ export function SummaryReports() {
           group.hourTypeBreakdown[hourTypeName] = {
             hours: 0,
             effectiveHours: 0,
-            cost: 0,
+            billable: 0,
           };
         }
 
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
           summary.effectiveHours || 0;
-        group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+        group.hourTypeBreakdown[hourTypeName].billable +=
+          summary.totalBillable || 0;
 
         return acc;
       },
@@ -385,7 +389,7 @@ export function SummaryReports() {
         : null;
 
       // Calculate GST for non-employee categories
-      const gstAmount = calculateGST(employee, emp.totalCost);
+      const gstAmount = calculateGST(employee, emp.totalBillable);
 
       return {
         ...emp,
@@ -517,7 +521,7 @@ export function SummaryReports() {
                 )}
               </div>
               <div className="text-orange-200">
-                ${(data.cost || 0).toFixed(2)}
+                ${(data.billable || 0).toFixed(2)}
               </div>
             </div>
           </div>
@@ -602,10 +606,10 @@ export function SummaryReports() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">
-                  Total Revenue
+                  Total Billable
                 </p>
                 <p className="text-2xl font-bold text-green-400">
-                  ${summaryStats.totalRevenue.toFixed(2)}
+                  ${summaryStats.totalBillable.toFixed(2)}
                 </p>
               </div>
               <DollarSign className="h-8 w-8 text-green-400" />
@@ -632,10 +636,10 @@ export function SummaryReports() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">
-                  Rental Revenue
+                  Rental Billable
                 </p>
                 <p className="text-2xl font-bold text-purple-400">
-                  ${summaryStats.rentalRevenue.toFixed(2)}
+                  ${summaryStats.rentalBillable.toFixed(2)}
                 </p>
               </div>
               <Truck className="h-8 w-8 text-purple-400" />
@@ -894,7 +898,7 @@ export function SummaryReports() {
                             Live Out Allowance Count
                           </TableHead>
                           <TableHead className="text-gray-200 font-semibold">
-                            Total Revenue
+                            Total Billable
                           </TableHead>
                           <TableHead className="text-gray-200 font-semibold">
                             GST (5%)
@@ -997,7 +1001,7 @@ export function SummaryReports() {
                                   <div className="flex items-center gap-1">
                                     <DollarSign className="h-4 w-4 text-green-600" />
                                     <span className="font-bold text-green-400">
-                                      ${employee.totalCost.toFixed(2)}
+                                      ${employee.totalBillable.toFixed(2)}
                                     </span>
                                   </div>
                                 </TableCell>
@@ -1011,7 +1015,7 @@ export function SummaryReports() {
                                         </span>
                                       </div>
                                       <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
-                                        5% GST on revenue
+                                        5% GST on billable
                                       </div>
                                       {employee.subordinateGstTotal > 0 && (
                                         <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
@@ -1150,7 +1154,7 @@ export function SummaryReports() {
                           <TableCell className="text-green-400 font-bold text-lg">
                             $
                             {hierarchicalEmployeeSummaries
-                              .reduce((sum, e) => sum + e.totalCost, 0)
+                              .reduce((sum, e) => sum + e.totalBillable, 0)
                               .toFixed(2)}
                           </TableCell>
                           <TableCell className="text-purple-400 font-bold text-lg">
