@@ -503,11 +503,18 @@ export function InvoiceManagement() {
                     <SelectItem value="invoicePercentage">
                       Invoice Progress
                     </SelectItem>
+                    <SelectItem value="paidPercentage">
+                      Payment Progress
+                    </SelectItem>
                     <SelectItem value="uninvoicedDates">
                       Uninvoiced Dates
                     </SelectItem>
+                    <SelectItem value="unpaidDates">Unpaid Dates</SelectItem>
                     <SelectItem value="uninvoicedBillable">
                       Uninvoiced Amount
+                    </SelectItem>
+                    <SelectItem value="unpaidBillable">
+                      Unpaid Amount
                     </SelectItem>
                   </SelectContent>
                 </Select>
