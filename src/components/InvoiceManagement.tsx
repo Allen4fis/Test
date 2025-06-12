@@ -453,6 +453,13 @@ export function InvoiceManagement() {
     sortDirection,
   ]);
 
+  // Pagination for job stats
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const pagination = usePagination({
+    data: filteredAndSortedJobStats,
+    itemsPerPage,
+  });
+
   const toggleJobPaidStatus = (job: Job) => {
     const jobDates = getJobDates(job);
     const allDates = jobDates.map((d) => d.date);
