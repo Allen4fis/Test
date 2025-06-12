@@ -401,7 +401,7 @@ export function InvoiceManagement() {
       });
     } else {
       toast({
-        title: "���️ No Dates to Invoice",
+        title: "ℹ️ No Dates to Invoice",
         description:
           "All dates in the selected range are already marked as invoiced.",
         variant: "default",
@@ -749,6 +749,33 @@ export function InvoiceManagement() {
                             className="bg-primary h-2 rounded-full transition-all duration-300"
                             style={{ width: `${stat.invoicePercentage}%` }}
                           />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-2">
+                        <Badge
+                          className={getPaidStatusColor(stat.paidPercentage)}
+                        >
+                          {stat.paidPercentage.toFixed(0)}% Paid
+                        </Badge>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div
+                            className="bg-purple-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${stat.paidPercentage}%` }}
+                          />
+                        </div>
+                        <div className="flex items-center gap-2 pt-1">
+                          <Switch
+                            checked={stat.paidPercentage >= 100}
+                            onCheckedChange={() =>
+                              toggleJobPaidStatus(stat.job)
+                            }
+                            className="scale-75"
+                          />
+                          <span className="text-xs text-muted-foreground">
+                            Mark as Paid
+                          </span>
                         </div>
                       </div>
                     </TableCell>
