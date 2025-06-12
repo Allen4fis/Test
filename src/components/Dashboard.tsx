@@ -481,15 +481,37 @@ export function Dashboard() {
             <div className="text-sm text-gray-400">
               Last updated: {new Date().toLocaleString()}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.location.reload()}
-              className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 smooth-transition"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log("🔍 Autosave Status Check:");
+                  console.log("📊 Current autosave info:", autosaveInfo);
+                  const autosaves = localStorage.getItem(
+                    "timeTrackingApp-autosave",
+                  );
+                  if (autosaves) {
+                    console.log("💾 Raw autosave data:", JSON.parse(autosaves));
+                  } else {
+                    console.log("❌ No autosave data found in localStorage");
+                  }
+                }}
+                className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-blue-500/20 hover:border-blue-400 smooth-transition"
+              >
+                <Activity className="h-4 w-4 mr-2" />
+                Test Autosave
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.reload()}
+                className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 smooth-transition"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
