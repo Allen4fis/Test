@@ -244,11 +244,13 @@ export function TimeEntryForm() {
         updateTimeEntry(editingEntry.id, entryData);
         resetForm();
       } else {
-        // For new entries, create multiple entries with delays
+        // For new entries, create multiple entries with proper sequencing
         for (let i = 0; i < hourEntries.length; i++) {
           const entry = hourEntries[i];
           const hours = parseFloat(entry.hours);
 
+          // Create base timestamp and add offset for each entry to ensure uniqueness
+          const baseTime = Date.now();
           const entryData = {
             employeeId: formData.employeeId,
             jobId: formData.jobId,
@@ -263,12 +265,13 @@ export function TimeEntryForm() {
             description: formData.description,
           };
 
-          // Await the entry creation to ensure it completes before the next one
-          await new Promise((resolve) => {
-            addTimeEntry(entryData);
-            // Add extra delay to ensure the entry is fully processed
-            setTimeout(resolve, 750); // Increased to 0.75 seconds for safety
-          });
+          // Add the entry
+          addTimeEntry(entryData);
+
+          // Wait before creating the next entry to ensure proper sequencing
+          if (i < hourEntries.length - 1) {
+            await delay(600); // 0.6 second delay between entries
+          }
         }
 
         // If only LOA and no hours, create a single entry with 0 hours
