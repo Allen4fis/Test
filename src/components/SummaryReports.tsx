@@ -65,6 +65,9 @@ const getLastNDays = (days: number) => {
   };
 };
 
+// Alias for quick date range buttons
+const getDateRange = getLastNDays;
+
 // Helper function to format date range for display
 const formatDateRange = (start: string, end: string) => {
   const startDate = parseLocalDate(start);
