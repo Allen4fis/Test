@@ -209,6 +209,13 @@ export function EmployeeManagement() {
     });
   }, [employees, sortBy, sortDirection]);
 
+  // Pagination for employees
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const pagination = usePagination({
+    data: sortedEmployees,
+    itemsPerPage,
+  });
+
   // Get direct reports for an employee (who works under them)
   const getDirectReports = (employeeId: string) => {
     return employees.filter((emp) => emp.managerId === employeeId);
