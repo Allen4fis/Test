@@ -59,6 +59,7 @@ import {
   User,
   TrendingUp,
   BarChart3,
+  ArrowUpDown,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { RentalItem, RentalEntry } from "@/types";
