@@ -632,7 +632,7 @@ export function InvoiceManagement() {
                   $
                   {jobStats
                     .reduce((sum, stat) => sum + stat.paidBillable, 0)
-                    .toFixed(0)}
+                    .toFixed(2)}
                 </p>
               </div>
               <CreditCard className="h-8 w-8 text-purple-400" />
