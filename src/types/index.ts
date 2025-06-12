@@ -16,6 +16,7 @@ export interface Job {
   name: string;
   description?: string;
   isActive: boolean;
+  isBillable: boolean; // true for billable jobs, false for non-billable (cost-only) jobs
   invoicedDates: string[]; // Array of dates in YYYY-MM-DD format
   paidDates: string[]; // Array of dates in YYYY-MM-DD format that have been paid
   createdAt: string;
