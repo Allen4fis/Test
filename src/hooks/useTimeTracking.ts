@@ -112,11 +112,12 @@ export function useTimeTracking() {
   const appData = useMemo(() => {
     const migratedData = { ...rawAppData };
 
-    // Add invoicedDates and paidDates to existing jobs that don't have them
+    // Add invoicedDates, paidDates, and isBillable to existing jobs that don't have them
     migratedData.jobs = rawAppData.jobs.map((job) => ({
       ...job,
       invoicedDates: job.invoicedDates || [],
       paidDates: (job as any).paidDates || [],
+      isBillable: job.isBillable ?? true, // Default to billable for backward compatibility
     }));
 
     // Migrate employees from single hourlyWage to billableWage/costWage
