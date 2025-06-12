@@ -1463,7 +1463,7 @@ export function RentalManagement() {
                                   </span>
                                 </div>
                               ) : (
-                                <span className="text-gray-400">���</span>
+                                <span className="text-gray-400">—</span>
                               )}
                             </TableCell>
                             <TableCell>
@@ -1563,78 +1563,67 @@ export function RentalManagement() {
                   </h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Rental Item:{" "}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">Rental Item: </span>
                       <span className="font-medium">
-                        {rentalItems.find(
-                          (item) => item.id === editingEntry.rentalItemId,
-                        )?.name || "Unknown"}
+                        {(() => {
+                          const item = rentalItems.find(item => item.id === editingEntry.rentalItemId);
+                          return item ? item.name : `Unknown (${editingEntry.rentalItemId})`;
+                        })()}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Job:{" "}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">Job: </span>
                       <span className="font-medium">
-                        {jobs.find((job) => job.id === editingEntry.jobId)
-                          ?.jobNumber || "Unknown"}{" "}
-                        -{" "}
-                        {jobs.find((job) => job.id === editingEntry.jobId)
-                          ?.name || ""}
+                        {(() => {
+                          const job = jobs.find(job => job.id === editingEntry.jobId);
+                          return job ? `${job.jobNumber} - ${job.name}` : `Unknown (${editingEntry.jobId})`;
+                        })()}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Employee:{" "}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">Employee: </span>
                       <span className="font-medium">
-                        {editingEntry.employeeId
-                          ? employees.find(
-                              (emp) => emp.id === editingEntry.employeeId,
-                            )?.name || "Unknown"
-                          : "No Employee"}
+                        {editingEntry.employeeId ? (() => {
+                          const employee = employees.find(emp => emp.id === editingEntry.employeeId);
+                          return employee ? employee.name : `Unknown (${editingEntry.employeeId})`;
+                        })() : "No Employee"}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Period:{" "}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">Period: </span>
                       <span className="font-medium">
                         {editingEntry.startDate} to {editingEntry.endDate}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Quantity:{" "}
-                      </span>
-                      <span className="font-medium">
-                        {editingEntry.quantity}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">Quantity: </span>
+                      <span className="font-medium">{editingEntry.quantity}</span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        DSP Rate:{" "}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">DSP Rate: </span>
                       <span className="font-medium">
                         ${editingEntry.dspRate?.toFixed(2) || "0.00"}
                       </span>
                     </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Rate Used: </span>
+                      <span className="font-medium">
+                        ${editingEntry.rateUsed?.toFixed(2) || "0.00"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Billing Unit: </span>
+                      <span className="font-medium">{editingEntry.billingUnit}</span>
+                    </div>
                     {editingEntry.description && (
                       <div className="col-span-2">
-                        <span className="text-gray-600 dark:text-gray-400">
-                          Description:{" "}
-                        </span>
-                        <span className="font-medium">
-                          {editingEntry.description}
-                        </span>
+                        <span className="text-gray-600 dark:text-gray-400">Description: </span>
+                        <span className="font-medium">{editingEntry.description}</span>
                       </div>
                     )}
                   </div>
                 </div>
               )}
-              <form onSubmit={handleEntrySubmit}>
-                <div className="border-t pt-4">
                   <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-3">
                     Edit Fields:
                   </h4>
