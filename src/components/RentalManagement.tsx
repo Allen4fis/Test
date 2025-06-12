@@ -1809,8 +1809,20 @@ export function RentalManagement() {
                               Total Billable
                             </p>
                             <p className="text-2xl font-bold text-purple-900">
-                              ${(sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalBillable, 0) /
-                                Math.max(sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalEntries, 0), 1)).toFixed(2)}
+                              $
+                              {(
+                                sortedRentalBillableAnalytics.reduce(
+                                  (sum, item) => sum + item.totalBillable,
+                                  0,
+                                ) /
+                                Math.max(
+                                  sortedRentalBillableAnalytics.reduce(
+                                    (sum, item) => sum + item.totalEntries,
+                                    0,
+                                  ),
+                                  1,
+                                )
+                              ).toFixed(2)}
                             </p>
                           </div>
                           <DollarSign className="h-8 w-8 text-green-600" />
@@ -1826,7 +1838,10 @@ export function RentalManagement() {
                               Total Entries
                             </p>
                             <p className="text-2xl font-bold text-blue-900">
-                              {sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalEntries, 0)}
+                              {sortedRentalBillableAnalytics.reduce(
+                                (sum, item) => sum + item.totalEntries,
+                                0,
+                              )}
                             </p>
                           </div>
                           <BarChart3 className="h-8 w-8 text-blue-600" />
@@ -1841,14 +1856,15 @@ export function RentalManagement() {
                             <p className="text-sm font-medium text-purple-700">
                               Avg Per Entry
                             </p>
-                            <p className="text-2xl font-bold text-green-900">
-                              ${sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalBillable, 0).toFixed(2)}
-                            </p>
+                            <p className="text-2xl font-bold text-purple-900">
+                              $
+                              {(
+                                sortedRentalBillableAnalytics.reduce(
                                   (sum, item) => sum + item.totalBillable,
                                   0,
                                 ) /
                                 Math.max(
-                                  rentalBillableAnalytics.reduce(
+                                  sortedRentalBillableAnalytics.reduce(
                                     (sum, item) => sum + item.totalEntries,
                                     0,
                                   ),
