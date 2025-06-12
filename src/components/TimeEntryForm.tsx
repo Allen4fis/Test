@@ -957,32 +957,41 @@ export function TimeEntryForm() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
+                            <DeleteConfirmationDialog
+                              item={{
+                                id: entry.id,
+                                name: `${employee?.name || "Unknown"} - ${formatLocalDate(entry.date)} - ${hourType?.name || "Unknown"}`,
+                                type: "time entry",
+                                associatedData: {
+                                  additionalInfo: [
+                                    `Employee: ${employee?.name || "Unknown"} (${entry.title})`,
+                                    `Job: ${job?.jobNumber || "Unknown"} - ${job?.name || ""}`,
+                                    `Date: ${formatLocalDate(entry.date)}`,
+                                    `Hours: ${entry.hours.toFixed(2)}h`,
+                                    `Hour Type: ${hourType?.name || "Unknown"}`,
+                                    `Province: ${province?.name || "Unknown"}`,
+                                    ...(entry.loaCount && entry.loaCount > 0
+                                      ? [
+                                          `LOA: ${entry.loaCount} ($${(entry.loaCount * 200).toFixed(2)})`,
+                                        ]
+                                      : []),
+                                    `Total Cost: $${(
+                                      entry.hours *
+                                        entry.billableWageUsed *
+                                        (hourType?.multiplier || 1) +
+                                      (entry.loaCount || 0) * 200
+                                    ).toFixed(2)}`,
+                                    `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
+                                  ],
+                                },
+                              }}
+                              trigger={
                                 <Button variant="ghost" size="sm">
                                   <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Delete Entry
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete this time
-                                    entry? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(entry)}
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                              }
+                              onConfirm={(entryId) => handleDelete(entry)}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>
