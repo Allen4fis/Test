@@ -67,8 +67,15 @@ const calculateDSPEarnings = (
 
 // Helper function to calculate 5% GST for non-employee categories
 const calculateGST = (employee: any, totalCost: number): number => {
-  // Apply 5% GST to employees marked as anything other than "Employee"
-  if (employee?.category && employee.category !== "employee") {
+  // Apply 5% GST to DSPs and contractors (anyone not explicitly marked as "employee")
+  if (employee?.category === "dsp") {
+    return totalCost * 0.05;
+  }
+  // Also apply GST to employees who have managers but no explicit category (subordinate contractors)
+  if (
+    employee?.managerId &&
+    (!employee.category || employee.category !== "employee")
+  ) {
     return totalCost * 0.05;
   }
   return 0;
