@@ -1095,7 +1095,6 @@ export function SummaryReports() {
               </div>
             </CardContent>
           </Card>
-          </Card>
         </TabsContent>
 
         {/* Time Analysis Tab */}
