@@ -30,6 +30,7 @@ import {
   BarChart3,
   Activity,
   DollarSign,
+  Trophy,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
