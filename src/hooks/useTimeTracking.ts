@@ -307,14 +307,25 @@ export function useTimeTracking() {
       const autosaves = JSON.parse(
         localStorage.getItem("timeTrackingApp-autosave") || "[]",
       );
-      return autosaves.map((save: any) => ({
-        timestamp: save.timestamp,
-        entriesCount: save.data?.timeEntries?.length || 0,
-        employeesCount: save.data?.employees?.length || 0,
-        jobsCount: save.data?.jobs?.length || 0,
-      }));
+
+      // Return object with lastSaveTime for Dashboard compatibility
+      return {
+        lastSaveTime: autosaves.length > 0 ? autosaves[0].timestamp : null,
+        autosaveCount: autosaves.length,
+        autosaves: autosaves.map((save: any) => ({
+          timestamp: save.timestamp,
+          entriesCount: save.data?.timeEntries?.length || 0,
+          employeesCount: save.data?.employees?.length || 0,
+          jobsCount: save.data?.jobs?.length || 0,
+          isManual: save.manual || false,
+        })),
+      };
     } catch {
-      return [];
+      return {
+        lastSaveTime: null,
+        autosaveCount: 0,
+        autosaves: [],
+      };
     }
   };
 
