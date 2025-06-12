@@ -1625,7 +1625,7 @@ export function RentalManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {billableAnalytics.map((item) => (
+                      {paginationAnalytics.paginatedData.map((item) => (
                         <TableRow key={item.rentalItem}>
                           <TableCell className="font-medium">
                             {item.rentalItem}
