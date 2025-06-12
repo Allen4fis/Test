@@ -250,7 +250,7 @@ export function Dashboard() {
               <div className="flex justify-between items-baseline">
                 <span className="text-sm text-gray-400">Cost:</span>
                 <span className="text-lg font-bold text-red-400">
-                  ${allTimeCombinedCost.toFixed(0)}
+                  ${allTimeCombinedCost.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between items-baseline">
