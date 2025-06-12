@@ -337,13 +337,25 @@ export function InvoiceManagement() {
           aValue = a.invoicePercentage;
           bValue = b.invoicePercentage;
           break;
+        case "paidPercentage":
+          aValue = a.paidPercentage;
+          bValue = b.paidPercentage;
+          break;
         case "uninvoicedDates":
           aValue = a.uninvoicedDates;
           bValue = b.uninvoicedDates;
           break;
+        case "unpaidDates":
+          aValue = a.unpaidDates;
+          bValue = b.unpaidDates;
+          break;
         case "uninvoicedBillable":
           aValue = a.uninvoicedBillable;
           bValue = b.uninvoicedBillable;
+          break;
+        case "unpaidBillable":
+          aValue = a.unpaidBillable;
+          bValue = b.unpaidBillable;
           break;
         default:
           aValue = a.job.jobNumber.toLowerCase();
