@@ -155,17 +155,30 @@ export function Dashboard({
     .filter((summary) => summary.hourTypeName !== "Live Out Allowance")
     .reduce((sum, summary) => sum + summary.hours, 0);
 
-  // Calculate all-time totals including LOA and rentals
-  const allTimeTotalCost = timeEntrySummaries.reduce(
+  // Filter for billable jobs only
+  const billableJobNumbers = jobs
+    .filter((job) => job.isBillable !== false)
+    .map((job) => job.jobNumber);
+
+  const billableTimeEntrySummaries = timeEntrySummaries.filter((summary) =>
+    billableJobNumbers.includes(summary.jobNumber),
+  );
+
+  const billableRentalSummaries = rentalSummaries.filter((rental) =>
+    billableJobNumbers.includes(rental.jobNumber),
+  );
+
+  // Calculate all-time totals including LOA and rentals (billable jobs only)
+  const allTimeTotalCost = billableTimeEntrySummaries.reduce(
     (sum, summary) => sum + summary.totalCost,
     0,
   );
-  const allTimeRentalCost = rentalSummaries.reduce(
+  const allTimeRentalCost = billableRentalSummaries.reduce(
     (sum, rental) => sum + rental.totalCost,
     0,
   );
   const allTimeTotalBillable =
-    timeEntrySummaries.reduce(
+    billableTimeEntrySummaries.reduce(
       (sum, summary) =>
         sum + (summary.totalBillableAmount || summary.totalCost),
       0,
