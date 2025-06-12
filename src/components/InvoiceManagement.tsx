@@ -563,15 +563,120 @@ export function InvoiceManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Job Number</TableHead>
-                  <TableHead>Job Name</TableHead>
-                  <TableHead>Invoice Status</TableHead>
-                  <TableHead>Dates</TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gray-50 select-none"
+                    onClick={() => {
+                      if (sortBy === "jobNumber") {
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        );
+                      } else {
+                        setSortBy("jobNumber");
+                        setSortDirection("asc");
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-1">
+                      Job Number
+                      {sortBy === "jobNumber" && (
+                        <span className="text-blue-500">
+                          {sortDirection === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gray-50 select-none"
+                    onClick={() => {
+                      if (sortBy === "jobName") {
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        );
+                      } else {
+                        setSortBy("jobName");
+                        setSortDirection("asc");
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-1">
+                      Job Name
+                      {sortBy === "jobName" && (
+                        <span className="text-blue-500">
+                          {sortDirection === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gray-50 select-none"
+                    onClick={() => {
+                      if (sortBy === "invoicePercentage") {
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        );
+                      } else {
+                        setSortBy("invoicePercentage");
+                        setSortDirection("desc"); // Default to highest progress first
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-1">
+                      Invoice Status
+                      {sortBy === "invoicePercentage" && (
+                        <span className="text-blue-500">
+                          {sortDirection === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gray-50 select-none"
+                    onClick={() => {
+                      if (sortBy === "uninvoicedDates") {
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        );
+                      } else {
+                        setSortBy("uninvoicedDates");
+                        setSortDirection("desc"); // Default to most uninvoiced first
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-1">
+                      Dates
+                      {sortBy === "uninvoicedDates" && (
+                        <span className="text-blue-500">
+                          {sortDirection === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </div>
+                  </TableHead>
                   <TableHead>Hours</TableHead>
                   <TableHead className="text-purple-600">
                     Live Out Allowance Count
                   </TableHead>
-                  <TableHead>Cost</TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gray-50 select-none"
+                    onClick={() => {
+                      if (sortBy === "uninvoicedBillable") {
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        );
+                      } else {
+                        setSortBy("uninvoicedBillable");
+                        setSortDirection("desc"); // Default to highest amount first
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-1">
+                      Cost
+                      {sortBy === "uninvoicedBillable" && (
+                        <span className="text-blue-500">
+                          {sortDirection === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </div>
+                  </TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
