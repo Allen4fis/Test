@@ -892,7 +892,7 @@ export function InvoiceManagement() {
                       <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-700 pt-3 mb-3">
                         <div>
                           <div className="text-sm font-bold text-green-400">
-                            ${jobStat.totalBillable.toFixed(0)}
+                            ${jobStat.totalBillable.toFixed(2)}
                           </div>
                           <div className="text-xs text-gray-400">Total</div>
                         </div>
