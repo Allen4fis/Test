@@ -805,7 +805,9 @@ export function SummaryReports() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">Total DSP Rentals</p>
+                <p className="text-sm font-medium text-gray-400">
+                  Total DSP Rentals
+                </p>
                 <p className="text-2xl font-bold text-orange-400">
                   ${totalDspEarnings.toFixed(2)}
                 </p>
@@ -1010,8 +1012,8 @@ export function SummaryReports() {
                   Payroll Information For Selected Dates And Times
                 </CardTitle>
                 <CardDescription className="text-gray-300">
-                  Hierarchical view of employee and subordinates, with hours, costs,
-                  and DSP Rental earnings breakdown.
+                  Hierarchical view of employee and subordinates, with hours,
+                  costs, and DSP Rental earnings breakdown.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
@@ -1074,7 +1076,9 @@ export function SummaryReports() {
                             )
                             .toFixed(0)}
                         </div>
-                        <div className="text-sm text-gray-300">Total DSP Rentals</div>
+                        <div className="text-sm text-gray-300">
+                          Total DSP Rentals
+                        </div>
                       </div>
                     </div>
 
@@ -1163,19 +1167,31 @@ export function SummaryReports() {
                                     <div className="text-xl font-bold text-orange-400">
                                       ${totalGst.toFixed(0)}
                                     </div>
-                                    <div className="text-xs text-gray-400">GST (5%)</div>
-                                    {employee.subordinateGstTotal > 0 && employee.gstAmount > 0 ? (
+                                    <div className="text-xs text-gray-400">
+                                      GST (5%)
+                                    </div>
+                                    {employee.subordinateGstTotal > 0 &&
+                                    employee.gstAmount > 0 ? (
                                       <div className="text-xs space-y-1">
                                         <div className="text-orange-300">
-                                          ${employee.gstAmount.toFixed(0)} personal
+                                          ${employee.gstAmount.toFixed(0)}{" "}
+                                          personal
                                         </div>
                                         <div className="text-blue-300">
-                                          +${employee.subordinateGstTotal.toFixed(0)} team
+                                          +$
+                                          {employee.subordinateGstTotal.toFixed(
+                                            0,
+                                          )}{" "}
+                                          team
                                         </div>
                                       </div>
                                     ) : employee.subordinateGstTotal > 0 ? (
                                       <div className="text-xs text-blue-300">
-                                        ${employee.subordinateGstTotal.toFixed(0)} from team
+                                        $
+                                        {employee.subordinateGstTotal.toFixed(
+                                          0,
+                                        )}{" "}
+                                        from team
                                       </div>
                                     ) : employee.gstAmount > 0 ? (
                                       <div className="text-xs text-orange-300">
@@ -1185,11 +1201,14 @@ export function SummaryReports() {
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-xl text-gray-500">-</div>
-                                    <div className="text-xs text-gray-400">GST (5%)</div>
+                                    <div className="text-xl text-gray-500">
+                                      -
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                      GST (5%)
+                                    </div>
                                   </>
                                 )}
-                              </div>
                               </div>
 
                               <div className="text-center">
@@ -1198,12 +1217,18 @@ export function SummaryReports() {
                                     <div className="text-xl font-bold text-purple-400">
                                       ${dspCalc.dspEarnings.toFixed(0)}
                                     </div>
-                                    <div className="text-xs text-gray-400">DSP Rentals</div>
+                                    <div className="text-xs text-gray-400">
+                                      DSP Rentals
+                                    </div>
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-xl text-gray-500">-</div>
-                                    <div className="text-xs text-gray-400">DSP Rentals</div>
+                                    <div className="text-xl text-gray-500">
+                                      -
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                      DSP Rentals
+                                    </div>
                                   </>
                                 )}
                               </div>
