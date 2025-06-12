@@ -497,7 +497,6 @@ export function SummaryReports() {
                               });
                             }
                           }}
-                          initialFocus
                         />
                       </PopoverContent>
                     </Popover>
