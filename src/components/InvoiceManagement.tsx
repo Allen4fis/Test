@@ -517,179 +517,131 @@ export function InvoiceManagement() {
             Manage invoiced dates for each job and track billing status
           </CardDescription>
 
-          {/* Sorting and Filtering Controls */}
-          <div className="pt-4">
-            <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg border">
-              <div className="flex items-center gap-2">
-                <ArrowUpDown className="h-4 w-4 text-gray-500" />
-                <Label className="text-sm font-medium">Sort by:</Label>
-                <Select
-                  value={sortBy}
-                  onValueChange={(value: any) => setSortBy(value)}
-                >
-                  <SelectTrigger className="w-[160px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="jobNumber">Job Number</SelectItem>
-                    <SelectItem value="jobName">Job Name</SelectItem>
-                    <SelectItem value="invoicePercentage">
-                      Invoice Progress
-                    </SelectItem>
-                    <SelectItem value="paidPercentage">
-                      Payment Progress
-                    </SelectItem>
-                    <SelectItem value="uninvoicedDates">
-                      Uninvoiced Dates
-                    </SelectItem>
-                    <SelectItem value="unpaidDates">Unpaid Dates</SelectItem>
-                    <SelectItem value="uninvoicedBillable">
-                      Uninvoiced Amount
-                    </SelectItem>
-                    <SelectItem value="unpaidBillable">
-                      Unpaid Amount
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-                  }
-                  className="px-2"
-                >
-                  {sortDirection === "asc" ? "↑" : "↓"}
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-500" />
-                  <Label className="text-sm font-medium">Show:</Label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant={showUninvoiced ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setShowUninvoiced(!showUninvoiced)}
-                    className="flex items-center gap-1"
-                  >
-                    {showUninvoiced ? (
-                      <Eye className="h-3 w-3" />
-                    ) : (
-                      <EyeOff className="h-3 w-3" />
-                    )}
-                    Uninvoiced
-                  </Button>
-
-                  <Button
-                    variant={showPartiallyInvoiced ? "default" : "outline"}
-                    size="sm"
-                    onClick={() =>
-                      setShowPartiallyInvoiced(!showPartiallyInvoiced)
-                    }
-                    className="flex items-center gap-1"
-                  >
-                    {showPartiallyInvoiced ? (
-                      <Eye className="h-3 w-3" />
-                    ) : (
-                      <EyeOff className="h-3 w-3" />
-                    )}
-                    Partially Invoiced
-                  </Button>
-
-                  <Button
-                    variant={showFullyInvoiced ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setShowFullyInvoiced(!showFullyInvoiced)}
-                    className="flex items-center gap-1"
-                  >
-                    {showFullyInvoiced ? (
-                      <Eye className="h-3 w-3" />
-                    ) : (
-                      <EyeOff className="h-3 w-3" />
-                    )}
-                    Fully Invoiced
-                  </Button>
-                </div>
-
-                <div className="flex items-center gap-4 border-l pl-4">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
-                    <Label className="text-sm font-medium">Payment:</Label>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant={showUnpaid ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setShowUnpaid(!showUnpaid)}
-                      className="flex items-center gap-1"
-                    >
-                      {showUnpaid ? (
-                        <Eye className="h-3 w-3" />
-                      ) : (
-                        <EyeOff className="h-3 w-3" />
-                      )}
-                      Unpaid
-                    </Button>
-
-                    <Button
-                      variant={showPartiallyPaid ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setShowPartiallyPaid(!showPartiallyPaid)}
-                      className="flex items-center gap-1"
-                    >
-                      {showPartiallyPaid ? (
-                        <Eye className="h-3 w-3" />
-                      ) : (
-                        <EyeOff className="h-3 w-3" />
-                      )}
-                      Partially Paid
-                    </Button>
-
-                    <Button
-                      variant={showFullyPaid ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setShowFullyPaid(!showFullyPaid)}
-                      className="flex items-center gap-1"
-                    >
-                      {showFullyPaid ? (
-                        <Eye className="h-3 w-3" />
-                      ) : (
-                        <EyeOff className="h-3 w-3" />
-                      )}
-                      Fully Paid
-                    </Button>
-                  </div>
-                </div>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSortBy("jobNumber");
-                    setSortDirection("asc");
-                    setShowUninvoiced(true);
-                    setShowPartiallyInvoiced(true);
-                    setShowFullyInvoiced(true);
-                    setShowUnpaid(true);
-                    setShowPartiallyPaid(true);
-                    setShowFullyPaid(true);
-                  }}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  Reset Filters
-                </Button>
-
-                <div className="ml-auto text-sm text-gray-500">
-                  Showing {filteredAndSortedJobStats.length} of{" "}
-                  {jobStats.length} jobs
-                </div>
-              </div>
+          {/* Concise sorting controls */}
+          <div className="flex flex-wrap items-center gap-4 mt-3">
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">Sort by:</span>
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
+                <SelectTrigger className="w-40 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="jobNumber">Job Number</SelectItem>
+                  <SelectItem value="jobName">Job Name</SelectItem>
+                  <SelectItem value="invoicePercentage">
+                    Invoice Progress
+                  </SelectItem>
+                  <SelectItem value="paidPercentage">
+                    Payment Progress
+                  </SelectItem>
+                  <SelectItem value="uninvoicedDates">
+                    Uninvoiced Dates
+                  </SelectItem>
+                  <SelectItem value="unpaidDates">Unpaid Dates</SelectItem>
+                  <SelectItem value="uninvoicedBillable">
+                    Uninvoiced Amount
+                  </SelectItem>
+                  <SelectItem value="unpaidBillable">Unpaid Amount</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+                }
+                className="px-2 h-8"
+              >
+                {sortDirection === "asc" ? "↑" : "↓"}
+              </Button>
             </div>
+
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">Show:</span>
+
+              <Button
+                variant={showUninvoiced ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowUninvoiced(!showUninvoiced)}
+                className="h-8 px-2 text-xs"
+              >
+                Uninvoiced
+              </Button>
+
+              <Button
+                variant={showPartiallyInvoiced ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowPartiallyInvoiced(!showPartiallyInvoiced)}
+                className="h-8 px-2 text-xs"
+              >
+                Partial Invoice
+              </Button>
+
+              <Button
+                variant={showFullyInvoiced ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowFullyInvoiced(!showFullyInvoiced)}
+                className="h-8 px-2 text-xs"
+              >
+                Fully Invoiced
+              </Button>
+
+              <div className="w-px h-6 bg-gray-300 mx-1"></div>
+
+              <Button
+                variant={showUnpaid ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowUnpaid(!showUnpaid)}
+                className="h-8 px-2 text-xs"
+              >
+                Unpaid
+              </Button>
+
+              <Button
+                variant={showPartiallyPaid ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowPartiallyPaid(!showPartiallyPaid)}
+                className="h-8 px-2 text-xs"
+              >
+                Partial Paid
+              </Button>
+
+              <Button
+                variant={showFullyPaid ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowFullyPaid(!showFullyPaid)}
+                className="h-8 px-2 text-xs"
+              >
+                Fully Paid
+              </Button>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSortBy("jobNumber");
+                setSortDirection("asc");
+                setShowUninvoiced(true);
+                setShowPartiallyInvoiced(true);
+                setShowFullyInvoiced(true);
+                setShowUnpaid(true);
+                setShowPartiallyPaid(true);
+                setShowFullyPaid(true);
+              }}
+              className="text-gray-500 hover:text-gray-700 h-8 px-2 text-xs"
+            >
+              Reset
+            </Button>
+
+            <span className="text-xs text-gray-500 ml-auto">
+              {filteredAndSortedJobStats.length} of {jobStats.length} jobs
+            </span>
           </div>
         </CardHeader>
         <CardContent>
