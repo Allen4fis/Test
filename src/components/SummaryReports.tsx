@@ -237,6 +237,7 @@ export function SummaryReports() {
             effectiveHours: 0,
             cost: 0,
             provinces: {},
+            rateEntries: [],
           };
         }
 
@@ -244,6 +245,17 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
           summary.effectiveHours || 0;
         group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+
+        // Track individual rate entries for this hour type
+        if (summary.hours > 0) {
+          const costRate = summary.totalCost / summary.hours;
+          group.hourTypeBreakdown[hourTypeName].rateEntries.push({
+            date: summary.date,
+            hours: summary.hours,
+            costRate: costRate,
+            totalCost: summary.totalCost,
+          });
+        }
 
         if (!group.hourTypeBreakdown[hourTypeName].provinces[provinceName]) {
           group.hourTypeBreakdown[hourTypeName].provinces[provinceName] = {
