@@ -465,6 +465,12 @@ export function SummaryReports() {
       }
 
       // Add the manager with subordinate GST total
+      if (subordinateGstTotal > 0) {
+        console.log(
+          `Manager ${manager.employeeName}: individual GST=${manager.gstAmount}, subordinate GST=${subordinateGstTotal}, total should be=${(manager.gstAmount || 0) + subordinateGstTotal}`,
+        );
+      }
+
       hierarchicalList.push({
         ...manager,
         subordinateGstTotal,
