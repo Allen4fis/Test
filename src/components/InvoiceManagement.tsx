@@ -991,7 +991,7 @@ export function InvoiceManagement() {
                                         </Button>
                                       </TableCell>
                                       <TableCell className="text-gray-100">
-                                        {dateInfo.totalHours.toFixed(1)}h
+                                        {dateInfo.totalHours.toFixed(2)}h
                                         {dateInfo.totalLoaCount > 0 && (
                                           <div className="text-xs text-purple-400">
                                             +{dateInfo.totalLoaCount} LOA
