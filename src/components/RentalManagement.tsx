@@ -1253,6 +1253,30 @@ export function RentalManagement() {
                   </Table>
                 </div>
               )}
+
+              {/* Pagination Controls */}
+              {sortedEntries.length > 0 && (
+                <div className="mt-4">
+                  <PaginationControls
+                    currentPage={paginationEntries.currentPage}
+                    totalPages={paginationEntries.totalPages}
+                    totalItems={paginationEntries.totalItems}
+                    pageInfo={paginationEntries.pageInfo}
+                    canGoNext={paginationEntries.canGoNext}
+                    canGoPrevious={paginationEntries.canGoPrevious}
+                    onPageChange={paginationEntries.goToPage}
+                    onNextPage={paginationEntries.goToNextPage}
+                    onPreviousPage={paginationEntries.goToPreviousPage}
+                    itemsPerPage={itemsPerPageEntries}
+                    onItemsPerPageChange={(newItemsPerPage) => {
+                      setItemsPerPageEntries(newItemsPerPage);
+                      paginationEntries.goToPage(1);
+                    }}
+                    itemsPerPageOptions={[25, 50, 100, 200]}
+                    className="border-t border-gray-700/50 pt-4"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
