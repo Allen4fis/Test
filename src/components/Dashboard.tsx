@@ -227,7 +227,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-400">
-              {totalHours.toFixed(1)}
+              {totalHours.toFixed(2)}
             </div>
             <p className="text-xs text-gray-400 mt-1 flex items-center">
               <TrendingUp className="h-3 w-3 mr-1 text-blue-400" />
