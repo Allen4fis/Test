@@ -1878,20 +1878,104 @@ export function RentalManagement() {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="font-semibold">Rank</TableHead>
-                          <TableHead className="font-semibold">
-                            Rental Item
+                          <TableHead
+                            className="font-semibold cursor-pointer hover:bg-gray-50 select-none"
+                            onClick={() => {
+                              if (billableSortBy === "itemName") {
+                                setBillableSortDirection(
+                                  billableSortDirection === "asc"
+                                    ? "desc"
+                                    : "asc",
+                                );
+                              } else {
+                                setBillableSortBy("itemName");
+                                setBillableSortDirection("asc");
+                              }
+                            }}
+                          >
+                            <div className="flex items-center gap-1">
+                              Rental Item
+                              {billableSortBy === "itemName" && (
+                                <span className="text-blue-500 text-xs">
+                                  {billableSortDirection === "asc" ? "↑" : "↓"}
+                                </span>
+                              )}
+                            </div>
                           </TableHead>
                           <TableHead className="font-semibold">
                             Category
                           </TableHead>
-                          <TableHead className="font-semibold text-right">
-                            Total Billable
+                          <TableHead
+                            className="font-semibold text-right cursor-pointer hover:bg-gray-50 select-none"
+                            onClick={() => {
+                              if (billableSortBy === "totalBillable") {
+                                setBillableSortDirection(
+                                  billableSortDirection === "asc"
+                                    ? "desc"
+                                    : "asc",
+                                );
+                              } else {
+                                setBillableSortBy("totalBillable");
+                                setBillableSortDirection("desc");
+                              }
+                            }}
+                          >
+                            <div className="flex items-center gap-1 justify-end">
+                              Total Billable
+                              {billableSortBy === "totalBillable" && (
+                                <span className="text-blue-500 text-xs">
+                                  {billableSortDirection === "asc" ? "↑" : "↓"}
+                                </span>
+                              )}
+                            </div>
                           </TableHead>
-                          <TableHead className="font-semibold text-right">
-                            DSP Rate
+                          <TableHead
+                            className="font-semibold text-right cursor-pointer hover:bg-gray-50 select-none"
+                            onClick={() => {
+                              if (billableSortBy === "dspRate") {
+                                setBillableSortDirection(
+                                  billableSortDirection === "asc"
+                                    ? "desc"
+                                    : "asc",
+                                );
+                              } else {
+                                setBillableSortBy("dspRate");
+                                setBillableSortDirection("desc");
+                              }
+                            }}
+                          >
+                            <div className="flex items-center gap-1 justify-end">
+                              DSP Rate
+                              {billableSortBy === "dspRate" && (
+                                <span className="text-blue-500 text-xs">
+                                  {billableSortDirection === "asc" ? "↑" : "↓"}
+                                </span>
+                              )}
+                            </div>
                           </TableHead>
-                          <TableHead className="font-semibold text-right">
-                            Entries
+                          <TableHead
+                            className="font-semibold text-right cursor-pointer hover:bg-gray-50 select-none"
+                            onClick={() => {
+                              if (billableSortBy === "totalEntries") {
+                                setBillableSortDirection(
+                                  billableSortDirection === "asc"
+                                    ? "desc"
+                                    : "asc",
+                                );
+                              } else {
+                                setBillableSortBy("totalEntries");
+                                setBillableSortDirection("desc");
+                              }
+                            }}
+                          >
+                            <div className="flex items-center gap-1 justify-end">
+                              Entries
+                              {billableSortBy === "totalEntries" && (
+                                <span className="text-blue-500 text-xs">
+                                  {billableSortDirection === "asc" ? "↑" : "↓"}
+                                </span>
+                              )}
+                            </div>
                           </TableHead>
                           <TableHead className="font-semibold text-right">
                             Avg per Entry
