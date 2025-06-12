@@ -615,6 +615,57 @@ export function InvoiceManagement() {
                   </Button>
                 </div>
 
+                <div className="flex items-center gap-4 border-l pl-4">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <Label className="text-sm font-medium">Payment:</Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={showUnpaid ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setShowUnpaid(!showUnpaid)}
+                      className="flex items-center gap-1"
+                    >
+                      {showUnpaid ? (
+                        <Eye className="h-3 w-3" />
+                      ) : (
+                        <EyeOff className="h-3 w-3" />
+                      )}
+                      Unpaid
+                    </Button>
+
+                    <Button
+                      variant={showPartiallyPaid ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setShowPartiallyPaid(!showPartiallyPaid)}
+                      className="flex items-center gap-1"
+                    >
+                      {showPartiallyPaid ? (
+                        <Eye className="h-3 w-3" />
+                      ) : (
+                        <EyeOff className="h-3 w-3" />
+                      )}
+                      Partially Paid
+                    </Button>
+
+                    <Button
+                      variant={showFullyPaid ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setShowFullyPaid(!showFullyPaid)}
+                      className="flex items-center gap-1"
+                    >
+                      {showFullyPaid ? (
+                        <Eye className="h-3 w-3" />
+                      ) : (
+                        <EyeOff className="h-3 w-3" />
+                      )}
+                      Fully Paid
+                    </Button>
+                  </div>
+                </div>
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -624,6 +675,9 @@ export function InvoiceManagement() {
                     setShowUninvoiced(true);
                     setShowPartiallyInvoiced(true);
                     setShowFullyInvoiced(true);
+                    setShowUnpaid(true);
+                    setShowPartiallyPaid(true);
+                    setShowFullyPaid(true);
                   }}
                   className="text-gray-500 hover:text-gray-700"
                 >
