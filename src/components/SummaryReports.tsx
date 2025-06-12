@@ -377,18 +377,23 @@ export function SummaryReports() {
   const hierarchicalEmployeeSummaries = useMemo(() => {
     const employeeMap = new Map(employees.map((emp) => [emp.name, emp]));
 
-    // First, enhance all employees with hierarchy data
+    // First, enhance all employees with hierarchy data and GST calculations
     const enhancedEmployees = employeeSummariesData.map((emp) => {
       const employee = employeeMap.get(emp.employeeName);
       const manager = employee?.managerId
         ? employees.find((e) => e.id === employee.managerId)
         : null;
 
+      // Calculate GST for non-employee categories
+      const gstAmount = calculateGST(employee, emp.totalCost);
+
       return {
         ...emp,
         employeeCategory: employee?.category,
         isSubordinate: !!employee?.managerId,
         managerName: manager?.name,
+        managerId: employee?.managerId,
+        gstAmount,
       };
     });
 
