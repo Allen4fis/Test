@@ -508,7 +508,7 @@ export function EmployeeManagement() {
                   className={`text-2xl font-bold ${averageRates.avgProfitMargin >= 0 ? "text-blue-400" : "text-red-400"}`}
                 >
                   {averageRates.avgProfitMargin >= 0 ? "+" : ""}
-                  {averageRates.avgProfitMargin.toFixed(1)}%
+                  {averageRates.avgProfitMargin.toFixed(2)}%
                 </div>
                 <div className="text-sm text-gray-300">
                   Average Profit Margin
