@@ -259,6 +259,25 @@ export function JobManagement() {
                       />
                     </div>
                   </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="isBillable" className="text-right">
+                      Billable
+                    </Label>
+                    <div className="col-span-3 flex items-center gap-3">
+                      <Switch
+                        id="isBillable"
+                        checked={formData.isBillable}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, isBillable: checked })
+                        }
+                      />
+                      <span className="text-sm text-gray-600">
+                        {formData.isBillable
+                          ? "Tracks costs and billable amounts"
+                          : "Non-billable - costs only, no billable tracking"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button type="submit">
