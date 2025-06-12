@@ -719,6 +719,12 @@ export function InvoiceManagement() {
 
             {/* Compact Controls */}
             <div className="flex items-center gap-2 text-sm">
+              <Input
+                placeholder="Search jobs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-48 h-8 bg-gray-800 border-gray-600 text-gray-100 placeholder:text-gray-400"
+              />
               <Select
                 value={sortBy}
                 onValueChange={(value) => setSortBy(value as any)}
