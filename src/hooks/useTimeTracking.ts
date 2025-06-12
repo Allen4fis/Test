@@ -473,9 +473,11 @@ export function useTimeTracking() {
 
   // Time entry operations
   const addTimeEntry = (entry: Omit<TimeEntry, "id" | "createdAt">) => {
+    const now = Date.now();
+    const randomSuffix = Math.random().toString(36).substr(2, 9);
     const newEntry: TimeEntry = {
       ...entry,
-      id: Date.now().toString(),
+      id: `${now}-${randomSuffix}`, // More unique ID generation
       createdAt: new Date().toISOString(),
     };
     setAppData((prev) => ({
