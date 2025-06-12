@@ -212,6 +212,38 @@ export function EmployeeManagement() {
     return employees.filter((emp) => emp.managerId === employeeId);
   };
 
+  // Calculate average rates and profit margin
+  const averageRates = useMemo(() => {
+    if (employees.length === 0) {
+      return {
+        avgBillableRate: 0,
+        avgCostRate: 0,
+        avgProfitMargin: 0,
+      };
+    }
+
+    const totalBillableRate = employees.reduce(
+      (sum, emp) => sum + (emp.billableWage || 0),
+      0,
+    );
+    const totalCostRate = employees.reduce(
+      (sum, emp) => sum + (emp.costWage || 0),
+      0,
+    );
+    const avgBillableRate = totalBillableRate / employees.length;
+    const avgCostRate = totalCostRate / employees.length;
+    const avgProfitMargin =
+      avgBillableRate > 0
+        ? ((avgBillableRate - avgCostRate) / avgBillableRate) * 100
+        : 0;
+
+    return {
+      avgBillableRate,
+      avgCostRate,
+      avgProfitMargin,
+    };
+  }, [employees]);
+
   return (
     <Card>
       <CardHeader>
