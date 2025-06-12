@@ -309,7 +309,7 @@ export function InvoiceManagement() {
 
     // Apply invoice status filters
     if (!showFullyInvoiced || !showPartiallyInvoiced || !showUninvoiced) {
-      filtered = jobStats.filter((stat) => {
+      filtered = filtered.filter((stat) => {
         const isFullyInvoiced = stat.invoicePercentage >= 100;
         const isUninvoiced = stat.invoicePercentage === 0;
         const isPartiallyInvoiced =
@@ -318,6 +318,21 @@ export function InvoiceManagement() {
         if (!showFullyInvoiced && isFullyInvoiced) return false;
         if (!showUninvoiced && isUninvoiced) return false;
         if (!showPartiallyInvoiced && isPartiallyInvoiced) return false;
+        return true;
+      });
+    }
+
+    // Apply paid status filters
+    if (!showFullyPaid || !showPartiallyPaid || !showUnpaid) {
+      filtered = filtered.filter((stat) => {
+        const isFullyPaid = stat.paidPercentage >= 100;
+        const isUnpaid = stat.paidPercentage === 0;
+        const isPartiallyPaid =
+          stat.paidPercentage > 0 && stat.paidPercentage < 100;
+
+        if (!showFullyPaid && isFullyPaid) return false;
+        if (!showUnpaid && isUnpaid) return false;
+        if (!showPartiallyPaid && isPartiallyPaid) return false;
         return true;
       });
     }
