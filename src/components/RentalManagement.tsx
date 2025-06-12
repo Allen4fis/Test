@@ -296,6 +296,42 @@ export function RentalManagement() {
   const activeItems = rentalItems.filter((item) => item.isActive);
   const activeJobs = jobs.filter((job) => job.isActive);
 
+  // Calculate rental billable analytics
+  const rentalBillableAnalytics = useMemo(() => {
+    const rentalItemStats = new Map();
+
+    // Group rental summaries by rental item
+    rentalSummaries.forEach((summary) => {
+      const itemName = summary.rentalItemName;
+
+      if (!rentalItemStats.has(itemName)) {
+        rentalItemStats.set(itemName, {
+          itemName,
+          category: summary.category,
+          totalBillable: 0,
+          totalEntries: 0,
+          dspRate: summary.dspRate || 0, // Use DSP rate from the entry
+          lastDspRate: summary.dspRate || 0, // Track the most recent DSP rate
+        });
+      }
+
+      const stats = rentalItemStats.get(itemName);
+      stats.totalBillable += summary.totalCost;
+      stats.totalEntries += 1;
+
+      // Update to the most recent DSP rate if it exists
+      if (summary.dspRate && summary.dspRate > 0) {
+        stats.lastDspRate = summary.dspRate;
+        stats.dspRate = summary.dspRate;
+      }
+    });
+
+    // Convert to array and sort by total billable (highest first)
+    return Array.from(rentalItemStats.values()).sort(
+      (a, b) => b.totalBillable - a.totalBillable,
+    );
+  }, [rentalSummaries]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
