@@ -253,6 +253,14 @@ export function TimeEntryViewer() {
           aValue = aHourType?.name || "";
           bValue = bHourType?.name || "";
           break;
+        case "billable":
+          const aJobBillable = jobs.find((j) => j.id === a.jobId);
+          const bJobBillable = jobs.find((j) => j.id === b.jobId);
+          aValue =
+            aJobBillable?.isBillable !== false ? "Billable" : "Non-Billable";
+          bValue =
+            bJobBillable?.isBillable !== false ? "Billable" : "Non-Billable";
+          break;
         default:
           aValue = a.date;
           bValue = b.date;
