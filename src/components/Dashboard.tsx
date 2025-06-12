@@ -192,7 +192,20 @@ export function Dashboard({
       ? (allTimeProfitAmount / allTimeTotalBillable) * 100
       : 0;
 
-  const activeJobs = jobs.filter((job) => job.isActive).length;
+  // Calculate cost of non-billable jobs
+  const nonBillableJobNumbers = jobs
+    .filter((job) => job.isBillable === false)
+    .map((job) => job.jobNumber);
+
+  const nonBillableJobCosts = timeEntrySummaries
+    .filter((summary) => nonBillableJobNumbers.includes(summary.jobNumber))
+    .reduce((sum, summary) => sum + summary.totalCost, 0);
+
+  const nonBillableRentalCosts = rentalSummaries
+    .filter((rental) => nonBillableJobNumbers.includes(rental.jobNumber))
+    .reduce((sum, rental) => sum + rental.totalCost, 0);
+
+  const totalNonBillableCosts = nonBillableJobCosts + nonBillableRentalCosts;
   const activeEmployees = employees.length;
 
   // Most overworked employees (by hours this month)
