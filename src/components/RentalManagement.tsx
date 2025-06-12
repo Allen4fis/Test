@@ -424,6 +424,13 @@ export function RentalManagement() {
     });
   }, [rentalSummaries, entrySortBy, entrySortDirection]);
 
+  // Pagination for rental entries
+  const [itemsPerPageEntries, setItemsPerPageEntries] = useState(50);
+  const paginationEntries = usePagination({
+    data: sortedEntries,
+    itemsPerPage: itemsPerPageEntries,
+  });
+
   // Billable analytics data
   const billableAnalytics = useMemo(() => {
     const itemAnalytics = rentalItems.map((item) => {
