@@ -872,6 +872,22 @@ export function TimeEntryViewer() {
                           </div>
                         </TableCell>
                         <TableCell>
+                          <Badge
+                            variant={
+                              job?.isBillable !== false ? "default" : "outline"
+                            }
+                            className={
+                              job?.isBillable !== false
+                                ? "bg-green-600"
+                                : "bg-orange-600 text-white"
+                            }
+                          >
+                            {job?.isBillable !== false
+                              ? "Billable"
+                              : "Non-Billable"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
                           <Badge variant="secondary">
                             {hourType?.name || "Unknown"}
                           </Badge>
