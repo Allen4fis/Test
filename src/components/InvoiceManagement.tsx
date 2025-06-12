@@ -48,6 +48,9 @@ import {
   ArrowUpDown,
   Filter,
   EyeOff,
+  Settings,
+  CreditCard,
+  Clock,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { toast } from "@/hooks/use-toast";
@@ -115,6 +118,7 @@ export function InvoiceManagement() {
   const [showFullyPaid, setShowFullyPaid] = useState(true);
   const [showPartiallyPaid, setShowPartiallyPaid] = useState(true);
   const [showUnpaid, setShowUnpaid] = useState(true);
+
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
@@ -129,8 +133,8 @@ export function InvoiceManagement() {
     const rentalDates = jobRentalEntries.map((entry) => entry.date);
     const dates = [...new Set([...timeDates, ...rentalDates])].sort();
 
-    const invoicedDates = job.invoicedDates || []; // Safe fallback for existing jobs
-    const paidDates = job.paidDates || []; // Safe fallback for existing jobs
+    const invoicedDates = job.invoicedDates || [];
+    const paidDates = job.paidDates || [];
 
     return dates.map((date) => {
       const dayTimeEntries = jobTimeEntries.filter(
@@ -160,11 +164,9 @@ export function InvoiceManagement() {
         (sum, entry) => sum + entry.totalCost,
         0,
       );
-      const loaCost = totalLoaCount * 200; // Live Out Allowance is billable at $200 each
-      const totalCost = laborCost; // Only labor is a cost, rentals are billable revenue
-      // CRITICAL FIX: Live Out Allowance is already included in laborBillable from timeEntrySummaries
-      // So we should NOT add loaCost again to avoid double-counting
-      const totalBillable = laborBillable + rentalBillable; // Labor billable (includes Live Out Allowance) + rental revenue
+      const loaCost = totalLoaCount * 200;
+      const totalCost = laborCost;
+      const totalBillable = laborBillable + rentalBillable;
 
       return {
         date,
@@ -193,114 +195,86 @@ export function InvoiceManagement() {
       (entry) => entry.jobNumber === job.jobNumber && entry.date === date,
     );
 
-    // Group time entries by employee title
-    const timeEntriesByTitle = jobTimeEntries.reduce(
-      (acc, entry) => {
-        const title = entry.employeeTitle;
-        if (!acc[title]) {
-          acc[title] = [];
-        }
-        acc[title].push(entry);
-        return acc;
-      },
-      {} as Record<string, typeof jobTimeEntries>,
-    );
-
-    // Group rental entries by category
-    const rentalsByCategory = jobRentalEntries.reduce(
-      (acc, entry) => {
-        const category = entry.category;
-        if (!acc[category]) {
-          acc[category] = [];
-        }
-        acc[category].push(entry);
-        return acc;
-      },
-      {} as Record<string, typeof jobRentalEntries>,
-    );
-
     return {
-      timeEntriesByTitle,
-      rentalsByCategory,
-      totalTimeEntries: jobTimeEntries.length,
-      totalRentalEntries: jobRentalEntries.length,
-      totalHours: jobTimeEntries.reduce((sum, entry) => sum + entry.hours, 0),
-      totalLaborCost: jobTimeEntries.reduce(
-        (sum, entry) => sum + entry.totalCost,
-        0,
-      ),
-      totalRentalCost: jobRentalEntries.reduce(
-        (sum, entry) => sum + entry.totalCost,
-        0,
-      ),
-      totalLoaCount: jobTimeEntries.reduce(
-        (sum, entry) => sum + (entry.loaCount || 0),
-        0,
-      ),
+      timeEntries: jobTimeEntries,
+      rentalEntries: jobRentalEntries,
     };
   };
 
-  // Calculate invoice statistics for each job
+  // Calculate payment-focused summary statistics for all jobs
   const jobStats = useMemo(() => {
     return jobs
       .map((job) => {
         const jobDates = getJobDates(job);
         const totalDates = jobDates.length;
         const invoicedDates = jobDates.filter((d) => d.isInvoiced).length;
+        const uninvoicedDates = totalDates - invoicedDates;
         const paidDates = jobDates.filter((d) => d.isPaid).length;
+        const unpaidDates = totalDates - paidDates;
+
         const totalHours = jobDates.reduce((sum, d) => sum + d.totalHours, 0);
-        const invoicedHours = jobDates
-          .filter((d) => d.isInvoiced)
-          .reduce((sum, d) => sum + d.totalHours, 0);
         const totalLoaCount = jobDates.reduce(
           (sum, d) => sum + d.totalLoaCount,
           0,
         );
-        const invoicedLoaCount = jobDates
-          .filter((d) => d.isInvoiced)
-          .reduce((sum, d) => sum + d.totalLoaCount, 0);
         const totalCost = jobDates.reduce((sum, d) => sum + d.totalCost, 0);
-        const invoicedCost = jobDates
-          .filter((d) => d.isInvoiced)
-          .reduce((sum, d) => sum + d.totalCost, 0);
         const totalBillable = jobDates.reduce(
           (sum, d) => sum + d.totalBillable,
           0,
         );
+
+        const invoicedHours = jobDates
+          .filter((d) => d.isInvoiced)
+          .reduce((sum, d) => sum + d.totalHours, 0);
+        const uninvoicedHours = totalHours - invoicedHours;
+
+        const invoicedLoaCount = jobDates
+          .filter((d) => d.isInvoiced)
+          .reduce((sum, d) => sum + d.totalLoaCount, 0);
+        const uninvoicedLoaCount = totalLoaCount - invoicedLoaCount;
+
+        const invoicedCost = jobDates
+          .filter((d) => d.isInvoiced)
+          .reduce((sum, d) => sum + d.totalCost, 0);
+        const uninvoicedCost = totalCost - invoicedCost;
+
         const invoicedBillable = jobDates
           .filter((d) => d.isInvoiced)
           .reduce((sum, d) => sum + d.totalBillable, 0);
+        const uninvoicedBillable = totalBillable - invoicedBillable;
+
         const paidBillable = jobDates
           .filter((d) => d.isPaid)
           .reduce((sum, d) => sum + d.totalBillable, 0);
+        const unpaidBillable = totalBillable - paidBillable;
 
         return {
           job,
           totalDates,
           invoicedDates,
+          uninvoicedDates,
           paidDates,
-          uninvoicedDates: totalDates - invoicedDates,
-          unpaidDates: totalDates - paidDates,
+          unpaidDates,
           totalHours,
           invoicedHours,
-          uninvoicedHours: totalHours - invoicedHours,
+          uninvoicedHours,
           totalLoaCount,
           invoicedLoaCount,
-          uninvoicedLoaCount: totalLoaCount - invoicedLoaCount,
+          uninvoicedLoaCount,
           totalCost,
           invoicedCost,
-          uninvoicedCost: totalCost - invoicedCost,
+          uninvoicedCost,
           totalBillable,
           invoicedBillable,
+          uninvoicedBillable,
           paidBillable,
-          uninvoicedBillable: totalBillable - invoicedBillable,
-          unpaidBillable: totalBillable - paidBillable,
+          unpaidBillable,
           invoicePercentage:
             totalDates > 0 ? (invoicedDates / totalDates) * 100 : 0,
           paidPercentage: totalDates > 0 ? (paidDates / totalDates) * 100 : 0,
         };
       })
-      .filter((stat) => stat.totalDates > 0); // Only show jobs with time entries
+      .filter((stat) => stat.totalDates > 0);
   }, [jobs, timeEntrySummaries]);
 
   // Filtered and sorted job stats
@@ -398,252 +372,342 @@ export function InvoiceManagement() {
     sortDirection,
   ]);
 
-  const handleBulkInvoice = () => {
-    if (!selectedJob || !dateRange.startDate || !dateRange.endDate) return;
-
-    // Parse dates safely to avoid timezone issues
-    const parseDate = (dateString: string) => {
-      const [year, month, day] = dateString.split("-").map(Number);
-      return new Date(year, month - 1, day); // month is 0-indexed
-    };
-
-    const startDate = parseDate(dateRange.startDate);
-    const endDate = parseDate(dateRange.endDate);
-    const allDatesInRange: string[] = [];
-
-    // Generate all dates in the range
-    const currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-      const year = currentDate.getFullYear();
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-      const day = currentDate.getDate().toString().padStart(2, "0");
-      allDatesInRange.push(`${year}-${month}-${day}`);
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    // Get existing invoiced dates for this job
-    const existingInvoicedDates = selectedJob.invoicedDates || [];
-
-    // Filter out dates that are already invoiced
-    const datesToInvoice = allDatesInRange.filter(
-      (date) => !existingInvoicedDates.includes(date),
-    );
-
-    if (datesToInvoice.length > 0) {
-      addInvoicedDates(selectedJob.id, datesToInvoice);
-
-      toast({
-        title: "✅ Dates Marked as Invoiced",
-        description: `Successfully marked ${datesToInvoice.length} date${datesToInvoice.length !== 1 ? "s" : ""} as invoiced for ${selectedJob.jobNumber} - ${selectedJob.name}`,
-      });
-    } else {
-      toast({
-        title: "ℹ️ No Dates to Invoice",
-        description:
-          "All dates in the selected range are already marked as invoiced.",
-        variant: "default",
-      });
-    }
-
-    // Clear the date range inputs after invoicing
-    setDateRange({ startDate: "", endDate: "" });
-  };
-
-  const toggleDateInvoiced = (
-    job: Job,
-    date: string,
-    isCurrentlyInvoiced: boolean,
-  ) => {
-    if (isCurrentlyInvoiced) {
-      removeInvoicedDates(job.id, [date]);
-    } else {
-      addInvoicedDates(job.id, [date]);
-    }
-  };
-
-  const getInvoiceStatusColor = (percentage: number) => {
-    if (percentage === 100)
-      return "bg-green-100 text-green-800 border-green-200";
-    if (percentage >= 75) return "bg-blue-100 text-blue-800 border-blue-200";
-    if (percentage >= 50)
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    if (percentage > 0)
-      return "bg-orange-100 text-orange-800 border-orange-200";
-    return "bg-red-100 text-red-800 border-red-200";
-  };
-
-  const getPaidStatusColor = (percentage: number) => {
-    if (percentage === 100)
-      return "bg-purple-100 text-purple-800 border-purple-200";
-    if (percentage >= 75)
-      return "bg-indigo-100 text-indigo-800 border-indigo-200";
-    if (percentage >= 50) return "bg-pink-100 text-pink-800 border-pink-200";
-    if (percentage > 0) return "bg-rose-100 text-rose-800 border-rose-200";
-    return "bg-gray-100 text-gray-800 border-gray-200";
-  };
-
   const toggleJobPaidStatus = (job: Job) => {
     const jobDates = getJobDates(job);
-    const currentlyPaidDates = job.paidDates || [];
+    const allDates = jobDates.map((d) => d.date);
+    const paidDates = jobDates.filter((d) => d.isPaid).map((d) => d.date);
 
-    if (currentlyPaidDates.length === 0) {
-      // Mark all invoiced dates as paid
-      const invoicedDates = job.invoicedDates || [];
-      addPaidDates(job.id, invoicedDates);
-      toast({
-        title: "✅ Job Marked as Paid",
-        description: `All invoiced dates for ${job.jobNumber} - ${job.name} have been marked as paid.`,
-      });
+    if (paidDates.length === allDates.length) {
+      // All dates are paid, mark all as unpaid
+      removePaidDates(job.id, allDates);
     } else {
-      // Remove all paid dates
-      removePaidDates(job.id, currentlyPaidDates);
-      toast({
-        title: "❌ Payment Status Removed",
-        description: `Payment status removed for ${job.jobNumber} - ${job.name}.`,
-      });
+      // Not all dates are paid, mark all as paid
+      addPaidDates(job.id, allDates);
+    }
+  };
+
+  const handleInvoiceToggle = (job: Job, dates: string[]) => {
+    const invoicedDates = job.invoicedDates || [];
+    const allDatesInvoiced = dates.every((date) =>
+      invoicedDates.includes(date),
+    );
+
+    if (allDatesInvoiced) {
+      removeInvoicedDates(job.id, dates);
+    } else {
+      addInvoicedDates(job.id, dates);
+    }
+  };
+
+  const handleFileUpload = () => {
+    if (
+      selectedFile &&
+      selectedJob &&
+      dateRange.startDate &&
+      dateRange.endDate
+    ) {
+      const dates = getJobDates(selectedJob)
+        .filter(
+          (d) => d.date >= dateRange.startDate && d.date <= dateRange.endDate,
+        )
+        .map((d) => d.date);
+
+      if (dates.length > 0) {
+        addInvoicedDates(selectedJob.id, dates);
+        toast({
+          title: "Invoice processed",
+          description: `Marked ${dates.length} dates as invoiced for ${selectedJob.jobNumber}`,
+        });
+      }
+
+      setSelectedFile(null);
+      setSelectedJob(null);
+      setDateRange({ startDate: "", endDate: "" });
+      setIsDialogOpen(false);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Invoice Overview */}
-      <Card className="modern-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" />
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-100">
             Invoice Management
-          </CardTitle>
-          <CardDescription>
-            Manage invoiced dates for each job and track billing status
-          </CardDescription>
+          </h1>
+          <p className="text-muted-foreground text-gray-300">
+            Manage invoicing and payment tracking for your jobs.
+          </p>
+        </div>
 
-          {/* Concise sorting controls */}
-          <div className="flex flex-wrap items-center gap-4 mt-3">
-            <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Sort by:</span>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-orange-600 hover:bg-orange-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Process Invoice
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-gray-900 border-gray-700">
+            <DialogHeader>
+              <DialogTitle className="text-gray-100">
+                Process New Invoice
+              </DialogTitle>
+              <DialogDescription className="text-gray-300">
+                Upload an invoice file and select the job and date range it
+                covers.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="invoice-file" className="text-gray-200">
+                  Invoice File
+                </Label>
+                <Input
+                  id="invoice-file"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.jpg,.png"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  className="bg-gray-800 border-gray-600 text-gray-100"
+                />
+              </div>
+              <div>
+                <Label htmlFor="job-select" className="text-gray-200">
+                  Job
+                </Label>
+                <Select
+                  value={selectedJob?.id || ""}
+                  onValueChange={(value) => {
+                    const job = jobs.find((j) => j.id === value);
+                    setSelectedJob(job || null);
+                  }}
+                >
+                  <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                    <SelectValue placeholder="Select a job" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-600">
+                    {jobs.map((job) => (
+                      <SelectItem
+                        key={job.id}
+                        value={job.id}
+                        className="text-gray-100 focus:bg-orange-500/20"
+                      >
+                        {job.jobNumber} - {job.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="start-date" className="text-gray-200">
+                    Start Date
+                  </Label>
+                  <Input
+                    id="start-date"
+                    type="date"
+                    value={dateRange.startDate}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, startDate: e.target.value })
+                    }
+                    className="bg-gray-800 border-gray-600 text-gray-100"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="end-date" className="text-gray-200">
+                    End Date
+                  </Label>
+                  <Input
+                    id="end-date"
+                    type="date"
+                    value={dateRange.endDate}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, endDate: e.target.value })
+                    }
+                    className="bg-gray-800 border-gray-600 text-gray-100"
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+                className="border-gray-600 text-gray-100 hover:bg-gray-800"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleFileUpload}
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                Process Invoice
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="modern-card">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-400">
+                  Total Invoices
+                </p>
+                <p className="text-2xl font-bold text-blue-400">
+                  {jobStats.reduce((sum, stat) => sum + stat.invoicedDates, 0)}
+                </p>
+              </div>
+              <FileText className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-400">
+                  Total Invoiced
+                </p>
+                <p className="text-2xl font-bold text-green-400">
+                  $
+                  {jobStats
+                    .reduce((sum, stat) => sum + stat.invoicedBillable, 0)
+                    .toFixed(0)}
+                </p>
+              </div>
+              <DollarSign className="h-8 w-8 text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-400">Total Paid</p>
+                <p className="text-2xl font-bold text-purple-400">
+                  $
+                  {jobStats
+                    .reduce((sum, stat) => sum + stat.paidBillable, 0)
+                    .toFixed(0)}
+                </p>
+              </div>
+              <CreditCard className="h-8 w-8 text-purple-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-400">
+                  Pending Payment
+                </p>
+                <p className="text-2xl font-bold text-orange-400">
+                  $
+                  {jobStats
+                    .reduce((sum, stat) => sum + stat.unpaidBillable, 0)
+                    .toFixed(0)}
+                </p>
+              </div>
+              <Clock className="h-8 w-8 text-orange-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Card */}
+      <Card className="modern-card">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl text-gray-100">
+                Job Invoice Status
+              </CardTitle>
+              <CardDescription className="text-gray-300">
+                Track invoicing and payment status for all active jobs
+              </CardDescription>
+            </div>
+
+            {/* Compact Controls */}
+            <div className="flex items-center gap-2 text-sm">
               <Select
                 value={sortBy}
-                onValueChange={(value: any) => setSortBy(value)}
+                onValueChange={(value) => setSortBy(value as any)}
               >
-                <SelectTrigger className="w-40 h-8">
+                <SelectTrigger className="w-40 h-8 bg-gray-800 border-gray-600 text-gray-100">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="jobNumber">Job Number</SelectItem>
-                  <SelectItem value="jobName">Job Name</SelectItem>
-                  <SelectItem value="invoicePercentage">
-                    Invoice Progress
+                <SelectContent className="bg-gray-800 border-gray-600">
+                  <SelectItem value="jobNumber" className="text-gray-100">
+                    Job Number
                   </SelectItem>
-                  <SelectItem value="paidPercentage">
-                    Payment Progress
+                  <SelectItem value="jobName" className="text-gray-100">
+                    Job Name
                   </SelectItem>
-                  <SelectItem value="uninvoicedDates">
-                    Uninvoiced Dates
+                  <SelectItem
+                    value="invoicePercentage"
+                    className="text-gray-100"
+                  >
+                    Invoice %
                   </SelectItem>
-                  <SelectItem value="unpaidDates">Unpaid Dates</SelectItem>
-                  <SelectItem value="uninvoicedBillable">
-                    Uninvoiced Amount
+                  <SelectItem value="paidPercentage" className="text-gray-100">
+                    Paid %
                   </SelectItem>
-                  <SelectItem value="unpaidBillable">Unpaid Amount</SelectItem>
+                  <SelectItem
+                    value="uninvoicedBillable"
+                    className="text-gray-100"
+                  >
+                    Uninvoiced $
+                  </SelectItem>
+                  <SelectItem value="unpaidBillable" className="text-gray-100">
+                    Unpaid $
+                  </SelectItem>
                 </SelectContent>
               </Select>
+
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() =>
                   setSortDirection(sortDirection === "asc" ? "desc" : "asc")
                 }
-                className="px-2 h-8"
+                className="h-8 px-2"
               >
                 {sortDirection === "asc" ? "↑" : "↓"}
               </Button>
+
+              <div className="flex gap-1">
+                <Button
+                  variant={showUninvoiced ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowUninvoiced(!showUninvoiced)}
+                  className="h-7 px-2 text-xs"
+                >
+                  Uninvoiced
+                </Button>
+                <Button
+                  variant={showUnpaid ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowUnpaid(!showUnpaid)}
+                  className="h-7 px-2 text-xs"
+                >
+                  Unpaid
+                </Button>
+              </div>
+
+              <span className="text-xs text-gray-500">
+                {filteredAndSortedJobStats.length} jobs
+              </span>
             </div>
-
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Show:</span>
-
-              <Button
-                variant={showUninvoiced ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowUninvoiced(!showUninvoiced)}
-                className="h-8 px-2 text-xs"
-              >
-                Uninvoiced
-              </Button>
-
-              <Button
-                variant={showPartiallyInvoiced ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowPartiallyInvoiced(!showPartiallyInvoiced)}
-                className="h-8 px-2 text-xs"
-              >
-                Partial Invoice
-              </Button>
-
-              <Button
-                variant={showFullyInvoiced ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowFullyInvoiced(!showFullyInvoiced)}
-                className="h-8 px-2 text-xs"
-              >
-                Fully Invoiced
-              </Button>
-
-              <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-              <Button
-                variant={showUnpaid ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowUnpaid(!showUnpaid)}
-                className="h-8 px-2 text-xs"
-              >
-                Unpaid
-              </Button>
-
-              <Button
-                variant={showPartiallyPaid ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowPartiallyPaid(!showPartiallyPaid)}
-                className="h-8 px-2 text-xs"
-              >
-                Partial Paid
-              </Button>
-
-              <Button
-                variant={showFullyPaid ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowFullyPaid(!showFullyPaid)}
-                className="h-8 px-2 text-xs"
-              >
-                Fully Paid
-              </Button>
-            </div>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setSortBy("jobNumber");
-                setSortDirection("asc");
-                setShowUninvoiced(true);
-                setShowPartiallyInvoiced(true);
-                setShowFullyInvoiced(true);
-                setShowUnpaid(true);
-                setShowPartiallyPaid(true);
-                setShowFullyPaid(true);
-              }}
-              className="text-gray-500 hover:text-gray-700 h-8 px-2 text-xs"
-            >
-              Reset
-            </Button>
-
-            <span className="text-xs text-gray-500 ml-auto">
-              {filteredAndSortedJobStats.length} of {jobStats.length} jobs
-            </span>
           </div>
         </CardHeader>
+
         <CardContent>
           {jobStats.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
@@ -661,32 +725,44 @@ export function InvoiceManagement() {
               <div className="grid grid-cols-4 gap-4 p-4 bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/20 rounded-lg">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-400">
-                    {jobStats.reduce((sum, stat) => sum + stat.totalDates, 0)}
+                    {filteredAndSortedJobStats.reduce(
+                      (sum, stat) => sum + stat.totalDates,
+                      0,
+                    )}
                   </div>
                   <div className="text-sm text-gray-300">Total Days</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-400">
-                    ${jobStats.reduce((sum, stat) => sum + stat.totalBillable, 0).toFixed(0)}
+                    $
+                    {filteredAndSortedJobStats
+                      .reduce((sum, stat) => sum + stat.totalBillable, 0)
+                      .toFixed(0)}
                   </div>
                   <div className="text-sm text-gray-300">Total Billable</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-400">
-                    ${jobStats.reduce((sum, stat) => sum + stat.uninvoicedBillable, 0).toFixed(0)}
+                    $
+                    {filteredAndSortedJobStats
+                      .reduce((sum, stat) => sum + stat.uninvoicedBillable, 0)
+                      .toFixed(0)}
                   </div>
                   <div className="text-sm text-gray-300">Uninvoiced</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-400">
-                    ${jobStats.reduce((sum, stat) => sum + stat.unpaidBillable, 0).toFixed(0)}
+                    $
+                    {filteredAndSortedJobStats
+                      .reduce((sum, stat) => sum + stat.unpaidBillable, 0)
+                      .toFixed(0)}
                   </div>
                   <div className="text-sm text-gray-300">Unpaid</div>
                 </div>
               </div>
 
               {/* Job Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {filteredAndSortedJobStats.map((jobStat) => {
                   const getInvoiceStatusColor = (percentage: number) => {
                     if (percentage >= 100) return "bg-green-500";
@@ -706,39 +782,47 @@ export function InvoiceManagement() {
                       className="p-4 bg-gray-800/50 border border-gray-600 rounded-lg hover:border-orange-500/50 transition-all"
                     >
                       {/* Job Header */}
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <div className="font-semibold text-gray-100">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-gray-100 truncate">
                             {jobStat.job.jobNumber}
                           </div>
-                          <div className="text-sm text-gray-300 truncate max-w-[200px]">
+                          <div className="text-sm text-gray-300 truncate">
                             {jobStat.job.name}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-gray-400">{jobStat.totalDates} days</div>
+                        <div className="text-right ml-2">
+                          <div className="text-sm text-gray-400">
+                            {jobStat.totalDates}d
+                          </div>
                           <div className="text-xs text-gray-500">
-                            {jobStat.totalHours.toFixed(1)}h
+                            {jobStat.totalHours.toFixed(0)}h
                           </div>
                         </div>
                       </div>
 
                       {/* Status Metrics */}
-                      <div className="grid grid-cols-2 gap-4 mb-3">
+                      <div className="grid grid-cols-2 gap-3 mb-3">
                         <div className="text-center">
                           <div className="text-lg font-bold text-blue-400">
                             {jobStat.invoicePercentage.toFixed(0)}%
                           </div>
-                          <div className="text-xs text-gray-400 mb-1">Invoiced</div>
-                          <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                          <div className="text-xs text-gray-400 mb-2">
+                            Invoiced
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-1.5">
                             <div
-                              className={`h-2 rounded-full transition-all ${getInvoiceStatusColor(jobStat.invoicePercentage)}`}
+                              className={`h-1.5 rounded-full transition-all ${getInvoiceStatusColor(jobStat.invoicePercentage)}`}
                               style={{ width: `${jobStat.invoicePercentage}%` }}
                             />
                           </div>
-                          <div className="text-xs space-y-1">
-                            <div className="text-green-400">✓ {jobStat.invoicedDates} days</div>
-                            <div className="text-red-400">✗ {jobStat.uninvoicedDates} days</div>
+                          <div className="text-xs mt-1 space-y-0.5">
+                            <div className="text-green-400">
+                              ✓ {jobStat.invoicedDates}
+                            </div>
+                            <div className="text-red-400">
+                              ✗ {jobStat.uninvoicedDates}
+                            </div>
                           </div>
                         </div>
 
@@ -746,22 +830,26 @@ export function InvoiceManagement() {
                           <div className="text-lg font-bold text-purple-400">
                             {jobStat.paidPercentage.toFixed(0)}%
                           </div>
-                          <div className="text-xs text-gray-400 mb-1">Paid</div>
-                          <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                          <div className="text-xs text-gray-400 mb-2">Paid</div>
+                          <div className="w-full bg-gray-700 rounded-full h-1.5">
                             <div
-                              className={`h-2 rounded-full transition-all ${getPaidStatusColor(jobStat.paidPercentage)}`}
+                              className={`h-1.5 rounded-full transition-all ${getPaidStatusColor(jobStat.paidPercentage)}`}
                               style={{ width: `${jobStat.paidPercentage}%` }}
                             />
                           </div>
-                          <div className="text-xs space-y-1">
-                            <div className="text-green-400">✓ {jobStat.paidDates} days</div>
-                            <div className="text-purple-400">◯ {jobStat.unpaidDates} days</div>
+                          <div className="text-xs mt-1 space-y-0.5">
+                            <div className="text-green-400">
+                              ✓ {jobStat.paidDates}
+                            </div>
+                            <div className="text-purple-400">
+                              ◯ {jobStat.unpaidDates}
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Financial Summary */}
-                      <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-700 pt-3">
+                      <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-700 pt-3 mb-3">
                         <div>
                           <div className="text-sm font-bold text-green-400">
                             ${jobStat.totalBillable.toFixed(0)}
@@ -772,7 +860,9 @@ export function InvoiceManagement() {
                           <div className="text-sm font-bold text-red-400">
                             ${jobStat.uninvoicedBillable.toFixed(0)}
                           </div>
-                          <div className="text-xs text-gray-400">Uninvoiced</div>
+                          <div className="text-xs text-gray-400">
+                            Uninvoiced
+                          </div>
                         </div>
                         <div>
                           <div className="text-sm font-bold text-purple-400">
@@ -784,15 +874,16 @@ export function InvoiceManagement() {
 
                       {/* LOA Info if applicable */}
                       {jobStat.totalLoaCount > 0 && (
-                        <div className="mt-2 pt-2 border-t border-gray-700 text-center">
+                        <div className="mb-3 text-center">
                           <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-1 rounded">
-                            LOA: {jobStat.totalLoaCount} (${(jobStat.totalLoaCount * 200).toFixed(0)})
+                            LOA: {jobStat.totalLoaCount} ($
+                            {(jobStat.totalLoaCount * 200).toFixed(0)})
                           </span>
                         </div>
                       )}
 
                       {/* Action Buttons */}
-                      <div className="flex gap-2 mt-3 pt-3 border-t border-gray-700">
+                      <div className="flex gap-2">
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
@@ -800,20 +891,105 @@ export function InvoiceManagement() {
                               size="sm"
                               onClick={() => {
                                 setSelectedJob(jobStat.job);
-                                setIsDialogOpen(true);
+                                setSelectedJobForBreakdown(jobStat.job);
+                                setIsBreakdownDialogOpen(true);
                               }}
-                              className="flex-1"
+                              className="flex-1 border-gray-600 text-gray-100 hover:bg-gray-700"
                             >
-                              <FileText className="h-4 w-4 mr-1" />
+                              <Settings className="h-4 w-4 mr-1" />
                               Manage
                             </Button>
                           </DialogTrigger>
+                          <DialogContent className="bg-gray-900 border-gray-700 max-w-4xl">
+                            <DialogHeader>
+                              <DialogTitle className="text-gray-100">
+                                Manage {jobStat.job.jobNumber} -{" "}
+                                {jobStat.job.name}
+                              </DialogTitle>
+                              <DialogDescription className="text-gray-300">
+                                Manage invoice and payment status for individual
+                                dates
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="max-h-96 overflow-y-auto">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead className="text-gray-200">
+                                      Date
+                                    </TableHead>
+                                    <TableHead className="text-gray-200">
+                                      Hours
+                                    </TableHead>
+                                    <TableHead className="text-gray-200">
+                                      Billable
+                                    </TableHead>
+                                    <TableHead className="text-gray-200">
+                                      Invoiced
+                                    </TableHead>
+                                    <TableHead className="text-gray-200">
+                                      Paid
+                                    </TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {getJobDates(jobStat.job).map((dateInfo) => (
+                                    <TableRow key={dateInfo.date}>
+                                      <TableCell className="text-gray-100">
+                                        {formatLocalDate(dateInfo.date)}
+                                      </TableCell>
+                                      <TableCell className="text-gray-100">
+                                        {dateInfo.totalHours.toFixed(1)}h
+                                        {dateInfo.totalLoaCount > 0 && (
+                                          <div className="text-xs text-purple-400">
+                                            +{dateInfo.totalLoaCount} LOA
+                                          </div>
+                                        )}
+                                      </TableCell>
+                                      <TableCell className="text-gray-100">
+                                        ${dateInfo.totalBillable.toFixed(2)}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Switch
+                                          checked={dateInfo.isInvoiced}
+                                          onCheckedChange={() =>
+                                            handleInvoiceToggle(jobStat.job, [
+                                              dateInfo.date,
+                                            ])
+                                          }
+                                          className="data-[state=checked]:bg-green-500"
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        <Switch
+                                          checked={dateInfo.isPaid}
+                                          onCheckedChange={() => {
+                                            if (dateInfo.isPaid) {
+                                              removePaidDates(jobStat.job.id, [
+                                                dateInfo.date,
+                                              ]);
+                                            } else {
+                                              addPaidDates(jobStat.job.id, [
+                                                dateInfo.date,
+                                              ]);
+                                            }
+                                          }}
+                                          className="data-[state=checked]:bg-purple-500"
+                                        />
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </DialogContent>
                         </Dialog>
+
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleJobPaidStatus(jobStat.job)}
-                          className="px-3"
+                          className="px-3 hover:bg-gray-700"
                         >
                           <CreditCard className="h-4 w-4" />
                         </Button>
@@ -824,1104 +1000,8 @@ export function InvoiceManagement() {
               </div>
             </div>
           )}
-              <TableHeader>
-                <TableRow>
-                  <TableHead
-                    className="cursor-pointer hover:bg-gray-50 select-none"
-                    onClick={() => {
-                      if (sortBy === "jobNumber") {
-                        setSortDirection(
-                          sortDirection === "asc" ? "desc" : "asc",
-                        );
-                      } else {
-                        setSortBy("jobNumber");
-                        setSortDirection("asc");
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-1">
-                      Job Number
-                      {sortBy === "jobNumber" && (
-                        <span className="text-blue-500">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Paid Status</TableHead>
-                  <TableHead
-                    className="cursor-pointer hover:bg-gray-50 select-none"
-                    onClick={() => {
-                      if (sortBy === "jobName") {
-                        setSortDirection(
-                          sortDirection === "asc" ? "desc" : "asc",
-                        );
-                      } else {
-                        setSortBy("jobName");
-                        setSortDirection("asc");
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-1">
-                      Job Name
-                      {sortBy === "jobName" && (
-                        <span className="text-blue-500">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead
-                    className="cursor-pointer hover:bg-gray-50 select-none"
-                    onClick={() => {
-                      if (sortBy === "invoicePercentage") {
-                        setSortDirection(
-                          sortDirection === "asc" ? "desc" : "asc",
-                        );
-                      } else {
-                        setSortBy("invoicePercentage");
-                        setSortDirection("desc"); // Default to highest progress first
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-1">
-                      Invoice Status
-                      {sortBy === "invoicePercentage" && (
-                        <span className="text-blue-500">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead
-                    className="cursor-pointer hover:bg-gray-50 select-none"
-                    onClick={() => {
-                      if (sortBy === "uninvoicedDates") {
-                        setSortDirection(
-                          sortDirection === "asc" ? "desc" : "asc",
-                        );
-                      } else {
-                        setSortBy("uninvoicedDates");
-                        setSortDirection("desc"); // Default to most uninvoiced first
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-1">
-                      Dates
-                      {sortBy === "uninvoicedDates" && (
-                        <span className="text-blue-500">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Paid Status</TableHead>
-                  <TableHead
-                    className="cursor-pointer hover:bg-gray-50 select-none"
-                    onClick={() => {
-                      if (sortBy === "uninvoicedDates") {
-                        setSortDirection(
-                          sortDirection === "asc" ? "desc" : "asc",
-                        );
-                      } else {
-                        setSortBy("uninvoicedDates");
-                        setSortDirection("desc"); // Default to most uninvoiced first
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-1">
-                      Dates
-                      {sortBy === "uninvoicedDates" && (
-                        <span className="text-blue-500">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Hours</TableHead>
-                  <TableHead className="text-purple-600">
-                    Live Out Allowance Count
-                  </TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAndSortedJobStats.map((stat) => (
-                  <TableRow key={stat.job.id} className="hover:bg-muted/50">
-                    <TableCell className="font-medium">
-                      {stat.job.jobNumber}
-                    </TableCell>
-                    <TableCell>{stat.job.name}</TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <Badge
-                          className={getInvoiceStatusColor(
-                            stat.invoicePercentage,
-                          )}
-                        >
-                          {stat.invoicePercentage.toFixed(0)}% Invoiced
-                        </Badge>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div
-                            className="bg-primary h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${stat.invoicePercentage}%` }}
-                          />
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-2">
-                        <Badge
-                          className={getPaidStatusColor(stat.paidPercentage)}
-                        >
-                          {stat.paidPercentage.toFixed(0)}% Paid
-                        </Badge>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div
-                            className="bg-purple-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${stat.paidPercentage}%` }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-2 pt-1">
-                          <Switch
-                            checked={stat.paidPercentage >= 100}
-                            onCheckedChange={() =>
-                              toggleJobPaidStatus(stat.job)
-                            }
-                            className="scale-75"
-                          />
-                          <span className="text-xs text-muted-foreground">
-                            Mark as Paid
-                          </span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div className="flex items-center gap-1">
-                          <Check className="h-3 w-3 text-green-600" />
-                          <span className="text-green-600 font-medium">
-                            {stat.invoicedDates}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <X className="h-3 w-3 text-red-600" />
-                          <span className="text-red-600">
-                            {stat.uninvoicedDates}
-                          </span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div className="text-green-600 font-medium">
-                          {stat.invoicedHours.toFixed(1)}h
-                        </div>
-                        <div className="text-red-600">
-                          {stat.uninvoicedHours.toFixed(1)}h
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {stat.totalLoaCount > 0 ? (
-                          <>
-                            <div className="text-green-600 font-medium">
-                              {stat.invoicedLoaCount > 0 && (
-                                <span>{stat.invoicedLoaCount} LOA</span>
-                              )}
-                            </div>
-                            <div className="text-red-600">
-                              {stat.uninvoicedLoaCount > 0 && (
-                                <span>{stat.uninvoicedLoaCount} LOA</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-purple-600 mt-1">
-                              Total: {stat.totalLoaCount} ($
-                              {(stat.totalLoaCount * 200).toFixed(2)})
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-gray-400 text-sm">—</span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div className="text-green-600 font-medium">
-                          ${stat.invoicedCost.toFixed(2)}
-                        </div>
-                        <div className="text-red-600">
-                          ${stat.uninvoicedCost.toFixed(2)}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          Total: ${stat.totalCost.toFixed(2)}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedJob(stat.job)}
-                          >
-                            <Calendar className="h-4 w-4 mr-1" />
-                            Manage
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          <DialogHeader>
-                            <DialogTitle>
-                              Manage Invoicing for {stat.job.jobNumber} -{" "}
-                              {stat.job.name}
-                            </DialogTitle>
-                            <DialogDescription>
-                              Select individual dates or use bulk actions to
-                              manage invoicing status
-                            </DialogDescription>
-                          </DialogHeader>
-
-                          <div className="space-y-4">
-                            {/* Financial Summary Cards */}
-                            {(() => {
-                              const jobDates = getJobDates(stat.job);
-                              const totalBillable = jobDates.reduce(
-                                (sum, d) => sum + d.totalBillable,
-                                0,
-                              );
-                              const totalCost = jobDates.reduce(
-                                (sum, d) => sum + d.totalCost,
-                                0,
-                              );
-                              const profitAmount = totalBillable - totalCost;
-                              const profitMargin =
-                                totalBillable > 0
-                                  ? (profitAmount / totalBillable) * 100
-                                  : 0;
-
-                              return (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                  <Card className="modern-card">
-                                    <CardContent className="p-4">
-                                      <div className="flex items-center gap-2">
-                                        <DollarSign className="h-5 w-5 text-green-500" />
-                                        <div>
-                                          <p className="text-sm font-medium text-muted-foreground">
-                                            Total Billable
-                                          </p>
-                                          <p className="text-xl font-bold text-green-600">
-                                            ${totalBillable.toFixed(2)}
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                            Labor + Rental Revenue + Live Out
-                                            Allowance
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-
-                                  <Card className="modern-card">
-                                    <CardContent className="p-4">
-                                      <div className="flex items-center gap-2">
-                                        <DollarSign className="h-5 w-5 text-red-500" />
-                                        <div>
-                                          <p className="text-sm font-medium text-muted-foreground">
-                                            Total Cost
-                                          </p>
-                                          <p className="text-xl font-bold text-red-600">
-                                            ${totalCost.toFixed(2)}
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                            Labor Costs Only
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-
-                                  <Card className="modern-card">
-                                    <CardContent className="p-4">
-                                      <div className="flex items-center gap-2">
-                                        <DollarSign
-                                          className={`h-5 w-5 ${profitMargin >= 0 ? "text-blue-500" : "text-red-500"}`}
-                                        />
-                                        <div>
-                                          <p className="text-sm font-medium text-muted-foreground">
-                                            Profit Margin
-                                          </p>
-                                          <p
-                                            className={`text-xl font-bold ${profitMargin >= 0 ? "text-blue-600" : "text-red-600"}`}
-                                          >
-                                            {profitMargin.toFixed(1)}%
-                                          </p>
-                                          <p
-                                            className={`text-xs ${profitAmount >= 0 ? "text-blue-600" : "text-red-600"}`}
-                                          >
-                                            ${profitAmount >= 0 ? "+" : ""}$
-                                            {profitAmount.toFixed(2)}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                </div>
-                              );
-                            })()}
-
-                            {/* Bulk Actions */}
-                            <Card className="p-4">
-                              <div className="flex items-center gap-4">
-                                <div className="space-y-2">
-                                  <Label>Start Date</Label>
-                                  <Input
-                                    type="date"
-                                    value={dateRange.startDate}
-                                    onChange={(e) =>
-                                      setDateRange({
-                                        ...dateRange,
-                                        startDate: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>End Date</Label>
-                                  <Input
-                                    type="date"
-                                    value={dateRange.endDate}
-                                    onChange={(e) =>
-                                      setDateRange({
-                                        ...dateRange,
-                                        endDate: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>&nbsp;</Label>
-                                  <Button
-                                    onClick={handleBulkInvoice}
-                                    disabled={
-                                      !dateRange.startDate || !dateRange.endDate
-                                    }
-                                  >
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Mark Range as Invoiced
-                                  </Button>
-                                </div>
-                              </div>
-                            </Card>
-
-                            {/* Individual Dates */}
-                            <div className="max-h-96 overflow-y-auto">
-                              <Table>
-                                <TableHeader>
-                                  <TableRow>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Hours</TableHead>
-                                    <TableHead className="text-purple-600">
-                                      Live Out Allowance Count
-                                    </TableHead>
-                                    <TableHead className="text-green-600">
-                                      Billable
-                                    </TableHead>
-                                    <TableHead className="text-red-600">
-                                      Cost
-                                    </TableHead>
-                                    <TableHead className="text-blue-600">
-                                      Profit
-                                    </TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Action</TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {getJobDates(stat.job).map((dateInfo) => (
-                                    <TableRow
-                                      key={dateInfo.date}
-                                      className="cursor-pointer hover:bg-blue-50 transition-colors"
-                                      onClick={() => {
-                                        setSelectedDateForBreakdown(
-                                          dateInfo.date,
-                                        );
-                                        setSelectedJobForBreakdown(stat.job);
-                                        setIsBreakdownDialogOpen(true);
-                                      }}
-                                    >
-                                      <TableCell className="font-medium text-blue-600 hover:text-blue-800">
-                                        <div className="flex items-center gap-2">
-                                          <span>
-                                            {formatLocalDate(dateInfo.date)}
-                                          </span>
-                                          <Eye className="h-4 w-4 opacity-50" />
-                                        </div>
-                                      </TableCell>
-                                      <TableCell>
-                                        {dateInfo.totalHours.toFixed(2)}
-                                      </TableCell>
-                                      <TableCell>
-                                        {dateInfo.totalLoaCount > 0 ? (
-                                          <div className="flex items-center gap-1">
-                                            <Badge
-                                              variant="secondary"
-                                              className="bg-purple-100 text-purple-800"
-                                            >
-                                              {dateInfo.totalLoaCount}
-                                            </Badge>
-                                            <span className="text-xs text-purple-600">
-                                              $
-                                              {(
-                                                dateInfo.totalLoaCount * 200
-                                              ).toFixed(2)}
-                                            </span>
-                                          </div>
-                                        ) : (
-                                          <span className="text-gray-400 text-sm">
-                                            —
-                                          </span>
-                                        )}
-                                      </TableCell>
-                                      <TableCell className="font-medium text-green-600">
-                                        <div className="text-sm">
-                                          <div>
-                                            ${dateInfo.totalBillable.toFixed(2)}
-                                          </div>
-                                          <div className="text-xs text-gray-500">
-                                            Labor: $
-                                            {dateInfo.laborBillable.toFixed(2)}{" "}
-                                            + Rentals: $
-                                            {dateInfo.rentalBillable.toFixed(2)}{" "}
-                                            + Live Out Allowance: $
-                                            {dateInfo.loaCost.toFixed(2)}
-                                          </div>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell className="font-medium text-red-600">
-                                        <div className="text-sm">
-                                          <div>
-                                            ${dateInfo.totalCost.toFixed(2)}
-                                          </div>
-                                          <div className="text-xs text-gray-500">
-                                            Labor Cost Only
-                                          </div>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell
-                                        className={`font-medium ${dateInfo.totalBillable - dateInfo.totalCost >= 0 ? "text-blue-600" : "text-red-600"}`}
-                                      >
-                                        <div className="text-sm">
-                                          <div>
-                                            $
-                                            {(
-                                              dateInfo.totalBillable -
-                                              dateInfo.totalCost
-                                            ).toFixed(2)}
-                                          </div>
-                                          <div className="text-xs text-gray-500">
-                                            {dateInfo.totalBillable > 0
-                                              ? (
-                                                  ((dateInfo.totalBillable -
-                                                    dateInfo.totalCost) /
-                                                    dateInfo.totalBillable) *
-                                                  100
-                                                ).toFixed(1)
-                                              : "0.0"}
-                                            %
-                                          </div>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell>
-                                        <Badge
-                                          variant={
-                                            dateInfo.isInvoiced
-                                              ? "default"
-                                              : "destructive"
-                                          }
-                                        >
-                                          {dateInfo.isInvoiced
-                                            ? "Invoiced"
-                                            : "Not Invoiced"}
-                                        </Badge>
-                                      </TableCell>
-                                      <TableCell>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleDateInvoiced(
-                                              stat.job,
-                                              dateInfo.date,
-                                              dateInfo.isInvoiced,
-                                            );
-                                          }}
-                                        >
-                                          {dateInfo.isInvoiced ? (
-                                            <>
-                                              <Minus className="h-4 w-4 mr-1" />
-                                              Uninvoice
-                                            </>
-                                          ) : (
-                                            <>
-                                              <Plus className="h-4 w-4 mr-1" />
-                                              Invoice
-                                            </>
-                                          )}
-                                        </Button>
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
         </CardContent>
       </Card>
-
-      {/* Payment Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <FileText className="h-5 w-5 text-blue-500 mt-1 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Total Invoices
-                </p>
-                <p className="text-lg font-bold text-blue-600 break-words">
-                  {jobStats.length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <Check className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Fully Invoiced
-                </p>
-                <p className="text-lg font-bold text-green-600 break-words">
-                  {
-                    jobStats.filter((stat) => stat.invoicePercentage >= 100)
-                      .length
-                  }
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <Calendar className="h-5 w-5 text-yellow-500 mt-1 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Partially Invoiced
-                </p>
-                <p className="text-lg font-bold text-yellow-600 break-words">
-                  {
-                    jobStats.filter(
-                      (stat) =>
-                        stat.invoicePercentage > 0 &&
-                        stat.invoicePercentage < 100,
-                    ).length
-                  }
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <DollarSign className="h-5 w-5 text-purple-500 mt-1 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Total Paid
-                </p>
-                <p className="text-lg font-bold text-purple-600 break-words">
-                  {jobStats.filter((stat) => stat.paidPercentage >= 100).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Day Breakdown Dialog */}
-      <Dialog
-        open={isBreakdownDialogOpen}
-        onOpenChange={setIsBreakdownDialogOpen}
-      >
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-blue-600" />
-              Day Breakdown -{" "}
-              {selectedDateForBreakdown &&
-                parseLocalDate(selectedDateForBreakdown).toLocaleDateString()}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedJobForBreakdown &&
-                `Detailed breakdown for ${selectedJobForBreakdown.jobNumber} - ${selectedJobForBreakdown.name}`}
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedDateForBreakdown && selectedJobForBreakdown && (
-            <div className="space-y-6">
-              {(() => {
-                const breakdown = getDayBreakdown(
-                  selectedJobForBreakdown,
-                  selectedDateForBreakdown,
-                );
-
-                return (
-                  <>
-                    {/* Summary Cards */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">Total Hours</p>
-                            <p className="text-2xl font-bold text-blue-600">
-                              {(breakdown.totalHours || 0).toFixed(2)}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">Labor Cost</p>
-                            <p className="text-2xl font-bold text-green-600">
-                              ${(breakdown.totalLaborCost || 0).toFixed(2)}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">Rental Cost</p>
-                            <p className="text-2xl font-bold text-orange-600">
-                              ${(breakdown.totalRentalCost || 0).toFixed(2)}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">
-                              Live Out Allowance Count
-                            </p>
-                            <p className="text-2xl font-bold text-purple-600">
-                              {breakdown.totalLoaCount}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    {/* Time Entries by Title */}
-                    {Object.keys(breakdown.timeEntriesByTitle).length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg">
-                            Time Entries by Employee Title
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            {Object.entries(breakdown.timeEntriesByTitle).map(
-                              ([title, entries]) => (
-                                <div
-                                  key={title}
-                                  className="border rounded-lg p-4"
-                                >
-                                  <h4 className="font-semibold text-blue-700 mb-3">
-                                    {title}
-                                  </h4>
-                                  <Table>
-                                    <TableHeader>
-                                      <TableRow>
-                                        <TableHead>Employee</TableHead>
-                                        <TableHead>Hour Type</TableHead>
-                                        <TableHead>Hours</TableHead>
-                                        <TableHead className="text-purple-600">
-                                          Live Out Allowance
-                                        </TableHead>
-                                        <TableHead>Billable Rate</TableHead>
-                                        <TableHead>Cost Rate</TableHead>
-                                        <TableHead>Total Cost</TableHead>
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                      {entries.map((entry, index) => (
-                                        <TableRow key={index}>
-                                          <TableCell className="font-medium">
-                                            {entry.employeeName}
-                                          </TableCell>
-                                          <TableCell>
-                                            <Badge variant="secondary">
-                                              {entry.hourTypeName}
-                                            </Badge>
-                                          </TableCell>
-                                          <TableCell>
-                                            {(entry.hours || 0).toFixed(2)}h
-                                          </TableCell>
-                                          <TableCell>
-                                            {entry.loaCount &&
-                                            entry.loaCount > 0 ? (
-                                              <Badge
-                                                variant="secondary"
-                                                className="bg-purple-100 text-purple-800"
-                                              >
-                                                {entry.loaCount}
-                                              </Badge>
-                                            ) : (
-                                              <span className="text-gray-400">
-                                                —
-                                              </span>
-                                            )}
-                                          </TableCell>
-                                          <TableCell className="text-green-600">
-                                            <div className="text-sm">
-                                              <div className="font-medium">
-                                                $
-                                                {(
-                                                  entry.billableWage || 0
-                                                ).toFixed(2)}
-                                              </div>
-                                              <div className="text-xs text-gray-500">
-                                                Billable/hr
-                                              </div>
-                                            </div>
-                                          </TableCell>
-                                          <TableCell className="text-red-600">
-                                            <div className="text-sm">
-                                              <div className="font-medium">
-                                                $
-                                                {(entry.costWage || 0).toFixed(
-                                                  2,
-                                                )}
-                                              </div>
-                                              <div className="text-xs text-gray-500">
-                                                Cost/hr
-                                              </div>
-                                            </div>
-                                          </TableCell>
-                                          <TableCell>
-                                            <div className="text-sm">
-                                              <div className="font-bold">
-                                                $
-                                                {(entry.totalCost || 0).toFixed(
-                                                  2,
-                                                )}
-                                              </div>
-                                              <div
-                                                className={`text-xs ${(() => {
-                                                  const profitMargin =
-                                                    entry.billableWage > 0
-                                                      ? ((entry.billableWage -
-                                                          entry.costWage) /
-                                                          entry.billableWage) *
-                                                        100
-                                                      : 0;
-                                                  return profitMargin >= 0
-                                                    ? "text-blue-600"
-                                                    : "text-red-600";
-                                                })()}`}
-                                              >
-                                                {(() => {
-                                                  const profitMargin =
-                                                    (entry.billableWage || 0) >
-                                                    0
-                                                      ? (((entry.billableWage ||
-                                                          0) -
-                                                          (entry.costWage ||
-                                                            0)) /
-                                                          (entry.billableWage ||
-                                                            1)) *
-                                                        100
-                                                      : 0;
-                                                  return `${(profitMargin || 0).toFixed(1)}% margin`;
-                                                })()}
-                                              </div>
-                                            </div>
-                                          </TableCell>
-                                        </TableRow>
-                                      ))}
-                                      <TableRow className="bg-gray-50 font-bold border-t-2 border-orange-500/30">
-                                        <TableCell
-                                          colSpan={2}
-                                          className="text-orange-400 font-semibold"
-                                        >
-                                          Subtotal for {title}
-                                        </TableCell>
-                                        <TableCell>
-                                          {entries
-                                            .reduce(
-                                              (sum, e) => sum + (e.hours || 0),
-                                              0,
-                                            )
-                                            .toFixed(2)}
-                                          h
-                                        </TableCell>
-                                        <TableCell className="text-purple-600">
-                                          {entries.reduce(
-                                            (sum, e) => sum + (e.loaCount || 0),
-                                            0,
-                                          )}
-                                        </TableCell>
-                                        <TableCell className="text-green-600">
-                                          <div className="text-sm">
-                                            <div className="font-medium">
-                                              $
-                                              {entries
-                                                .reduce(
-                                                  (sum, e) =>
-                                                    sum +
-                                                    (e.totalBillableAmount ||
-                                                      0),
-                                                  0,
-                                                )
-                                                .toFixed(2)}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                              Total Billable
-                                            </div>
-                                          </div>
-                                        </TableCell>
-                                        <TableCell className="text-red-600">
-                                          <div className="text-sm">
-                                            <div className="font-medium">
-                                              $
-                                              {entries
-                                                .reduce(
-                                                  (sum, e) =>
-                                                    sum + (e.totalCost || 0),
-                                                  0,
-                                                )
-                                                .toFixed(2)}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                              Total Cost
-                                            </div>
-                                          </div>
-                                        </TableCell>
-                                        <TableCell>
-                                          <div className="text-sm">
-                                            <div className="font-bold">
-                                              $
-                                              {(
-                                                entries.reduce(
-                                                  (sum, e) =>
-                                                    sum +
-                                                    (e.totalBillableAmount ||
-                                                      0),
-                                                  0,
-                                                ) -
-                                                entries.reduce(
-                                                  (sum, e) =>
-                                                    sum + (e.totalCost || 0),
-                                                  0,
-                                                )
-                                              ).toFixed(2)}
-                                            </div>
-                                            <div
-                                              className={`text-xs ${(() => {
-                                                const totalBillable =
-                                                  entries.reduce(
-                                                    (sum, e) =>
-                                                      sum +
-                                                      e.totalBillableAmount,
-                                                    0,
-                                                  );
-                                                const totalCost =
-                                                  entries.reduce(
-                                                    (sum, e) =>
-                                                      sum + e.totalCost,
-                                                    0,
-                                                  );
-                                                const profitMargin =
-                                                  totalBillable > 0
-                                                    ? ((totalBillable -
-                                                        totalCost) /
-                                                        totalBillable) *
-                                                      100
-                                                    : 0;
-                                                return profitMargin >= 0
-                                                  ? "text-blue-600"
-                                                  : "text-red-600";
-                                              })()}`}
-                                            >
-                                              {(() => {
-                                                const totalBillable =
-                                                  entries.reduce(
-                                                    (sum, e) =>
-                                                      sum +
-                                                      (e.totalBillableAmount ||
-                                                        0),
-                                                    0,
-                                                  );
-                                                const totalCost =
-                                                  entries.reduce(
-                                                    (sum, e) =>
-                                                      sum + (e.totalCost || 0),
-                                                    0,
-                                                  );
-                                                const profitMargin =
-                                                  totalBillable > 0
-                                                    ? ((totalBillable -
-                                                        totalCost) /
-                                                        totalBillable) *
-                                                      100
-                                                    : 0;
-                                                return `${(profitMargin || 0).toFixed(1)}% margin`;
-                                              })()}
-                                            </div>
-                                          </div>
-                                        </TableCell>
-                                      </TableRow>
-                                    </TableBody>
-                                  </Table>
-                                </div>
-                              ),
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {/* Rental Entries by Category */}
-                    {Object.keys(breakdown.rentalsByCategory).length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg">
-                            Rental Entries by Category
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            {Object.entries(breakdown.rentalsByCategory).map(
-                              ([category, rentals]) => (
-                                <div
-                                  key={category}
-                                  className="border rounded-lg p-4"
-                                >
-                                  <h4 className="font-semibold text-orange-700 mb-3">
-                                    {category}
-                                  </h4>
-                                  <Table>
-                                    <TableHeader>
-                                      <TableRow>
-                                        <TableHead>Item</TableHead>
-                                        <TableHead>Employee</TableHead>
-                                        <TableHead>Duration</TableHead>
-                                        <TableHead>Rate</TableHead>
-                                        <TableHead>Quantity</TableHead>
-                                        <TableHead>Total Cost</TableHead>
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                      {rentals.map((rental, index) => (
-                                        <TableRow key={index}>
-                                          <TableCell className="font-medium">
-                                            {rental.rentalItemName}
-                                          </TableCell>
-                                          <TableCell>
-                                            {rental.employeeName}
-                                          </TableCell>
-                                          <TableCell>
-                                            {rental.duration}{" "}
-                                            {rental.billingUnit}
-                                            {rental.duration !== 1 ? "s" : ""}
-                                          </TableCell>
-                                          <TableCell>
-                                            ${(rental.rateUsed || 0).toFixed(2)}
-                                            /{rental.billingUnit}
-                                          </TableCell>
-                                          <TableCell>
-                                            {rental.quantity}
-                                          </TableCell>
-                                          <TableCell className="font-bold text-orange-600">
-                                            $
-                                            {(rental.totalCost || 0).toFixed(2)}
-                                          </TableCell>
-                                        </TableRow>
-                                      ))}
-                                      <TableRow className="bg-gray-50 font-bold border-t-2 border-orange-500/30">
-                                        <TableCell
-                                          colSpan={5}
-                                          className="text-orange-400 font-semibold"
-                                        >
-                                          Subtotal for {category}
-                                        </TableCell>
-                                        <TableCell>
-                                          $
-                                          {rentals
-                                            .reduce(
-                                              (sum, r) => sum + r.totalCost,
-                                              0,
-                                            )
-                                            .toFixed(2)}
-                                        </TableCell>
-                                      </TableRow>
-                                    </TableBody>
-                                  </Table>
-                                </div>
-                              ),
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {/* No Data Message */}
-                    {Object.keys(breakdown.timeEntriesByTitle).length === 0 &&
-                      Object.keys(breakdown.rentalsByCategory).length === 0 && (
-                        <Card>
-                          <CardContent className="p-8 text-center">
-                            <p className="text-gray-500">
-                              No time entries or rentals found for this date.
-                            </p>
-                          </CardContent>
-                        </Card>
-                      )}
-                  </>
-                );
-              })()}
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsBreakdownDialogOpen(false)}
-            >
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
