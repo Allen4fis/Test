@@ -64,7 +64,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
     },
     {
       id: "reports" as const,
-      label: "Reports",
+      label: "Payroll Information",
       icon: BarChart3,
       description: "Summary reports",
       color: "text-orange-400",
@@ -141,7 +141,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                     4Front Trackity-doo
                   </h1>
                   <p className="text-sm text-gray-400 font-medium">
-                    Modern Time Tracking System
+                    Not Gonna Change It
                   </p>
                 </div>
               </div>
