@@ -805,7 +805,7 @@ export function SummaryReports() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">Total DSP</p>
+                <p className="text-sm font-medium text-gray-400">Total DSP Rentals</p>
                 <p className="text-2xl font-bold text-orange-400">
                   ${totalDspEarnings.toFixed(2)}
                 </p>
@@ -1007,11 +1007,11 @@ export function SummaryReports() {
               >
                 <CardTitle className="text-xl text-gray-100 flex items-center gap-3">
                   <Users className="h-6 w-6 text-blue-400" />
-                  Employee Performance Dashboard
+                  Payroll Information For Selected Dates And Times
                 </CardTitle>
                 <CardDescription className="text-gray-300">
-                  Hierarchical view of employee performance with hours, costs,
-                  and DSP earnings breakdown.
+                  Hierarchical view of employee and subordinates, with hours, costs,
+                  and DSP Rental earnings breakdown.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
@@ -1074,7 +1074,7 @@ export function SummaryReports() {
                             )
                             .toFixed(0)}
                         </div>
-                        <div className="text-sm text-gray-300">Total DSP</div>
+                        <div className="text-sm text-gray-300">Total DSP Rentals</div>
                       </div>
                     </div>
 
@@ -1158,59 +1158,38 @@ export function SummaryReports() {
                             {/* Key Metrics Row */}
                             <div className="grid grid-cols-4 gap-4 mb-3">
                               <div className="text-center">
-                                <div className="text-xl font-bold text-blue-400">
-                                  {employee.totalHours.toFixed(1)}h
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                  Hours
-                                </div>
-                                {employee.totalEffectiveHours !==
-                                  employee.totalHours && (
-                                  <div className="text-xs text-gray-500">
-                                    ({employee.totalEffectiveHours.toFixed(1)}h
-                                    eff)
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="text-center">
-                                <div className="text-xl font-bold text-green-400">
-                                  ${employee.totalCost.toFixed(0)}
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                  Cost
-                                </div>
-                              </div>
-
-                              <div className="text-center">
                                 {totalGst > 0 ? (
                                   <>
                                     <div className="text-xl font-bold text-orange-400">
                                       ${totalGst.toFixed(0)}
                                     </div>
-                                    <div className="text-xs text-gray-400">
-                                      GST
-                                    </div>
-                                    {employee.subordinateGstTotal > 0 && (
-                                      <div className="text-xs text-blue-300">
-                                        +$
-                                        {employee.subordinateGstTotal.toFixed(
-                                          0,
-                                        )}{" "}
-                                        team
+                                    <div className="text-xs text-gray-400">GST (5%)</div>
+                                    {employee.subordinateGstTotal > 0 && employee.gstAmount > 0 ? (
+                                      <div className="text-xs space-y-1">
+                                        <div className="text-orange-300">
+                                          ${employee.gstAmount.toFixed(0)} personal
+                                        </div>
+                                        <div className="text-blue-300">
+                                          +${employee.subordinateGstTotal.toFixed(0)} team
+                                        </div>
                                       </div>
-                                    )}
+                                    ) : employee.subordinateGstTotal > 0 ? (
+                                      <div className="text-xs text-blue-300">
+                                        ${employee.subordinateGstTotal.toFixed(0)} from team
+                                      </div>
+                                    ) : employee.gstAmount > 0 ? (
+                                      <div className="text-xs text-orange-300">
+                                        Personal GST
+                                      </div>
+                                    ) : null}
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-xl text-gray-500">
-                                      -
-                                    </div>
-                                    <div className="text-xs text-gray-400">
-                                      GST
-                                    </div>
+                                    <div className="text-xl text-gray-500">-</div>
+                                    <div className="text-xs text-gray-400">GST (5%)</div>
                                   </>
                                 )}
+                              </div>
                               </div>
 
                               <div className="text-center">
@@ -1219,18 +1198,12 @@ export function SummaryReports() {
                                     <div className="text-xl font-bold text-purple-400">
                                       ${dspCalc.dspEarnings.toFixed(0)}
                                     </div>
-                                    <div className="text-xs text-gray-400">
-                                      DSP
-                                    </div>
+                                    <div className="text-xs text-gray-400">DSP Rentals</div>
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-xl text-gray-500">
-                                      -
-                                    </div>
-                                    <div className="text-xs text-gray-400">
-                                      DSP
-                                    </div>
+                                    <div className="text-xl text-gray-500">-</div>
+                                    <div className="text-xs text-gray-400">DSP Rentals</div>
                                   </>
                                 )}
                               </div>
