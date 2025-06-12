@@ -390,6 +390,10 @@ export function InvoiceManagement() {
           aValue = a.unpaidBillable;
           bValue = b.unpaidBillable;
           break;
+        case "billableStatus":
+          aValue = a.job.isBillable !== false ? "Billable" : "Non-Billable";
+          bValue = b.job.isBillable !== false ? "Billable" : "Non-Billable";
+          break;
         default:
           aValue = a.job.jobNumber.toLowerCase();
           bValue = b.job.jobNumber.toLowerCase();
