@@ -1097,7 +1097,7 @@ export function SummaryReports() {
                         <div className="text-2xl font-bold text-blue-400">
                           {hierarchicalEmployeeSummaries
                             .reduce((sum, e) => sum + e.totalHours, 0)
-                            .toFixed(0)}
+                            .toFixed(2)}
                           h
                         </div>
                         <div className="text-sm text-gray-300">Total Hours</div>
