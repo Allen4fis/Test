@@ -445,7 +445,7 @@ export function Dashboard() {
                       </div>
                       <div className="text-right">
                         <div className="font-bold text-blue-400">
-                          {performer.hours.toFixed(1)}h
+                          {performer.hours.toFixed(2)}h
                         </div>
                         <div className="text-sm text-green-400">
                           ${performer.cost.toFixed(2)}
