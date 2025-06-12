@@ -1398,7 +1398,7 @@ export function RentalManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {rentalSummaries.map((summary, index) => {
+                      {sortedRentalSummaries.map((summary, index) => {
                         // Find the rental item by name
                         const rentalItem = rentalItems.find(
                           (item) => item.name === summary.rentalItemName,
