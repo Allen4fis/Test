@@ -1331,6 +1331,205 @@ export function RentalManagement() {
             </DialogContent>
           </Dialog>
         </TabsContent>
+
+        {/* Rental Billable Tab */}
+        <TabsContent value="billable">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-green-500" />
+                    Rental Billable Analytics
+                  </CardTitle>
+                  <CardDescription>
+                    Track rental performance and profitability by equipment type
+                  </CardDescription>
+                </div>
+                <Badge
+                  variant="outline"
+                  className="text-green-600 border-green-600"
+                >
+                  <TrendingUp className="h-4 w-4 mr-1" />
+                  {rentalBillableAnalytics.length} rental types
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {rentalBillableAnalytics.length === 0 ? (
+                <div className="text-center py-8">
+                  <DollarSign className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-500">No rental data available</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Add rental entries to see billable analytics
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Summary Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-green-700">
+                              Total Billable
+                            </p>
+                            <p className="text-2xl font-bold text-green-900">
+                              $
+                              {rentalBillableAnalytics
+                                .reduce(
+                                  (sum, item) => sum + item.totalBillable,
+                                  0,
+                                )
+                                .toFixed(2)}
+                            </p>
+                          </div>
+                          <DollarSign className="h-8 w-8 text-green-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-blue-700">
+                              Total Entries
+                            </p>
+                            <p className="text-2xl font-bold text-blue-900">
+                              {rentalBillableAnalytics.reduce(
+                                (sum, item) => sum + item.totalEntries,
+                                0,
+                              )}
+                            </p>
+                          </div>
+                          <BarChart3 className="h-8 w-8 text-blue-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-purple-700">
+                              Avg Per Entry
+                            </p>
+                            <p className="text-2xl font-bold text-purple-900">
+                              $
+                              {(
+                                rentalBillableAnalytics.reduce(
+                                  (sum, item) => sum + item.totalBillable,
+                                  0,
+                                ) /
+                                Math.max(
+                                  rentalBillableAnalytics.reduce(
+                                    (sum, item) => sum + item.totalEntries,
+                                    0,
+                                  ),
+                                  1,
+                                )
+                              ).toFixed(2)}
+                            </p>
+                          </div>
+                          <TrendingUp className="h-8 w-8 text-purple-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Analytics Table */}
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-semibold">Rank</TableHead>
+                          <TableHead className="font-semibold">
+                            Rental Item
+                          </TableHead>
+                          <TableHead className="font-semibold">
+                            Category
+                          </TableHead>
+                          <TableHead className="font-semibold text-right">
+                            Total Billable
+                          </TableHead>
+                          <TableHead className="font-semibold text-right">
+                            DSP Rate
+                          </TableHead>
+                          <TableHead className="font-semibold text-right">
+                            Entries
+                          </TableHead>
+                          <TableHead className="font-semibold text-right">
+                            Avg per Entry
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {rentalBillableAnalytics.map((item, index) => (
+                          <TableRow
+                            key={item.itemName}
+                            className="hover:bg-gray-50"
+                          >
+                            <TableCell>
+                              <div className="flex items-center">
+                                {index === 0 && (
+                                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                                    🥇 #{index + 1}
+                                  </Badge>
+                                )}
+                                {index === 1 && (
+                                  <Badge className="bg-gray-100 text-gray-800 border-gray-300">
+                                    🥈 #{index + 1}
+                                  </Badge>
+                                )}
+                                {index === 2 && (
+                                  <Badge className="bg-orange-100 text-orange-800 border-orange-300">
+                                    🥉 #{index + 1}
+                                  </Badge>
+                                )}
+                                {index > 2 && (
+                                  <Badge variant="outline">#{index + 1}</Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {item.itemName}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">{item.category}</Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-semibold text-green-600">
+                              ${item.totalBillable.toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {item.dspRate > 0 ? (
+                                <span className="text-blue-600 font-medium">
+                                  ${item.dspRate.toFixed(2)}
+                                </span>
+                              ) : (
+                                <span className="text-gray-400">N/A</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right text-gray-600">
+                              {item.totalEntries}
+                            </TableCell>
+                            <TableCell className="text-right text-gray-600">
+                              $
+                              {(item.totalBillable / item.totalEntries).toFixed(
+                                2,
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
