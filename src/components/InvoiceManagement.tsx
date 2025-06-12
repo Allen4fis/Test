@@ -77,6 +77,8 @@ export function InvoiceManagement() {
     rentalSummaries,
     addInvoicedDates,
     removeInvoicedDates,
+    addPaidDates,
+    removePaidDates,
   } = useTimeTracking();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
