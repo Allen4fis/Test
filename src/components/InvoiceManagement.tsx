@@ -1111,121 +1111,18 @@ export function InvoiceManagement() {
         </CardContent>
       </Card>
 
-      {/* Summary Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      {/* Payment Statistics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="modern-card">
           <CardContent className="p-5">
             <div className="flex items-start gap-3">
-              <DollarSign className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
+              <FileText className="h-5 w-5 text-blue-500 mt-1 flex-shrink-0" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-muted-foreground truncate">
-                  Total Billable
+                  Total Invoices
                 </p>
-                <p className="text-lg font-bold text-green-600 break-words">
-                  $
-                  {jobStats
-                    .reduce((sum, stat) => sum + (stat.totalBillable || 0), 0)
-                    .toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <DollarSign className="h-5 w-5 text-red-500 mt-1 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Total Cost
-                </p>
-                <p className="text-lg font-bold text-red-600 break-words">
-                  $
-                  {jobStats
-                    .reduce((sum, stat) => sum + stat.totalCost, 0)
-                    .toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <DollarSign
-                className={`h-5 w-5 mt-1 flex-shrink-0 ${(() => {
-                  const totalBillable = jobStats.reduce(
-                    (sum, stat) => sum + (stat.totalBillable || 0),
-                    0,
-                  );
-                  const totalCost = jobStats.reduce(
-                    (sum, stat) => sum + stat.totalCost,
-                    0,
-                  );
-                  return totalBillable - totalCost >= 0
-                    ? "text-blue-500"
-                    : "text-red-500";
-                })()} `}
-              />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Profit Margin
-                </p>
-                <p
-                  className={`text-lg font-bold break-words ${(() => {
-                    const totalBillable = jobStats.reduce(
-                      (sum, stat) => sum + (stat.totalBillable || 0),
-                      0,
-                    );
-                    const totalCost = jobStats.reduce(
-                      (sum, stat) => sum + stat.totalCost,
-                      0,
-                    );
-                    return totalBillable - totalCost >= 0
-                      ? "text-blue-600"
-                      : "text-red-600";
-                  })()}`}
-                >
-                  {(() => {
-                    const totalBillable = jobStats.reduce(
-                      (sum, stat) => sum + (stat.totalBillable || 0),
-                      0,
-                    );
-                    const totalCost = jobStats.reduce(
-                      (sum, stat) => sum + stat.totalCost,
-                      0,
-                    );
-                    const profitMargin =
-                      totalBillable > 0
-                        ? ((totalBillable - totalCost) / totalBillable) * 100
-                        : 0;
-                    return profitMargin.toFixed(1);
-                  })()}
-                  %
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="modern-card">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-3">
-              <DollarSign className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground truncate">
-                  Invoiced Revenue
-                </p>
-                <p className="text-lg font-bold text-green-600 break-words">
-                  $
-                  {jobStats
-                    .reduce(
-                      (sum, stat) => sum + (stat.invoicedBillable || 0),
-                      0,
-                    )
-                    .toFixed(2)}
+                <p className="text-lg font-bold text-blue-600 break-words">
+                  {jobStats.length}
                 </p>
               </div>
             </div>
@@ -1238,10 +1135,13 @@ export function InvoiceManagement() {
               <Check className="h-5 w-5 text-green-500 mt-1 flex-shrink-0" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-muted-foreground truncate">
-                  Invoiced Days
+                  Fully Invoiced
                 </p>
-                <p className="text-lg font-bold text-foreground break-words">
-                  {jobStats.reduce((sum, stat) => sum + stat.invoicedDates, 0)}
+                <p className="text-lg font-bold text-green-600 break-words">
+                  {
+                    jobStats.filter((stat) => stat.invoicePercentage >= 100)
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -1251,16 +1151,35 @@ export function InvoiceManagement() {
         <Card className="modern-card">
           <CardContent className="p-5">
             <div className="flex items-start gap-3">
-              <X className="h-5 w-5 text-red-500 mt-1 flex-shrink-0" />
+              <Calendar className="h-5 w-5 text-yellow-500 mt-1 flex-shrink-0" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-muted-foreground truncate">
-                  Pending Days
+                  Partially Invoiced
                 </p>
-                <p className="text-lg font-bold text-foreground break-words">
-                  {jobStats.reduce(
-                    (sum, stat) => sum + stat.uninvoicedDates,
-                    0,
-                  )}
+                <p className="text-lg font-bold text-yellow-600 break-words">
+                  {
+                    jobStats.filter(
+                      (stat) =>
+                        stat.invoicePercentage > 0 &&
+                        stat.invoicePercentage < 100,
+                    ).length
+                  }
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="modern-card">
+          <CardContent className="p-5">
+            <div className="flex items-start gap-3">
+              <DollarSign className="h-5 w-5 text-purple-500 mt-1 flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-muted-foreground truncate">
+                  Total Paid
+                </p>
+                <p className="text-lg font-bold text-purple-600 break-words">
+                  {jobStats.filter((stat) => stat.paidPercentage >= 100).length}
                 </p>
               </div>
             </div>
