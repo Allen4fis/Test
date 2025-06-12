@@ -244,10 +244,9 @@ export function InvoiceManagement() {
     }));
   };
 
-  // Calculate payment-focused summary statistics for billable jobs only
+  // Calculate payment-focused summary statistics for all jobs
   const jobStats = useMemo(() => {
     return jobs
-      .filter((job) => job.isBillable !== false) // Only include billable jobs
       .map((job) => {
         const jobDates = getJobDates(job);
         const totalDates = jobDates.length;
