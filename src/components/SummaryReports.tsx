@@ -502,9 +502,26 @@ export function SummaryReports() {
             0,
           );
 
-          // Calculate 5% GST on their total cost if they have any cost
-          if (subordinateTotalCost > 0) {
-            const subordinateGst = subordinateTotalCost * 0.05;
+          // Calculate DSP earnings for this subordinate
+          const subordinateRentals = rentalSummaries.filter(
+            (rental) => rental.employeeName === subordinateEmployee.name,
+          );
+
+          const subordinateDspEarnings = subordinateRentals.reduce(
+            (sum, rental) => {
+              const dspRate = rental.dspRate || 0;
+              return sum + dspRate * rental.duration * rental.quantity;
+            },
+            0,
+          );
+
+          // Total cost including DSP earnings
+          const totalCostWithDsp =
+            subordinateTotalCost + subordinateDspEarnings;
+
+          // Calculate 5% GST on their total cost (including DSP) if they have any cost
+          if (totalCostWithDsp > 0) {
+            const subordinateGst = totalCostWithDsp * 0.05;
             subordinateGstTotal += subordinateGst;
           }
         });
