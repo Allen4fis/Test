@@ -836,7 +836,7 @@ export function InvoiceManagement() {
                             {jobStat.totalDates}d
                           </div>
                           <div className="text-xs text-gray-500">
-                            {jobStat.totalHours.toFixed(0)}h
+                            {jobStat.totalHours.toFixed(2)}h
                           </div>
                         </div>
                       </div>
