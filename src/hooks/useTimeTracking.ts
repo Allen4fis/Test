@@ -275,6 +275,12 @@ export function useTimeTracking() {
     lastSaveRef.current = generateDataHash(appData);
 
     // Setup periodic autosave
+    console.log(
+      `🔄 Autosave initialized: Every ${AUTOSAVE_INTERVAL / 1000 / 60} minutes`,
+    );
+    console.log(
+      `📅 Next autosave: ${new Date(Date.now() + AUTOSAVE_INTERVAL).toLocaleTimeString()}`,
+    );
     autosaveTimerRef.current = setInterval(performAutosave, AUTOSAVE_INTERVAL);
 
     // Cleanup on unmount
