@@ -425,12 +425,46 @@ export function SummaryReports() {
     const hierarchicalList: typeof enhancedEmployees = [];
 
     managers.forEach((manager) => {
-      // Calculate total GST from subordinates
+      // Calculate total GST from subordinates (both in current filter and outside it)
       const subordinates = subordinatesByManager[manager.employeeName] || [];
-      const subordinateGstTotal = subordinates.reduce(
+
+      // Also check for subordinates not in current filtered data but still linked to this manager
+      const allSubordinatesForManager = employees.filter(
+        (emp) =>
+          emp.managerId &&
+          employees.find((mgr) => mgr.id === emp.managerId)?.name ===
+            manager.employeeName,
+      );
+
+      // Calculate GST for all subordinates linked to this manager
+      let subordinateGstTotal = 0;
+
+      // Add GST from subordinates in current filtered data
+      subordinateGstTotal += subordinates.reduce(
         (sum, sub) => sum + sub.gstAmount,
         0,
       );
+
+      // Add GST from subordinates not in current filtered data but still linked
+      allSubordinatesForManager.forEach((sub) => {
+        // Only add if this subordinate is not already counted in the filtered data
+        if (
+          !subordinates.find(
+            (filteredSub) => filteredSub.employeeName === sub.name,
+          )
+        ) {
+          // For subordinates not in filtered data, we need to calculate their total cost from all their entries
+          const allEntriesForSub = timeEntrySummaries.filter(
+            (entry) => entry.employeeName === sub.name,
+          );
+          const totalCostForSub = allEntriesForSub.reduce(
+            (sum, entry) => sum + (entry.totalCost || 0),
+            0,
+          );
+          const gstForSub = calculateGST(sub, totalCostForSub);
+          subordinateGstTotal += gstForSub;
+        }
+      });
 
       // Add the manager with subordinate GST total
       hierarchicalList.push({
