@@ -120,6 +120,7 @@ export function InvoiceManagement() {
     | "unpaidDates"
     | "uninvoicedBillable"
     | "unpaidBillable"
+    | "billableStatus"
   >("jobNumber");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [showFullyInvoiced, setShowFullyInvoiced] = useState(true);
