@@ -308,9 +308,10 @@ export function RentalManagement() {
       </div>
 
       <Tabs defaultValue="items" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="items">Rental Items</TabsTrigger>
           <TabsTrigger value="entries">Rental Entries</TabsTrigger>
+          <TabsTrigger value="billable">Rental Billable</TabsTrigger>
         </TabsList>
 
         {/* Rental Items Tab */}
