@@ -1551,6 +1551,29 @@ export function RentalManagement() {
                       {billableAnalytics.length !== 1 ? "s" : ""}
                     </span>
                   </div>
+
+                  {/* Job Type Filter Controls */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-sm text-gray-600">Job Types:</span>
+                    <Button
+                      variant={showBillableJobs ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setShowBillableJobs(!showBillableJobs)}
+                      className="h-7 px-2 text-xs"
+                    >
+                      Billable
+                    </Button>
+                    <Button
+                      variant={showNonBillableJobs ? "default" : "outline"}
+                      size="sm"
+                      onClick={() =>
+                        setShowNonBillableJobs(!showNonBillableJobs)
+                      }
+                      className="h-7 px-2 text-xs"
+                    >
+                      Non-Billable
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardHeader>
