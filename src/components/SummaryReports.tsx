@@ -1165,10 +1165,14 @@ export function SummaryReports() {
                                 <div className="text-xl font-bold text-blue-400">
                                   {employee.totalHours.toFixed(1)}h
                                 </div>
-                                <div className="text-xs text-gray-400">Hours</div>
-                                {employee.totalEffectiveHours !== employee.totalHours && (
+                                <div className="text-xs text-gray-400">
+                                  Hours
+                                </div>
+                                {employee.totalEffectiveHours !==
+                                  employee.totalHours && (
                                   <div className="text-xs text-gray-500">
-                                    ({employee.totalEffectiveHours.toFixed(1)}h eff)
+                                    ({employee.totalEffectiveHours.toFixed(1)}h
+                                    eff)
                                   </div>
                                 )}
                               </div>
@@ -1177,7 +1181,9 @@ export function SummaryReports() {
                                 <div className="text-xl font-bold text-green-400">
                                   ${employee.totalCost.toFixed(0)}
                                 </div>
-                                <div className="text-xs text-gray-400">Cost</div>
+                                <div className="text-xs text-gray-400">
+                                  Cost
+                                </div>
                               </div>
 
                               <div className="text-center">
@@ -1186,19 +1192,31 @@ export function SummaryReports() {
                                     <div className="text-xl font-bold text-orange-400">
                                       ${totalGst.toFixed(0)}
                                     </div>
-                                    <div className="text-xs text-gray-400">GST (5%)</div>
-                                    {employee.subordinateGstTotal > 0 && employee.gstAmount > 0 ? (
+                                    <div className="text-xs text-gray-400">
+                                      GST (5%)
+                                    </div>
+                                    {employee.subordinateGstTotal > 0 &&
+                                    employee.gstAmount > 0 ? (
                                       <div className="text-xs space-y-1">
                                         <div className="text-orange-300">
-                                          ${employee.gstAmount.toFixed(0)} personal
+                                          ${employee.gstAmount.toFixed(0)}{" "}
+                                          personal
                                         </div>
                                         <div className="text-blue-300">
-                                          +${employee.subordinateGstTotal.toFixed(0)} team
+                                          +$
+                                          {employee.subordinateGstTotal.toFixed(
+                                            0,
+                                          )}{" "}
+                                          team
                                         </div>
                                       </div>
                                     ) : employee.subordinateGstTotal > 0 ? (
                                       <div className="text-xs text-blue-300">
-                                        ${employee.subordinateGstTotal.toFixed(0)} from team
+                                        $
+                                        {employee.subordinateGstTotal.toFixed(
+                                          0,
+                                        )}{" "}
+                                        from team
                                       </div>
                                     ) : employee.gstAmount > 0 ? (
                                       <div className="text-xs text-orange-300">
@@ -1208,8 +1226,12 @@ export function SummaryReports() {
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-xl text-gray-500">-</div>
-                                    <div className="text-xs text-gray-400">GST (5%)</div>
+                                    <div className="text-xl text-gray-500">
+                                      -
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                      GST (5%)
+                                    </div>
                                   </>
                                 )}
                               </div>
@@ -1220,16 +1242,87 @@ export function SummaryReports() {
                                     <div className="text-xl font-bold text-purple-400">
                                       ${dspCalc.dspEarnings.toFixed(0)}
                                     </div>
-                                    <div className="text-xs text-gray-400">DSP Rentals</div>
+                                    <div className="text-xs text-gray-400">
+                                      DSP Rentals
+                                    </div>
                                   </>
                                 ) : (
                                   <>
-                                    <div className="text-xl text-gray-500">-</div>
-                                    <div className="text-xs text-gray-400">DSP Rentals</div>
+                                    <div className="text-xl text-gray-500">
+                                      -
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                      DSP Rentals
+                                    </div>
                                   </>
                                 )}
                               </div>
                             </div>
+
+                            {/* Hour Types Compact */}
+                            {employee.hourTypeBreakdown &&
+                              Object.keys(employee.hourTypeBreakdown).length >
+                                0 && (
+                                <div className="border-t border-gray-700 pt-3">
+                                  <div className="flex flex-wrap gap-2">
+                                    {Object.entries(employee.hourTypeBreakdown)
+                                      .sort(([, a], [, b]) => b.hours - a.hours)
+                                      .slice(0, 4)
+                                      .map(([hourType, data]) => (
+                                        <div
+                                          key={hourType}
+                                          className="bg-orange-600/20 border border-orange-500/30 rounded px-3 py-1"
+                                        >
+                                          <div className="text-sm font-medium text-orange-200">
+                                            {hourType}
+                                          </div>
+                                          <div className="text-xs text-orange-300">
+                                            {data.hours.toFixed(1)}h • $
+                                            {data.cost.toFixed(0)}
+                                            {data.rateEntries &&
+                                              data.rateEntries.length > 0 && (
+                                                <div className="text-orange-400">
+                                                  @$
+                                                  {(
+                                                    data.rateEntries.reduce(
+                                                      (sum, entry) =>
+                                                        sum +
+                                                        entry.hourlyRate *
+                                                          entry.hours,
+                                                      0,
+                                                    ) /
+                                                    data.rateEntries.reduce(
+                                                      (sum, entry) =>
+                                                        sum + entry.hours,
+                                                      0,
+                                                    )
+                                                  ).toFixed(0)}
+                                                  /hr
+                                                </div>
+                                              )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    {Object.keys(employee.hourTypeBreakdown)
+                                      .length > 4 && (
+                                      <div className="text-sm text-gray-400 self-center px-2">
+                                        +
+                                        {Object.keys(employee.hourTypeBreakdown)
+                                          .length - 4}{" "}
+                                        more
+                                      </div>
+                                    )}
+                                  </div>
+                                  {employee.totalLoaCount > 0 && (
+                                    <div className="mt-2">
+                                      <span className="bg-purple-900/30 text-purple-300 px-2 py-1 rounded text-sm">
+                                        LOA: {employee.totalLoaCount}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                          </div>
                         );
                       })}
                     </div>
