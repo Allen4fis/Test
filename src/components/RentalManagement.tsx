@@ -1550,6 +1550,45 @@ export function RentalManagement() {
                   <CardDescription>
                     Track rental performance and profitability by equipment type
                   </CardDescription>
+                  {/* Concise sorting controls */}
+                  <div className="flex items-center gap-2 mt-3">
+                    <ArrowUpDown className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Sort by:</span>
+                    <Select
+                      value={billableSortBy}
+                      onValueChange={(value: any) => setBillableSortBy(value)}
+                    >
+                      <SelectTrigger className="w-32 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="totalBillable">
+                          Total Billable
+                        </SelectItem>
+                        <SelectItem value="itemName">Item Name</SelectItem>
+                        <SelectItem value="dspRate">DSP Rate</SelectItem>
+                        <SelectItem value="totalEntries">
+                          Entry Count
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setBillableSortDirection(
+                          billableSortDirection === "asc" ? "desc" : "asc",
+                        )
+                      }
+                      className="px-2 h-8"
+                    >
+                      {billableSortDirection === "asc" ? "↑" : "↓"}
+                    </Button>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {sortedRentalBillableAnalytics.length} type
+                      {sortedRentalBillableAnalytics.length !== 1 ? "s" : ""}
+                    </span>
+                  </div>
                 </div>
                 <Badge
                   variant="outline"
