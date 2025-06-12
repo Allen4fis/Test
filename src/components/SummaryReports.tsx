@@ -846,14 +846,17 @@ export function SummaryReports() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                    className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 overflow-hidden"
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateFilter.start ? (
-                      format(parseLocalDate(dateFilter.start), "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
+                    <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">
+                      {dateFilter.start
+                        ? format(
+                            parseLocalDate(dateFilter.start),
+                            "MMM d, yyyy",
+                          )
+                        : "Pick a date"}
+                    </span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -887,14 +890,14 @@ export function SummaryReports() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                    className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 overflow-hidden"
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateFilter.end ? (
-                      format(parseLocalDate(dateFilter.end), "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
+                    <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">
+                      {dateFilter.end
+                        ? format(parseLocalDate(dateFilter.end), "MMM d, yyyy")
+                        : "Pick a date"}
+                    </span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
