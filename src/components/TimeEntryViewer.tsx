@@ -834,7 +834,7 @@ export function TimeEntryViewer() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAndSortedEntries.map((entry) => {
+                  {pagination.paginatedData.map((entry) => {
                     const employee = employees.find(
                       (emp) => emp.id === entry.employeeId,
                     );
