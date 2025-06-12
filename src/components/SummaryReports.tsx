@@ -897,6 +897,9 @@ export function SummaryReports() {
                             Total Revenue
                           </TableHead>
                           <TableHead className="text-gray-200 font-semibold">
+                            GST (5%)
+                          </TableHead>
+                          <TableHead className="text-gray-200 font-semibold">
                             Rental DSP
                           </TableHead>
                           <TableHead className="text-gray-200 font-semibold">
