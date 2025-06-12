@@ -433,6 +433,120 @@ export function InvoiceManagement() {
           <CardDescription>
             Manage invoiced dates for each job and track billing status
           </CardDescription>
+
+          {/* Sorting and Filtering Controls */}
+          <div className="pt-4">
+            <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg border">
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-gray-500" />
+                <Label className="text-sm font-medium">Sort by:</Label>
+                <Select
+                  value={sortBy}
+                  onValueChange={(value: any) => setSortBy(value)}
+                >
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="jobNumber">Job Number</SelectItem>
+                    <SelectItem value="jobName">Job Name</SelectItem>
+                    <SelectItem value="invoicePercentage">
+                      Invoice Progress
+                    </SelectItem>
+                    <SelectItem value="uninvoicedDates">
+                      Uninvoiced Dates
+                    </SelectItem>
+                    <SelectItem value="uninvoicedBillable">
+                      Uninvoiced Amount
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+                  }
+                  className="px-2"
+                >
+                  {sortDirection === "asc" ? "↑" : "↓"}
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-gray-500" />
+                  <Label className="text-sm font-medium">Show:</Label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={showUninvoiced ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowUninvoiced(!showUninvoiced)}
+                    className="flex items-center gap-1"
+                  >
+                    {showUninvoiced ? (
+                      <Eye className="h-3 w-3" />
+                    ) : (
+                      <EyeOff className="h-3 w-3" />
+                    )}
+                    Uninvoiced
+                  </Button>
+
+                  <Button
+                    variant={showPartiallyInvoiced ? "default" : "outline"}
+                    size="sm"
+                    onClick={() =>
+                      setShowPartiallyInvoiced(!showPartiallyInvoiced)
+                    }
+                    className="flex items-center gap-1"
+                  >
+                    {showPartiallyInvoiced ? (
+                      <Eye className="h-3 w-3" />
+                    ) : (
+                      <EyeOff className="h-3 w-3" />
+                    )}
+                    Partially Invoiced
+                  </Button>
+
+                  <Button
+                    variant={showFullyInvoiced ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowFullyInvoiced(!showFullyInvoiced)}
+                    className="flex items-center gap-1"
+                  >
+                    {showFullyInvoiced ? (
+                      <Eye className="h-3 w-3" />
+                    ) : (
+                      <EyeOff className="h-3 w-3" />
+                    )}
+                    Fully Invoiced
+                  </Button>
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSortBy("jobNumber");
+                    setSortDirection("asc");
+                    setShowUninvoiced(true);
+                    setShowPartiallyInvoiced(true);
+                    setShowFullyInvoiced(true);
+                  }}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  Reset Filters
+                </Button>
+
+                <div className="ml-auto text-sm text-gray-500">
+                  Showing {filteredAndSortedJobStats.length} of{" "}
+                  {jobStats.length} jobs
+                </div>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {jobStats.length === 0 ? (
