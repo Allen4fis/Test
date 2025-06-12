@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,11 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -87,7 +86,7 @@ export function RentalManagement() {
     dailyRate: "",
     hourlyRate: "",
     unit: "day" as const,
-    isActive: true,
+    dspRate: "",
   });
 
   // Rental Entry Form State
@@ -102,28 +101,30 @@ export function RentalManagement() {
     description: "",
   });
 
-  // UI State
+  // UI States
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<RentalItem | null>(null);
+  const [isEntryDialogOpen, setIsEntryDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<RentalEntry | null>(null);
 
-  // Sorting state for each tab
-  const [itemsSortBy, setItemsSortBy] = useState<
-    "name" | "category" | "dailyRate" | "unit" | "createdAt"
+  // Sorting states
+  const [sortBy, setSortBy] = useState<
+    "name" | "category" | "dailyRate" | "createdAt"
   >("name");
-  const [itemsSortDirection, setItemsSortDirection] = useState<"asc" | "desc">(
-    "asc",
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  // Entry sorting states
+  const [entrySortBy, setEntrySortBy] = useState<
+    "startDate" | "rentalItem" | "job" | "employee" | "quantity" | "totalCost"
+  >("startDate");
+  const [entrySortDirection, setEntrySortDirection] = useState<"asc" | "desc">(
+    "desc",
   );
 
-  const [entriesSortBy, setEntriesSortBy] = useState<
-    "rentalItemName" | "jobNumber" | "employeeName" | "startDate" | "totalCost"
-  >("startDate");
-  const [entriesSortDirection, setEntriesSortDirection] = useState<
-    "asc" | "desc"
-  >("desc");
-
+  // Billable sorting states
   const [billableSortBy, setBillableSortBy] = useState<
-    "itemName" | "totalBillable" | "dspRate" | "totalEntries"
-  >("totalBillable");
+    "rentalItem" | "category" | "totalRevenue" | "totalDays" | "avgDaily"
+  >("totalRevenue");
   const [billableSortDirection, setBillableSortDirection] = useState<
     "asc" | "desc"
   >("desc");
@@ -137,8 +138,9 @@ export function RentalManagement() {
       dailyRate: "",
       hourlyRate: "",
       unit: "day",
-      isActive: true,
+      dspRate: "",
     });
+    setEditingItem(null);
   };
 
   const resetEntryForm = () => {
@@ -152,11 +154,18 @@ export function RentalManagement() {
       dspRate: "",
       description: "",
     });
+    setEditingEntry(null);
   };
 
-  // Handle form submissions
+  // Handle submissions
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (
+      !formData.name.trim() ||
+      !formData.category.trim() ||
+      !formData.dailyRate.trim()
+    )
+      return;
 
     const itemData = {
       name: formData.name,
@@ -167,31 +176,34 @@ export function RentalManagement() {
         ? parseFloat(formData.hourlyRate)
         : undefined,
       unit: formData.unit,
-      isActive: formData.isActive,
+      dspRate: formData.dspRate ? parseFloat(formData.dspRate) : undefined,
+      isActive: true,
     };
 
     if (editingItem) {
       updateRentalItem(editingItem.id, itemData);
-      setEditingItem(null);
     } else {
       addRentalItem(itemData);
     }
 
+    setIsDialogOpen(false);
     resetForm();
   };
 
   const handleEntrySubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (
+      !entryFormData.rentalItemId ||
+      !entryFormData.jobId ||
+      !entryFormData.startDate ||
+      !entryFormData.endDate
+    )
+      return;
 
-    // Find the selected rental item to get its rate and unit
-    const selectedRentalItem = rentalItems.find(
+    const selectedItem = rentalItems.find(
       (item) => item.id === entryFormData.rentalItemId,
     );
-
-    if (!selectedRentalItem) {
-      console.error("Selected rental item not found");
-      return;
-    }
+    if (!selectedItem) return;
 
     const entryData = {
       rentalItemId: entryFormData.rentalItemId,
@@ -200,8 +212,8 @@ export function RentalManagement() {
       startDate: entryFormData.startDate,
       endDate: entryFormData.endDate,
       quantity: entryFormData.quantity,
-      billingUnit: selectedRentalItem.unit, // Use the rental item's unit
-      rateUsed: selectedRentalItem.dailyRate, // Use the current daily rate
+      billingUnit: selectedItem.unit,
+      rateUsed: selectedItem.dailyRate,
       dspRate: entryFormData.dspRate
         ? parseFloat(entryFormData.dspRate)
         : undefined,
@@ -215,11 +227,12 @@ export function RentalManagement() {
       addRentalEntry(entryData);
     }
 
+    setIsEntryDialogOpen(false);
     resetEntryForm();
   };
 
   // Handle editing
-  const handleEditItem = (item: RentalItem) => {
+  const handleEdit = (item: RentalItem) => {
     setEditingItem(item);
     setFormData({
       name: item.name,
@@ -228,8 +241,9 @@ export function RentalManagement() {
       dailyRate: item.dailyRate.toString(),
       hourlyRate: item.hourlyRate?.toString() || "",
       unit: item.unit,
-      isActive: item.isActive,
+      dspRate: item.dspRate?.toString() || "",
     });
+    setIsDialogOpen(true);
   };
 
   const handleEditEntry = (entry: RentalEntry) => {
@@ -280,7 +294,7 @@ export function RentalManagement() {
           duration = Math.ceil(diffTime / (1000 * 60 * 60));
           break;
         case "day":
-          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both start and end days
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
           break;
         case "week":
           duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
@@ -290,77 +304,38 @@ export function RentalManagement() {
           break;
       }
 
-      const totalCost = duration * entry.quantity * entry.rateUsed;
+      const totalCost = entry.rateUsed * duration * entry.quantity;
 
       return {
         id: entry.id,
         rentalItemName: item?.name || "Unknown Item",
-        itemName: item?.name || "Unknown Item", // Add this for backward compatibility
         category: item?.category || "Unknown",
-        jobNumber: job?.jobNumber || "Unknown Job",
-        jobName: job?.name || "Unknown Job Name",
+        jobNumber: job?.jobNumber || "Unknown",
+        jobName: job?.name || "",
         employeeName: employee?.name || "Unassigned",
-        employeeTitle: employee?.title || "N/A",
         startDate: entry.startDate,
         endDate: entry.endDate,
         duration,
         quantity: entry.quantity,
-        billingUnit: entry.billingUnit,
         rateUsed: entry.rateUsed,
-        dspRate: entry.dspRate, // Include DSP rate from the entry
+        dspRate: entry.dspRate,
         totalCost,
         description: entry.description,
-        date: entry.startDate, // Use start date for filtering compatibility
       };
     });
   }, [rentalEntries, rentalItems, jobs, employees]);
 
+  // Get active items and jobs for form options
   const activeItems = rentalItems.filter((item) => item.isActive);
   const activeJobs = jobs.filter((job) => job.isActive);
 
-  // Calculate rental billable analytics
-  const rentalBillableAnalytics = useMemo(() => {
-    const rentalItemStats = new Map();
-
-    // Group rental summaries by rental item
-    rentalSummaries.forEach((summary) => {
-      const itemName = summary.rentalItemName;
-
-      if (!rentalItemStats.has(itemName)) {
-        rentalItemStats.set(itemName, {
-          itemName,
-          category: summary.category,
-          totalBillable: 0,
-          totalEntries: 0,
-          dspRate: summary.dspRate || 0, // Use DSP rate from the entry
-          lastDspRate: summary.dspRate || 0, // Track the most recent DSP rate
-        });
-      }
-
-      const stats = rentalItemStats.get(itemName);
-      stats.totalBillable += summary.totalCost;
-      stats.totalEntries += 1;
-
-      // Update to the most recent DSP rate if it exists
-      if (summary.dspRate && summary.dspRate > 0) {
-        stats.lastDspRate = summary.dspRate;
-        stats.dspRate = summary.dspRate;
-      }
-    });
-
-    // Convert to array and sort by total billable (highest first)
-    return Array.from(rentalItemStats.values()).sort(
-      (a, b) => b.totalBillable - a.totalBillable,
-    );
-  }, [rentalSummaries]);
-
-  // Sorted data for each tab
-  const sortedRentalItems = useMemo(() => {
-    return [...activeItems].sort((a, b) => {
+  // Sorted rental items
+  const sortedItems = useMemo(() => {
+    return [...rentalItems].sort((a, b) => {
       let aValue: string | number;
       let bValue: string | number;
 
-      switch (itemsSortBy) {
+      switch (sortBy) {
         case "name":
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
@@ -373,10 +348,6 @@ export function RentalManagement() {
           aValue = a.dailyRate;
           bValue = b.dailyRate;
           break;
-        case "unit":
-          aValue = a.unit;
-          bValue = b.unit;
-          break;
         case "createdAt":
           aValue = new Date(a.createdAt).getTime();
           bValue = new Date(b.createdAt).getTime();
@@ -386,33 +357,38 @@ export function RentalManagement() {
           bValue = b.name.toLowerCase();
       }
 
-      if (aValue < bValue) return itemsSortDirection === "asc" ? -1 : 1;
-      if (aValue > bValue) return itemsSortDirection === "asc" ? 1 : -1;
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
-  }, [activeItems, itemsSortBy, itemsSortDirection]);
+  }, [rentalItems, sortBy, sortDirection]);
 
-  const sortedRentalSummaries = useMemo(() => {
+  // Sorted rental entries
+  const sortedEntries = useMemo(() => {
     return [...rentalSummaries].sort((a, b) => {
       let aValue: string | number;
       let bValue: string | number;
 
-      switch (entriesSortBy) {
-        case "rentalItemName":
-          aValue = a.rentalItemName.toLowerCase();
-          bValue = b.rentalItemName.toLowerCase();
-          break;
-        case "jobNumber":
-          aValue = a.jobNumber.toLowerCase();
-          bValue = b.jobNumber.toLowerCase();
-          break;
-        case "employeeName":
-          aValue = (a.employeeName || "").toLowerCase();
-          bValue = (b.employeeName || "").toLowerCase();
-          break;
+      switch (entrySortBy) {
         case "startDate":
           aValue = new Date(a.startDate).getTime();
           bValue = new Date(b.startDate).getTime();
+          break;
+        case "rentalItem":
+          aValue = a.rentalItemName.toLowerCase();
+          bValue = b.rentalItemName.toLowerCase();
+          break;
+        case "job":
+          aValue = a.jobNumber.toLowerCase();
+          bValue = b.jobNumber.toLowerCase();
+          break;
+        case "employee":
+          aValue = a.employeeName.toLowerCase();
+          bValue = b.employeeName.toLowerCase();
+          break;
+        case "quantity":
+          aValue = a.quantity;
+          bValue = b.quantity;
           break;
         case "totalCost":
           aValue = a.totalCost;
@@ -423,64 +399,83 @@ export function RentalManagement() {
           bValue = new Date(b.startDate).getTime();
       }
 
-      if (aValue < bValue) return entriesSortDirection === "asc" ? -1 : 1;
-      if (aValue > bValue) return entriesSortDirection === "asc" ? 1 : -1;
+      if (aValue < bValue) return entrySortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return entrySortDirection === "asc" ? 1 : -1;
       return 0;
     });
-  }, [rentalSummaries, entriesSortBy, entriesSortDirection]);
+  }, [rentalSummaries, entrySortBy, entrySortDirection]);
 
-  const sortedRentalBillableAnalytics = useMemo(() => {
-    return [...rentalBillableAnalytics].sort((a, b) => {
+  // Billable analytics data
+  const billableAnalytics = useMemo(() => {
+    const itemAnalytics = rentalItems.map((item) => {
+      const itemEntries = rentalSummaries.filter(
+        (entry) => entry.rentalItemName === item.name,
+      );
+
+      const totalRevenue = itemEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      );
+      const totalDays = itemEntries.reduce(
+        (sum, entry) => sum + entry.duration,
+        0,
+      );
+      const avgDaily = totalDays > 0 ? totalRevenue / totalDays : 0;
+
+      return {
+        rentalItem: item.name,
+        category: item.category,
+        dailyRate: item.dailyRate,
+        totalRevenue,
+        totalDays,
+        avgDaily,
+        rentals: itemEntries.length,
+      };
+    });
+
+    return itemAnalytics.sort((a, b) => {
       let aValue: string | number;
       let bValue: string | number;
 
       switch (billableSortBy) {
-        case "itemName":
-          aValue = a.itemName.toLowerCase();
-          bValue = b.itemName.toLowerCase();
+        case "rentalItem":
+          aValue = a.rentalItem.toLowerCase();
+          bValue = b.rentalItem.toLowerCase();
           break;
-        case "totalBillable":
-          aValue = a.totalBillable;
-          bValue = b.totalBillable;
+        case "category":
+          aValue = a.category.toLowerCase();
+          bValue = b.category.toLowerCase();
           break;
-        case "dspRate":
-          aValue = a.dspRate || 0;
-          bValue = b.dspRate || 0;
+        case "totalRevenue":
+          aValue = a.totalRevenue;
+          bValue = b.totalRevenue;
           break;
-        case "totalEntries":
-          aValue = a.totalEntries;
-          bValue = b.totalEntries;
+        case "totalDays":
+          aValue = a.totalDays;
+          bValue = b.totalDays;
+          break;
+        case "avgDaily":
+          aValue = a.avgDaily;
+          bValue = b.avgDaily;
           break;
         default:
-          aValue = a.totalBillable;
-          bValue = b.totalBillable;
+          aValue = a.totalRevenue;
+          bValue = b.totalRevenue;
       }
 
       if (aValue < bValue) return billableSortDirection === "asc" ? -1 : 1;
       if (aValue > bValue) return billableSortDirection === "asc" ? 1 : -1;
       return 0;
     });
-  }, [rentalBillableAnalytics, billableSortBy, billableSortDirection]);
+  }, [rentalItems, rentalSummaries, billableSortBy, billableSortDirection]);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Rental Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage rental equipment and track rental entries
-          </p>
-        </div>
-      </div>
-
-      <Tabs defaultValue="items" className="space-y-6">
+      <Tabs defaultValue="items" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="items">Rental Items</TabsTrigger>
           <TabsTrigger value="entries">Rental Entries</TabsTrigger>
-          <TabsTrigger value="billable">Rental Billable</TabsTrigger>
+          <TabsTrigger value="billable">Billable Analytics</TabsTrigger>
         </TabsList>
 
         {/* Rental Items Tab */}
@@ -489,17 +484,20 @@ export function RentalManagement() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Rental Items</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5 text-blue-500" />
+                    Rental Management
+                  </CardTitle>
                   <CardDescription>
-                    Manage your rental equipment and their rates
+                    Manage rental items and their rates
                   </CardDescription>
                   {/* Concise sorting controls */}
                   <div className="flex items-center gap-2 mt-3">
                     <ArrowUpDown className="h-4 w-4 text-gray-500" />
                     <span className="text-sm text-gray-600">Sort by:</span>
                     <Select
-                      value={itemsSortBy}
-                      onValueChange={(value: any) => setItemsSortBy(value)}
+                      value={sortBy}
+                      onValueChange={(value: any) => setSortBy(value)}
                     >
                       <SelectTrigger className="w-32 h-8">
                         <SelectValue />
@@ -508,7 +506,6 @@ export function RentalManagement() {
                         <SelectItem value="name">Name</SelectItem>
                         <SelectItem value="category">Category</SelectItem>
                         <SelectItem value="dailyRate">Daily Rate</SelectItem>
-                        <SelectItem value="unit">Unit</SelectItem>
                         <SelectItem value="createdAt">Date Added</SelectItem>
                       </SelectContent>
                     </Select>
@@ -516,32 +513,36 @@ export function RentalManagement() {
                       variant="ghost"
                       size="sm"
                       onClick={() =>
-                        setItemsSortDirection(
-                          itemsSortDirection === "asc" ? "desc" : "asc",
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
                         )
                       }
                       className="px-2 h-8"
                     >
-                      {itemsSortDirection === "asc" ? "↑" : "↓"}
+                      {sortDirection === "asc" ? "↑" : "↓"}
                     </Button>
                     <span className="text-xs text-gray-500 ml-2">
-                      {sortedRentalItems.length} item
-                      {sortedRentalItems.length !== 1 ? "s" : ""}
+                      {sortedItems.length} item
+                      {sortedItems.length !== 1 ? "s" : ""}
                     </span>
                   </div>
                 </div>
-                <Dialog>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button>
+                    <Button onClick={() => resetForm()}>
                       <Plus className="h-4 w-4 mr-2" />
-                      Add Item
+                      Add Rental Item
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[600px]">
+                  <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Add Rental Item</DialogTitle>
+                      <DialogTitle>
+                        {editingItem ? "Edit Rental" : "Add New Rental"} Item
+                      </DialogTitle>
                       <DialogDescription>
-                        Add a new rental item to your inventory.
+                        {editingItem
+                          ? "Update the rental item information."
+                          : "Add a new rental item to your inventory."}
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit}>
@@ -557,89 +558,9 @@ export function RentalManagement() {
                               setFormData({ ...formData, name: e.target.value })
                             }
                             className="col-span-3"
+                            placeholder="e.g., Excavator X200"
                             required
                           />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="category" className="text-right">
-                            Category *
-                          </Label>
-                          <Input
-                            id="category"
-                            value={formData.category}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                category: e.target.value,
-                              })
-                            }
-                            className="col-span-3"
-                            placeholder="e.g., Equipment, Tools, Vehicles"
-                            required
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="dailyRate" className="text-right">
-                            Daily Rate *
-                          </Label>
-                          <Input
-                            id="dailyRate"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={formData.dailyRate}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                dailyRate: e.target.value,
-                              })
-                            }
-                            className="col-span-3"
-                            required
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="hourlyRate" className="text-right">
-                            Hourly Rate
-                          </Label>
-                          <Input
-                            id="hourlyRate"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={formData.hourlyRate}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                hourlyRate: e.target.value,
-                              })
-                            }
-                            className="col-span-3"
-                            placeholder="Optional hourly rate"
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="unit" className="text-right">
-                            Unit *
-                          </Label>
-                          <Select
-                            value={formData.unit}
-                            onValueChange={(value: any) =>
-                              setFormData({ ...formData, unit: value })
-                            }
-                          >
-                            <SelectTrigger className="col-span-3">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="day">Day</SelectItem>
-                              <SelectItem value="hour">Hour</SelectItem>
-                              <SelectItem value="week">Week</SelectItem>
-                              <SelectItem value="month">Month</SelectItem>
-                            </SelectContent>
-                          </Select>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="description" className="text-right">
@@ -659,20 +580,110 @@ export function RentalManagement() {
                           />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="isActive" className="text-right">
-                            Active
+                          <Label htmlFor="category" className="text-right">
+                            Category *
                           </Label>
-                          <Switch
-                            id="isActive"
-                            checked={formData.isActive}
-                            onCheckedChange={(checked) =>
-                              setFormData({ ...formData, isActive: checked })
+                          <Input
+                            id="category"
+                            value={formData.category}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                category: e.target.value,
+                              })
                             }
+                            className="col-span-3"
+                            placeholder="e.g., Heavy Equipment"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="dailyRate" className="text-right">
+                            Daily Rate *
+                          </Label>
+                          <Input
+                            id="dailyRate"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.dailyRate}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                dailyRate: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            placeholder="0.00"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="hourlyRate" className="text-right">
+                            Hourly Rate
+                          </Label>
+                          <Input
+                            id="hourlyRate"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.hourlyRate}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                hourlyRate: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            placeholder="Optional hourly rate"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="unit" className="text-right">
+                            Billing Unit *
+                          </Label>
+                          <Select
+                            value={formData.unit}
+                            onValueChange={(value: any) =>
+                              setFormData({ ...formData, unit: value })
+                            }
+                          >
+                            <SelectTrigger className="col-span-3">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="day">Day</SelectItem>
+                              <SelectItem value="hour">Hour</SelectItem>
+                              <SelectItem value="week">Week</SelectItem>
+                              <SelectItem value="month">Month</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="dspRate" className="text-right">
+                            DSP Rate
+                          </Label>
+                          <Input
+                            id="dspRate"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.dspRate}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                dspRate: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            placeholder="Optional DSP rate"
                           />
                         </div>
                       </div>
                       <DialogFooter>
-                        <Button type="submit">Add Item</Button>
+                        <Button type="submit">
+                          {editingItem ? "Update Item" : "Add Item"}
+                        </Button>
                       </DialogFooter>
                     </form>
                   </DialogContent>
@@ -680,156 +691,68 @@ export function RentalManagement() {
               </div>
             </CardHeader>
             <CardContent>
-              {rentalItems.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
-                  No rental items yet. Add your first item to get started!
-                </p>
+              {sortedItems.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No rental items found. Add your first rental item to get
+                  started.
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (itemsSortBy === "name") {
-                              setItemsSortDirection(
-                                itemsSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setItemsSortBy("name");
-                              setItemsSortDirection("asc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Name
-                            {itemsSortBy === "name" && (
-                              <span className="text-blue-500 text-xs">
-                                {itemsSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (itemsSortBy === "category") {
-                              setItemsSortDirection(
-                                itemsSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setItemsSortBy("category");
-                              setItemsSortDirection("asc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Category
-                            {itemsSortBy === "category" && (
-                              <span className="text-blue-500 text-xs">
-                                {itemsSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (itemsSortBy === "dailyRate") {
-                              setItemsSortDirection(
-                                itemsSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setItemsSortBy("dailyRate");
-                              setItemsSortDirection("desc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Rate
-                            {itemsSortBy === "dailyRate" && (
-                              <span className="text-blue-500 text-xs">
-                                {itemsSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (itemsSortBy === "unit") {
-                              setItemsSortDirection(
-                                itemsSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setItemsSortBy("unit");
-                              setItemsSortDirection("asc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Unit
-                            {itemsSortBy === "unit" && (
-                              <span className="text-blue-500 text-xs">
-                                {itemsSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Daily Rate</TableHead>
+                        <TableHead>Hourly Rate</TableHead>
+                        <TableHead>Unit</TableHead>
+                        <TableHead>DSP Rate</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {sortedRentalItems.map((item) => (
+                      {sortedItems.map((item) => (
                         <TableRow key={item.id}>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{item.name}</p>
-                              {item.description && (
-                                <p className="text-sm text-gray-500">
-                                  {item.description}
-                                </p>
-                              )}
-                            </div>
+                          <TableCell className="font-medium">
+                            {item.name}
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline">{item.category}</Badge>
                           </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="h-4 w-4 text-green-600" />
-                              <span className="font-medium">
-                                {item.dailyRate.toFixed(2)}
-                              </span>
-                            </div>
+                          <TableCell className="font-medium text-green-600">
+                            ${item.dailyRate.toFixed(2)}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary">Per {item.unit}</Badge>
+                            {item.hourlyRate
+                              ? `$${item.hourlyRate.toFixed(2)}`
+                              : "—"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">{item.unit}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            {item.dspRate ? `$${item.dspRate.toFixed(2)}` : "—"}
                           </TableCell>
                           <TableCell>
                             {item.isActive ? (
-                              <Badge
-                                variant="default"
-                                className="bg-green-100 text-green-800"
-                              >
+                              <Badge className="bg-green-500">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 Active
                               </Badge>
                             ) : (
-                              <Badge variant="secondary">
+                              <Badge variant="destructive">
                                 <XCircle className="h-3 w-3 mr-1" />
                                 Inactive
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
-                                onClick={() => handleEditItem(item)}
+                                onClick={() => handleEdit(item)}
                               >
                                 <Pencil className="h-4 w-4" />
                               </Button>
@@ -841,17 +764,26 @@ export function RentalManagement() {
                                   associatedData: {
                                     additionalInfo: [
                                       `Category: ${item.category}`,
-                                      `Rate: $${item.dailyRate.toFixed(2)} per ${item.unit}`,
-                                      item.dspRate
-                                        ? `DSP Rate: $${item.dspRate.toFixed(2)}`
-                                        : null,
+                                      `Daily Rate: $${item.dailyRate.toFixed(2)}`,
+                                      `Unit: ${item.unit}`,
+                                      ...(item.hourlyRate
+                                        ? [
+                                            `Hourly Rate: $${item.hourlyRate.toFixed(2)}`,
+                                          ]
+                                        : []),
+                                      ...(item.dspRate
+                                        ? [
+                                            `DSP Rate: $${item.dspRate.toFixed(2)}`,
+                                          ]
+                                        : []),
                                       `Status: ${item.isActive ? "Active" : "Inactive"}`,
-                                    ].filter(Boolean),
+                                      `Created: ${new Date(item.createdAt).toLocaleDateString()}`,
+                                    ],
                                   },
                                 }}
                                 trigger={
-                                  <Button variant="ghost" size="sm">
-                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4" />
                                   </Button>
                                 }
                                 onConfirm={() => handleDeleteItem(item.id)}
@@ -866,145 +798,6 @@ export function RentalManagement() {
               )}
             </CardContent>
           </Card>
-
-          {/* Edit Item Dialog */}
-          <Dialog
-            open={editingItem !== null}
-            onOpenChange={(open) => {
-              if (!open) {
-                setEditingItem(null);
-                resetForm();
-              }
-            }}
-          >
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Edit Rental Item</DialogTitle>
-                <DialogDescription>
-                  Update the rental item information.
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-name" className="text-right">
-                      Name *
-                    </Label>
-                    <Input
-                      id="edit-name"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      className="col-span-3"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-category" className="text-right">
-                      Category *
-                    </Label>
-                    <Input
-                      id="edit-category"
-                      value={formData.category}
-                      onChange={(e) =>
-                        setFormData({ ...formData, category: e.target.value })
-                      }
-                      className="col-span-3"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-dailyRate" className="text-right">
-                      Daily Rate *
-                    </Label>
-                    <Input
-                      id="edit-dailyRate"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.dailyRate}
-                      onChange={(e) =>
-                        setFormData({ ...formData, dailyRate: e.target.value })
-                      }
-                      className="col-span-3"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-hourlyRate" className="text-right">
-                      Hourly Rate
-                    </Label>
-                    <Input
-                      id="edit-hourlyRate"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.hourlyRate}
-                      onChange={(e) =>
-                        setFormData({ ...formData, hourlyRate: e.target.value })
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-unit" className="text-right">
-                      Unit *
-                    </Label>
-                    <Select
-                      value={formData.unit}
-                      onValueChange={(value: any) =>
-                        setFormData({ ...formData, unit: value })
-                      }
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="day">Day</SelectItem>
-                        <SelectItem value="hour">Hour</SelectItem>
-                        <SelectItem value="week">Week</SelectItem>
-                        <SelectItem value="month">Month</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-description" className="text-right">
-                      Description
-                    </Label>
-                    <Textarea
-                      id="edit-description"
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-isActive" className="text-right">
-                      Active
-                    </Label>
-                    <Switch
-                      id="edit-isActive"
-                      checked={formData.isActive}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, isActive: checked })
-                      }
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">Update Item</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
         </TabsContent>
 
         {/* Rental Entries Tab */}
@@ -1013,34 +806,30 @@ export function RentalManagement() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-purple-500" />
                     Rental Entries
-                    <span className="ml-2 text-sm font-normal text-gray-500">
-                      {sortedRentalSummaries.length} of {rentalEntries.length}{" "}
-                      entries
-                    </span>
                   </CardTitle>
                   <CardDescription>
-                    Track rental equipment usage and billing
+                    Track rental usage and assignments
                   </CardDescription>
                   {/* Concise sorting controls */}
                   <div className="flex items-center gap-2 mt-3">
                     <ArrowUpDown className="h-4 w-4 text-gray-500" />
                     <span className="text-sm text-gray-600">Sort by:</span>
                     <Select
-                      value={entriesSortBy}
-                      onValueChange={(value: any) => setEntriesSortBy(value)}
+                      value={entrySortBy}
+                      onValueChange={(value: any) => setEntrySortBy(value)}
                     >
                       <SelectTrigger className="w-32 h-8">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="startDate">Start Date</SelectItem>
-                        <SelectItem value="rentalItemName">
-                          Item Name
-                        </SelectItem>
-                        <SelectItem value="jobNumber">Job Number</SelectItem>
-                        <SelectItem value="employeeName">Employee</SelectItem>
+                        <SelectItem value="rentalItem">Rental Item</SelectItem>
+                        <SelectItem value="job">Job</SelectItem>
+                        <SelectItem value="employee">Employee</SelectItem>
+                        <SelectItem value="quantity">Quantity</SelectItem>
                         <SelectItem value="totalCost">Total Cost</SelectItem>
                       </SelectContent>
                     </Select>
@@ -1048,487 +837,345 @@ export function RentalManagement() {
                       variant="ghost"
                       size="sm"
                       onClick={() =>
-                        setEntriesSortDirection(
-                          entriesSortDirection === "asc" ? "desc" : "asc",
+                        setEntrySortDirection(
+                          entrySortDirection === "asc" ? "desc" : "asc",
                         )
                       }
                       className="px-2 h-8"
                     >
-                      {entriesSortDirection === "asc" ? "↑" : "↓"}
+                      {entrySortDirection === "asc" ? "↑" : "↓"}
                     </Button>
                     <span className="text-xs text-gray-500 ml-2">
-                      {sortedRentalSummaries.length} entr
-                      {sortedRentalSummaries.length !== 1 ? "ies" : "y"}
+                      {sortedEntries.length} entr
+                      {sortedEntries.length !== 1 ? "ies" : "y"}
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {activeItems.length > 0 && (
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Entry
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[600px]">
-                        <DialogHeader>
-                          <DialogTitle>Add Rental Entry</DialogTitle>
-                          <DialogDescription>
-                            Add a new rental entry to track equipment usage.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleEntrySubmit}>
-                          <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label
-                                htmlFor="rentalItem"
-                                className="text-right"
-                              >
-                                Rental Item *
-                              </Label>
-                              <Select
-                                value={entryFormData.rentalItemId}
-                                onValueChange={handleRentalItemChange}
-                              >
-                                <SelectTrigger className="col-span-3">
-                                  <SelectValue placeholder="Select rental item" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {activeItems.map((item) => (
-                                    <SelectItem key={item.id} value={item.id}>
-                                      {item.name} - ${item.dailyRate.toFixed(2)}
-                                      /{item.unit}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="job" className="text-right">
-                                Job *
-                              </Label>
-                              <Select
-                                value={entryFormData.jobId}
-                                onValueChange={(value) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    jobId: value,
-                                  })
-                                }
-                              >
-                                <SelectTrigger className="col-span-3">
-                                  <SelectValue placeholder="Select job" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {activeJobs.map((job) => (
-                                    <SelectItem key={job.id} value={job.id}>
-                                      {job.jobNumber} - {job.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="employee" className="text-right">
-                                Employee
-                              </Label>
-                              <Select
-                                value={entryFormData.employeeId}
-                                onValueChange={(value) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    employeeId: value === "none" ? "" : value,
-                                  })
-                                }
-                              >
-                                <SelectTrigger className="col-span-3">
-                                  <SelectValue placeholder="Select employee (optional)" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="none">
-                                    No Employee
-                                  </SelectItem>
-                                  {employees.map((employee) => (
-                                    <SelectItem
-                                      key={employee.id}
-                                      value={employee.id}
-                                    >
-                                      {employee.name} - {employee.title}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="startDate" className="text-right">
-                                Start Date *
-                              </Label>
-                              <Input
-                                id="startDate"
-                                type="date"
-                                value={entryFormData.startDate}
-                                onChange={(e) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    startDate: e.target.value,
-                                  })
-                                }
-                                className="col-span-3"
-                                required
-                              />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="endDate" className="text-right">
-                                End Date *
-                              </Label>
-                              <Input
-                                id="endDate"
-                                type="date"
-                                value={entryFormData.endDate}
-                                onChange={(e) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    endDate: e.target.value,
-                                  })
-                                }
-                                className="col-span-3"
-                                required
-                              />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="quantity" className="text-right">
-                                Quantity *
-                              </Label>
-                              <Input
-                                id="quantity"
-                                type="number"
-                                min="1"
-                                step="1"
-                                value={entryFormData.quantity}
-                                onChange={(e) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    quantity: parseInt(e.target.value) || 1,
-                                  })
-                                }
-                                className="col-span-3"
-                                required
-                              />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="dspRate" className="text-right">
-                                DSP Rate
-                              </Label>
-                              <Input
-                                id="dspRate"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={entryFormData.dspRate}
-                                onChange={(e) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    dspRate: e.target.value,
-                                  })
-                                }
-                                className="col-span-3"
-                                placeholder="Enter DSP rate (optional)"
-                              />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label
-                                htmlFor="description"
-                                className="text-right"
-                              >
-                                Description
-                              </Label>
-                              <Textarea
-                                id="description"
-                                value={entryFormData.description}
-                                onChange={(e) =>
-                                  setEntryFormData({
-                                    ...entryFormData,
-                                    description: e.target.value,
-                                  })
-                                }
-                                className="col-span-3"
-                                placeholder="Optional description"
-                              />
-                            </div>
-                          </div>
-                          <DialogFooter>
-                            <Button type="submit">Add Entry</Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-                  )}
-                </div>
+                <Dialog
+                  open={isEntryDialogOpen}
+                  onOpenChange={setIsEntryDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button onClick={() => resetEntryForm()}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Rental Entry
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle>Add New Rental Entry</DialogTitle>
+                      <DialogDescription>
+                        Record a new rental usage for tracking and billing.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleEntrySubmit}>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="rentalItem" className="text-right">
+                            Rental Item *
+                          </Label>
+                          <Select
+                            value={entryFormData.rentalItemId}
+                            onValueChange={handleRentalItemChange}
+                          >
+                            <SelectTrigger className="col-span-3">
+                              <SelectValue placeholder="Select rental item" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {activeItems.map((item) => (
+                                <SelectItem key={item.id} value={item.id}>
+                                  {item.name} - ${item.dailyRate.toFixed(2)}/
+                                  {item.unit}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="job" className="text-right">
+                            Job *
+                          </Label>
+                          <Select
+                            value={entryFormData.jobId}
+                            onValueChange={(value) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                jobId: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="col-span-3">
+                              <SelectValue placeholder="Select job" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {activeJobs.map((job) => (
+                                <SelectItem key={job.id} value={job.id}>
+                                  {job.jobNumber} - {job.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="employee" className="text-right">
+                            Employee
+                          </Label>
+                          <Select
+                            value={entryFormData.employeeId}
+                            onValueChange={(value) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                employeeId: value === "none" ? "" : value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="col-span-3">
+                              <SelectValue placeholder="Select employee (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No Employee</SelectItem>
+                              {employees.map((employee) => (
+                                <SelectItem
+                                  key={employee.id}
+                                  value={employee.id}
+                                >
+                                  {employee.name} - {employee.title}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="startDate" className="text-right">
+                            Start Date *
+                          </Label>
+                          <Input
+                            id="startDate"
+                            type="date"
+                            value={entryFormData.startDate}
+                            onChange={(e) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                startDate: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="endDate" className="text-right">
+                            End Date *
+                          </Label>
+                          <Input
+                            id="endDate"
+                            type="date"
+                            value={entryFormData.endDate}
+                            onChange={(e) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                endDate: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="quantity" className="text-right">
+                            Quantity *
+                          </Label>
+                          <Input
+                            id="quantity"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={entryFormData.quantity}
+                            onChange={(e) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                quantity: parseInt(e.target.value) || 1,
+                              })
+                            }
+                            className="col-span-3"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="dspRate" className="text-right">
+                            DSP Rate
+                          </Label>
+                          <Input
+                            id="dspRate"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={entryFormData.dspRate}
+                            onChange={(e) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                dspRate: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            placeholder="Enter DSP rate (optional)"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="description" className="text-right">
+                            Description
+                          </Label>
+                          <Textarea
+                            id="description"
+                            value={entryFormData.description}
+                            onChange={(e) =>
+                              setEntryFormData({
+                                ...entryFormData,
+                                description: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                            placeholder="Optional description"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Add Entry</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardHeader>
             <CardContent>
-              {activeItems.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
-                  Please add rental items first before creating rental entries.
-                </p>
-              ) : rentalSummaries.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
-                  No rental entries yet. Add your first rental to get started!
-                </p>
+              {sortedEntries.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No rental entries found. Add your first rental entry to get
+                  started.
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (entriesSortBy === "rentalItemName") {
-                              setEntriesSortDirection(
-                                entriesSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setEntriesSortBy("rentalItemName");
-                              setEntriesSortDirection("asc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Item
-                            {entriesSortBy === "rentalItemName" && (
-                              <span className="text-blue-500 text-xs">
-                                {entriesSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (entriesSortBy === "jobNumber") {
-                              setEntriesSortDirection(
-                                entriesSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setEntriesSortBy("jobNumber");
-                              setEntriesSortDirection("asc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Job
-                            {entriesSortBy === "jobNumber" && (
-                              <span className="text-blue-500 text-xs">
-                                {entriesSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (entriesSortBy === "employeeName") {
-                              setEntriesSortDirection(
-                                entriesSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setEntriesSortBy("employeeName");
-                              setEntriesSortDirection("asc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Employee
-                            {entriesSortBy === "employeeName" && (
-                              <span className="text-blue-500 text-xs">
-                                {entriesSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (entriesSortBy === "startDate") {
-                              setEntriesSortDirection(
-                                entriesSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setEntriesSortBy("startDate");
-                              setEntriesSortDirection("desc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Period
-                            {entriesSortBy === "startDate" && (
-                              <span className="text-blue-500 text-xs">
-                                {entriesSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
+                        <TableHead>Rental Item</TableHead>
+                        <TableHead>Job</TableHead>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Start Date</TableHead>
+                        <TableHead>End Date</TableHead>
                         <TableHead>Duration</TableHead>
-                        <TableHead>Rental Rate</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Rate Used</TableHead>
                         <TableHead>DSP Rate</TableHead>
-                        <TableHead
-                          className="cursor-pointer hover:bg-gray-50 select-none"
-                          onClick={() => {
-                            if (entriesSortBy === "totalCost") {
-                              setEntriesSortDirection(
-                                entriesSortDirection === "asc" ? "desc" : "asc",
-                              );
-                            } else {
-                              setEntriesSortBy("totalCost");
-                              setEntriesSortDirection("desc");
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1">
-                            Total Cost
-                            {entriesSortBy === "totalCost" && (
-                              <span className="text-blue-500 text-xs">
-                                {entriesSortDirection === "asc" ? "↑" : "↓"}
-                              </span>
-                            )}
-                          </div>
-                        </TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead>Total Cost</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {sortedRentalSummaries.map((summary, index) => {
-                        // Find the rental item by name
-                        const rentalItem = rentalItems.find(
-                          (item) => item.name === summary.rentalItemName,
-                        );
-
-                        return (
-                          <TableRow key={`${summary.id}-${index}`}>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">
-                                  {summary.itemName ||
-                                    summary.rentalItemName ||
-                                    "Unknown Item"}
-                                </p>
-                                <Badge variant="outline" className="text-xs">
-                                  {summary.category || "Unknown"}
-                                </Badge>
+                      {sortedEntries.map((entry) => (
+                        <TableRow key={entry.id}>
+                          <TableCell className="font-medium">
+                            <div>
+                              <div className="font-medium text-purple-600">
+                                {entry.rentalItemName}
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">
-                                  {summary.jobNumber || "Unknown Job"}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                  {summary.jobName || ""}
-                                </p>
+                              <div className="text-sm text-gray-500">
+                                {entry.category}
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              {summary.employeeName || "No Employee"}
-                            </TableCell>
-                            <TableCell>
-                              <div className="text-sm">
-                                <p>{summary.startDate}</p>
-                                <p>to {summary.endDate}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">
+                                {entry.jobNumber}
                               </div>
-                            </TableCell>
-                            <TableCell>
+                              <div className="text-sm text-gray-500">
+                                {entry.jobName}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {entry.employeeName === "Unassigned" ? (
+                              <Badge variant="outline">Unassigned</Badge>
+                            ) : (
                               <div className="flex items-center gap-1">
-                                <Clock className="h-4 w-4 text-blue-600" />
-                                <span>
-                                  {summary.duration} {summary.billingUnit}
-                                  {summary.duration !== 1 ? "s" : ""}
-                                </span>
-                                {summary.quantity > 1 && (
-                                  <Badge variant="secondary" className="ml-1">
-                                    x{summary.quantity}
-                                  </Badge>
-                                )}
+                                <User className="h-3 w-3" />
+                                {entry.employeeName}
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              {rentalItem ? (
-                                <div className="flex items-center gap-1">
-                                  <DollarSign className="h-4 w-4 text-green-600" />
-                                  <span className="font-medium text-green-600">
-                                    {rentalItem.dailyRate.toFixed(2)}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    /{rentalItem.unit}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="text-gray-400">—</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {summary.dspRate ? (
-                                <div className="flex items-center gap-1">
-                                  <DollarSign className="h-4 w-4 text-purple-600" />
-                                  <span className="font-medium text-purple-600">
-                                    {summary.dspRate.toFixed(2)}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    /day
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="text-gray-400">—</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <DollarSign className="h-4 w-4 text-green-600" />
-                                <span className="font-medium">
-                                  {summary.totalCost?.toFixed(2) || "0.00"}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEditEntry(summary)}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </Button>
-                                <DeleteConfirmationDialog
-                                  item={{
-                                    id: summary.id,
-                                    name: `${summary.itemName || summary.rentalItemName} - ${summary.jobNumber}`,
-                                    type: "rental-entry",
-                                    associatedData: {
-                                      additionalInfo: [
-                                        `Item: ${summary.itemName || summary.rentalItemName}`,
-                                        `Job: ${summary.jobNumber} - ${summary.jobName}`,
-                                        `Employee: ${summary.employeeName}`,
-                                        `Period: ${summary.startDate} to ${summary.endDate}`,
-                                        `Duration: ${summary.duration} ${summary.billingUnit}${summary.duration !== 1 ? "s" : ""}`,
-                                        `Quantity: ${summary.quantity}`,
-                                        `Total cost: $${summary.totalCost?.toFixed(2) || "0.00"}`,
-                                      ],
-                                    },
-                                  }}
-                                  trigger={
-                                    <Button variant="ghost" size="sm">
-                                      <Trash2 className="h-4 w-4 text-red-500" />
-                                    </Button>
+                            )}
+                          </TableCell>
+                          <TableCell>{entry.startDate}</TableCell>
+                          <TableCell>{entry.endDate}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {entry.duration} days
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{entry.quantity}</TableCell>
+                          <TableCell className="font-medium text-green-600">
+                            ${entry.rateUsed.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            {entry.dspRate
+                              ? `$${entry.dspRate.toFixed(2)}`
+                              : "—"}
+                          </TableCell>
+                          <TableCell className="font-semibold text-purple-600">
+                            ${entry.totalCost.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const originalEntry = rentalEntries.find(
+                                    (e) => e.id === entry.id,
+                                  );
+                                  if (originalEntry) {
+                                    handleEditEntry(originalEntry);
                                   }
-                                  onConfirm={() =>
-                                    handleDeleteEntry(summary.id)
-                                  }
-                                />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                }}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <DeleteConfirmationDialog
+                                item={{
+                                  id: entry.id,
+                                  name: `${entry.rentalItemName} - ${entry.jobNumber}`,
+                                  type: "rental-entry",
+                                  associatedData: {
+                                    additionalInfo: [
+                                      `Rental Item: ${entry.rentalItemName}`,
+                                      `Job: ${entry.jobNumber} - ${entry.jobName}`,
+                                      `Employee: ${entry.employeeName}`,
+                                      `Period: ${entry.startDate} to ${entry.endDate}`,
+                                      `Duration: ${entry.duration} days`,
+                                      `Quantity: ${entry.quantity}`,
+                                      `Rate Used: $${entry.rateUsed.toFixed(2)}`,
+                                      ...(entry.dspRate
+                                        ? [
+                                            `DSP Rate: $${entry.dspRate.toFixed(2)}`,
+                                          ]
+                                        : []),
+                                      `Total Cost: $${entry.totalCost.toFixed(2)}`,
+                                      ...(entry.description
+                                        ? [`Description: ${entry.description}`]
+                                        : []),
+                                    ],
+                                  },
+                                }}
+                                trigger={
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                }
+                                onConfirm={() => handleDeleteEntry(entry.id)}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -1536,7 +1183,7 @@ export function RentalManagement() {
             </CardContent>
           </Card>
 
-          {/* Edit Entry Dialog */}
+          {/* Edit Rental Entry Dialog */}
           <Dialog
             open={editingEntry !== null}
             onOpenChange={(open) => {
@@ -1563,28 +1210,41 @@ export function RentalManagement() {
                   </h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">Rental Item: </span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Rental Item:{" "}
+                      </span>
                       <span className="font-medium">
-                        {rentalItems.find(item => item.id === editingEntry.rentalItemId)?.name || `ID: ${editingEntry.rentalItemId}`}
+                        {rentalItems.find(
+                          (item) => item.id === editingEntry.rentalItemId,
+                        )?.name || `ID: ${editingEntry.rentalItemId}`}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">Job: </span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Job:{" "}
+                      </span>
                       <span className="font-medium">
                         {(() => {
-                          const job = jobs.find(job => job.id === editingEntry.jobId);
-                          return job ? `${job.jobNumber} - ${job.name}` : `ID: ${editingEntry.jobId}`;
+                          const job = jobs.find(
+                            (job) => job.id === editingEntry.jobId,
+                          );
+                          return job
+                            ? `${job.jobNumber} - ${job.name}`
+                            : `ID: ${editingEntry.jobId}`;
                         })()}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">Employee: </span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Employee:{" "}
+                      </span>
                       <span className="font-medium">
                         {editingEntry.employeeId
-                          ? (employees.find(emp => emp.id === editingEntry.employeeId)?.name || `ID: ${editingEntry.employeeId}`)
+                          ? employees.find(
+                              (emp) => emp.id === editingEntry.employeeId,
+                            )?.name || `ID: ${editingEntry.employeeId}`
                           : "No Employee"}
                       </span>
-                    </div>
                     </div>
                     <div>
                       <span className="text-gray-600 dark:text-gray-400">
@@ -1604,18 +1264,18 @@ export function RentalManagement() {
                     </div>
                     <div>
                       <span className="text-gray-600 dark:text-gray-400">
-                        DSP Rate:{" "}
-                      </span>
-                      <span className="font-medium">
-                        ${editingEntry.dspRate?.toFixed(2) || "0.00"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">
                         Rate Used:{" "}
                       </span>
                       <span className="font-medium">
                         ${editingEntry.rateUsed?.toFixed(2) || "0.00"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        DSP Rate:{" "}
+                      </span>
+                      <span className="font-medium">
+                        ${editingEntry.dspRate?.toFixed(2) || "0.00"}
                       </span>
                     </div>
                     <div>
@@ -1843,14 +1503,13 @@ export function RentalManagement() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="totalBillable">
-                          Total Billable
+                        <SelectItem value="rentalItem">Rental Item</SelectItem>
+                        <SelectItem value="category">Category</SelectItem>
+                        <SelectItem value="totalRevenue">
+                          Total Revenue
                         </SelectItem>
-                        <SelectItem value="itemName">Item Name</SelectItem>
-                        <SelectItem value="dspRate">DSP Rate</SelectItem>
-                        <SelectItem value="totalEntries">
-                          Entry Count
-                        </SelectItem>
+                        <SelectItem value="totalDays">Total Days</SelectItem>
+                        <SelectItem value="avgDaily">Avg Daily</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button
@@ -1866,281 +1525,65 @@ export function RentalManagement() {
                       {billableSortDirection === "asc" ? "↑" : "↓"}
                     </Button>
                     <span className="text-xs text-gray-500 ml-2">
-                      {sortedRentalBillableAnalytics.length} type
-                      {sortedRentalBillableAnalytics.length !== 1 ? "s" : ""}
+                      {billableAnalytics.length} item
+                      {billableAnalytics.length !== 1 ? "s" : ""}
                     </span>
                   </div>
                 </div>
-                <Badge
-                  variant="outline"
-                  className="text-green-600 border-green-600"
-                >
-                  <TrendingUp className="h-4 w-4 mr-1" />
-                  {sortedRentalBillableAnalytics.length} rental types
-                </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              {rentalBillableAnalytics.length === 0 ? (
-                <div className="text-center py-8">
-                  <DollarSign className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-500">No rental data available</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Add rental entries to see billable analytics
-                  </p>
+              {billableAnalytics.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No rental data available for analytics.
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {/* Summary Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-green-700">
-                              Total Billable
-                            </p>
-                            <p className="text-2xl font-bold text-purple-900">
-                              $
-                              {(
-                                sortedRentalBillableAnalytics.reduce(
-                                  (sum, item) => sum + item.totalBillable,
-                                  0,
-                                ) /
-                                Math.max(
-                                  sortedRentalBillableAnalytics.reduce(
-                                    (sum, item) => sum + item.totalEntries,
-                                    0,
-                                  ),
-                                  1,
-                                )
-                              ).toFixed(2)}
-                            </p>
-                          </div>
-                          <DollarSign className="h-8 w-8 text-green-600" />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-blue-700">
-                              Total Entries
-                            </p>
-                            <p className="text-2xl font-bold text-blue-900">
-                              {sortedRentalBillableAnalytics.reduce(
-                                (sum, item) => sum + item.totalEntries,
-                                0,
-                              )}
-                            </p>
-                          </div>
-                          <BarChart3 className="h-8 w-8 text-blue-600" />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-purple-700">
-                              Avg Per Entry
-                            </p>
-                            <p className="text-2xl font-bold text-purple-900">
-                              $
-                              {(
-                                sortedRentalBillableAnalytics.reduce(
-                                  (sum, item) => sum + item.totalBillable,
-                                  0,
-                                ) /
-                                Math.max(
-                                  sortedRentalBillableAnalytics.reduce(
-                                    (sum, item) => sum + item.totalEntries,
-                                    0,
-                                  ),
-                                  1,
-                                )
-                              ).toFixed(2)}
-                            </p>
-                          </div>
-                          <TrendingUp className="h-8 w-8 text-purple-600" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Analytics Table */}
-                  <div className="border rounded-lg">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="font-semibold">Rank</TableHead>
-                          <TableHead
-                            className="font-semibold cursor-pointer hover:bg-gray-50 select-none"
-                            onClick={() => {
-                              if (billableSortBy === "itemName") {
-                                setBillableSortDirection(
-                                  billableSortDirection === "asc"
-                                    ? "desc"
-                                    : "asc",
-                                );
-                              } else {
-                                setBillableSortBy("itemName");
-                                setBillableSortDirection("asc");
-                              }
-                            }}
-                          >
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Rental Item</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Daily Rate</TableHead>
+                        <TableHead>Total Revenue</TableHead>
+                        <TableHead>Total Days</TableHead>
+                        <TableHead>Avg Daily</TableHead>
+                        <TableHead>Rentals</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {billableAnalytics.map((item) => (
+                        <TableRow key={item.rentalItem}>
+                          <TableCell className="font-medium">
+                            {item.rentalItem}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{item.category}</Badge>
+                          </TableCell>
+                          <TableCell className="font-medium text-green-600">
+                            ${item.dailyRate.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="font-semibold text-green-600">
+                            ${item.totalRevenue.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {item.totalDays} days
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-medium text-blue-600">
+                            ${item.avgDaily.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
                             <div className="flex items-center gap-1">
-                              Rental Item
-                              {billableSortBy === "itemName" && (
-                                <span className="text-blue-500 text-xs">
-                                  {billableSortDirection === "asc" ? "↑" : "↓"}
-                                </span>
-                              )}
+                              <TrendingUp className="h-3 w-3 text-purple-500" />
+                              {item.rentals}
                             </div>
-                          </TableHead>
-                          <TableHead className="font-semibold">
-                            Category
-                          </TableHead>
-                          <TableHead
-                            className="font-semibold text-right cursor-pointer hover:bg-gray-50 select-none"
-                            onClick={() => {
-                              if (billableSortBy === "totalBillable") {
-                                setBillableSortDirection(
-                                  billableSortDirection === "asc"
-                                    ? "desc"
-                                    : "asc",
-                                );
-                              } else {
-                                setBillableSortBy("totalBillable");
-                                setBillableSortDirection("desc");
-                              }
-                            }}
-                          >
-                            <div className="flex items-center gap-1 justify-end">
-                              Total Billable
-                              {billableSortBy === "totalBillable" && (
-                                <span className="text-blue-500 text-xs">
-                                  {billableSortDirection === "asc" ? "↑" : "↓"}
-                                </span>
-                              )}
-                            </div>
-                          </TableHead>
-                          <TableHead
-                            className="font-semibold text-right cursor-pointer hover:bg-gray-50 select-none"
-                            onClick={() => {
-                              if (billableSortBy === "dspRate") {
-                                setBillableSortDirection(
-                                  billableSortDirection === "asc"
-                                    ? "desc"
-                                    : "asc",
-                                );
-                              } else {
-                                setBillableSortBy("dspRate");
-                                setBillableSortDirection("desc");
-                              }
-                            }}
-                          >
-                            <div className="flex items-center gap-1 justify-end">
-                              DSP Rate
-                              {billableSortBy === "dspRate" && (
-                                <span className="text-blue-500 text-xs">
-                                  {billableSortDirection === "asc" ? "↑" : "↓"}
-                                </span>
-                              )}
-                            </div>
-                          </TableHead>
-                          <TableHead
-                            className="font-semibold text-right cursor-pointer hover:bg-gray-50 select-none"
-                            onClick={() => {
-                              if (billableSortBy === "totalEntries") {
-                                setBillableSortDirection(
-                                  billableSortDirection === "asc"
-                                    ? "desc"
-                                    : "asc",
-                                );
-                              } else {
-                                setBillableSortBy("totalEntries");
-                                setBillableSortDirection("desc");
-                              }
-                            }}
-                          >
-                            <div className="flex items-center gap-1 justify-end">
-                              Entries
-                              {billableSortBy === "totalEntries" && (
-                                <span className="text-blue-500 text-xs">
-                                  {billableSortDirection === "asc" ? "↑" : "↓"}
-                                </span>
-                              )}
-                            </div>
-                          </TableHead>
-                          <TableHead className="font-semibold text-right">
-                            Avg per Entry
-                          </TableHead>
+                          </TableCell>
                         </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {sortedRentalBillableAnalytics.map((item, index) => (
-                          <TableRow
-                            key={item.itemName}
-                            className="hover:bg-gray-50"
-                          >
-                            <TableCell>
-                              <div className="flex items-center">
-                                {index === 0 && (
-                                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
-                                    🥇 #{index + 1}
-                                  </Badge>
-                                )}
-                                {index === 1 && (
-                                  <Badge className="bg-gray-100 text-gray-800 border-gray-300">
-                                    🥈 #{index + 1}
-                                  </Badge>
-                                )}
-                                {index === 2 && (
-                                  <Badge className="bg-orange-100 text-orange-800 border-orange-300">
-                                    🥉 #{index + 1}
-                                  </Badge>
-                                )}
-                                {index > 2 && (
-                                  <Badge variant="outline">#{index + 1}</Badge>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {item.itemName}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="secondary">{item.category}</Badge>
-                            </TableCell>
-                            <TableCell className="text-right font-semibold text-green-600">
-                              ${item.totalBillable.toFixed(2)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {item.dspRate > 0 ? (
-                                <span className="text-blue-600 font-medium">
-                                  ${item.dspRate.toFixed(2)}
-                                </span>
-                              ) : (
-                                <span className="text-gray-400">N/A</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right text-gray-600">
-                              {item.totalEntries}
-                            </TableCell>
-                            <TableCell className="text-right text-gray-600">
-                              $
-                              {(item.totalBillable / item.totalEntries).toFixed(
-                                2,
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               )}
             </CardContent>
