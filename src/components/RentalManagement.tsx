@@ -1546,13 +1546,93 @@ export function RentalManagement() {
               }
             }}
           >
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Edit Rental Entry</DialogTitle>
                 <DialogDescription>
-                  Update the rental entry information.
+                  Update the rental entry information. Original values are shown
+                  for reference.
                 </DialogDescription>
               </DialogHeader>
+
+              {/* Original Values Display */}
+              {editingEntry && (
+                <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Original Values:
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Rental Item:{" "}
+                      </span>
+                      <span className="font-medium">
+                        {rentalItems.find(
+                          (item) => item.id === editingEntry.rentalItemId,
+                        )?.name || "Unknown"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Job:{" "}
+                      </span>
+                      <span className="font-medium">
+                        {jobs.find((job) => job.id === editingEntry.jobId)
+                          ?.jobNumber || "Unknown"}{" "}
+                        -{" "}
+                        {jobs.find((job) => job.id === editingEntry.jobId)
+                          ?.name || ""}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Employee:{" "}
+                      </span>
+                      <span className="font-medium">
+                        {editingEntry.employeeId
+                          ? employees.find(
+                              (emp) => emp.id === editingEntry.employeeId,
+                            )?.name || "Unknown"
+                          : "No Employee"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Period:{" "}
+                      </span>
+                      <span className="font-medium">
+                        {editingEntry.startDate} to {editingEntry.endDate}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Quantity:{" "}
+                      </span>
+                      <span className="font-medium">
+                        {editingEntry.quantity}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        DSP Rate:{" "}
+                      </span>
+                      <span className="font-medium">
+                        ${editingEntry.dspRate?.toFixed(2) || "0.00"}
+                      </span>
+                    </div>
+                    {editingEntry.description && (
+                      <div className="col-span-2">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Description:{" "}
+                        </span>
+                        <span className="font-medium">
+                          {editingEntry.description}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               <form onSubmit={handleEntrySubmit}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
