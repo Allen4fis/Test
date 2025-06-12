@@ -161,14 +161,51 @@ export function EmployeeManagement() {
 
   // Get employee's category or manager name
   const getEmployeeCategory = (employee: Employee) => {
-    if (employee.category === "employee") return "Employee";
     if (employee.category === "dsp") return "DSP";
-    if (employee.managerId) {
-      const manager = employees.find((emp) => emp.id === employee.managerId);
-      return manager ? manager.name : "Unknown Manager";
-    }
-    return "Employee"; // Default fallback for existing employees without category
+    if (employee.category === "employee") return "Employee";
+    if (!employee.managerId) return "Employee";
+
+    const manager = employees.find((emp) => emp.id === employee.managerId);
+    return manager ? manager.name : "Unknown Manager";
   };
+
+  // Sorted employees with efficient sorting
+  const sortedEmployees = useMemo(() => {
+    return [...employees].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortBy) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "title":
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case "billableWage":
+          aValue = a.billableWage || 0;
+          bValue = b.billableWage || 0;
+          break;
+        case "costWage":
+          aValue = a.costWage || 0;
+          bValue = b.costWage || 0;
+          break;
+        case "createdAt":
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
+        default:
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [employees, sortBy, sortDirection]);
 
   // Get direct reports for an employee (who works under them)
   const getDirectReports = (employeeId: string) => {
