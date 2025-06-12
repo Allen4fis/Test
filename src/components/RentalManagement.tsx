@@ -1595,7 +1595,7 @@ export function RentalManagement() {
                   className="text-green-600 border-green-600"
                 >
                   <TrendingUp className="h-4 w-4 mr-1" />
-                  {rentalBillableAnalytics.length} rental types
+                  {sortedRentalBillableAnalytics.length} rental types
                 </Badge>
               </div>
             </CardHeader>
