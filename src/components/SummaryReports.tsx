@@ -187,12 +187,18 @@ export function SummaryReports() {
       0,
     );
 
+    // Calculate total DSP earnings
+    const totalDspEarnings = filteredRentalSummaries.reduce((sum, rental) => {
+      const dspRate = rental.dspRate || 0;
+      return sum + dspRate * rental.duration * rental.quantity;
+    }, 0);
+
     return {
-      totalCost,
+      totalCost: totalCost + totalDspEarnings, // Include DSP in total cost
       totalHours,
       totalEffectiveHours,
       rentalCost,
-      totalCombinedCost: totalCost + rentalCost,
+      totalCombinedCost: totalCost + rentalCost + totalDspEarnings,
     };
   }, [filteredSummaries, filteredRentalSummaries]);
 
