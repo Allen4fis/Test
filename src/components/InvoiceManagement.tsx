@@ -92,6 +92,19 @@ export function InvoiceManagement() {
     useState<Job | null>(null);
   const [isBreakdownDialogOpen, setIsBreakdownDialogOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Sorting and filtering state
+  const [sortBy, setSortBy] = useState<
+    | "jobNumber"
+    | "jobName"
+    | "invoicePercentage"
+    | "uninvoicedDates"
+    | "uninvoicedBillable"
+  >("jobNumber");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [showFullyInvoiced, setShowFullyInvoiced] = useState(true);
+  const [showPartiallyInvoiced, setShowPartiallyInvoiced] = useState(true);
+  const [showUninvoiced, setShowUninvoiced] = useState(true);
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
