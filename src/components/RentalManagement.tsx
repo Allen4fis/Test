@@ -512,6 +512,13 @@ export function RentalManagement() {
     billableSortDirection,
   ]);
 
+  // Pagination for billable analytics
+  const [itemsPerPageAnalytics, setItemsPerPageAnalytics] = useState(20);
+  const paginationAnalytics = usePagination({
+    data: billableAnalytics,
+    itemsPerPage: itemsPerPageAnalytics,
+  });
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="items" className="space-y-4">
