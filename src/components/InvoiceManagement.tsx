@@ -391,6 +391,9 @@ export function InvoiceManagement() {
     showFullyInvoiced,
     showPartiallyInvoiced,
     showUninvoiced,
+    showFullyPaid,
+    showPartiallyPaid,
+    showUnpaid,
     sortBy,
     sortDirection,
   ]);
