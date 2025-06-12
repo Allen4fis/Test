@@ -432,37 +432,30 @@ export function SummaryReports() {
       let subordinateGstTotal = 0;
 
       // Find the manager record in the employees list
-      const managerRecord = employees.find(emp => emp.name === manager.employeeName);
+      const managerRecord = employees.find(
+        (emp) => emp.name === manager.employeeName,
+      );
 
       if (managerRecord) {
         // Find all employees that report to this manager
-        const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
+        const allSubordinates = employees.filter(
+          (emp) => emp.managerId === managerRecord.id,
+        );
 
         // For each subordinate, calculate their total GST
-        allSubordinates.forEach(subordinateEmployee => {
+        allSubordinates.forEach((subordinateEmployee) => {
           // Get ALL time entries for this subordinate across all time periods
-          const subordinateEntries = timeEntrySummaries.filter(entry =>
-            entry.employeeName === subordinateEmployee.name
+          const subordinateEntries = timeEntrySummaries.filter(
+            (entry) => entry.employeeName === subordinateEmployee.name,
           );
 
           // Calculate total cost for this subordinate
-          const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
-            sum + (entry.totalCost || 0), 0
-          );
-
-          // Calculate GST for this subordinate if they're in a non-employee category
-          const subordinateGst = calculateGST(subordinateEmployee, subordinateTotalCost);
-          subordinateGstTotal += subordinateGst;
-        });
-      }
-
-          // Calculate total cost for this subordinate across all their entries
           const subordinateTotalCost = subordinateEntries.reduce(
             (sum, entry) => sum + (entry.totalCost || 0),
             0,
           );
 
-          // Calculate GST for this subordinate
+          // Calculate GST for this subordinate if they're in a non-employee category
           const subordinateGst = calculateGST(
             subordinateEmployee,
             subordinateTotalCost,
