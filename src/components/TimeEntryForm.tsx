@@ -263,12 +263,12 @@ export function TimeEntryForm() {
             description: formData.description,
           };
 
-          addTimeEntry(entryData);
-
-          // Add 0.5 second delay between entries (except for the last one)
-          if (i < hourEntries.length - 1) {
-            await delay(500);
-          }
+          // Await the entry creation to ensure it completes before the next one
+          await new Promise((resolve) => {
+            addTimeEntry(entryData);
+            // Add extra delay to ensure the entry is fully processed
+            setTimeout(resolve, 750); // Increased to 0.75 seconds for safety
+          });
         }
 
         // If only LOA and no hours, create a single entry with 0 hours
