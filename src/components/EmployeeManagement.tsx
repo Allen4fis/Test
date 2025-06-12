@@ -41,6 +41,7 @@ import {
   DollarSign,
   Banknote,
   UserCheck,
+  ArrowUpDown,
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
