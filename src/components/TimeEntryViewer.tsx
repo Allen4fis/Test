@@ -73,7 +73,14 @@ const getLocalDateString = (date: Date = new Date()) => {
 
 import { parseLocalDate, formatLocalDate } from "@/utils/dateUtils";
 
-type SortField = "date" | "employee" | "job" | "hours" | "title" | "hourType";
+type SortField =
+  | "date"
+  | "employee"
+  | "job"
+  | "hours"
+  | "title"
+  | "hourType"
+  | "billable";
 type SortDirection = "asc" | "desc";
 
 export function TimeEntryViewer() {
