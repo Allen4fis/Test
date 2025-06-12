@@ -634,6 +634,16 @@ export function SummaryReports() {
                                 h eff)
                               </span>
                             )}
+                            {provinceData.hours > 0 && (
+                              <span className="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-xs">
+                                $
+                                {(
+                                  (provinceData.cost || 0) /
+                                  (provinceData.hours || 1)
+                                ).toFixed(2)}
+                                /hr
+                              </span>
+                            )}
                           </div>
                         </div>
                       ),
