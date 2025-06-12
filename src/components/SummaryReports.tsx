@@ -57,6 +57,15 @@ const calculateDSPEarnings = (
   }, 0);
 };
 
+// Helper function to calculate 5% GST for non-employee categories
+const calculateGST = (employee: any, totalRevenue: number): number => {
+  // Apply 5% GST to employees marked as anything other than "Employee"
+  if (employee.category && employee.category !== "employee") {
+    return totalRevenue * 0.05;
+  }
+  return 0;
+};
+
 export function SummaryReports() {
   const {
     employees,
