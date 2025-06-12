@@ -22,6 +22,7 @@ import {
   Clock,
   Calendar,
   TrendingUp,
+  TrendingDown,
   MapPin,
   RotateCcw,
   Award,
@@ -31,6 +32,7 @@ import {
   Activity,
   DollarSign,
   PiggyBank,
+  Calculator,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
