@@ -932,12 +932,51 @@ export function RentalManagement() {
                   <CardTitle>
                     Rental Entries
                     <span className="ml-2 text-sm font-normal text-gray-500">
-                      {rentalSummaries.length} of {rentalEntries.length} entries
+                      {sortedRentalSummaries.length} of {rentalEntries.length}{" "}
+                      entries
                     </span>
                   </CardTitle>
                   <CardDescription>
                     Track rental equipment usage and billing
                   </CardDescription>
+                  {/* Concise sorting controls */}
+                  <div className="flex items-center gap-2 mt-3">
+                    <ArrowUpDown className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Sort by:</span>
+                    <Select
+                      value={entriesSortBy}
+                      onValueChange={(value: any) => setEntriesSortBy(value)}
+                    >
+                      <SelectTrigger className="w-32 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="startDate">Start Date</SelectItem>
+                        <SelectItem value="rentalItemName">
+                          Item Name
+                        </SelectItem>
+                        <SelectItem value="jobNumber">Job Number</SelectItem>
+                        <SelectItem value="employeeName">Employee</SelectItem>
+                        <SelectItem value="totalCost">Total Cost</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setEntriesSortDirection(
+                          entriesSortDirection === "asc" ? "desc" : "asc",
+                        )
+                      }
+                      className="px-2 h-8"
+                    >
+                      {entriesSortDirection === "asc" ? "↑" : "↓"}
+                    </Button>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {sortedRentalSummaries.length} entr
+                      {sortedRentalSummaries.length !== 1 ? "ies" : "y"}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {activeItems.length > 0 && (
