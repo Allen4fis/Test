@@ -1463,7 +1463,7 @@ export function RentalManagement() {
                                   </span>
                                 </div>
                               ) : (
-                                <span className="text-gray-400">—</span>
+                                <span className="text-gray-400">���</span>
                               )}
                             </TableCell>
                             <TableCell>
@@ -1634,6 +1634,11 @@ export function RentalManagement() {
                 </div>
               )}
               <form onSubmit={handleEntrySubmit}>
+                <div className="border-t pt-4">
+                  <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-3">
+                    Edit Fields:
+                  </h4>
+                </div>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="edit-rentalItem" className="text-right">
