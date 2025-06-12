@@ -587,8 +587,13 @@ export function SummaryReports() {
                   </span>
                 )}
               </div>
-              <div className="text-orange-200">
-                ${(data.cost || 0).toFixed(2)}
+              <div className="text-orange-200 space-y-1">
+                <div>${(data.cost || 0).toFixed(2)}</div>
+                {data.hours > 0 && (
+                  <div className="text-xs text-orange-300">
+                    ${((data.cost || 0) / (data.hours || 1)).toFixed(2)}/hr
+                  </div>
+                )}
               </div>
             </div>
           </div>
