@@ -615,6 +615,7 @@ export function InvoiceManagement() {
                   $
                   {jobStats
                     .reduce((sum, stat) => sum + stat.invoicedBillable, 0)
+                    .toFixed(2)
                     .toFixed(0)}
                 </p>
               </div>
