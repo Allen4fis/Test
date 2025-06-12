@@ -282,6 +282,71 @@ export function InvoiceManagement() {
       .filter((stat) => stat.totalDates > 0); // Only show jobs with time entries
   }, [jobs, timeEntrySummaries]);
 
+  // Filtered and sorted job stats
+  const filteredAndSortedJobStats = useMemo(() => {
+    let filtered = jobStats;
+
+    // Apply invoice status filters
+    if (!showFullyInvoiced || !showPartiallyInvoiced || !showUninvoiced) {
+      filtered = jobStats.filter((stat) => {
+        const isFullyInvoiced = stat.invoicePercentage >= 100;
+        const isUninvoiced = stat.invoicePercentage === 0;
+        const isPartiallyInvoiced =
+          stat.invoicePercentage > 0 && stat.invoicePercentage < 100;
+
+        if (!showFullyInvoiced && isFullyInvoiced) return false;
+        if (!showUninvoiced && isUninvoiced) return false;
+        if (!showPartiallyInvoiced && isPartiallyInvoiced) return false;
+        return true;
+      });
+    }
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortBy) {
+        case "jobNumber":
+          aValue = a.job.jobNumber.toLowerCase();
+          bValue = b.job.jobNumber.toLowerCase();
+          break;
+        case "jobName":
+          aValue = a.job.name.toLowerCase();
+          bValue = b.job.name.toLowerCase();
+          break;
+        case "invoicePercentage":
+          aValue = a.invoicePercentage;
+          bValue = b.invoicePercentage;
+          break;
+        case "uninvoicedDates":
+          aValue = a.uninvoicedDates;
+          bValue = b.uninvoicedDates;
+          break;
+        case "uninvoicedBillable":
+          aValue = a.uninvoicedBillable;
+          bValue = b.uninvoicedBillable;
+          break;
+        default:
+          aValue = a.job.jobNumber.toLowerCase();
+          bValue = b.job.jobNumber.toLowerCase();
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  }, [
+    jobStats,
+    showFullyInvoiced,
+    showPartiallyInvoiced,
+    showUninvoiced,
+    sortBy,
+    sortDirection,
+  ]);
+
   const handleBulkInvoice = () => {
     if (!selectedJob || !dateRange.startDate || !dateRange.endDate) return;
 
