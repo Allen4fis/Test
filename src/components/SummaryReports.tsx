@@ -425,25 +425,43 @@ export function SummaryReports() {
     const hierarchicalList: typeof enhancedEmployees = [];
 
     managers.forEach((manager) => {
-      // Calculate total GST from subordinates (both in current filter and outside it)
+      // Get subordinates in current filtered data
       const subordinates = subordinatesByManager[manager.employeeName] || [];
 
-      // Also check for subordinates not in current filtered data but still linked to this manager
-      const allSubordinatesForManager = employees.filter(
-        (emp) =>
-          emp.managerId &&
-          employees.find((mgr) => mgr.id === emp.managerId)?.name ===
-            manager.employeeName,
-      );
-
-      // Calculate GST for all subordinates linked to this manager
+      // Calculate subordinate GST total from ALL subordinates linked to this manager
       let subordinateGstTotal = 0;
 
-      // Add GST from subordinates in current filtered data
-      subordinateGstTotal += subordinates.reduce(
-        (sum, sub) => sum + sub.gstAmount,
-        0,
-      );
+      // Find ALL employees that report to this manager (by finding manager by ID)
+      const managerRecord = employees.find(emp => emp.name === manager.employeeName);
+      if (managerRecord) {
+        const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
+
+        allSubordinates.forEach(subordinateEmployee => {
+          // Get all time entries for this subordinate (not just filtered ones)
+          const subordinateEntries = timeEntrySummaries.filter(entry =>
+            entry.employeeName === subordinateEmployee.name
+          );
+
+          // Calculate total cost for this subordinate across all their entries
+          const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
+            sum + (entry.totalCost || 0), 0
+          );
+
+          // Calculate GST for this subordinate
+          const subordinateGst = calculateGST(subordinateEmployee, subordinateTotalCost);
+          subordinateGstTotal += subordinateGst;
+        });
+      }
+
+      // Add the manager with subordinate GST total
+      hierarchicalList.push({
+        ...manager,
+        subordinateGstTotal,
+      });
+
+      // Add their subordinates immediately after
+      hierarchicalList.push(...subordinates);
+    });
 
       // Add GST from subordinates not in current filtered data but still linked
       allSubordinatesForManager.forEach((sub) => {
