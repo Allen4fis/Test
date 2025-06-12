@@ -961,6 +961,7 @@ export function useTimeTracking() {
 
     // Time entry operations
     addTimeEntry,
+    addMultipleTimeEntries,
     updateTimeEntry,
     deleteTimeEntry,
 
