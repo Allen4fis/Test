@@ -246,47 +246,38 @@ export function TimeEntryForm() {
         updateTimeEntry(editingEntry.id, entryData);
         resetForm();
       } else {
-        // For new entries, create multiple entries with proper sequencing
-        setSubmissionProgress(`Creating ${hourEntries.length} entries...`);
+        // For new entries, create all entries at once using batch method
+        if (hourEntries.length > 0) {
+          setSubmissionProgress(`Creating ${hourEntries.length} entries...`);
 
-        for (let i = 0; i < hourEntries.length; i++) {
-          const entry = hourEntries[i];
-          const hours = parseFloat(entry.hours);
-          const hourTypeName =
-            hourTypes.find((ht) => ht.id === entry.hourTypeId)?.name ||
-            "Unknown";
+          const entriesToCreate = hourEntries.map((entry, i) => {
+            const hours = parseFloat(entry.hours);
+            return {
+              employeeId: formData.employeeId,
+              jobId: formData.jobId,
+              hourTypeId: entry.hourTypeId,
+              provinceId: formData.provinceId,
+              date: formData.date,
+              hours: hours,
+              loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
+              title: formData.title,
+              billableWageUsed: billableWageUsed,
+              costWageUsed: costWageUsed,
+              description: formData.description,
+            };
+          });
 
+          // Create all entries in a single batch operation
+          addMultipleTimeEntries(entriesToCreate);
           setSubmissionProgress(
-            `Creating entry ${i + 1} of ${hourEntries.length}: ${hourTypeName} (${hours}h)`,
+            `Successfully created ${hourEntries.length} entries!`,
           );
-
-          const entryData = {
-            employeeId: formData.employeeId,
-            jobId: formData.jobId,
-            hourTypeId: entry.hourTypeId,
-            provinceId: formData.provinceId,
-            date: formData.date,
-            hours: hours,
-            loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
-            title: formData.title,
-            billableWageUsed: billableWageUsed,
-            costWageUsed: costWageUsed,
-            description: formData.description,
-          };
-
-          // Add the entry
-          addTimeEntry(entryData);
-
-          // Wait before creating the next entry to ensure proper sequencing
-          if (i < hourEntries.length - 1) {
-            await delay(600); // 0.6 second delay between entries
-          }
         }
-
-        setSubmissionProgress("Entries created successfully!");
 
         // If only LOA and no hours, create a single entry with 0 hours
         if (hourEntries.length === 0 && loaCount > 0) {
+          setSubmissionProgress("Creating LOA entry...");
+
           const entryData = {
             employeeId: formData.employeeId,
             jobId: formData.jobId,
@@ -302,6 +293,7 @@ export function TimeEntryForm() {
           };
 
           addTimeEntry(entryData);
+          setSubmissionProgress("LOA entry created successfully!");
         }
 
         // Preserve form data but clear hours and description for next entry
