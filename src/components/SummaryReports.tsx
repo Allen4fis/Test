@@ -720,7 +720,7 @@ export function SummaryReports() {
 
                   {/* Employee Cards */}
                   <div className="space-y-4">
-                    {hierarchicalEmployeeSummaries.map((employee, index) => {
+                    {pagination.paginatedData.map((employee, index) => {
                       const dspCalc = {
                         dspEarnings: employee.dspEarnings || 0,
                       };
