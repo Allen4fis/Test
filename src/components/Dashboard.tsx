@@ -220,7 +220,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Activity */}
+        {/* High Score - Top 5 Invoices */}
         <Card className="modern-card">
           <CardHeader
             className="border-b border-gray-700/50"
@@ -230,52 +230,63 @@ export function Dashboard() {
             }}
           >
             <CardTitle className="flex items-center gap-3 text-gray-100">
-              <Calendar className="h-5 w-5 text-blue-400" />
-              Recent Activity
+              <Trophy className="h-5 w-5 text-yellow-400" />
+              High Score
             </CardTitle>
             <CardDescription className="text-gray-300">
-              Latest time entries from the past 7 days
+              Top 5 invoices ranked by highest billable total
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            {getRecentEntries().length === 0 ? (
+            {getTopInvoices().length === 0 ? (
               <div className="p-6 text-center text-gray-500">
-                <Clock className="h-8 w-8 mx-auto mb-2" />
-                <p>No recent entries</p>
+                <TrendingUp className="h-8 w-8 mx-auto mb-2" />
+                <p>No invoice data available</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-800">
-                {getRecentEntries().map((entry, index) => (
+                {getTopInvoices().map((invoice, index) => (
                   <div
-                    key={`${entry.employeeName}-${entry.date}-${index}`}
+                    key={`${invoice.jobNumber}-${index}`}
                     className="p-4 hover:bg-gray-800/50 smooth-transition"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-100">
-                            {entry.employeeName}
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className="bg-blue-900/30 border-blue-500/50 text-blue-300"
-                          >
-                            {entry.hourTypeName}
-                          </Badge>
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {entry.jobNumber} - {entry.jobName}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {formatLocalDate(entry.date)}
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
+                            index === 0
+                              ? "bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900"
+                              : index === 1
+                                ? "bg-gradient-to-br from-gray-300 to-gray-500 text-gray-900"
+                                : index === 2
+                                  ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white"
+                                  : "bg-gradient-to-br from-gray-600 to-gray-800 text-white"
+                          }`}
+                        >
+                          {index + 1}
+                        </span>
+                        <div className="space-y-1">
+                          <div className="font-semibold text-gray-100">
+                            {invoice.jobNumber}
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {invoice.jobName}
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-bold text-blue-400">
-                          {entry.hours.toFixed(1)}h
+                      <div className="text-right space-y-1">
+                        <div className="font-bold text-green-400">
+                          ${invoice.totalBillable.toFixed(2)}
                         </div>
-                        <div className="text-sm text-green-400">
-                          ${entry.totalCost.toFixed(2)}
+                        <div
+                          className={`text-sm font-medium ${
+                            invoice.profitPercentage >= 0
+                              ? "text-blue-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {invoice.profitPercentage >= 0 ? "+" : ""}
+                          {invoice.profitPercentage.toFixed(1)}% profit
                         </div>
                       </div>
                     </div>
