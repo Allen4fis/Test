@@ -476,7 +476,16 @@ export function TimeEntryForm() {
                       .filter((job) => job.isActive)
                       .map((job) => (
                         <SelectItem key={job.id} value={job.id}>
-                          {job.jobNumber} - {job.name}
+                          <div className="flex items-center justify-between w-full">
+                            <span>
+                              {job.jobNumber} - {job.name}
+                            </span>
+                            {job.isBillable === false && (
+                              <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded ml-2">
+                                Non-Billable
+                              </span>
+                            )}
+                          </div>
                         </SelectItem>
                       ))}
                   </SelectContent>
