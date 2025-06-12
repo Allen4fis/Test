@@ -1278,7 +1278,7 @@ export function InvoiceManagement() {
                                 {entry.duration} days
                               </TableCell>
                               <TableCell className="text-gray-100">
-                                ${entry.dailyRate?.toFixed(2) || "0.00"}
+                                ${entry.rateUsed?.toFixed(2) || "0.00"}
                               </TableCell>
                               <TableCell className="text-gray-100">
                                 ${entry.dspRate?.toFixed(2) || "0.00"}
