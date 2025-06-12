@@ -234,6 +234,7 @@ export function useTimeTracking() {
 
         // Only save if data has changed
         if (currentHash === lastSaveRef.current) {
+          console.log(`⏰ Autosave check: No changes detected, skipping save`);
           return;
         }
 
@@ -258,9 +259,15 @@ export function useTimeTracking() {
         localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(updatedAutosaves));
         lastSaveRef.current = currentHash;
 
-        console.log(`Autosave completed at ${autosave.timestamp}`);
+        console.log(`✅ Autosave completed at ${autosave.timestamp}`);
+        console.log(
+          `📊 Saved data: ${appData.timeEntries.length} entries, ${appData.employees.length} employees, ${appData.jobs.length} jobs`,
+        );
+        console.log(
+          `💾 Total autosaves: ${updatedAutosaves.length}/${MAX_AUTOSAVES}`,
+        );
       } catch (error) {
-        console.error("Autosave failed:", error);
+        console.error("❌ Autosave failed:", error);
       }
     };
 
