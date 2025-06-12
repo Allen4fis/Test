@@ -603,7 +603,36 @@ export function SummaryReports() {
                 <div>${(data.cost || 0).toFixed(2)}</div>
                 {data.hours > 0 && (
                   <div className="text-xs text-orange-300">
-                    ${((data.cost || 0) / (data.hours || 1)).toFixed(2)}/hr
+                    Average: $
+                    {((data.cost || 0) / (data.hours || 1)).toFixed(2)}/hr
+                  </div>
+                )}
+                {data.rateEntries && data.rateEntries.length > 0 && (
+                  <div className="text-xs space-y-1 mt-2 pt-2 border-t border-orange-500/30">
+                    <div className="font-semibold text-orange-200">
+                      Individual Rates:
+                    </div>
+                    {data.rateEntries
+                      .sort((a, b) => b.hours - a.hours)
+                      .slice(0, 5)
+                      .map((entry, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center bg-orange-800/30 px-2 py-1 rounded"
+                        >
+                          <span className="text-orange-200">
+                            {entry.date}: {entry.hours.toFixed(1)}h
+                          </span>
+                          <span className="text-orange-100 font-medium">
+                            ${entry.costRate.toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
+                    {data.rateEntries.length > 5 && (
+                      <div className="text-xs text-orange-300 italic">
+                        ... and {data.rateEntries.length - 5} more entries
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
