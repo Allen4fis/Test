@@ -47,6 +47,7 @@ export function Dashboard() {
     hourTypes,
     provinces,
     timeEntrySummaries,
+    rentalSummaries,
     summaryByTitleAndJob,
     getAutosaveInfo,
   } = useTimeTracking();
