@@ -261,10 +261,10 @@ export function InvoiceManagement() {
           0,
         );
         const totalCost = jobDates.reduce((sum, d) => sum + d.totalCost, 0);
-        const totalBillable = jobDates.reduce(
-          (sum, d) => sum + d.totalBillable,
-          0,
-        );
+        const totalBillable =
+          job.isBillable === false
+            ? 0
+            : jobDates.reduce((sum, d) => sum + d.totalBillable, 0);
 
         const invoicedHours = jobDates
           .filter((d) => d.isInvoiced)
