@@ -544,7 +544,7 @@ export function Dashboard({
                 size="sm"
                 onClick={() => {
                   console.log("🔍 Autosave Status Check:");
-                  console.log("📊 Current autosave info:", autosaveInfo);
+                  console.log("📊 Current autosave info:", currentAutosaveInfo);
                   const autosaves = localStorage.getItem(
                     "timeTrackingApp-autosave",
                   );
