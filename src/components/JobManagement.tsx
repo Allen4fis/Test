@@ -70,6 +70,7 @@ export function JobManagement() {
     name: "",
     description: "",
     isActive: true,
+    isBillable: true,
   });
 
   // Sorting and filtering state
