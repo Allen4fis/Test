@@ -221,6 +221,40 @@ export function EmployeeManagement() {
             <CardDescription>
               Manage your employees, job titles, and wage rates
             </CardDescription>
+            {/* Concise sorting controls */}
+            <div className="flex items-center gap-2 mt-3">
+              <ArrowUpDown className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">Sort by:</span>
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
+                <SelectTrigger className="w-32 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="name">Name</SelectItem>
+                  <SelectItem value="title">Title</SelectItem>
+                  <SelectItem value="billableWage">Billable Rate</SelectItem>
+                  <SelectItem value="costWage">Cost Rate</SelectItem>
+                  <SelectItem value="createdAt">Date Added</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+                }
+                className="px-2 h-8"
+              >
+                {sortDirection === "asc" ? "↑" : "↓"}
+              </Button>
+              <span className="text-xs text-gray-500 ml-2">
+                {sortedEmployees.length} employee
+                {sortedEmployees.length !== 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
