@@ -868,7 +868,7 @@ export function InvoiceManagement() {
 
                         <div className="text-center">
                           <div className="text-lg font-bold text-purple-400">
-                            {jobStat.paidPercentage.toFixed(0)}%
+                            {jobStat.paidPercentage.toFixed(2)}%
                           </div>
                           <div className="text-xs text-gray-400 mb-2">Paid</div>
                           <div className="w-full bg-gray-700 rounded-full h-1.5">
