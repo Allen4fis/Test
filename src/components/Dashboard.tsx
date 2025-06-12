@@ -341,20 +341,26 @@ export function Dashboard({
         <Card className="modern-card hover-scale group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-semibold text-gray-200">
-              Active Jobs
+              Cost of Non Billable Jobs
             </CardTitle>
-            <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300">
-              <Briefcase className="h-5 w-5 text-white" />
+            <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
+              <Calculator className="h-5 w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-orange-400">
-              {activeJobs}
+            <div className="text-3xl font-bold text-purple-400">
+              ${totalNonBillableCosts.toFixed(2)}
             </div>
             <p className="text-xs text-gray-400 mt-1 flex items-center">
-              <Zap className="h-3 w-3 mr-1 text-orange-400" />
-              Active projects
+              <TrendingDown className="h-3 w-3 mr-1 text-purple-400" />
+              Internal project costs
             </p>
+            {nonBillableJobNumbers.length > 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                {nonBillableJobNumbers.length} non-billable job
+                {nonBillableJobNumbers.length !== 1 ? "s" : ""}
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
