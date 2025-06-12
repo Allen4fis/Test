@@ -1004,30 +1004,30 @@ export function TimeEntryViewer() {
                 </TableBody>
               </Table>
             </div>
+          )}
 
-            {/* Pagination Controls */}
-            {filteredAndSortedEntries.length > 0 && (
-              <div className="mt-4">
-                <PaginationControls
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalItems={pagination.totalItems}
-                  pageInfo={pagination.pageInfo}
-                  canGoNext={pagination.canGoNext}
-                  canGoPrevious={pagination.canGoPrevious}
-                  onPageChange={pagination.goToPage}
-                  onNextPage={pagination.goToNextPage}
-                  onPreviousPage={pagination.goToPreviousPage}
-                  itemsPerPage={itemsPerPage}
-                  onItemsPerPageChange={(newItemsPerPage) => {
-                    setItemsPerPage(newItemsPerPage);
-                    pagination.goToPage(1);
-                  }}
-                  itemsPerPageOptions={[25, 50, 100, 200]}
-                  className="border-t border-gray-700/50 pt-4"
-                />
-              </div>
-            )}
+          {/* Pagination Controls */}
+          {filteredAndSortedEntries.length > 0 && (
+            <div className="mt-4">
+              <PaginationControls
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalItems={pagination.totalItems}
+                pageInfo={pagination.pageInfo}
+                canGoNext={pagination.canGoNext}
+                canGoPrevious={pagination.canGoPrevious}
+                onPageChange={pagination.goToPage}
+                onNextPage={pagination.goToNextPage}
+                onPreviousPage={pagination.goToPreviousPage}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={(newItemsPerPage) => {
+                  setItemsPerPage(newItemsPerPage);
+                  pagination.goToPage(1);
+                }}
+                itemsPerPageOptions={[25, 50, 100, 200]}
+                className="border-t border-gray-700/50 pt-4"
+              />
+            </div>
           )}
         </CardContent>
       </Card>
