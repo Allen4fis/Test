@@ -29,42 +29,63 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import {
+  Calendar,
+  CalendarIcon,
+  Clock,
+  TrendingUp,
+  Users,
+  DollarSign,
+  AlertCircle,
+  Download,
+  Filter,
+  Calendar as CalendarComponent,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Users,
-  Briefcase,
-  Calendar,
-  FileText,
-  Truck,
-  RotateCcw,
-  DollarSign,
-  MapPin,
-  Clock,
-  CalendarIcon,
-} from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
   parseLocalDate,
   formatLocalDate,
   getTodayString,
 } from "@/utils/dateUtils";
-import { format } from "date-fns";
 
-// Helper function to safely calculate DSP earnings for an employee
-const calculateDSPEarnings = (
-  employeeRentals: any[],
-  rentalItems: any[],
-): number => {
-  return employeeRentals.reduce((sum, rental) => {
-    // Use the DSP rate from the rental entry itself, not from the rental item template
-    const dspRate = rental.dspRate || 0;
-    return sum + dspRate * rental.duration * rental.quantity;
-  }, 0);
+// Helper function to get the last n days
+const getLastNDays = (days: number) => {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+
+  return {
+    start: startDate.toISOString().split("T")[0],
+    end: endDate.toISOString().split("T")[0],
+  };
+};
+
+// Helper function to format date range for display
+const formatDateRange = (start: string, end: string) => {
+  const startDate = parseLocalDate(start);
+  const endDate = parseLocalDate(end);
+  return `${formatLocalDate(startDate, { month: "short", day: "numeric" })} - ${formatLocalDate(endDate, { month: "short", day: "numeric" })}`;
+};
+
+// Helper function to sum values by hour type
+const sumByHourType = (
+  entries: any[],
+  hourTypeField: string,
+  valueField: string,
+) => {
+  return entries.reduce(
+    (acc, entry) => {
+      const hourType = entry[hourTypeField] || "Unknown";
+      acc[hourType] = (acc[hourType] || 0) + (entry[valueField] || 0);
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 };
 
 // Helper function to calculate 5% GST for non-employee categories
@@ -101,8 +122,8 @@ export function SummaryReports() {
     startDate.setDate(endDate.getDate() - 30);
 
     return {
-      start: format(startDate, "yyyy-MM-dd"),
-      end: format(endDate, "yyyy-MM-dd"),
+      start: startDate.toISOString().split("T")[0],
+      end: endDate.toISOString().split("T")[0],
     };
   };
 
@@ -165,12 +186,13 @@ export function SummaryReports() {
     employeeFilter,
     jobFilter,
     provinceFilter,
+    jobs,
   ]);
 
-  // Filter rental summaries based on selected criteria
+  // Filter rental summaries
   const filteredRentalSummaries = useMemo(() => {
     return rentalSummaries.filter((rental) => {
-      // Date filter
+      // Date filter - use start date for filtering
       const rentalDate = parseLocalDate(rental.startDate);
       const startDate = parseLocalDate(dateFilter.start);
       const endDate = parseLocalDate(dateFilter.end);
@@ -205,7 +227,7 @@ export function SummaryReports() {
 
       return true;
     });
-  }, [rentalSummaries, dateFilter, employeeFilter, jobFilter]);
+  }, [rentalSummaries, dateFilter, employeeFilter, jobFilter, jobs]);
 
   // Calculate summary statistics
   const summaryStats = useMemo(() => {
@@ -299,11 +321,10 @@ export function SummaryReports() {
             hourlyRate: hourlyRate,
             hourlyCost: hourlyCost,
             totalCost: summary.totalCost,
-            costWage: summary.costWage,
-            loaCount: summary.loaCount || 0,
           });
         }
 
+        // Track province breakdown for this hour type
         if (!group.hourTypeBreakdown[hourTypeName].provinces[provinceName]) {
           group.hourTypeBreakdown[hourTypeName].provinces[provinceName] = {
             hours: 0,
@@ -325,32 +346,12 @@ export function SummaryReports() {
       {} as Record<string, any>,
     );
 
-    // Add DSP earnings to each employee's total cost
-    const employeeGroupsWithDSP = Object.values(employeeGroups).map(
-      (employee) => {
-        // Calculate DSP earnings for this employee
-        const employeeRentals = filteredRentalSummaries.filter(
-          (rental) => rental.employeeName === employee.employeeName,
-        );
-
-        const dspEarnings = employeeRentals.reduce((sum, rental) => {
-          const dspRate = rental.dspRate || 0;
-          return sum + dspRate * rental.duration * rental.quantity;
-        }, 0);
-
-        // Add DSP earnings to total cost
-        return {
-          ...employee,
-          totalCost: employee.totalCost + dspEarnings,
-          dspEarnings, // Keep track of DSP earnings separately for display purposes
-        };
-      },
+    return Object.values(employeeGroups).filter(
+      (group) => showEmptyResults || group.totalHours > 0,
     );
+  }, [filteredSummaries, showEmptyResults]);
 
-    return employeeGroupsWithDSP.sort((a, b) => b.totalHours - a.totalHours);
-  }, [filteredSummaries, filteredRentalSummaries]);
-
-  // Optimized hierarchical employee processing with proper grouping
+  // Calculate hierarchical employee summaries (managers and subordinates)
   const hierarchicalEmployeeSummaries = useMemo(() => {
     const employeeMap = new Map(employees.map((emp) => [emp.name, emp]));
 
@@ -438,128 +439,101 @@ export function SummaryReports() {
             metrics
           </p>
         </div>
-        <Button
-          onClick={resetFilters}
-          variant="outline"
-          className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
-        >
-          <RotateCcw className="h-4 w-4 mr-2" />
+        <Button onClick={resetFilters} variant="outline" className="gap-2">
+          <Filter className="h-4 w-4" />
           Reset Filters
         </Button>
       </div>
 
-      <Tabs defaultValue="employee-performance" className="space-y-4">
+      <Tabs defaultValue="payroll-info" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="employee-performance">
-            Payroll Information
-          </TabsTrigger>
+          <TabsTrigger value="payroll-info">Payroll Information</TabsTrigger>
           <TabsTrigger value="time-analysis">Time Analysis</TabsTrigger>
           <TabsTrigger value="job-performance">Job Performance</TabsTrigger>
         </TabsList>
 
         {/* Payroll Information Tab */}
-        <TabsContent value="employee-performance">
+        <TabsContent value="payroll-info">
           <Card className="bg-gray-900 border-gray-700">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-100">
                 <Users className="h-5 w-5 text-orange-400" />
-                Payroll Information For Selected Dates And Times
+                Payroll Information
               </CardTitle>
               <CardDescription className="text-gray-300">
-                Hierarchical view of employee and subordinates, with hours,
-                costs, and DSP Rental earnings breakdown across jobs and
-                provinces.
+                Employee cost breakdown with hierarchical reporting structure
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              {/* Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-4 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Start Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 overflow-hidden"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">
-                          {dateFilter.start
-                            ? format(
-                                parseLocalDate(dateFilter.start),
-                                "MMM d, yyyy",
-                              )
-                            : "Pick a date"}
-                        </span>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 bg-gray-800 border-gray-600"
-                      align="start"
-                    >
-                      <CalendarComponent
-                        mode="single"
-                        selected={
-                          dateFilter.start
-                            ? parseLocalDate(dateFilter.start)
-                            : undefined
-                        }
-                        onSelect={(date) => {
-                          if (date) {
-                            setDateFilter({
-                              ...dateFilter,
-                              start: format(date, "yyyy-MM-dd"),
-                            });
-                          }
-                        }}
-                        initialFocus
-                        className="bg-gray-800 text-gray-100"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">End Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 overflow-hidden"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">
-                          {dateFilter.end
-                            ? format(
-                                parseLocalDate(dateFilter.end),
-                                "MMM d, yyyy",
-                              )
-                            : "Pick a date"}
-                        </span>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 bg-gray-800 border-gray-600"
-                      align="start"
-                    >
-                      <CalendarComponent
-                        mode="single"
-                        selected={
-                          dateFilter.end
-                            ? parseLocalDate(dateFilter.end)
-                            : undefined
-                        }
-                        onSelect={(date) => {
-                          if (date) {
-                            setDateFilter({
-                              ...dateFilter,
-                              end: format(date, "yyyy-MM-dd"),
-                            });
-                          }
-                        }}
-                        initialFocus
-                        className="bg-gray-800 text-gray-100"
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Label className="text-sm font-medium">Date Range</Label>
+                  <div className="flex gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          <span className="truncate">
+                            {formatLocalDate(parseLocalDate(dateFilter.start), {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={parseLocalDate(dateFilter.start)}
+                          onSelect={(date) => {
+                            if (date) {
+                              setDateFilter({
+                                ...dateFilter,
+                                start: date.toISOString().split("T")[0],
+                              });
+                            }
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <span className="text-gray-400 self-center">to</span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          <span className="truncate">
+                            {formatLocalDate(parseLocalDate(dateFilter.end), {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={parseLocalDate(dateFilter.end)}
+                          onSelect={(date) => {
+                            if (date) {
+                              setDateFilter({
+                                ...dateFilter,
+                                end: date.toISOString().split("T")[0],
+                              });
+                            }
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">Employee</Label>
@@ -657,74 +631,62 @@ export function SummaryReports() {
                           value={province.name}
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          {province.name}
+                          {province.name} ({province.code})
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Options</Label>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="include-invoiced"
-                      checked={includeInvoiced}
-                      onCheckedChange={setIncludeInvoiced}
-                    />
-                    <Label
-                      htmlFor="include-invoiced"
-                      className="text-sm text-gray-300"
-                    >
-                      Include invoiced
-                    </Label>
-                  </div>
-                </div>
               </div>
 
-              {filteredSummaries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No data found for the selected filters. Try adjusting your
-                  date range or filter criteria.
-                </div>
-              ) : (
-                <div className="mt-6">
-                  {/* Summary Statistics */}
-                  <div className="grid grid-cols-4 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-400">
-                        {summaryStats.totalHours.toFixed(2)}h
-                      </div>
-                      <div className="text-sm text-gray-300">Total Hours</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-400">
-                        ${summaryStats.totalCombinedCost.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-gray-300">Total Cost</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-400">
-                        ${summaryStats.totalGst.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-gray-300">Total GST</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-400">
-                        ${summaryStats.totalDspEarnings.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-gray-300">
-                        Total DSP Rentals
-                      </div>
-                    </div>
+              <div className="space-y-6">
+                {filteredSummaries.length === 0 ? (
+                  <div className="text-center py-8">
+                    <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-100 mb-2">
+                      No Data Available
+                    </h3>
+                    <p className="text-gray-400 mb-4">
+                      No time entries found for the selected filters.
+                    </p>
+                    <Button onClick={resetFilters} variant="outline">
+                      Reset Filters
+                    </Button>
                   </div>
+                ) : (
+                  <div className="mt-6">
+                    {/* Summary Statistics */}
+                    <div className="grid grid-cols-4 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-400">
+                          {summaryStats.totalHours.toFixed(2)}h
+                        </div>
+                        <div className="text-sm text-gray-300">Total Hours</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-400">
+                          ${summaryStats.totalCombinedCost.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-gray-300">Total Cost</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-orange-400">
+                          ${summaryStats.totalGst.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-gray-300">Total GST</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-400">
+                          ${summaryStats.totalDspEarnings.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          Total DSP Rentals
+                        </div>
+                      </div>
+                    </div>
 
-                  {/* Employee Cards */}
-                  <div className="space-y-4">
+                    {/* Hierarchical Employee Display */}
                     {pagination.paginatedData.map((employee, index) => {
-                      const dspCalc = {
-                        dspEarnings: employee.dspEarnings || 0,
-                      };
-
                       const totalGst =
                         (employee.gstAmount || 0) +
                         (employee.subordinateGstTotal || 0);
@@ -744,7 +706,7 @@ export function SummaryReports() {
                                         : "bg-gradient-to-br from-gray-500 to-gray-700 text-white"
                                   }`}
                                 >
-                                  {index + 1}
+                                  {employee.employeeName.charAt(0)}
                                 </span>
                                 <div>
                                   <div className="font-semibold text-gray-100">
@@ -755,41 +717,26 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="text-xs text-gray-400">
-                                {employee.entries.length} entries
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-4 gap-4">
-                              <div className="text-center">
-                                <div className="text-xl font-bold text-blue-400">
-                                  {employee.totalHours.toFixed(2)}h
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                  Hours
-                                </div>
-                                {employee.totalEffectiveHours !==
-                                  employee.totalHours && (
-                                  <div className="text-xs text-gray-500">
-                                    ({employee.totalEffectiveHours.toFixed(2)}h
-                                    eff)
+                              <div className="grid grid-cols-4 gap-4 text-center">
+                                <div>
+                                  <div className="text-lg font-bold text-blue-400">
+                                    {employee.totalHours.toFixed(2)}h
                                   </div>
-                                )}
-                              </div>
-
-                              <div className="text-center">
-                                <div className="text-xl font-bold text-green-400">
-                                  ${employee.totalCost.toFixed(2)}
+                                  <div className="text-xs text-gray-400">
+                                    Hours
+                                  </div>
                                 </div>
-                                <div className="text-xs text-gray-400">
-                                  Cost
+                                <div>
+                                  <div className="text-lg font-bold text-green-400">
+                                    ${employee.totalCost.toFixed(2)}
+                                  </div>
+                                  <div className="text-xs text-gray-400">
+                                    Cost
+                                  </div>
                                 </div>
-                              </div>
-
-                              <div className="text-center">
                                 {totalGst > 0 ? (
-                                  <>
-                                    <div className="text-xl font-bold text-orange-400">
+                                  <div>
+                                    <div className="text-lg font-bold text-orange-400">
                                       ${totalGst.toFixed(2)}
                                     </div>
                                     <div className="text-xs text-gray-400">
@@ -817,54 +764,55 @@ export function SummaryReports() {
                                       </div>
                                     ) : (
                                       <div className="text-xs text-blue-300">
-                                        from team
+                                        Team GST
                                       </div>
                                     )}
-                                  </>
+                                  </div>
                                 ) : (
-                                  <>
-                                    <div className="text-xl text-gray-500">
-                                      -
+                                  <div>
+                                    <div className="text-lg font-bold text-gray-500">
+                                      $0.00
                                     </div>
                                     <div className="text-xs text-gray-400">
                                       GST
                                     </div>
-                                  </>
+                                  </div>
                                 )}
-                              </div>
-
-                              <div className="text-center">
-                                {dspCalc && dspCalc.dspEarnings > 0 ? (
-                                  <>
-                                    <div className="text-xl font-bold text-purple-400">
-                                      ${dspCalc.dspEarnings.toFixed(2)}
+                                <div>
+                                  {employee.totalLoaCount > 0 ? (
+                                    <div>
+                                      <div className="text-lg font-bold text-purple-400">
+                                        {employee.totalLoaCount}
+                                      </div>
+                                      <div className="text-xs text-gray-400">
+                                        LOA
+                                      </div>
                                     </div>
-                                    <div className="text-xs text-gray-400">
-                                      DSP Rentals
+                                  ) : (
+                                    <div>
+                                      <div className="text-lg font-bold text-gray-500">
+                                        0
+                                      </div>
+                                      <div className="text-xs text-gray-400">
+                                        LOA
+                                      </div>
                                     </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <div className="text-xl text-gray-500">
-                                      -
-                                    </div>
-                                    <div className="text-xs text-gray-400">
-                                      DSP Rentals
-                                    </div>
-                                  </>
-                                )}
+                                  )}
+                                </div>
                               </div>
                             </div>
 
-                            {/* Hour Types Compact */}
+                            {/* Hour Type Breakdown */}
                             {employee.hourTypeBreakdown &&
                               Object.keys(employee.hourTypeBreakdown).length >
                                 0 && (
-                                <div className="border-t border-gray-700 pt-3">
+                                <div className="space-y-2">
+                                  <div className="text-sm font-medium text-gray-300 mb-2">
+                                    Hour Type Breakdown:
+                                  </div>
                                   <div className="flex flex-wrap gap-2">
                                     {Object.entries(employee.hourTypeBreakdown)
                                       .sort(([, a], [, b]) => b.hours - a.hours)
-                                      .slice(0, 4)
                                       .map(([hourType, data]) => (
                                         <div
                                           key={hourType}
@@ -926,143 +874,133 @@ export function SummaryReports() {
                                                 <div className="text-xs text-orange-400 space-y-0.5">
                                                   {Object.entries(
                                                     data.provinces,
-                                                  )
-                                                    .sort(
-                                                      ([, a], [, b]) =>
-                                                        b.hours - a.hours,
-                                                    )
-                                                    .map(
-                                                      ([
-                                                        provinceName,
-                                                        provinceData,
-                                                      ]) => (
-                                                        <div
-                                                          key={provinceName}
-                                                          className="flex justify-between"
-                                                        >
-                                                          <span className="text-orange-400/80">
-                                                            {provinceName}:
-                                                          </span>
-                                                          <span>
-                                                            {provinceData.hours.toFixed(
-                                                              2,
-                                                            )}
-                                                            h
-                                                          </span>
-                                                        </div>
-                                                      ),
-                                                    )}
+                                                  ).map(
+                                                    ([
+                                                      provinceName,
+                                                      provinceData,
+                                                    ]) => (
+                                                      <div
+                                                        key={provinceName}
+                                                        className="truncate"
+                                                      >
+                                                        {provinceName}:{" "}
+                                                        {provinceData.hours.toFixed(
+                                                          2,
+                                                        )}
+                                                        h
+                                                      </div>
+                                                    ),
+                                                  )}
                                                 </div>
                                               </div>
                                             )}
                                         </div>
                                       ))}
-                                    {Object.keys(employee.hourTypeBreakdown)
-                                      .length > 4 && (
-                                      <div className="text-sm text-gray-400 self-center px-2">
-                                        +
-                                        {Object.keys(employee.hourTypeBreakdown)
-                                          .length - 4}{" "}
-                                        more
-                                      </div>
-                                    )}
                                   </div>
-                                  {employee.totalLoaCount > 0 && (
-                                    <div className="mt-2">
-                                      <span className="bg-purple-900/30 text-purple-300 px-2 py-1 rounded text-sm">
-                                        LOA: {employee.totalLoaCount}
-                                      </span>
+                                  {Object.keys(employee.hourTypeBreakdown)
+                                    .length > 0 && (
+                                    <div className="text-xs text-gray-400 mt-2">
+                                      Total:{" "}
+                                      {
+                                        Object.keys(employee.hourTypeBreakdown)
+                                          .length
+                                      }{" "}
+                                      hour type
+                                      {Object.keys(employee.hourTypeBreakdown)
+                                        .length !== 1
+                                        ? "s"
+                                        : ""}
                                     </div>
                                   )}
                                 </div>
                               )}
-                          </div>
 
-                          {/* Subordinates */}
-                          {employee.subordinates &&
-                            employee.subordinates.length > 0 && (
-                              <div className="ml-8 space-y-2 mt-2">
-                                {employee.subordinates.map((subordinate) => {
-                                  const subDspCalc = {
-                                    dspEarnings: subordinate.dspEarnings || 0,
-                                  };
+                            {/* Subordinates */}
+                            {employee.subordinates &&
+                              employee.subordinates.length > 0 && (
+                                <div className="ml-8 space-y-2 mt-2">
+                                  {employee.subordinates.map((subordinate) => {
+                                    const subDspCalc = {
+                                      dspEarnings: subordinate.dspEarnings || 0,
+                                    };
 
-                                  return (
-                                    <div
-                                      key={subordinate.employeeName}
-                                      className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3"
-                                    >
-                                      <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
-                                      <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                          <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-                                            ↳
-                                          </span>
-                                          <div>
-                                            <div className="font-medium text-blue-300">
-                                              {subordinate.employeeName}
+                                    return (
+                                      <div
+                                        key={subordinate.employeeName}
+                                        className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3"
+                                      >
+                                        <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
+                                        <div className="flex items-center justify-between mb-2">
+                                          <div className="flex items-center gap-2">
+                                            <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+                                              ↳
+                                            </span>
+                                            <div>
+                                              <div className="font-medium text-blue-300">
+                                                {subordinate.employeeName}
+                                              </div>
+                                              <div className="text-xs text-blue-200">
+                                                {subordinate.employeeTitle}
+                                              </div>
                                             </div>
-                                            <div className="text-xs text-blue-200">
-                                              {subordinate.employeeTitle}
-                                            </div>
                                           </div>
                                         </div>
-                                        <div className="text-xs text-blue-400">
-                                          {subordinate.entries.length} entries
-                                        </div>
-                                      </div>
-
-                                      <div className="grid grid-cols-4 gap-3 text-sm">
-                                        <div className="text-center">
-                                          <div className="font-semibold text-blue-300">
-                                            {subordinate.totalHours.toFixed(2)}h
-                                          </div>
-                                          <div className="text-xs text-blue-400">
-                                            Hours
-                                          </div>
-                                        </div>
-                                        <div className="text-center">
-                                          <div className="font-semibold text-green-300">
-                                            ${subordinate.totalCost.toFixed(2)}
-                                          </div>
-                                          <div className="text-xs text-blue-400">
-                                            Cost
-                                          </div>
-                                        </div>
-                                        <div className="text-center">
-                                          <div className="font-semibold text-orange-300">
-                                            $
-                                            {(
-                                              subordinate.gstAmount || 0
-                                            ).toFixed(2)}
-                                          </div>
-                                          <div className="text-xs text-blue-400">
-                                            GST
-                                          </div>
-                                        </div>
-                                        <div className="text-center">
-                                          {subDspCalc.dspEarnings > 0 ? (
-                                            <div className="font-semibold text-purple-300">
-                                              $
-                                              {subDspCalc.dspEarnings.toFixed(
+                                        <div className="grid grid-cols-4 gap-3 text-center">
+                                          <div className="text-center">
+                                            <div className="font-semibold text-blue-300">
+                                              {subordinate.totalHours.toFixed(
                                                 2,
                                               )}
+                                              h
                                             </div>
-                                          ) : (
-                                            <div className="text-blue-400">
-                                              -
+                                            <div className="text-xs text-blue-400">
+                                              Hours
                                             </div>
-                                          )}
-                                          <div className="text-xs text-blue-400">
-                                            DSP
+                                          </div>
+                                          <div className="text-center">
+                                            <div className="font-semibold text-green-300">
+                                              $
+                                              {subordinate.totalCost.toFixed(2)}
+                                            </div>
+                                            <div className="text-xs text-blue-400">
+                                              Cost
+                                            </div>
+                                          </div>
+                                          <div className="text-center">
+                                            <div className="font-semibold text-orange-300">
+                                              $
+                                              {(
+                                                subordinate.gstAmount || 0
+                                              ).toFixed(2)}
+                                            </div>
+                                            <div className="text-xs text-blue-400">
+                                              GST
+                                            </div>
+                                          </div>
+                                          <div className="text-center">
+                                            {subDspCalc.dspEarnings > 0 ? (
+                                              <div className="font-semibold text-purple-300">
+                                                $
+                                                {subDspCalc.dspEarnings.toFixed(
+                                                  2,
+                                                )}
+                                              </div>
+                                            ) : (
+                                              <div className="text-blue-400">
+                                                -
+                                              </div>
+                                            )}
+                                            <div className="text-xs text-blue-400">
+                                              DSP
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
+                                    );
+                                  })}
+                                </div>
+                              )}
+                          </div>
                         </div>
                       );
                     })}
@@ -1122,7 +1060,7 @@ export function SummaryReports() {
           <Card className="bg-gray-900 border-gray-700">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-100">
-                <Briefcase className="h-5 w-5 text-green-400" />
+                <TrendingUp className="h-5 w-5 text-green-400" />
                 Job Performance
               </CardTitle>
               <CardDescription className="text-gray-300">
