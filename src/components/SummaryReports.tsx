@@ -260,10 +260,30 @@ export function SummaryReports() {
       {} as Record<string, any>,
     );
 
-    return Object.values(employeeGroups).sort(
-      (a, b) => b.totalHours - a.totalHours,
+    // Add DSP earnings to each employee's total cost
+    const employeeGroupsWithDSP = Object.values(employeeGroups).map(
+      (employee) => {
+        // Calculate DSP earnings for this employee
+        const employeeRentals = filteredRentalSummaries.filter(
+          (rental) => rental.employeeName === employee.employeeName,
+        );
+
+        const dspEarnings = employeeRentals.reduce((sum, rental) => {
+          const dspRate = rental.dspRate || 0;
+          return sum + dspRate * rental.duration * rental.quantity;
+        }, 0);
+
+        // Add DSP earnings to total cost
+        return {
+          ...employee,
+          totalCost: employee.totalCost + dspEarnings,
+          dspEarnings, // Keep track of DSP earnings separately for display purposes
+        };
+      },
     );
-  }, [filteredSummaries]);
+
+    return employeeGroupsWithDSP.sort((a, b) => b.totalHours - a.totalHours);
+  }, [filteredSummaries, filteredRentalSummaries]);
   // Optimized title & job summaries
   const titleJobSummaries = useMemo(() => {
     const titleJobGroups = filteredSummaries.reduce(
