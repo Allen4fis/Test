@@ -133,7 +133,17 @@ export function SummaryReports() {
       }
 
       // Job filter
-      if (jobFilter !== "all-jobs" && summary.jobNumber !== jobFilter) {
+      if (jobFilter === "billable-only") {
+        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
+        if (job?.isBillable === false) {
+          return false;
+        }
+      } else if (jobFilter === "non-billable-only") {
+        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
+        if (job?.isBillable !== false) {
+          return false;
+        }
+      } else if (jobFilter !== "all-jobs" && summary.jobNumber !== jobFilter) {
         return false;
       }
 
