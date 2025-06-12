@@ -1563,51 +1563,28 @@ export function RentalManagement() {
                   </h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Rental Item:{" "}
+                      <span className="text-gray-600 dark:text-gray-400">Rental Item: </span>
+                      <span className="font-medium">
+                        {rentalItems.find(item => item.id === editingEntry.rentalItemId)?.name || `ID: ${editingEntry.rentalItemId}`}
                       </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Job: </span>
                       <span className="font-medium">
                         {(() => {
-                          const item = rentalItems.find(
-                            (item) => item.id === editingEntry.rentalItemId,
-                          );
-                          return item
-                            ? item.name
-                            : `Unknown (${editingEntry.rentalItemId})`;
+                          const job = jobs.find(job => job.id === editingEntry.jobId);
+                          return job ? `${job.jobNumber} - ${job.name}` : `ID: ${editingEntry.jobId}`;
                         })()}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Job:{" "}
-                      </span>
-                      <span className="font-medium">
-                        {(() => {
-                          const job = jobs.find(
-                            (job) => job.id === editingEntry.jobId,
-                          );
-                          return job
-                            ? `${job.jobNumber} - ${job.name}`
-                            : `Unknown (${editingEntry.jobId})`;
-                        })()}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Employee:{" "}
-                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">Employee: </span>
                       <span className="font-medium">
                         {editingEntry.employeeId
-                          ? (() => {
-                              const employee = employees.find(
-                                (emp) => emp.id === editingEntry.employeeId,
-                              );
-                              return employee
-                                ? employee.name
-                                : `Unknown (${editingEntry.employeeId})`;
-                            })()
+                          ? (employees.find(emp => emp.id === editingEntry.employeeId)?.name || `ID: ${editingEntry.employeeId}`)
                           : "No Employee"}
                       </span>
+                    </div>
                     </div>
                     <div>
                       <span className="text-gray-600 dark:text-gray-400">
