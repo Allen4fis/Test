@@ -413,9 +413,18 @@ export function RentalManagement() {
   // Billable analytics data
   const billableAnalytics = useMemo(() => {
     const itemAnalytics = rentalItems.map((item) => {
-      const itemEntries = rentalSummaries.filter(
-        (entry) => entry.rentalItemName === item.name,
-      );
+      const itemEntries = rentalSummaries.filter((entry) => {
+        if (entry.rentalItemName !== item.name) return false;
+
+        // Filter by billable job status
+        const job = jobs.find((j) => j.jobNumber === entry.jobNumber);
+        const isBillable = job?.isBillable !== false;
+
+        if (!showBillableJobs && isBillable) return false;
+        if (!showNonBillableJobs && !isBillable) return false;
+
+        return true;
+      });
 
       const totalRevenue = itemEntries.reduce(
         (sum, entry) => sum + entry.totalCost,
