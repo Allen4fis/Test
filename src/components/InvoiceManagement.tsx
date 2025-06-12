@@ -44,6 +44,9 @@ import {
   Plus,
   Minus,
   Eye,
+  ArrowUpDown,
+  Filter,
+  EyeOff,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { toast } from "@/hooks/use-toast";
