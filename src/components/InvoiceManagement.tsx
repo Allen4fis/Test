@@ -123,12 +123,15 @@ export function InvoiceManagement() {
     | "billableStatus"
   >("jobNumber");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [searchQuery, setSearchQuery] = useState("");
   const [showFullyInvoiced, setShowFullyInvoiced] = useState(true);
   const [showPartiallyInvoiced, setShowPartiallyInvoiced] = useState(true);
   const [showUninvoiced, setShowUninvoiced] = useState(true);
   const [showFullyPaid, setShowFullyPaid] = useState(true);
   const [showPartiallyPaid, setShowPartiallyPaid] = useState(true);
   const [showUnpaid, setShowUnpaid] = useState(true);
+  const [showBillableJobs, setShowBillableJobs] = useState(true);
+  const [showNonBillableJobs, setShowNonBillableJobs] = useState(true);
 
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
