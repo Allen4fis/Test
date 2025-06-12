@@ -27,6 +27,12 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Users,
   Briefcase,
@@ -37,6 +43,7 @@ import {
   DollarSign,
   MapPin,
   Clock,
+  CalendarIcon,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
