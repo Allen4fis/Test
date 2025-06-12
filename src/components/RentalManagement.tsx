@@ -57,6 +57,8 @@ import {
   DollarSign,
   Clock,
   User,
+  TrendingUp,
+  BarChart3,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { RentalItem, RentalEntry } from "@/types";
