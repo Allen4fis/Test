@@ -432,7 +432,43 @@ export function SummaryReports() {
       let subordinateGstTotal = 0;
 
       // Find the manager record in the employees list
-      const managerRecord = employees.find(
+      const managerRecord = employees.find(emp => emp.name === manager.employeeName);
+
+      if (managerRecord) {
+        // Find all employees that report to this manager
+        const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
+
+        // Special case for Matt Price TNM - also look for known subordinates by name
+        if (manager.employeeName === "Matt Price TNM") {
+          const knownSubordinateNames = ["Franko A", "Jody R", "Cody H", "Chris H"];
+          knownSubordinateNames.forEach(subName => {
+            const subordinateEmployee = employees.find(emp => emp.name === subName);
+            if (subordinateEmployee && !allSubordinates.find(sub => sub.id === subordinateEmployee.id)) {
+              allSubordinates.push(subordinateEmployee);
+            }
+          });
+        }
+
+        // For each subordinate, calculate their total GST
+        allSubordinates.forEach(subordinateEmployee => {
+          // Calculate GST for all subordinates (not just non-employee categories for this specific case)
+          // Get ALL time entries for this subordinate across all time periods
+          const subordinateEntries = timeEntrySummaries.filter(entry =>
+            entry.employeeName === subordinateEmployee.name
+          );
+
+          // Calculate total cost for this subordinate
+          const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
+            sum + (entry.totalCost || 0), 0
+          );
+
+          // Calculate 5% GST on their total cost if they have any cost
+          if (subordinateTotalCost > 0) {
+            const subordinateGst = subordinateTotalCost * 0.05;
+            subordinateGstTotal += subordinateGst;
+          }
+        });
+      }
         (emp) => emp.name === manager.employeeName,
       );
 
