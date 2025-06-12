@@ -970,26 +970,43 @@ export function InvoiceManagement() {
 
                       {/* Financial Summary */}
                       <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-700 pt-3 mb-3">
-                        <div>
-                          <div className="text-sm font-bold text-green-400">
-                            ${jobStat.totalBillable.toFixed(2)}
-                          </div>
-                          <div className="text-xs text-gray-400">Total</div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-red-400">
-                            ${jobStat.uninvoicedBillable.toFixed(2)}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            Uninvoiced
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-purple-400">
-                            ${jobStat.unpaidBillable.toFixed(2)}
-                          </div>
-                          <div className="text-xs text-gray-400">Unpaid</div>
-                        </div>
+                        {jobStat.job.isBillable === false ? (
+                          <>
+                            <div className="col-span-3 text-center">
+                              <div className="text-sm text-orange-400 font-medium">
+                                Non-Billable Job - Cost Tracking Only
+                              </div>
+                              <div className="text-xs text-gray-400 mt-1">
+                                Total Cost: ${jobStat.totalCost.toFixed(2)}
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <div className="text-sm font-bold text-green-400">
+                                ${jobStat.totalBillable.toFixed(2)}
+                              </div>
+                              <div className="text-xs text-gray-400">Total</div>
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-red-400">
+                                ${jobStat.uninvoicedBillable.toFixed(2)}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                Uninvoiced
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-purple-400">
+                                ${jobStat.unpaidBillable.toFixed(2)}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                Unpaid
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
 
                       {/* LOA Info if applicable */}
