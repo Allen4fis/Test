@@ -407,11 +407,31 @@ export function TimeEntryForm() {
                     <SelectValue placeholder="Select employee" />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees.map((employee) => (
-                      <SelectItem key={employee.id} value={employee.id}>
-                        {employee.name} - {employee.title}
-                      </SelectItem>
-                    ))}
+                    {employees.map((employee) => {
+                      const manager = employee.managerId
+                        ? employees.find((emp) => emp.id === employee.managerId)
+                        : null;
+
+                      const employeeType =
+                        employee.category === "dsp"
+                          ? "DSP"
+                          : manager
+                            ? `Employee of ${manager.name}`
+                            : "Direct Employee";
+
+                      return (
+                        <SelectItem key={employee.id} value={employee.id}>
+                          <div className="flex flex-col">
+                            <div className="font-medium">
+                              {employee.name} - {employee.title}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {employeeType}
+                            </div>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
