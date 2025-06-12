@@ -676,7 +676,9 @@ export function InvoiceManagement() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">Total Paid</p>
+                <p className="text-sm font-medium text-gray-400">
+                  Total Paid (Billable)
+                </p>
                 <p className="text-2xl font-bold text-purple-400">
                   $
                   {jobStats
