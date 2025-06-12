@@ -248,12 +248,19 @@ export function SummaryReports() {
 
         // Track individual rate entries for this hour type
         if (summary.hours > 0) {
-          const costRate = summary.totalCost / summary.hours;
+          // Calculate hourly cost excluding LOA and other non-hourly costs
+          const hourlyCost = summary.effectiveHours * summary.costWage;
+          const hourlyRate = hourlyCost / summary.hours;
+
           group.hourTypeBreakdown[hourTypeName].rateEntries.push({
             date: summary.date,
             hours: summary.hours,
-            costRate: costRate,
+            effectiveHours: summary.effectiveHours,
+            hourlyRate: hourlyRate,
+            hourlyCost: hourlyCost,
             totalCost: summary.totalCost,
+            costWage: summary.costWage,
+            loaCount: summary.loaCount || 0,
           });
         }
 
