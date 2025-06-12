@@ -459,6 +459,8 @@ export function JobManagement() {
                     )}
                   </div>
                 </TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Billing Type</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -471,6 +473,18 @@ export function JobManagement() {
                   <TableCell>
                     <Badge variant={job.isActive ? "default" : "secondary"}>
                       {job.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={(job.isBillable ?? true) ? "default" : "outline"}
+                      className={
+                        (job.isBillable ?? true)
+                          ? "bg-green-600"
+                          : "bg-orange-600 text-white"
+                      }
+                    >
+                      {(job.isBillable ?? true) ? "Billable" : "Non-Billable"}
                     </Badge>
                   </TableCell>
                   <TableCell>
