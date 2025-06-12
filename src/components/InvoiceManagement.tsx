@@ -702,7 +702,9 @@ export function InvoiceManagement() {
                     className="cursor-pointer hover:bg-gray-50 select-none"
                     onClick={() => {
                       if (sortBy === "uninvoicedDates") {
-                        setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+                        setSortDirection(
+                          sortDirection === "asc" ? "desc" : "asc",
+                        );
                       } else {
                         setSortBy("uninvoicedDates");
                         setSortDirection("desc"); // Default to most uninvoiced first
@@ -722,6 +724,8 @@ export function InvoiceManagement() {
                   <TableHead className="text-purple-600">
                     Live Out Allowance Count
                   </TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredAndSortedJobStats.map((stat) => (
