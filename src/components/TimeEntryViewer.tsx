@@ -803,18 +803,23 @@ export function TimeEntryViewer() {
                     <TableHead>Province</TableHead>
                     <TableHead
                       className="cursor-pointer hover:bg-gray-50"
-                      onClick={() => handleSort("hours")}
+                      onClick={() => handleSort("job")}
                     >
                       <div className="flex items-center gap-2">
-                        Hours
-                        {getSortIcon("hours")}
+                        Job
+                        {getSortIcon("job")}
                       </div>
                     </TableHead>
-                    <TableHead className="text-purple-600">
-                      Live Out Allowance
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("billable")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Job Type
+                        {getSortIcon("billable")}
+                      </div>
                     </TableHead>
-                    <TableHead>Billable Rate</TableHead>
-                    <TableHead>Cost Rate</TableHead>
+                    <TableHead>Province</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
