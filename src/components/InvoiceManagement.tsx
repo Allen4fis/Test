@@ -240,6 +240,7 @@ export function InvoiceManagement() {
         const jobDates = getJobDates(job);
         const totalDates = jobDates.length;
         const invoicedDates = jobDates.filter((d) => d.isInvoiced).length;
+        const paidDates = jobDates.filter((d) => d.isPaid).length;
         const totalHours = jobDates.reduce((sum, d) => sum + d.totalHours, 0);
         const invoicedHours = jobDates
           .filter((d) => d.isInvoiced)
@@ -262,12 +263,17 @@ export function InvoiceManagement() {
         const invoicedBillable = jobDates
           .filter((d) => d.isInvoiced)
           .reduce((sum, d) => sum + d.totalBillable, 0);
+        const paidBillable = jobDates
+          .filter((d) => d.isPaid)
+          .reduce((sum, d) => sum + d.totalBillable, 0);
 
         return {
           job,
           totalDates,
           invoicedDates,
+          paidDates,
           uninvoicedDates: totalDates - invoicedDates,
+          unpaidDates: totalDates - paidDates,
           totalHours,
           invoicedHours,
           uninvoicedHours: totalHours - invoicedHours,
@@ -279,9 +285,12 @@ export function InvoiceManagement() {
           uninvoicedCost: totalCost - invoicedCost,
           totalBillable,
           invoicedBillable,
+          paidBillable,
           uninvoicedBillable: totalBillable - invoicedBillable,
+          unpaidBillable: totalBillable - paidBillable,
           invoicePercentage:
             totalDates > 0 ? (invoicedDates / totalDates) * 100 : 0,
+          paidPercentage: totalDates > 0 ? (paidDates / totalDates) * 100 : 0,
         };
       })
       .filter((stat) => stat.totalDates > 0); // Only show jobs with time entries
