@@ -486,6 +486,26 @@ export function useTimeTracking() {
     }));
   };
 
+  // Batch add multiple time entries with proper sequencing
+  const addMultipleTimeEntries = (
+    entries: Omit<TimeEntry, "id" | "createdAt">[],
+  ) => {
+    const newEntries: TimeEntry[] = entries.map((entry, index) => {
+      const now = Date.now() + index; // Ensure unique timestamps
+      const randomSuffix = Math.random().toString(36).substr(2, 9);
+      return {
+        ...entry,
+        id: `${now}-${randomSuffix}`,
+        createdAt: new Date(now).toISOString(),
+      };
+    });
+
+    setAppData((prev) => ({
+      ...prev,
+      timeEntries: [...prev.timeEntries, ...newEntries],
+    }));
+  };
+
   const updateTimeEntry = (id: string, updates: Partial<TimeEntry>) => {
     setAppData((prev) => ({
       ...prev,
