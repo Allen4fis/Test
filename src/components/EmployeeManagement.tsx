@@ -66,6 +66,12 @@ export function EmployeeManagement() {
     managerId: "no-manager", // New field for manager selection
   });
 
+  // Concise sorting state
+  const [sortBy, setSortBy] = useState<
+    "name" | "title" | "billableWage" | "costWage" | "createdAt"
+  >("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
   const resetForm = () => {
     setFormData({
       name: "",
