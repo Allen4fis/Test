@@ -123,6 +123,7 @@ export function InvoiceManagement() {
     const dates = [...new Set([...timeDates, ...rentalDates])].sort();
 
     const invoicedDates = job.invoicedDates || []; // Safe fallback for existing jobs
+    const paidDates = job.paidDates || []; // Safe fallback for existing jobs
 
     return dates.map((date) => {
       const dayTimeEntries = jobTimeEntries.filter(
@@ -161,6 +162,7 @@ export function InvoiceManagement() {
       return {
         date,
         isInvoiced: invoicedDates.includes(date),
+        isPaid: paidDates.includes(date),
         timeEntries: dayTimeEntries,
         rentalEntries: dayRentalEntries,
         totalHours,
