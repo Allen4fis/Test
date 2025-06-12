@@ -1159,6 +1159,29 @@ export function InvoiceManagement() {
                   );
                 })}
               </div>
+
+              {/* Pagination Controls */}
+              {filteredAndSortedJobStats.length > 0 && (
+                <div className="mt-6">
+                  <PaginationControls
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalItems}
+                    pageInfo={pagination.pageInfo}
+                    canGoNext={pagination.canGoNext}
+                    canGoPrevious={pagination.canGoPrevious}
+                    onPageChange={pagination.goToPage}
+                    onNextPage={pagination.goToNextPage}
+                    onPreviousPage={pagination.goToPreviousPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={(newItemsPerPage) => {
+                      setItemsPerPage(newItemsPerPage);
+                      pagination.goToPage(1);
+                    }}
+                    className="border-t border-gray-700/50 pt-4"
+                  />
+                </div>
+              )}
             </div>
           )}
         </CardContent>
