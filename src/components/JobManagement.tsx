@@ -350,11 +350,74 @@ export function JobManagement() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Job Number</TableHead>
-                <TableHead>Name</TableHead>
+                <TableHead
+                  className="cursor-pointer hover:bg-gray-50 select-none"
+                  onClick={() => {
+                    if (sortBy === "jobNumber") {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setSortBy("jobNumber");
+                      setSortDirection("asc");
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    Job Number
+                    {sortBy === "jobNumber" && (
+                      <span className="text-blue-500">
+                        {sortDirection === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead
+                  className="cursor-pointer hover:bg-gray-50 select-none"
+                  onClick={() => {
+                    if (sortBy === "name") {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setSortBy("name");
+                      setSortDirection("asc");
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    Name
+                    {sortBy === "name" && (
+                      <span className="text-blue-500">
+                        {sortDirection === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead
+                  className="cursor-pointer hover:bg-gray-50 select-none"
+                  onClick={() => {
+                    if (sortBy === "createdAt") {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setSortBy("createdAt");
+                      setSortDirection("desc"); // Default to newest first for dates
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    Created
+                    {sortBy === "createdAt" && (
+                      <span className="text-blue-500">
+                        {sortDirection === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
