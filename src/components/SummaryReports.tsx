@@ -1024,50 +1024,16 @@ export function SummaryReports() {
                   </div>
                 ) : (
                   <div className="overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow
-                          className="border-b border-gray-700/50 hover:bg-orange-500/5"
-                          style={{
-                            background:
-                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.05) 0%, hsl(24, 100%, 50%, 0.02) 100%)",
-                          }}
-                        >
-                          <TableHead className="text-gray-200 font-semibold">
-                            Employee Name
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Title
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Hour Type Breakdown
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Total Hours
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Effective Hours
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Live Out Allowance Count
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Total Cost
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            GST (5%)
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Rental DSP
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Date Range
-                          </TableHead>
-                          <TableHead className="text-gray-200 font-semibold">
-                            Entries
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
+                    <div className="space-y-2">
+                      {/* Compact header */}
+                      <div className="grid grid-cols-12 gap-2 px-4 py-2 text-xs font-semibold text-gray-300 bg-gradient-to-r from-orange-500/10 to-transparent border-b border-orange-500/20">
+                        <div className="col-span-3">Employee</div>
+                        <div className="col-span-2">Hours & Cost</div>
+                        <div className="col-span-2">GST & DSP</div>
+                        <div className="col-span-3">Hour Types</div>
+                        <div className="col-span-1">LOA</div>
+                        <div className="col-span-1">Entries</div>
+                      </div>
                       <TableBody>
                         {hierarchicalEmployeeSummaries.map(
                           (employee, index) => {
