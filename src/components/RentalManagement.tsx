@@ -1983,7 +1983,7 @@ export function RentalManagement() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {rentalBillableAnalytics.map((item, index) => (
+                        {sortedRentalBillableAnalytics.map((item, index) => (
                           <TableRow
                             key={item.itemName}
                             className="hover:bg-gray-50"
