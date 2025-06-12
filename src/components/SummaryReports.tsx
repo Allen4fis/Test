@@ -345,8 +345,40 @@ export function SummaryReports() {
       };
     });
 
-    // Group subordinates by their managers
-    const subordinatesByManager = enhancedEmployees
+    // Create a comprehensive list of all employees with their summaries (including zero entries for missing employees)
+    const allEmployeesWithSummaries = employees.map((employee) => {
+      const existingData = enhancedEmployees.find(
+        (emp) => emp.employeeName === employee.name,
+      );
+
+      if (existingData) {
+        return existingData;
+      }
+
+      // Create zero-entry data for employees not in current filter
+      const manager = employee.managerId
+        ? employees.find((e) => e.id === employee.managerId)
+        : null;
+
+      return {
+        employeeName: employee.name,
+        employeeTitle: employee.title,
+        totalHours: 0,
+        totalEffectiveHours: 0,
+        totalCost: 0,
+        totalLoaCount: 0,
+        entries: [],
+        hourTypeBreakdown: {},
+        employeeCategory: employee.category,
+        isSubordinate: !!employee.managerId,
+        managerName: manager?.name,
+        managerId: employee.managerId,
+        gstAmount: 0, // No GST for zero cost entries
+      };
+    });
+
+    // Group subordinates by their managers (using comprehensive list)
+    const subordinatesByManager = allEmployeesWithSummaries
       .filter((emp) => emp.isSubordinate)
       .reduce(
         (acc, emp) => {
@@ -360,7 +392,7 @@ export function SummaryReports() {
         {} as Record<string, any[]>,
       );
 
-    // Calculate subordinate GST totals for managers
+    // Calculate subordinate GST totals for managers (only from actual enhanced employees with data)
     const managersWithSubordinateGST = enhancedEmployees
       .filter((emp) => !emp.isSubordinate)
       .map((manager) => {
