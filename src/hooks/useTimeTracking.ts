@@ -1028,6 +1028,9 @@ export function useTimeTracking() {
     updateJobInvoicedDates,
     addInvoicedDates,
     removeInvoicedDates,
+    updateJobPaidDates,
+    addPaidDates,
+    removePaidDates,
 
     // Time entry operations
     addTimeEntry,
