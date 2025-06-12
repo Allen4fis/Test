@@ -261,6 +261,80 @@ export function JobManagement() {
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* Sorting and Filtering Controls */}
+        <div className="px-6 pb-4">
+          <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg border">
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="h-4 w-4 text-gray-500" />
+              <Label className="text-sm font-medium">Sort by:</Label>
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="jobNumber">Job Number</SelectItem>
+                  <SelectItem value="name">Job Name</SelectItem>
+                  <SelectItem value="createdAt">Date Created</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+                }
+                className="px-2"
+              >
+                {sortDirection === "asc" ? "↑" : "↓"}
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-500" />
+                <Label className="text-sm font-medium">Show:</Label>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={showActive ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowActive(!showActive)}
+                  className="flex items-center gap-1"
+                >
+                  {showActive ? (
+                    <Eye className="h-3 w-3" />
+                  ) : (
+                    <EyeOff className="h-3 w-3" />
+                  )}
+                  Active
+                </Button>
+
+                <Button
+                  variant={showInactive ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowInactive(!showInactive)}
+                  className="flex items-center gap-1"
+                >
+                  {showInactive ? (
+                    <Eye className="h-3 w-3" />
+                  ) : (
+                    <EyeOff className="h-3 w-3" />
+                  )}
+                  Inactive
+                </Button>
+              </div>
+
+              <div className="ml-auto text-sm text-gray-500">
+                Showing {filteredAndSortedJobs.length} of {jobs.length} jobs
+              </div>
+            </div>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {jobs.length === 0 ? (
