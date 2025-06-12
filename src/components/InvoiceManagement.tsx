@@ -401,7 +401,7 @@ export function InvoiceManagement() {
       });
     } else {
       toast({
-        title: "ℹ️ No Dates to Invoice",
+        title: "���️ No Dates to Invoice",
         description:
           "All dates in the selected range are already marked as invoiced.",
         variant: "default",
@@ -631,6 +631,7 @@ export function InvoiceManagement() {
                       )}
                     </div>
                   </TableHead>
+                  <TableHead>Paid Status</TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-gray-50 select-none"
                     onClick={() => {
