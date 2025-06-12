@@ -689,7 +689,7 @@ export function SummaryReports() {
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-green-400">
-                        ${summaryStats.totalCost.toFixed(2)}
+                        ${summaryStats.totalCombinedCost.toFixed(2)}
                       </div>
                       <div className="text-sm text-gray-300">Total Cost</div>
                     </div>
