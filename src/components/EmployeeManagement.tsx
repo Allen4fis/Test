@@ -493,7 +493,9 @@ export function EmployeeManagement() {
                 <div className="text-2xl font-bold text-green-400">
                   ${averageRates.avgBillableRate.toFixed(2)}
                 </div>
-                <div className="text-sm text-gray-300">Average Billable Rate</div>
+                <div className="text-sm text-gray-300">
+                  Average Billable Rate
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-400">
@@ -502,14 +504,18 @@ export function EmployeeManagement() {
                 <div className="text-sm text-gray-300">Average Cost Rate</div>
               </div>
               <div className="text-center">
-                <div className={`text-2xl font-bold ${averageRates.avgProfitMargin >= 0 ? 'text-blue-400' : 'text-red-400'}`}>
-                  {averageRates.avgProfitMargin >= 0 ? '+' : ''}{averageRates.avgProfitMargin.toFixed(1)}%
+                <div
+                  className={`text-2xl font-bold ${averageRates.avgProfitMargin >= 0 ? "text-blue-400" : "text-red-400"}`}
+                >
+                  {averageRates.avgProfitMargin >= 0 ? "+" : ""}
+                  {averageRates.avgProfitMargin.toFixed(1)}%
                 </div>
-                <div className="text-sm text-gray-300">Average Profit Margin</div>
+                <div className="text-sm text-gray-300">
+                  Average Profit Margin
+                </div>
               </div>
             </div>
           </div>
-        )}
         )}
 
         {employees.length === 0 ? (
