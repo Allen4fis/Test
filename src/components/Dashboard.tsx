@@ -85,6 +85,7 @@ export function Dashboard({
   // Get top 5 invoices by billable total
   const getTopInvoices = () => {
     const jobInvoiceData = jobs
+      .filter((job) => job.isBillable !== false) // Only include billable jobs
       .map((job) => {
         // Get time entries for this job
         const jobTimeEntries = timeEntrySummaries.filter(
