@@ -481,11 +481,14 @@ export function SummaryReports() {
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             <span className="truncate">
-                              {formatLocalDate(parseLocalDate(dateFilter.start), {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric"
-                              })}
+                              {formatLocalDate(
+                                parseLocalDate(dateFilter.start),
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                },
+                              )}
                             </span>
                           </Button>
                         </PopoverTrigger>
@@ -516,7 +519,7 @@ export function SummaryReports() {
                               {formatLocalDate(parseLocalDate(dateFilter.end), {
                                 month: "short",
                                 day: "numeric",
-                                year: "numeric"
+                                year: "numeric",
                               })}
                             </span>
                           </Button>
@@ -571,106 +574,107 @@ export function SummaryReports() {
                 {/* Other Filters */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                  <Label className="text-sm font-medium">Employee</Label>
-                  <Select
-                    value={employeeFilter}
-                    onValueChange={setEmployeeFilter}
-                  >
-                    <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-600">
-                      <SelectItem
-                        value="all-employees"
-                        className="text-gray-100 focus:bg-orange-500/20"
-                      >
-                        All Employees
-                      </SelectItem>
-                      {employees.map((employee) => (
+                    <Label className="text-sm font-medium">Employee</Label>
+                    <Select
+                      value={employeeFilter}
+                      onValueChange={setEmployeeFilter}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
                         <SelectItem
-                          key={employee.id}
-                          value={employee.name}
+                          value="all-employees"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          {employee.name}
+                          All Employees
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Job</Label>
-                  <Select value={jobFilter} onValueChange={setJobFilter}>
-                    <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-600">
-                      <SelectItem
-                        value="all-jobs"
-                        className="text-gray-100 focus:bg-orange-500/20"
-                      >
-                        All Jobs
-                      </SelectItem>
-                      <SelectItem
-                        value="billable-only"
-                        className="text-gray-100 focus:bg-orange-500/20"
-                      >
-                        Billable Jobs Only
-                      </SelectItem>
-                      <SelectItem
-                        value="non-billable-only"
-                        className="text-gray-100 focus:bg-orange-500/20"
-                      >
-                        Non-Billable Jobs Only
-                      </SelectItem>
-                      {jobs.map((job) => (
+                        {employees.map((employee) => (
+                          <SelectItem
+                            key={employee.id}
+                            value={employee.name}
+                            className="text-gray-100 focus:bg-orange-500/20"
+                          >
+                            {employee.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Job</Label>
+                    <Select value={jobFilter} onValueChange={setJobFilter}>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
                         <SelectItem
-                          key={job.id}
-                          value={job.jobNumber}
+                          value="all-jobs"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          <div className="flex items-center justify-between w-full">
-                            <span>
-                              {job.jobNumber} - {job.name}
-                            </span>
-                            {job.isBillable === false && (
-                              <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded ml-2">
-                                Non-Billable
+                          All Jobs
+                        </SelectItem>
+                        <SelectItem
+                          value="billable-only"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          Billable Jobs Only
+                        </SelectItem>
+                        <SelectItem
+                          value="non-billable-only"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          Non-Billable Jobs Only
+                        </SelectItem>
+                        {jobs.map((job) => (
+                          <SelectItem
+                            key={job.id}
+                            value={job.jobNumber}
+                            className="text-gray-100 focus:bg-orange-500/20"
+                          >
+                            <div className="flex items-center justify-between w-full">
+                              <span>
+                                {job.jobNumber} - {job.name}
                               </span>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Province</Label>
-                  <Select
-                    value={provinceFilter}
-                    onValueChange={setProvinceFilter}
-                  >
-                    <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-600">
-                      <SelectItem
-                        value="all-provinces"
-                        className="text-gray-100 focus:bg-orange-500/20"
-                      >
-                        All Provinces
-                      </SelectItem>
-                      {provinces.map((province) => (
+                              {job.isBillable === false && (
+                                <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded ml-2">
+                                  Non-Billable
+                                </span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Province</Label>
+                    <Select
+                      value={provinceFilter}
+                      onValueChange={setProvinceFilter}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
                         <SelectItem
-                          key={province.id}
-                          value={province.name}
+                          value="all-provinces"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          {province.name} ({province.code})
+                          All Provinces
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        {provinces.map((province) => (
+                          <SelectItem
+                            key={province.id}
+                            value={province.name}
+                            className="text-gray-100 focus:bg-orange-500/20"
+                          >
+                            {province.name} ({province.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
