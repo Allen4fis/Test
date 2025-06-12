@@ -897,7 +897,7 @@ export function TimeEntryForm() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentEntries.map((entry) => {
+                  {pagination.paginatedData.map((entry) => {
                     const employee = employees.find(
                       (emp) => emp.id === entry.employeeId,
                     );
