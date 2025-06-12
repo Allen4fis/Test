@@ -138,9 +138,29 @@ export function Dashboard() {
     .filter((summary) => summary.hourTypeName !== "Live Out Allowance")
     .reduce((sum, summary) => sum + summary.hours, 0);
 
-  const totalCost = timeEntrySummaries
-    .filter((summary) => summary.hourTypeName !== "Live Out Allowance")
-    .reduce((sum, summary) => sum + summary.totalCost, 0);
+  // Calculate all-time totals including LOA and rentals
+  const allTimeTotalCost = timeEntrySummaries.reduce(
+    (sum, summary) => sum + summary.totalCost,
+    0,
+  );
+  const allTimeRentalCost = rentalSummaries.reduce(
+    (sum, rental) => sum + rental.totalCost,
+    0,
+  );
+  const allTimeTotalBillable =
+    timeEntrySummaries.reduce(
+      (sum, summary) =>
+        sum + (summary.totalBillableAmount || summary.totalCost),
+      0,
+    ) + allTimeRentalCost;
+  const allTimeCombinedCost = allTimeTotalCost + allTimeRentalCost;
+
+  // Calculate profit percentage
+  const allTimeProfitAmount = allTimeTotalBillable - allTimeCombinedCost;
+  const allTimeProfitPercentage =
+    allTimeTotalBillable > 0
+      ? (allTimeProfitAmount / allTimeTotalBillable) * 100
+      : 0;
 
   const activeJobs = jobs.filter((job) => job.isActive).length;
   const activeEmployees = employees.length;
