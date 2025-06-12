@@ -239,20 +239,39 @@ export function Dashboard() {
         <Card className="modern-card hover-scale group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-semibold text-gray-200">
-              Labor Cost
+              All-Time Profit
             </CardTitle>
             <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
               <DollarSign className="h-5 w-5 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-400">
-              ${totalCost.toFixed(0)}
+            <div className="space-y-2">
+              <div className="flex justify-between items-baseline">
+                <span className="text-sm text-gray-400">Cost:</span>
+                <span className="text-lg font-bold text-red-400">
+                  ${allTimeCombinedCost.toFixed(0)}
+                </span>
+              </div>
+              <div className="flex justify-between items-baseline">
+                <span className="text-sm text-gray-400">Billable:</span>
+                <span className="text-lg font-bold text-green-400">
+                  ${allTimeTotalBillable.toFixed(0)}
+                </span>
+              </div>
+              <div className="border-t border-gray-700 pt-2">
+                <div
+                  className={`text-2xl font-bold ${allTimeProfitPercentage >= 0 ? "text-blue-400" : "text-red-400"}`}
+                >
+                  {allTimeProfitPercentage >= 0 ? "+" : ""}
+                  {allTimeProfitPercentage.toFixed(1)}%
+                </div>
+                <p className="text-xs text-gray-400 mt-1 flex items-center">
+                  <PiggyBank className="h-3 w-3 mr-1 text-blue-400" />
+                  Including LOA & rentals
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-gray-400 mt-1 flex items-center">
-              <Activity className="h-3 w-3 mr-1 text-green-400" />
-              Across all projects
-            </p>
           </CardContent>
         </Card>
 
