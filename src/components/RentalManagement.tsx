@@ -1828,8 +1828,6 @@ export function RentalManagement() {
                             <p className="text-2xl font-bold text-blue-900">
                               {sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalEntries, 0)}
                             </p>
-                              )}
-                            </p>
                           </div>
                           <BarChart3 className="h-8 w-8 text-blue-600" />
                         </div>
