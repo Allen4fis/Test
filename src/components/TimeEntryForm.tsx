@@ -296,6 +296,9 @@ export function TimeEntryForm() {
           setSubmissionProgress("LOA entry created successfully!");
         }
 
+        // Brief delay to show success message
+        await delay(800);
+
         // Preserve form data but clear hours and description for next entry
         setFormData((prev) => ({
           ...prev,
