@@ -90,9 +90,8 @@ export function useTimeTracking() {
     getDefaultAppData(),
   );
 
-  // Autosave hooks - must be at the top to follow Rules of Hooks
+  // Autosave ref for backwards compatibility
   const lastSaveRef = useRef<string>("");
-  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // State hooks must come after refs but before any conditional logic
   const [selectedView, setSelectedView] = useState<
