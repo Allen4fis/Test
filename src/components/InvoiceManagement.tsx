@@ -1227,6 +1227,7 @@ export function InvoiceManagement() {
                                 </div>
                               );
                             })()}
+                          </DialogContent>
                         </Dialog>
 
                         <Button
