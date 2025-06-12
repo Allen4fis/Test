@@ -108,7 +108,12 @@ const Index = () => {
     let component;
     switch (selectedView) {
       case "dashboard":
-        component = <Dashboard />;
+        component = (
+          <Dashboard
+            autosaveInfo={globalAutosave.getAutosaveInfo()}
+            triggerManualSave={globalAutosave.triggerManualSave}
+          />
+        );
         break;
       case "timeEntry":
         component = <TimeEntryForm />;
