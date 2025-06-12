@@ -474,7 +474,7 @@ export function JobManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAndSortedJobs.map((job) => (
+              {pagination.paginatedData.map((job) => (
                 <TableRow key={job.id}>
                   <TableCell className="font-medium">{job.jobNumber}</TableCell>
                   <TableCell>{job.name}</TableCell>
