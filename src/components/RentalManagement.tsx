@@ -1706,6 +1706,29 @@ export function RentalManagement() {
                   </Table>
                 </div>
               )}
+
+              {/* Pagination Controls */}
+              {billableAnalytics.length > 0 && (
+                <div className="mt-4">
+                  <PaginationControls
+                    currentPage={paginationAnalytics.currentPage}
+                    totalPages={paginationAnalytics.totalPages}
+                    totalItems={paginationAnalytics.totalItems}
+                    pageInfo={paginationAnalytics.pageInfo}
+                    canGoNext={paginationAnalytics.canGoNext}
+                    canGoPrevious={paginationAnalytics.canGoPrevious}
+                    onPageChange={paginationAnalytics.goToPage}
+                    onNextPage={paginationAnalytics.goToNextPage}
+                    onPreviousPage={paginationAnalytics.goToPreviousPage}
+                    itemsPerPage={itemsPerPageAnalytics}
+                    onItemsPerPageChange={(newItemsPerPage) => {
+                      setItemsPerPageAnalytics(newItemsPerPage);
+                      paginationAnalytics.goToPage(1);
+                    }}
+                    className="border-t border-gray-700/50 pt-4"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
