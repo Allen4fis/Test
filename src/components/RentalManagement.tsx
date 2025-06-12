@@ -481,7 +481,15 @@ export function RentalManagement() {
       if (aValue > bValue) return billableSortDirection === "asc" ? 1 : -1;
       return 0;
     });
-  }, [rentalItems, rentalSummaries, billableSortBy, billableSortDirection]);
+  }, [
+    rentalItems,
+    rentalSummaries,
+    jobs,
+    showBillableJobs,
+    showNonBillableJobs,
+    billableSortBy,
+    billableSortDirection,
+  ]);
 
   return (
     <div className="space-y-6">
