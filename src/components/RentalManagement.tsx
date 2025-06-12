@@ -1122,7 +1122,7 @@ export function RentalManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {sortedEntries.map((entry) => (
+                      {paginationEntries.paginatedData.map((entry) => (
                         <TableRow key={entry.id}>
                           <TableCell className="font-medium">
                             <div>
