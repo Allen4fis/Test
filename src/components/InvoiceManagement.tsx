@@ -554,6 +554,11 @@ export function InvoiceManagement() {
               No jobs with time entries found. Add time entries to manage
               invoicing.
             </div>
+          ) : filteredAndSortedJobStats.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No jobs match the current filters. Try adjusting your filter
+              settings.
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -571,7 +576,7 @@ export function InvoiceManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {jobStats.map((stat) => (
+                {filteredAndSortedJobStats.map((stat) => (
                   <TableRow key={stat.job.id} className="hover:bg-muted/50">
                     <TableCell className="font-medium">
                       {stat.job.jobNumber}
