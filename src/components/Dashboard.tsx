@@ -213,7 +213,7 @@ export function Dashboard({
     return hourType ? hourType.name : "Unknown Type";
   };
 
-  const autosaveInfo = getAutosaveInfo();
+  const currentAutosaveInfo = autosaveInfo || getAutosaveInfo();
 
   return (
     <div className="space-y-8 animate-fade-in">
