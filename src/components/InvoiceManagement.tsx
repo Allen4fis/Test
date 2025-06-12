@@ -57,6 +57,7 @@ import { parseLocalDate, formatLocalDate } from "@/utils/dateUtils";
 interface JobDateInfo {
   date: string;
   isInvoiced: boolean;
+  isPaid: boolean;
   timeEntries: any[];
   rentalEntries: any[];
   totalHours: number;
