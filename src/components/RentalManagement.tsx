@@ -106,6 +106,28 @@ export function RentalManagement() {
   const [editingItem, setEditingItem] = useState<RentalItem | null>(null);
   const [editingEntry, setEditingEntry] = useState<RentalEntry | null>(null);
 
+  // Sorting state for each tab
+  const [itemsSortBy, setItemsSortBy] = useState<
+    "name" | "category" | "dailyRate" | "unit" | "createdAt"
+  >("name");
+  const [itemsSortDirection, setItemsSortDirection] = useState<"asc" | "desc">(
+    "asc",
+  );
+
+  const [entriesSortBy, setEntriesSortBy] = useState<
+    "rentalItemName" | "jobNumber" | "employeeName" | "startDate" | "totalCost"
+  >("startDate");
+  const [entriesSortDirection, setEntriesSortDirection] = useState<
+    "asc" | "desc"
+  >("desc");
+
+  const [billableSortBy, setBillableSortBy] = useState<
+    "itemName" | "totalBillable" | "dspRate" | "totalEntries"
+  >("totalBillable");
+  const [billableSortDirection, setBillableSortDirection] = useState<
+    "asc" | "desc"
+  >("desc");
+
   // Reset forms
   const resetForm = () => {
     setFormData({
