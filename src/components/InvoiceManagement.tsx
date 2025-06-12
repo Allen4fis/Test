@@ -906,7 +906,7 @@ export function InvoiceManagement() {
                         </div>
                         <div>
                           <div className="text-sm font-bold text-purple-400">
-                            ${jobStat.unpaidBillable.toFixed(0)}
+                            ${jobStat.unpaidBillable.toFixed(2)}
                           </div>
                           <div className="text-xs text-gray-400">Unpaid</div>
                         </div>
