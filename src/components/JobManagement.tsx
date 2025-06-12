@@ -341,6 +341,11 @@ export function JobManagement() {
           <div className="text-center py-8 text-gray-500">
             No jobs found. Add your first job to get started.
           </div>
+        ) : filteredAndSortedJobs.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No jobs match the current filters. Try adjusting your filter
+            settings.
+          </div>
         ) : (
           <Table>
             <TableHeader>
@@ -354,7 +359,7 @@ export function JobManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {jobs.map((job) => (
+              {filteredAndSortedJobs.map((job) => (
                 <TableRow key={job.id}>
                   <TableCell className="font-medium">{job.jobNumber}</TableCell>
                   <TableCell>{job.name}</TableCell>
