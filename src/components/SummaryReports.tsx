@@ -30,7 +30,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import {
-  Calendar,
   CalendarIcon,
   Clock,
   TrendingUp,
@@ -39,13 +38,7 @@ import {
   AlertCircle,
   Download,
   Filter,
-  Calendar as CalendarComponent,
 } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
   parseLocalDate,
