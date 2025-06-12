@@ -72,6 +72,14 @@ export function JobManagement() {
     isActive: true,
   });
 
+  // Sorting and filtering state
+  const [sortBy, setSortBy] = useState<"jobNumber" | "name" | "createdAt">(
+    "jobNumber",
+  );
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [showActive, setShowActive] = useState(true);
+  const [showInactive, setShowInactive] = useState(true);
+
   const resetForm = () => {
     setFormData({ jobNumber: "", name: "", description: "", isActive: true });
     setEditingJob(null);
