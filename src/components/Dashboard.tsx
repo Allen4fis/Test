@@ -145,15 +145,15 @@ export function Dashboard() {
   const activeJobs = jobs.filter((job) => job.isActive).length;
   const activeEmployees = employees.length;
 
-  // Top performers (by hours this week)
+  // Most overworked employees (by hours this month)
   const performersArray = Object.values(
     timeEntrySummaries
       .filter((summary) => {
         const entryDate = parseLocalDate(summary.date);
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
+        const monthAgo = new Date();
+        monthAgo.setDate(monthAgo.getDate() - 30);
         return (
-          entryDate >= weekAgo && summary.hourTypeName !== "Live Out Allowance"
+          entryDate >= monthAgo && summary.hourTypeName !== "Live Out Allowance"
         );
       })
       .reduce(
@@ -355,7 +355,7 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Top Performers */}
+        {/* Most Overworked Employees */}
         <Card className="modern-card">
           <CardHeader
             className="border-b border-gray-700/50"
@@ -366,10 +366,10 @@ export function Dashboard() {
           >
             <CardTitle className="flex items-center gap-3 text-gray-100">
               <Award className="h-5 w-5 text-yellow-400" />
-              Top Performers (This Week)
+              Most Overworked Employees This Month
             </CardTitle>
             <CardDescription className="text-gray-300">
-              Employees ranked by hours worked this week
+              Employees with the most hours worked in the last 30 days
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
