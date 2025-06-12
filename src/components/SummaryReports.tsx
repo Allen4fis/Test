@@ -1023,303 +1023,251 @@ export function SummaryReports() {
                     </p>
                   </div>
                 ) : (
-                  <div className="overflow-hidden">
-                    <div className="space-y-2">
-                      {/* Compact header */}
-                      <div className="grid grid-cols-12 gap-2 px-4 py-2 text-xs font-semibold text-gray-300 bg-gradient-to-r from-orange-500/10 to-transparent border-b border-orange-500/20">
-                        <div className="col-span-3">Employee</div>
-                        <div className="col-span-2">Hours & Cost</div>
-                        <div className="col-span-2">GST & DSP</div>
-                        <div className="col-span-3">Hour Types</div>
-                        <div className="col-span-1">LOA</div>
-                        <div className="col-span-1">Entries</div>
+                  <div className="p-4">
+                    {/* Summary Header */}
+                    <div className="grid grid-cols-4 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-400">
+                          {hierarchicalEmployeeSummaries
+                            .reduce((sum, e) => sum + e.totalHours, 0)
+                            .toFixed(0)}h
+                        </div>
+                        <div className="text-sm text-gray-300">Total Hours</div>
                       </div>
-                      <TableBody>
-                        {hierarchicalEmployeeSummaries.map(
-                          (employee, index) => {
-                            const dspCalc = dspCalculations.find(
-                              (calc) =>
-                                calc.employeeName === employee.employeeName,
-                            );
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-400">
+                          $
+                          {hierarchicalEmployeeSummaries
+                            .reduce((sum, e) => sum + e.totalCost, 0)
+                            .toFixed(0)}
+                        </div>
+                        <div className="text-sm text-gray-300">Total Cost</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-orange-400">
+                          $
+                          {hierarchicalEmployeeSummaries
+                            .reduce(
+                              (sum, e) =>
+                                sum + (e.gstAmount || 0) + (e.subordinateGstTotal || 0),
+                              0
+                            )
+                            .toFixed(0)}
+                        </div>
+                        <div className="text-sm text-gray-300">Total GST</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-400">
+                          $
+                          {hierarchicalEmployeeSummaries
+                            .reduce(
+                              (sum, e) =>
+                                sum +
+                                (dspCalculations.find(
+                                  (calc) =>
+                                    calc.employeeName === e.employeeName,
+                                )?.dspEarnings || 0),
+                              0,
+                            )
+                            .toFixed(0)}
+                        </div>
+                        <div className="text-sm text-gray-300">Total DSP</div>
+                      </div>
+                    </div>
 
-                            return (
-                              <TableRow
-                                key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
-                                className={`
-                                border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-transparent smooth-transition
-                                ${employee.isSubordinate ? "bg-blue-900/10" : ""}
-                              `}
-                              >
-                                <TableCell className="font-medium">
-                                  <div className="flex items-center gap-3">
-                                    {employee.isSubordinate ? (
-                                      <div className="flex items-center gap-3 ml-6">
-                                        <div className="w-4 h-4 border-l-2 border-b-2 border-blue-400"></div>
-                                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white shadow-lg">
-                                          ↳
-                                        </span>
-                                        <span className="text-blue-300 font-semibold">
-                                          {employee.employeeName}
-                                        </span>
-                                        <span className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/30">
-                                          Employee of {employee.managerName}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-3">
-                                        <span
-                                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
-                                            index < 3
-                                              ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white"
-                                              : index < 10
-                                                ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
-                                                : "bg-gradient-to-br from-gray-500 to-gray-700 text-white"
-                                          }`}
-                                        >
-                                          {index + 1}
-                                        </span>
-                                        <span className="text-gray-100 font-semibold">
-                                          {employee.employeeName}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-gray-200">
-                                  {employee.employeeTitle}
-                                </TableCell>
-                                <TableCell>
-                                  <HourTypeBreakdownDisplay
-                                    breakdown={employee.hourTypeBreakdown}
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-1">
-                                    <Clock className="h-4 w-4 text-blue-600" />
-                                    <span className="font-bold text-blue-400">
-                                      {employee.totalHours.toFixed(2)}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-1">
-                                    <Clock className="h-4 w-4 text-gray-600" />
-                                    <span className="text-gray-200">
-                                      {employee.totalEffectiveHours.toFixed(2)}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-1">
-                                    <Calendar className="h-4 w-4 text-purple-600" />
-                                    <span className="font-semibold text-purple-400">
-                                      {employee.totalLoaCount}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-1">
-                                    <DollarSign className="h-4 w-4 text-green-600" />
-                                    <span className="font-bold text-green-400">
-                                      ${employee.totalCost.toFixed(2)}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  {(() => {
-                                    const totalGst =
-                                      (employee.gstAmount || 0) +
-                                      (employee.subordinateGstTotal || 0);
-                                    const hasIndividualGst =
-                                      employee.gstAmount > 0;
-                                    const hasSubordinateGst =
-                                      employee.subordinateGstTotal > 0;
+                    {/* Employee Cards */}
+                    <div className="space-y-3">
+                      {hierarchicalEmployeeSummaries.map((employee, index) => {
+                        const dspCalc = dspCalculations.find(
+                          (calc) => calc.employeeName === employee.employeeName,
+                        );
 
-                                    if (totalGst > 0) {
-                                      return (
-                                        <div className="space-y-1">
-                                          <div className="flex items-center gap-1">
-                                            <DollarSign className="h-4 w-4 text-orange-600" />
-                                            <span className="font-bold text-orange-400">
-                                              ${totalGst.toFixed(2)}
-                                            </span>
-                                          </div>
-                                          {hasIndividualGst &&
-                                          hasSubordinateGst ? (
-                                            <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
-                                              ${employee.gstAmount.toFixed(2)}{" "}
-                                              personal + $
-                                              {employee.subordinateGstTotal.toFixed(
-                                                2,
-                                              )}{" "}
-                                              from subordinates
-                                            </div>
-                                          ) : hasIndividualGst ? (
-                                            <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
-                                              5% GST on cost
-                                            </div>
-                                          ) : (
-                                            <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
-                                              Total from subordinates
-                                            </div>
-                                          )}
-                                        </div>
-                                      );
-                                    } else {
-                                      return (
-                                        <span className="text-gray-500 text-sm italic">
-                                          No GST applicable
-                                        </span>
-                                      );
-                                    }
-                                  })()}
-                                </TableCell>
-                                <TableCell>
-                                  {dspCalc && dspCalc.dspEarnings > 0 ? (
-                                    <div className="space-y-2">
-                                      <div className="flex items-center gap-1">
-                                        <DollarSign className="h-4 w-4 text-purple-600" />
-                                        <span className="font-bold text-purple-400">
-                                          ${dspCalc.dspEarnings.toFixed(2)}
-                                        </span>
-                                      </div>
-                                      <div className="space-y-1">
-                                        {dspCalc.rentals.map(
-                                          (rental, rentalIndex) => {
-                                            // Use the DSP rate from the rental entry itself
-                                            const dspRate = rental.dspRate;
+                        const totalGst =
+                          (employee.gstAmount || 0) + (employee.subordinateGstTotal || 0);
 
-                                            return (
-                                              <div
-                                                key={`${rental.rentalItemName}-${rental.startDate}-${rental.endDate}-${rentalIndex}`}
-                                                className="text-xs bg-gradient-to-r from-purple-800/30 to-purple-900/30 px-2 py-1 rounded-md border border-purple-500/20"
-                                              >
-                                                <div className="font-semibold text-purple-200">
-                                                  {rental.rentalItemName}
-                                                </div>
-                                                <div className="text-purple-300">
-                                                  {dspRate
-                                                    ? `$${dspRate.toFixed(2)}/day`
-                                                    : "No DSP rate"}
-                                                  {rental.duration > 1 &&
-                                                    ` × ${rental.duration} days`}
-                                                  {rental.quantity > 1 &&
-                                                    ` × ${rental.quantity} units`}
-                                                  <div className="text-xs text-gray-400">
-                                                    ({rental.startDate})
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            );
-                                          },
-                                        )}
+                        return (
+                          <div
+                            key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
+                            className={`relative p-4 rounded-lg border transition-all hover:shadow-lg hover:border-orange-500/50 ${
+                              employee.isSubordinate
+                                ? "bg-blue-900/10 border-blue-500/30 ml-8"
+                                : "bg-gray-800/50 border-gray-600"
+                            }`}
+                          >
+                            {/* Employee Header */}
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                {employee.isSubordinate ? (
+                                  <>
+                                    <div className="w-3 h-3 border-l-2 border-b-2 border-blue-400 absolute -left-4 top-6"></div>
+                                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+                                      ↳
+                                    </span>
+                                    <div>
+                                      <div className="font-semibold text-blue-300">
+                                        {employee.employeeName}
+                                      </div>
+                                      <div className="text-sm text-blue-200">
+                                        {employee.employeeTitle} • Reports to {employee.managerName}
                                       </div>
                                     </div>
-                                  ) : (
-                                    <span className="text-gray-500 text-sm italic">
-                                      No rental DSP
+                                  </>
+                                ) : (
+                                  <>
+                                    <span
+                                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
+                                        index < 3
+                                          ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white"
+                                          : index < 10
+                                            ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
+                                            : "bg-gradient-to-br from-gray-500 to-gray-700 text-white"
+                                      }`}
+                                    >
+                                      {index + 1}
                                     </span>
-                                  )}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="text-sm">
-                                    {employee.entries.length > 0 ? (
-                                      <>
-                                        <div className="text-orange-400 font-medium">
-                                          {formatLocalDate(
-                                            employee.entries[0].date,
-                                          )}
-                                        </div>
-                                        {employee.entries.length > 1 && (
-                                          <div className="text-gray-400">
-                                            to{" "}
-                                            {formatLocalDate(
-                                              employee.entries[
-                                                employee.entries.length - 1
-                                              ].date,
+                                    <div>
+                                      <div className="font-semibold text-gray-100">
+                                        {employee.employeeName}
+                                      </div>
+                                      <div className="text-sm text-gray-300">
+                                        {employee.employeeTitle}
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm text-gray-400">
+                                  {employee.entries.length} entries
+                                </div>
+                                {employee.entries.length > 0 && (
+                                  <div className="text-xs text-gray-500">
+                                    {formatLocalDate(employee.entries[0].date)}
+                                    {employee.entries.length > 1 &&
+                                      ` to ${formatLocalDate(employee.entries[employee.entries.length - 1].date)}`}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Key Metrics Row */}
+                            <div className="grid grid-cols-4 gap-4 mb-3">
+                              <div className="text-center">
+                                <div className="text-xl font-bold text-blue-400">
+                                  {employee.totalHours.toFixed(1)}h
+                                </div>
+                                <div className="text-xs text-gray-400">Hours</div>
+                                {employee.totalEffectiveHours !== employee.totalHours && (
+                                  <div className="text-xs text-gray-500">
+                                    ({employee.totalEffectiveHours.toFixed(1)}h eff)
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="text-center">
+                                <div className="text-xl font-bold text-green-400">
+                                  ${employee.totalCost.toFixed(0)}
+                                </div>
+                                <div className="text-xs text-gray-400">Cost</div>
+                              </div>
+
+                              <div className="text-center">
+                                {totalGst > 0 ? (
+                                  <>
+                                    <div className="text-xl font-bold text-orange-400">
+                                      ${totalGst.toFixed(0)}
+                                    </div>
+                                    <div className="text-xs text-gray-400">GST</div>
+                                    {employee.subordinateGstTotal > 0 && (
+                                      <div className="text-xs text-blue-300">
+                                        +${employee.subordinateGstTotal.toFixed(0)} team
+                                      </div>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="text-xl text-gray-500">-</div>
+                                    <div className="text-xs text-gray-400">GST</div>
+                                  </>
+                                )}
+                              </div>
+
+                              <div className="text-center">
+                                {dspCalc && dspCalc.dspEarnings > 0 ? (
+                                  <>
+                                    <div className="text-xl font-bold text-purple-400">
+                                      ${dspCalc.dspEarnings.toFixed(0)}
+                                    </div>
+                                    <div className="text-xs text-gray-400">DSP</div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="text-xl text-gray-500">-</div>
+                                    <div className="text-xs text-gray-400">DSP</div>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Hour Types Compact */}
+                            {employee.hourTypeBreakdown &&
+                              Object.keys(employee.hourTypeBreakdown).length > 0 && (
+                                <div className="border-t border-gray-700 pt-3">
+                                  <div className="flex flex-wrap gap-2">
+                                    {Object.entries(employee.hourTypeBreakdown)
+                                      .sort(([, a], [, b]) => b.hours - a.hours)
+                                      .slice(0, 4)
+                                      .map(([hourType, data]) => (
+                                        <div
+                                          key={hourType}
+                                          className="bg-orange-600/20 border border-orange-500/30 rounded px-3 py-1"
+                                        >
+                                          <div className="text-sm font-medium text-orange-200">
+                                            {hourType}
+                                          </div>
+                                          <div className="text-xs text-orange-300">
+                                            {data.hours.toFixed(1)}h • ${data.cost.toFixed(0)}
+                                            {data.rateEntries && data.rateEntries.length > 0 && (
+                                              <div className="text-orange-400">
+                                                @$
+                                                {(
+                                                  data.rateEntries.reduce(
+                                                    (sum, entry) =>
+                                                      sum + entry.hourlyRate * entry.hours,
+                                                    0,
+                                                  ) /
+                                                  data.rateEntries.reduce(
+                                                    (sum, entry) => sum + entry.hours,
+                                                    0,
+                                                  )
+                                                ).toFixed(0)}
+                                                /hr
+                                              </div>
                                             )}
                                           </div>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <span className="text-gray-500 italic">
-                                        No entries
-                                      </span>
+                                        </div>
+                                      ))}
+                                    {Object.keys(employee.hourTypeBreakdown).length > 4 && (
+                                      <div className="text-sm text-gray-400 self-center px-2">
+                                        +{Object.keys(employee.hourTypeBreakdown).length - 4} more
+                                      </div>
                                     )}
                                   </div>
-                                </TableCell>
-                                <TableCell>
-                                  <Badge
-                                    variant="outline"
-                                    className="bg-gray-800/50 border-gray-600 text-gray-200"
-                                  >
-                                    {employee.entries.length}
-                                  </Badge>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          },
-                        )}
-                        <TableRow
-                          key="employee-summary-total"
-                          style={{
-                            background:
-                              "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
-                          }}
-                          className="border-t-2 border-orange-500/50 font-bold"
-                        >
-                          <TableCell
-                            colSpan={4}
-                            className="text-orange-200 font-bold text-lg"
-                          >
-                            Total Summary
-                          </TableCell>
-                          <TableCell className="text-blue-400 font-bold text-lg">
-                            {hierarchicalEmployeeSummaries
-                              .reduce((sum, e) => sum + e.totalHours, 0)
-                              .toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-gray-200 font-bold">
-                            {hierarchicalEmployeeSummaries
-                              .reduce(
-                                (sum, e) => sum + e.totalEffectiveHours,
-                                0,
-                              )
-                              .toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-green-400 font-bold text-lg">
-                            $
-                            {hierarchicalEmployeeSummaries
-                              .reduce((sum, e) => sum + e.totalCost, 0)
-                              .toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-purple-400 font-bold text-lg">
-                            $
-                            {hierarchicalEmployeeSummaries
-                              .reduce(
-                                (sum, e) =>
-                                  sum +
-                                  (dspCalculations.find(
-                                    (calc) =>
-                                      calc.employeeName === e.employeeName,
-                                  )?.dspEarnings || 0),
-                                0,
-                              )
-                              .toFixed(2)}
-                          </TableCell>
-                          <TableCell className="text-orange-200 font-bold">
-                            Multiple Ranges
-                          </TableCell>
-                          <TableCell className="text-orange-200 font-bold">
-                            {hierarchicalEmployeeSummaries.reduce(
-                              (sum, e) => sum + e.entries.length,
-                              0,
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
+                                  {employee.totalLoaCount > 0 && (
+                                    <div className="mt-2">
+                                      <span className="bg-purple-900/30 text-purple-300 px-2 py-1 rounded text-sm">
+                                        LOA: {employee.totalLoaCount}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+                )}
                 )}
               </CardContent>
             </Card>
