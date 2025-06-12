@@ -102,8 +102,11 @@ export function InvoiceManagement() {
     | "jobNumber"
     | "jobName"
     | "invoicePercentage"
+    | "paidPercentage"
     | "uninvoicedDates"
+    | "unpaidDates"
     | "uninvoicedBillable"
+    | "unpaidBillable"
   >("jobNumber");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [showFullyInvoiced, setShowFullyInvoiced] = useState(true);
