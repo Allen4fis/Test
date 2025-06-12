@@ -16,6 +16,7 @@ import { DataExport } from "@/components/DataExport";
 import { BackupManagement } from "@/components/BackupManagement";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
+import { useGlobalAutosave } from "@/hooks/useGlobalAutosave";
 import {
   shouldUseOptimizedComponents,
   DataMetrics,
