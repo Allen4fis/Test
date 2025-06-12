@@ -68,7 +68,6 @@ export function RentalManagement() {
   const {
     rentalItems,
     rentalEntries,
-    rentalSummaries,
     employees,
     jobs,
     addRentalItem,
