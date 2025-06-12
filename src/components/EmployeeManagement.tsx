@@ -693,7 +693,7 @@ export function EmployeeManagement() {
                       <TableCell
                         className={`font-medium ${profitMargin >= 0 ? "text-green-600" : "text-red-600"}`}
                       >
-                        {profitMargin.toFixed(1)}%
+                        {profitMargin.toFixed(2)}%
                       </TableCell>
                       <TableCell>
                         {new Date(employee.createdAt).toLocaleDateString()}
