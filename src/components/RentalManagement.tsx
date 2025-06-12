@@ -375,6 +375,13 @@ export function RentalManagement() {
     });
   }, [rentalItems, sortBy, sortDirection]);
 
+  // Pagination for rental items
+  const [itemsPerPageItems, setItemsPerPageItems] = useState(20);
+  const paginationItems = usePagination({
+    data: sortedItems,
+    itemsPerPage: itemsPerPageItems,
+  });
+
   // Sorted rental entries
   const sortedEntries = useMemo(() => {
     return [...rentalSummaries].sort((a, b) => {
