@@ -897,8 +897,15 @@ export function InvoiceManagement() {
                       {/* Job Header */}
                       <div className="flex items-start justify-between mb-3">
                         <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-gray-100 truncate">
-                            {jobStat.job.jobNumber}
+                          <div className="flex items-center gap-2">
+                            <div className="font-semibold text-gray-100 truncate">
+                              {jobStat.job.jobNumber}
+                            </div>
+                            {jobStat.job.isBillable === false && (
+                              <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded">
+                                Non-Billable
+                              </span>
+                            )}
                           </div>
                           <div className="text-sm text-gray-300 truncate">
                             {jobStat.job.name}
