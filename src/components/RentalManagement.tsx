@@ -1281,14 +1281,119 @@ export function RentalManagement() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Item</TableHead>
-                        <TableHead>Job</TableHead>
-                        <TableHead>Employee</TableHead>
-                        <TableHead>Period</TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (entriesSortBy === "rentalItemName") {
+                              setEntriesSortDirection(
+                                entriesSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setEntriesSortBy("rentalItemName");
+                              setEntriesSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Item
+                            {entriesSortBy === "rentalItemName" && (
+                              <span className="text-blue-500 text-xs">
+                                {entriesSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (entriesSortBy === "jobNumber") {
+                              setEntriesSortDirection(
+                                entriesSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setEntriesSortBy("jobNumber");
+                              setEntriesSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Job
+                            {entriesSortBy === "jobNumber" && (
+                              <span className="text-blue-500 text-xs">
+                                {entriesSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (entriesSortBy === "employeeName") {
+                              setEntriesSortDirection(
+                                entriesSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setEntriesSortBy("employeeName");
+                              setEntriesSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Employee
+                            {entriesSortBy === "employeeName" && (
+                              <span className="text-blue-500 text-xs">
+                                {entriesSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (entriesSortBy === "startDate") {
+                              setEntriesSortDirection(
+                                entriesSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setEntriesSortBy("startDate");
+                              setEntriesSortDirection("desc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Period
+                            {entriesSortBy === "startDate" && (
+                              <span className="text-blue-500 text-xs">
+                                {entriesSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
                         <TableHead>Duration</TableHead>
                         <TableHead>Rental Rate</TableHead>
                         <TableHead>DSP Rate</TableHead>
-                        <TableHead>Total Cost</TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (entriesSortBy === "totalCost") {
+                              setEntriesSortDirection(
+                                entriesSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setEntriesSortBy("totalCost");
+                              setEntriesSortDirection("desc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Total Cost
+                            {entriesSortBy === "totalCost" && (
+                              <span className="text-blue-500 text-xs">
+                                {entriesSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
