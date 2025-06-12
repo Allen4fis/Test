@@ -432,57 +432,34 @@ export function SummaryReports() {
       let subordinateGstTotal = 0;
 
       // Find ALL employees that report to this manager (by finding manager by ID)
-      const managerRecord = employees.find(emp => emp.name === manager.employeeName);
+      const managerRecord = employees.find(
+        (emp) => emp.name === manager.employeeName,
+      );
       if (managerRecord) {
-        const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
+        const allSubordinates = employees.filter(
+          (emp) => emp.managerId === managerRecord.id,
+        );
 
-        allSubordinates.forEach(subordinateEmployee => {
+        allSubordinates.forEach((subordinateEmployee) => {
           // Get all time entries for this subordinate (not just filtered ones)
-          const subordinateEntries = timeEntrySummaries.filter(entry =>
-            entry.employeeName === subordinateEmployee.name
+          const subordinateEntries = timeEntrySummaries.filter(
+            (entry) => entry.employeeName === subordinateEmployee.name,
           );
 
           // Calculate total cost for this subordinate across all their entries
-          const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
-            sum + (entry.totalCost || 0), 0
-          );
-
-          // Calculate GST for this subordinate
-          const subordinateGst = calculateGST(subordinateEmployee, subordinateTotalCost);
-          subordinateGstTotal += subordinateGst;
-        });
-      }
-
-      // Add the manager with subordinate GST total
-      hierarchicalList.push({
-        ...manager,
-        subordinateGstTotal,
-      });
-
-      // Add their subordinates immediately after
-      hierarchicalList.push(...subordinates);
-    });
-
-      // Add GST from subordinates not in current filtered data but still linked
-      allSubordinatesForManager.forEach((sub) => {
-        // Only add if this subordinate is not already counted in the filtered data
-        if (
-          !subordinates.find(
-            (filteredSub) => filteredSub.employeeName === sub.name,
-          )
-        ) {
-          // For subordinates not in filtered data, we need to calculate their total cost from all their entries
-          const allEntriesForSub = timeEntrySummaries.filter(
-            (entry) => entry.employeeName === sub.name,
-          );
-          const totalCostForSub = allEntriesForSub.reduce(
+          const subordinateTotalCost = subordinateEntries.reduce(
             (sum, entry) => sum + (entry.totalCost || 0),
             0,
           );
-          const gstForSub = calculateGST(sub, totalCostForSub);
-          subordinateGstTotal += gstForSub;
-        }
-      });
+
+          // Calculate GST for this subordinate
+          const subordinateGst = calculateGST(
+            subordinateEmployee,
+            subordinateTotalCost,
+          );
+          subordinateGstTotal += subordinateGst;
+        });
+      }
 
       // Add the manager with subordinate GST total
       hierarchicalList.push({
