@@ -841,32 +841,86 @@ export function SummaryReports() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate" className="text-sm font-medium">
-                Start Date
-              </Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={dateFilter.start}
-                onChange={(e) =>
-                  setDateFilter({ ...dateFilter, start: e.target.value })
-                }
-                className="bg-gray-800 border-gray-600 text-gray-100"
-              />
+              <Label className="text-sm font-medium">Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateFilter.start ? (
+                      format(parseLocalDate(dateFilter.start), "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto p-0 bg-gray-800 border-gray-600"
+                  align="start"
+                >
+                  <CalendarComponent
+                    mode="single"
+                    selected={
+                      dateFilter.start
+                        ? parseLocalDate(dateFilter.start)
+                        : undefined
+                    }
+                    onSelect={(date) => {
+                      if (date) {
+                        setDateFilter({
+                          ...dateFilter,
+                          start: format(date, "yyyy-MM-dd"),
+                        });
+                      }
+                    }}
+                    initialFocus
+                    className="bg-gray-800 text-gray-100"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate" className="text-sm font-medium">
-                End Date
-              </Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={dateFilter.end}
-                onChange={(e) =>
-                  setDateFilter({ ...dateFilter, end: e.target.value })
-                }
-                className="bg-gray-800 border-gray-600 text-gray-100"
-              />
+              <Label className="text-sm font-medium">End Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateFilter.end ? (
+                      format(parseLocalDate(dateFilter.end), "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto p-0 bg-gray-800 border-gray-600"
+                  align="start"
+                >
+                  <CalendarComponent
+                    mode="single"
+                    selected={
+                      dateFilter.end
+                        ? parseLocalDate(dateFilter.end)
+                        : undefined
+                    }
+                    onSelect={(date) => {
+                      if (date) {
+                        setDateFilter({
+                          ...dateFilter,
+                          end: format(date, "yyyy-MM-dd"),
+                        });
+                      }
+                    }}
+                    initialFocus
+                    className="bg-gray-800 text-gray-100"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium">Employee</Label>
