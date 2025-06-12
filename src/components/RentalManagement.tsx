@@ -59,6 +59,7 @@ import {
   TrendingUp,
   BarChart3,
   ArrowUpDown,
+  Truck,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { RentalItem, RentalEntry } from "@/types";
