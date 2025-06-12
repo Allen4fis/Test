@@ -470,7 +470,7 @@ export function EmployeeManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {employees.map((employee) => {
+                {sortedEmployees.map((employee) => {
                   const profitMargin =
                     employee.billableWage > 0
                       ? ((employee.billableWage - employee.costWage) /
