@@ -30,7 +30,7 @@ import {
   BarChart3,
   Activity,
   DollarSign,
-  Trophy,
+  PiggyBank,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
@@ -288,11 +288,11 @@ export function Dashboard() {
             }}
           >
             <CardTitle className="flex items-center gap-3 text-gray-100">
-              <Trophy className="h-5 w-5 text-yellow-400" />
-              High Score
+              <PiggyBank className="h-5 w-5 text-pink-400" />
+              Prize Piggies
             </CardTitle>
             <CardDescription className="text-gray-300">
-              Top 5 invoices ranked by highest billable total
+              Oink Oink!
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
