@@ -325,6 +325,29 @@ export function InvoiceManagement() {
   const filteredAndSortedJobStats = useMemo(() => {
     let filtered = jobStats;
 
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter((stat) => {
+        return (
+          stat.job.jobNumber.toLowerCase().includes(query) ||
+          stat.job.name.toLowerCase().includes(query) ||
+          (stat.job.description &&
+            stat.job.description.toLowerCase().includes(query))
+        );
+      });
+    }
+
+    // Apply billable status filters
+    if (!showBillableJobs || !showNonBillableJobs) {
+      filtered = filtered.filter((stat) => {
+        const isBillable = stat.job.isBillable !== false;
+        if (!showBillableJobs && isBillable) return false;
+        if (!showNonBillableJobs && !isBillable) return false;
+        return true;
+      });
+    }
+
     // Apply invoice status filters
     if (!showFullyInvoiced || !showPartiallyInvoiced || !showUninvoiced) {
       filtered = filtered.filter((stat) => {
