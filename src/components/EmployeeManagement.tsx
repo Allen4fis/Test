@@ -481,6 +481,43 @@ export function EmployeeManagement() {
         </div>
       </CardHeader>
       <CardContent>
+        {/* Average Rates Summary */}
+        {employees.length > 0 && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-green-50 border border-gray-200 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-blue-600" />
+              Team Average Rates
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  ${averageRates.avgBillableRate.toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-600">
+                  Average Billable Rate
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">
+                  ${averageRates.avgCostRate.toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-600">Average Cost Rate</div>
+              </div>
+              <div className="text-center">
+                <div
+                  className={`text-2xl font-bold ${averageRates.avgProfitMargin >= 0 ? "text-blue-600" : "text-red-600"}`}
+                >
+                  {averageRates.avgProfitMargin >= 0 ? "+" : ""}
+                  {averageRates.avgProfitMargin.toFixed(1)}%
+                </div>
+                <div className="text-sm text-gray-600">
+                  Average Profit Margin
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {employees.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No employees found. Add your first employee to get started.
