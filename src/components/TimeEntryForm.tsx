@@ -98,6 +98,7 @@ export function TimeEntryForm() {
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
   const [showAllEntries, setShowAllEntries] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionProgress, setSubmissionProgress] = useState("");
 
   // Update title and wages when employee is selected
   useEffect(() => {
@@ -245,12 +246,19 @@ export function TimeEntryForm() {
         resetForm();
       } else {
         // For new entries, create multiple entries with proper sequencing
+        setSubmissionProgress(`Creating ${hourEntries.length} entries...`);
+
         for (let i = 0; i < hourEntries.length; i++) {
           const entry = hourEntries[i];
           const hours = parseFloat(entry.hours);
+          const hourTypeName =
+            hourTypes.find((ht) => ht.id === entry.hourTypeId)?.name ||
+            "Unknown";
 
-          // Create base timestamp and add offset for each entry to ensure uniqueness
-          const baseTime = Date.now();
+          setSubmissionProgress(
+            `Creating entry ${i + 1} of ${hourEntries.length}: ${hourTypeName} (${hours}h)`,
+          );
+
           const entryData = {
             employeeId: formData.employeeId,
             jobId: formData.jobId,
@@ -273,6 +281,8 @@ export function TimeEntryForm() {
             await delay(600); // 0.6 second delay between entries
           }
         }
+
+        setSubmissionProgress("Entries created successfully!");
 
         // If only LOA and no hours, create a single entry with 0 hours
         if (hourEntries.length === 0 && loaCount > 0) {
@@ -310,6 +320,7 @@ export function TimeEntryForm() {
       console.error("Error saving time entry:", error);
     } finally {
       setIsSubmitting(false);
+      setSubmissionProgress("");
     }
   };
 
@@ -801,7 +812,8 @@ export function TimeEntryForm() {
                 {isSubmitting ? (
                   <>
                     <Activity className="h-4 w-4 mr-2 animate-spin" />
-                    {editingEntry ? "Updating..." : "Creating Entries..."}
+                    {submissionProgress ||
+                      (editingEntry ? "Updating..." : "Creating Entries...")}
                   </>
                 ) : (
                   <>
