@@ -1302,22 +1302,43 @@ export function SummaryReports() {
                                               )}
                                           </div>
                                           {/* Province Breakdown */}
-                                          {data.provinces && Object.keys(data.provinces).length > 0 && (
-                                            <div className="mt-1 pt-1 border-t border-orange-500/20">
-                                              <div className="text-xs text-orange-400 space-y-0.5">
-                                                {Object.entries(data.provinces)
-                                                  .sort(([, a], [, b]) => b.hours - a.hours)
-                                                  .map(([provinceName, provinceData]) => (
-                                                    <div key={provinceName} className="flex justify-between">
-                                                      <span className="text-orange-400/80">{provinceName}:</span>
-                                                      <span>{provinceData.hours.toFixed(1)}h</span>
-                                                    </div>
-                                                  ))}
+                                          {data.provinces &&
+                                            Object.keys(data.provinces).length >
+                                              0 && (
+                                              <div className="mt-1 pt-1 border-t border-orange-500/20">
+                                                <div className="text-xs text-orange-400 space-y-0.5">
+                                                  {Object.entries(
+                                                    data.provinces,
+                                                  )
+                                                    .sort(
+                                                      ([, a], [, b]) =>
+                                                        b.hours - a.hours,
+                                                    )
+                                                    .map(
+                                                      ([
+                                                        provinceName,
+                                                        provinceData,
+                                                      ]) => (
+                                                        <div
+                                                          key={provinceName}
+                                                          className="flex justify-between"
+                                                        >
+                                                          <span className="text-orange-400/80">
+                                                            {provinceName}:
+                                                          </span>
+                                                          <span>
+                                                            {provinceData.hours.toFixed(
+                                                              1,
+                                                            )}
+                                                            h
+                                                          </span>
+                                                        </div>
+                                                      ),
+                                                    )}
+                                                </div>
                                               </div>
-                                            </div>
-                                          )}
+                                            )}
                                         </div>
-                                      ))
                                       ))}
                                     {Object.keys(employee.hourTypeBreakdown)
                                       .length > 4 && (
