@@ -354,6 +354,114 @@ export function RentalManagement() {
     );
   }, [rentalSummaries]);
 
+  // Sorted data for each tab
+  const sortedRentalItems = useMemo(() => {
+    return [...activeItems].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (itemsSortBy) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "category":
+          aValue = a.category.toLowerCase();
+          bValue = b.category.toLowerCase();
+          break;
+        case "dailyRate":
+          aValue = a.dailyRate;
+          bValue = b.dailyRate;
+          break;
+        case "unit":
+          aValue = a.unit;
+          bValue = b.unit;
+          break;
+        case "createdAt":
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
+        default:
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+      }
+
+      if (aValue < bValue) return itemsSortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return itemsSortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [activeItems, itemsSortBy, itemsSortDirection]);
+
+  const sortedRentalSummaries = useMemo(() => {
+    return [...rentalSummaries].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (entriesSortBy) {
+        case "rentalItemName":
+          aValue = a.rentalItemName.toLowerCase();
+          bValue = b.rentalItemName.toLowerCase();
+          break;
+        case "jobNumber":
+          aValue = a.jobNumber.toLowerCase();
+          bValue = b.jobNumber.toLowerCase();
+          break;
+        case "employeeName":
+          aValue = (a.employeeName || "").toLowerCase();
+          bValue = (b.employeeName || "").toLowerCase();
+          break;
+        case "startDate":
+          aValue = new Date(a.startDate).getTime();
+          bValue = new Date(b.startDate).getTime();
+          break;
+        case "totalCost":
+          aValue = a.totalCost;
+          bValue = b.totalCost;
+          break;
+        default:
+          aValue = new Date(a.startDate).getTime();
+          bValue = new Date(b.startDate).getTime();
+      }
+
+      if (aValue < bValue) return entriesSortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return entriesSortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [rentalSummaries, entriesSortBy, entriesSortDirection]);
+
+  const sortedRentalBillableAnalytics = useMemo(() => {
+    return [...rentalBillableAnalytics].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (billableSortBy) {
+        case "itemName":
+          aValue = a.itemName.toLowerCase();
+          bValue = b.itemName.toLowerCase();
+          break;
+        case "totalBillable":
+          aValue = a.totalBillable;
+          bValue = b.totalBillable;
+          break;
+        case "dspRate":
+          aValue = a.dspRate || 0;
+          bValue = b.dspRate || 0;
+          break;
+        case "totalEntries":
+          aValue = a.totalEntries;
+          bValue = b.totalEntries;
+          break;
+        default:
+          aValue = a.totalBillable;
+          bValue = b.totalBillable;
+      }
+
+      if (aValue < bValue) return billableSortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return billableSortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [rentalBillableAnalytics, billableSortBy, billableSortDirection]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
