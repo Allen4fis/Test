@@ -1812,8 +1812,6 @@ export function RentalManagement() {
                               ${(sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalBillable, 0) /
                                 Math.max(sortedRentalBillableAnalytics.reduce((sum, item) => sum + item.totalEntries, 0), 1)).toFixed(2)}
                             </p>
-                                .toFixed(2)}
-                            </p>
                           </div>
                           <DollarSign className="h-8 w-8 text-green-600" />
                         </div>
