@@ -1322,7 +1322,7 @@ export function InvoiceManagement() {
                         <div className="text-2xl font-bold text-blue-400">
                           {breakdown.timeEntries
                             .reduce((sum, entry) => sum + entry.hours, 0)
-                            .toFixed(1)}
+                            .toFixed(2)}
                           h
                         </div>
                         <div className="text-sm text-gray-300">Total Hours</div>
