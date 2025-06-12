@@ -1029,37 +1029,53 @@ export function SummaryReports() {
                                   </div>
                                 </TableCell>
                                 <TableCell>
-                                  {employee.gstAmount > 0 ? (
-                                    <div className="space-y-1">
-                                      <div className="flex items-center gap-1">
-                                        <DollarSign className="h-4 w-4 text-orange-600" />
-                                        <span className="font-bold text-orange-400">
-                                          ${employee.gstAmount.toFixed(2)}
-                                        </span>
-                                      </div>
-                                      <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
-                                        5% GST on cost
-                                      </div>
-                                      {employee.subordinateGstTotal > 0 && (
-                                        <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
-                                          + $
-                                          {employee.subordinateGstTotal.toFixed(
-                                            2,
-                                          )}{" "}
-                                          from subordinates
+                                  {(() => {
+                                    const totalGst =
+                                      (employee.gstAmount || 0) +
+                                      (employee.subordinateGstTotal || 0);
+                                    const hasIndividualGst =
+                                      employee.gstAmount > 0;
+                                    const hasSubordinateGst =
+                                      employee.subordinateGstTotal > 0;
+
+                                    if (totalGst > 0) {
+                                      return (
+                                        <div className="space-y-1">
+                                          <div className="flex items-center gap-1">
+                                            <DollarSign className="h-4 w-4 text-orange-600" />
+                                            <span className="font-bold text-orange-400">
+                                              ${totalGst.toFixed(2)}
+                                            </span>
+                                          </div>
+                                          {hasIndividualGst &&
+                                          hasSubordinateGst ? (
+                                            <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
+                                              ${employee.gstAmount.toFixed(2)}{" "}
+                                              personal + $
+                                              {employee.subordinateGstTotal.toFixed(
+                                                2,
+                                              )}{" "}
+                                              from subordinates
+                                            </div>
+                                          ) : hasIndividualGst ? (
+                                            <div className="text-xs text-orange-200 bg-orange-900/30 px-2 py-1 rounded-md border border-orange-500/20">
+                                              5% GST on cost
+                                            </div>
+                                          ) : (
+                                            <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
+                                              Total from subordinates
+                                            </div>
+                                          )}
                                         </div>
-                                      )}
-                                    </div>
-                                  ) : employee.subordinateGstTotal > 0 ? (
-                                    <div className="text-xs text-blue-200 bg-blue-900/30 px-2 py-1 rounded-md border border-blue-500/20">
-                                      ${employee.subordinateGstTotal.toFixed(2)}{" "}
-                                      from subordinates
-                                    </div>
-                                  ) : (
-                                    <span className="text-gray-500 text-sm italic">
-                                      No GST applicable
-                                    </span>
-                                  )}
+                                      );
+                                    } else {
+                                      return (
+                                        <span className="text-gray-500 text-sm italic">
+                                          No GST applicable
+                                        </span>
+                                      );
+                                    }
+                                  })()}
                                 </TableCell>
                                 <TableCell>
                                   {dspCalc && dspCalc.dspEarnings > 0 ? (
