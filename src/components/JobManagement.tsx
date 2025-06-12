@@ -329,6 +329,20 @@ export function JobManagement() {
                 </Button>
               </div>
 
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSortBy("jobNumber");
+                  setSortDirection("asc");
+                  setShowActive(true);
+                  setShowInactive(true);
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                Reset Filters
+              </Button>
+
               <div className="ml-auto text-sm text-gray-500">
                 Showing {filteredAndSortedJobs.length} of {jobs.length} jobs
               </div>
