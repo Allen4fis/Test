@@ -428,11 +428,20 @@ export function SummaryReports() {
     const hierarchicalList: typeof enhancedEmployees = [];
 
     managers.forEach((manager) => {
-      // Add the manager
-      hierarchicalList.push(manager);
+      // Calculate total GST from subordinates
+      const subordinates = subordinatesByManager[manager.employeeName] || [];
+      const subordinateGstTotal = subordinates.reduce(
+        (sum, sub) => sum + sub.gstAmount,
+        0,
+      );
+
+      // Add the manager with subordinate GST total
+      hierarchicalList.push({
+        ...manager,
+        subordinateGstTotal,
+      });
 
       // Add their subordinates immediately after
-      const subordinates = subordinatesByManager[manager.employeeName] || [];
       hierarchicalList.push(...subordinates);
     });
 
