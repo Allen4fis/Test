@@ -431,31 +431,29 @@ export function SummaryReports() {
       // Calculate subordinate GST total from ALL subordinates linked to this manager
       let subordinateGstTotal = 0;
 
-      // Find ALL employees that report to this manager (by finding manager by ID)
+      // Find the manager record in the employees list
       const managerRecord = employees.find(emp => emp.name === manager.employeeName);
+
       if (managerRecord) {
+        // Find all employees that report to this manager
         const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
 
-        console.log(`Manager ${manager.employeeName} has ${allSubordinates.length} subordinates:`, allSubordinates.map(s => s.name));
-
+        // For each subordinate, calculate their total GST
         allSubordinates.forEach(subordinateEmployee => {
-          // Get all time entries for this subordinate (not just filtered ones)
+          // Get ALL time entries for this subordinate across all time periods
           const subordinateEntries = timeEntrySummaries.filter(entry =>
             entry.employeeName === subordinateEmployee.name
           );
 
-          // Calculate total cost for this subordinate across all their entries
+          // Calculate total cost for this subordinate
           const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
             sum + (entry.totalCost || 0), 0
           );
 
-          // Calculate GST for this subordinate
+          // Calculate GST for this subordinate if they're in a non-employee category
           const subordinateGst = calculateGST(subordinateEmployee, subordinateTotalCost);
-          console.log(`  Subordinate ${subordinateEmployee.name}: cost=${subordinateTotalCost}, GST=${subordinateGst}, category=${subordinateEmployee.category}`);
           subordinateGstTotal += subordinateGst;
         });
-
-        console.log(`Manager ${manager.employeeName} total subordinate GST: ${subordinateGstTotal}`);
       }
 
           // Calculate total cost for this subordinate across all their entries
