@@ -866,7 +866,27 @@ export function SummaryReports() {
                                           </div>
                                           <div className="text-xs text-orange-300">
                                             {data.hours.toFixed(2)}h • $
-                                            {data.cost.toFixed(2)}
+                                            {data.rateEntries &&
+                                            data.rateEntries.length > 0
+                                              ? (() => {
+                                                  const avgRate =
+                                                    data.rateEntries.reduce(
+                                                      (sum, entry) =>
+                                                        sum +
+                                                        entry.hourlyRate *
+                                                          entry.hours,
+                                                      0,
+                                                    ) /
+                                                    data.rateEntries.reduce(
+                                                      (sum, entry) =>
+                                                        sum + entry.hours,
+                                                      0,
+                                                    );
+                                                  return (
+                                                    data.hours * avgRate
+                                                  ).toFixed(2);
+                                                })()
+                                              : data.cost.toFixed(2)}
                                             {data.rateEntries &&
                                               data.rateEntries.length > 0 && (
                                                 <div className="text-orange-400">
