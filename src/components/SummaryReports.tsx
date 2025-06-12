@@ -506,7 +506,7 @@ export function SummaryReports() {
     hierarchicalList.push(...orphanedSubordinates);
 
     return hierarchicalList;
-  }, [employeeSummariesData, employees]);
+  }, [employeeSummariesData, employees, timeEntrySummaries]);
 
   // Optimized DSP calculations with memoization
   const dspCalculations = useMemo(() => {
