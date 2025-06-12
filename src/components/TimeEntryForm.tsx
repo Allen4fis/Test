@@ -358,12 +358,17 @@ export function TimeEntryForm() {
     }
   };
 
-  // Get recent time entries (last 50, sorted by latest input time) - Memoized for performance
+  // Get recent time entries (sorted by latest input time) - Memoized for performance
   const recentEntries = useMemo(() => {
-    return timeEntries
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .slice(0, 50);
+    return timeEntries.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }, [timeEntries]);
+
+  // Pagination for recent entries
+  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const pagination = usePagination({
+    data: recentEntries,
+    itemsPerPage,
+  });
 
   const selectedEmployee = employees.find(
     (emp) => emp.id === formData.employeeId,
