@@ -493,6 +493,42 @@ export function RentalManagement() {
                   <CardDescription>
                     Manage your rental equipment and their rates
                   </CardDescription>
+                  {/* Concise sorting controls */}
+                  <div className="flex items-center gap-2 mt-3">
+                    <ArrowUpDown className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Sort by:</span>
+                    <Select
+                      value={itemsSortBy}
+                      onValueChange={(value: any) => setItemsSortBy(value)}
+                    >
+                      <SelectTrigger className="w-32 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="name">Name</SelectItem>
+                        <SelectItem value="category">Category</SelectItem>
+                        <SelectItem value="dailyRate">Daily Rate</SelectItem>
+                        <SelectItem value="unit">Unit</SelectItem>
+                        <SelectItem value="createdAt">Date Added</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setItemsSortDirection(
+                          itemsSortDirection === "asc" ? "desc" : "asc",
+                        )
+                      }
+                      className="px-2 h-8"
+                    >
+                      {itemsSortDirection === "asc" ? "↑" : "↓"}
+                    </Button>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {sortedRentalItems.length} item
+                      {sortedRentalItems.length !== 1 ? "s" : ""}
+                    </span>
+                  </div>
                 </div>
                 <Dialog>
                   <DialogTrigger asChild>
