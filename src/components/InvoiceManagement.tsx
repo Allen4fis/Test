@@ -845,7 +845,7 @@ export function InvoiceManagement() {
                       <div className="grid grid-cols-2 gap-3 mb-3">
                         <div className="text-center">
                           <div className="text-lg font-bold text-blue-400">
-                            {jobStat.invoicePercentage.toFixed(0)}%
+                            {jobStat.invoicePercentage.toFixed(2)}%
                           </div>
                           <div className="text-xs text-gray-400 mb-2">
                             Invoiced
