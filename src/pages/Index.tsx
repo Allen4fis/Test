@@ -41,6 +41,36 @@ const Index = () => {
   const optimizedTimeTracking = useOptimizedTimeTracking();
   const [retryKey, setRetryKey] = useState(0);
 
+  // Determine which components to use based on data size and get the primary data source
+  const dataMetrics: DataMetrics = useMemo(
+    () => ({
+      employeeCount: regularTimeTracking.employees.length,
+      jobCount: regularTimeTracking.jobs.length,
+      timeEntryCount: regularTimeTracking.timeEntries.length,
+    }),
+    [
+      regularTimeTracking.employees.length,
+      regularTimeTracking.jobs.length,
+      regularTimeTracking.timeEntries.length,
+    ],
+  );
+
+  const useOptimized = shouldUseOptimizedComponents(dataMetrics);
+  const timeTracking = useOptimized
+    ? optimizedTimeTracking
+    : regularTimeTracking;
+
+  // Initialize global autosave with the current app data
+  const globalAutosave = useGlobalAutosave({
+    employees: timeTracking.employees,
+    jobs: timeTracking.jobs,
+    hourTypes: timeTracking.hourTypes,
+    provinces: timeTracking.provinces,
+    timeEntries: timeTracking.timeEntries,
+    rentalItems: timeTracking.rentalItems,
+    rentalEntries: timeTracking.rentalEntries,
+  });
+
   // Determine which components to use based on data size
   const dataMetrics: DataMetrics = useMemo(
     () => ({
