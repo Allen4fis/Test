@@ -1160,50 +1160,23 @@ export function SummaryReports() {
 
                         return (
                           <div
-                            key={`${employee.employeeName}|${employee.employeeTitle}|${index}`}
-                            className={`relative p-4 rounded-lg border transition-all hover:shadow-lg hover:border-orange-500/50 ${
-                              employee.isSubordinate
-                                ? "bg-blue-900/10 border-blue-500/30 ml-8"
-                                : "bg-gray-800/50 border-gray-600"
-                            }`}
-                          >
-                            {/* Employee Header */}
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-3">
-                                {employee.isSubordinate ? (
-                                  <>
-                                    <div className="w-3 h-3 border-l-2 border-b-2 border-blue-400 absolute -left-4 top-6"></div>
-                                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-                                      ↳
-                                    </span>
-                                    <div>
-                                      <div className="font-semibold text-blue-300">
-                                        {employee.employeeName}
-                                      </div>
-                                      <div className="text-sm text-blue-200">
-                                        {employee.employeeTitle} • Reports to{" "}
-                                        {employee.managerName}
-                                      </div>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <span
-                                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ${
-                                        index < 3
-                                          ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white"
-                                          : index < 10
-                                            ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
-                                            : "bg-gradient-to-br from-gray-500 to-gray-700 text-white"
-                                      }`}
-                                    >
-                                      {index + 1}
-                                    </span>
-                                    <div>
-                                      <div className="font-semibold text-gray-100">
-                                        {employee.employeeName}
-                                      </div>
-                                      <div className="text-sm text-gray-300">
+                            ${summaryStats.totalHours.toFixed(2)}
+                          </div>
+                          <div className="text-sm text-gray-300">
+                            Total Hours
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-400">
+                            ${summaryStats.totalCost.toFixed(2)}
+                          </div>
+                          <div className="text-sm text-gray-300">
+                            Total Cost
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-400">
+                            ${summaryStats.totalGst.toFixed(2)}
                                         {employee.employeeTitle}
                                       </div>
                                     </div>
