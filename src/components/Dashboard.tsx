@@ -264,7 +264,7 @@ export function Dashboard() {
                   className={`text-2xl font-bold ${allTimeProfitPercentage >= 0 ? "text-blue-400" : "text-red-400"}`}
                 >
                   {allTimeProfitPercentage >= 0 ? "+" : ""}
-                  {allTimeProfitPercentage.toFixed(1)}%
+                  {allTimeProfitPercentage.toFixed(2)}%
                 </div>
                 <p className="text-xs text-gray-400 mt-1 flex items-center">
                   <PiggyBank className="h-3 w-3 mr-1 text-blue-400" />
