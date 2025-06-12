@@ -17,6 +17,7 @@ export interface Job {
   description?: string;
   isActive: boolean;
   invoicedDates: string[]; // Array of dates in YYYY-MM-DD format
+  paidDates: string[]; // Array of dates in YYYY-MM-DD format that have been paid
   createdAt: string;
 }
 
