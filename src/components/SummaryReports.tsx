@@ -573,13 +573,34 @@ export function SummaryReports() {
                       >
                         All Jobs
                       </SelectItem>
+                      <SelectItem
+                        value="billable-only"
+                        className="text-gray-100 focus:bg-orange-500/20"
+                      >
+                        Billable Jobs Only
+                      </SelectItem>
+                      <SelectItem
+                        value="non-billable-only"
+                        className="text-gray-100 focus:bg-orange-500/20"
+                      >
+                        Non-Billable Jobs Only
+                      </SelectItem>
                       {jobs.map((job) => (
                         <SelectItem
                           key={job.id}
                           value={job.jobNumber}
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          {job.jobNumber} - {job.name}
+                          <div className="flex items-center justify-between w-full">
+                            <span>
+                              {job.jobNumber} - {job.name}
+                            </span>
+                            {job.isBillable === false && (
+                              <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded ml-2">
+                                Non-Billable
+                              </span>
+                            )}
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
