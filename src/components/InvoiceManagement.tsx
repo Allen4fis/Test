@@ -435,6 +435,38 @@ export function InvoiceManagement() {
     return "bg-red-100 text-red-800 border-red-200";
   };
 
+  const getPaidStatusColor = (percentage: number) => {
+    if (percentage === 100)
+      return "bg-purple-100 text-purple-800 border-purple-200";
+    if (percentage >= 75)
+      return "bg-indigo-100 text-indigo-800 border-indigo-200";
+    if (percentage >= 50) return "bg-pink-100 text-pink-800 border-pink-200";
+    if (percentage > 0) return "bg-rose-100 text-rose-800 border-rose-200";
+    return "bg-gray-100 text-gray-800 border-gray-200";
+  };
+
+  const toggleJobPaidStatus = (job: Job) => {
+    const jobDates = getJobDates(job);
+    const currentlyPaidDates = job.paidDates || [];
+
+    if (currentlyPaidDates.length === 0) {
+      // Mark all invoiced dates as paid
+      const invoicedDates = job.invoicedDates || [];
+      addPaidDates(job.id, invoicedDates);
+      toast({
+        title: "✅ Job Marked as Paid",
+        description: `All invoiced dates for ${job.jobNumber} - ${job.name} have been marked as paid.`,
+      });
+    } else {
+      // Remove all paid dates
+      removePaidDates(job.id, currentlyPaidDates);
+      toast({
+        title: "❌ Payment Status Removed",
+        description: `Payment status removed for ${job.jobNumber} - ${job.name}.`,
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Invoice Overview */}
