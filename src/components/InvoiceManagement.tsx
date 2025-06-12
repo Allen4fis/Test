@@ -697,34 +697,31 @@ export function InvoiceManagement() {
                       )}
                     </div>
                   </TableHead>
-                  <TableHead>Hours</TableHead>
-                  <TableHead className="text-purple-600">
-                    Live Out Allowance Count
-                  </TableHead>
+                  <TableHead>Paid Status</TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-gray-50 select-none"
                     onClick={() => {
-                      if (sortBy === "uninvoicedBillable") {
-                        setSortDirection(
-                          sortDirection === "asc" ? "desc" : "asc",
-                        );
+                      if (sortBy === "uninvoicedDates") {
+                        setSortDirection(sortDirection === "asc" ? "desc" : "asc");
                       } else {
-                        setSortBy("uninvoicedBillable");
-                        setSortDirection("desc"); // Default to highest amount first
+                        setSortBy("uninvoicedDates");
+                        setSortDirection("desc"); // Default to most uninvoiced first
                       }
                     }}
                   >
                     <div className="flex items-center gap-1">
-                      Cost
-                      {sortBy === "uninvoicedBillable" && (
+                      Dates
+                      {sortBy === "uninvoicedDates" && (
                         <span className="text-blue-500">
                           {sortDirection === "asc" ? "↑" : "↓"}
                         </span>
                       )}
                     </div>
                   </TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
+                  <TableHead>Hours</TableHead>
+                  <TableHead className="text-purple-600">
+                    Live Out Allowance Count
+                  </TableHead>
               </TableHeader>
               <TableBody>
                 {filteredAndSortedJobStats.map((stat) => (
