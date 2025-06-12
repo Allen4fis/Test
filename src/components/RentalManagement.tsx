@@ -782,7 +782,7 @@ export function RentalManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {rentalItems.map((item) => (
+                      {sortedRentalItems.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>
                             <div>
