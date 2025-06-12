@@ -466,73 +466,110 @@ export function SummaryReports() {
             </CardHeader>
             <CardContent>
               {/* Filters */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-4 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
-                <div className="space-y-2">
+              <div className="space-y-4 mb-6 p-4 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
+                {/* Date Range Section */}
+                <div className="space-y-3">
                   <Label className="text-sm font-medium">Date Range</Label>
-                  <div className="flex gap-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          <span className="truncate">
-                            {formatLocalDate(parseLocalDate(dateFilter.start), {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={parseLocalDate(dateFilter.start)}
-                          onSelect={(date) => {
-                            if (date) {
-                              setDateFilter({
-                                ...dateFilter,
-                                start: date.toISOString().split("T")[0],
-                              });
-                            }
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <span className="text-gray-400 self-center">to</span>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          <span className="truncate">
-                            {formatLocalDate(parseLocalDate(dateFilter.end), {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={parseLocalDate(dateFilter.end)}
-                          onSelect={(date) => {
-                            if (date) {
-                              setDateFilter({
-                                ...dateFilter,
-                                end: date.toISOString().split("T")[0],
-                              });
-                            }
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {/* Date Picker Controls */}
+                    <div className="flex items-center gap-2 flex-1">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="flex-1 justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <span className="truncate">
+                              {formatLocalDate(parseLocalDate(dateFilter.start), {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric"
+                              })}
+                            </span>
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={parseLocalDate(dateFilter.start)}
+                            onSelect={(date) => {
+                              if (date) {
+                                setDateFilter({
+                                  ...dateFilter,
+                                  start: date.toISOString().split("T")[0],
+                                });
+                              }
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <span className="text-gray-400 px-1">to</span>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="flex-1 justify-start text-left font-normal bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <span className="truncate">
+                              {formatLocalDate(parseLocalDate(dateFilter.end), {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric"
+                              })}
+                            </span>
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={parseLocalDate(dateFilter.end)}
+                            onSelect={(date) => {
+                              if (date) {
+                                setDateFilter({
+                                  ...dateFilter,
+                                  end: date.toISOString().split("T")[0],
+                                });
+                              }
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    {/* Quick Date Range Buttons */}
+                    <div className="flex gap-2 flex-wrap">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDateFilter(getDateRange(7))}
+                        className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                      >
+                        7 Days
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDateFilter(getDateRange(30))}
+                        className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                      >
+                        30 Days
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDateFilter(getDateRange(90))}
+                        className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
+                      >
+                        90 Days
+                      </Button>
+                    </div>
                   </div>
                 </div>
+
+                {/* Other Filters */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">Employee</Label>
                   <Select
