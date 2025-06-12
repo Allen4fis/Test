@@ -762,7 +762,7 @@ export function RentalManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {sortedItems.map((item) => (
+                      {paginationItems.paginatedData.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell className="font-medium">
                             {item.name}
