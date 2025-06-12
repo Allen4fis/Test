@@ -82,7 +82,13 @@ export function JobManagement() {
   const [showInactive, setShowInactive] = useState(true);
 
   const resetForm = () => {
-    setFormData({ jobNumber: "", name: "", description: "", isActive: true });
+    setFormData({
+      jobNumber: "",
+      name: "",
+      description: "",
+      isActive: true,
+      isBillable: true,
+    });
     setEditingJob(null);
   };
 
