@@ -1160,12 +1160,13 @@ export function SummaryReports() {
 
                         return (
                           <div
-                            ${summaryStats.totalHours.toFixed(2)}
+                            key={employee.employeeName}
+                            className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4 space-y-3"
+                          >
+                            <div className="text-sm text-gray-300">
+                              Total Hours: {employee.totalHours.toFixed(2)}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-300">
-                            Total Hours
-                          </div>
-                        </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-green-400">
                             ${summaryStats.totalCost.toFixed(2)}
