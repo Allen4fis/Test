@@ -113,6 +113,7 @@ export function JobManagement() {
       name: job.name,
       description: job.description || "",
       isActive: job.isActive,
+      isBillable: job.isBillable ?? true, // Default to true for backward compatibility
     });
     setIsDialogOpen(true);
   };
