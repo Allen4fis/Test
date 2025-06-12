@@ -651,7 +651,7 @@ export function InvoiceManagement() {
                   $
                   {jobStats
                     .reduce((sum, stat) => sum + stat.unpaidBillable, 0)
-                    .toFixed(0)}
+                    .toFixed(2)}
                 </p>
               </div>
               <Clock className="h-8 w-8 text-orange-400" />
