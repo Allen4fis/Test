@@ -1008,241 +1008,127 @@ export function InvoiceManagement() {
                             <DialogHeader>
                               <DialogTitle className="text-gray-100">
                                 Day Breakdown -{" "}
-                                {selectedJobForBreakdown?.jobNumber}
-                                {selectedDateForBreakdown &&
-                                  ` - ${formatLocalDate(selectedDateForBreakdown)}`}
-                              </DialogTitle>
-                              <DialogDescription className="text-gray-300">
-                                Detailed breakdown of time entries and rentals
-                                for this day
-                              </DialogDescription>
-                            </DialogHeader>
+                            {selectedJobForBreakdown && selectedDateForBreakdown && (() => {
+                              const breakdown = getDayBreakdown(
+                                selectedJobForBreakdown,
+                                selectedDateForBreakdown
+                              );
 
-                            {selectedJobForBreakdown &&
-                              selectedDateForBreakdown && (
+                              // Group entries by title and hour type
+                              const groupedEntries = breakdown.timeEntries.reduce((acc, entry) => {
+                                const key = `${entry.employeeTitle} - ${entry.hourTypeName}`;
+                                if (!acc[key]) {
+                                  acc[key] = {
+                                    title: entry.employeeTitle,
+                                    hourType: entry.hourTypeName,
+                                    employees: [],
+                                    totalHours: 0,
+                                    totalEffectiveHours: 0,
+                                    totalCost: 0,
+                                    totalBillable: 0,
+                                  };
+                                }
+                                acc[key].employees.push(entry.employeeName);
+                                acc[key].totalHours += entry.hours;
+                                acc[key].totalEffectiveHours += entry.effectiveHours;
+                                acc[key].totalCost += entry.totalCost;
+                                acc[key].totalBillable += entry.totalBillableAmount;
+                                return acc;
+                              }, {});
+
+                              const totalLOA = breakdown.timeEntries.reduce((sum, entry) => sum + (entry.loaCount || 0), 0);
+
+                              return (
                                 <div className="space-y-6">
-                                  {(() => {
-                                    const breakdown = getDayBreakdown(
-                                      selectedJobForBreakdown,
-                                      selectedDateForBreakdown,
-                                    );
+                                  {/* Overall LOA Count */}
+                                  {totalLOA > 0 && (
+                                    <div className="p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg">
+                                      <div className="text-center">
+                                        <div className="text-2xl font-bold text-purple-400">{totalLOA}</div>
+                                        <div className="text-sm text-purple-300">Total Live Out Allowances for the Day</div>
+                                        <div className="text-xs text-purple-200">${(totalLOA * 200).toFixed(2)} billable</div>
+                                      </div>
+                                    </div>
+                                  )}
 
-                                    return (
-                                      <>
-                                      {/* Time Entries Grouped by Title and Hour Type */}
-                                      {breakdown.timeEntries.length > 0 && (
-                                        <div>
-                                          <h3 className="text-lg font-semibold text-gray-100 mb-3">
-                                            Time Entries by Title & Hour Type
-                                          </h3>
-
-                                          {/* Overall LOA Count */}
-                                          {(() => {
-                                            const totalLOA = breakdown.timeEntries.reduce((sum, entry) => sum + (entry.loaCount || 0), 0);
-                                            return totalLOA > 0 && (
-                                              <div className="mb-4 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg">
-                                                <div className="text-center">
-                                                  <div className="text-xl font-bold text-purple-400">{totalLOA}</div>
-                                                  <div className="text-sm text-purple-300">Total Live Out Allowances for the Day</div>
-                                                  <div className="text-xs text-purple-200">${(totalLOA * 200).toFixed(2)} billable</div>
-                                                </div>
-                                              </div>
-                                            );
-                                          })()}
-
-                                          <div className="overflow-x-auto">
-                                            <Table>
-                                              <TableHeader>
-                                                <TableRow>
-                                                  <TableHead className="text-gray-200">Title & Hour Type</TableHead>
-                                                  <TableHead className="text-gray-200">Employees</TableHead>
-                                                  <TableHead className="text-gray-200">Total Hours</TableHead>
-                                                  <TableHead className="text-gray-200">Effective Hours</TableHead>
-                                                  <TableHead className="text-gray-200">Total Cost</TableHead>
-                                                  <TableHead className="text-gray-200">Total Billable</TableHead>
-                                                </TableRow>
-                                              </TableHeader>
-                                              <TableBody>
-                                                {(() => {
-                                                  // Group entries by title and hour type
-                                                  const groupedEntries = breakdown.timeEntries.reduce((acc, entry) => {
-                                                    const key = `${entry.employeeTitle} - ${entry.hourTypeName}`;
-                                                    if (!acc[key]) {
-                                                      acc[key] = {
-                                                        title: entry.employeeTitle,
-                                                        hourType: entry.hourTypeName,
-                                                        employees: [],
-                                                        totalHours: 0,
-                                                        totalEffectiveHours: 0,
-                                                        totalCost: 0,
-                                                        totalBillable: 0,
-                                                      };
-                                                    }
-                                                    acc[key].employees.push(entry.employeeName);
-                                                    acc[key].totalHours += entry.hours;
-                                                    acc[key].totalEffectiveHours += entry.effectiveHours;
-                                                    acc[key].totalCost += entry.totalCost;
-                                                    acc[key].totalBillable += entry.totalBillableAmount;
-                                                    return acc;
-                                                  }, {});
-
-                                                  const groupedRows = Object.values(groupedEntries).map((group, index) => (
-                                                    <TableRow key={index}>
-                                                      <TableCell className="text-gray-100">
-                                                        <div className="font-semibold">{group.title}</div>
-                                                        <div className="text-sm text-orange-400">{group.hourType}</div>
-                                                      </TableCell>
-                                                      <TableCell className="text-gray-100">
-                                                        <div className="space-y-1">
-                                                          {[...new Set(group.employees)].map((employee, empIndex) => (
-                                                            <div key={empIndex} className="text-sm bg-gray-800/50 px-2 py-1 rounded">
-                                                              {employee}
-                                                            </div>
-                                                          ))}
-                                                        </div>
-                                                      </TableCell>
-                                                      <TableCell className="text-gray-100">
-                                                        <div className="font-semibold text-blue-400">
-                                                          {group.totalHours.toFixed(2)}h
-                                                        </div>
-                                                      </TableCell>
-                                                      <TableCell className="text-gray-100">
-                                                        <div className="text-blue-300">
-                                                          {group.totalEffectiveHours.toFixed(2)}h
-                                                        </div>
-                                                      </TableCell>
-                                                      <TableCell className="text-gray-100">
-                                                        <div className="font-semibold text-green-400">
-                                                          ${group.totalCost.toFixed(2)}
-                                                        </div>
-                                                      </TableCell>
-                                                      <TableCell className="text-gray-100">
-                                                        <div className="font-semibold text-green-400">
-                                                          ${group.totalBillable.toFixed(2)}
-                                                        </div>
-                                                      </TableCell>
-                                                    </TableRow>
-                                                  ));
-
-                                                  return groupedRows;
-                                                })()}
-                                                <TableRow className="border-t-2 border-orange-500/50 font-bold">
-                                                  <TableCell colSpan={2} className="text-orange-200">
-                                                    Grand Totals:
-                                                  </TableCell>
-                                                  <TableCell className="text-blue-400">
-                                                    {breakdown.timeEntries.reduce((sum, entry) => sum + entry.hours, 0).toFixed(2)}h
-                                                  </TableCell>
-                                                  <TableCell className="text-blue-400">
-                                                    {breakdown.timeEntries.reduce((sum, entry) => sum + entry.effectiveHours, 0).toFixed(2)}h
-                                                  </TableCell>
-                                                  <TableCell className="text-green-400">
-                                                    ${breakdown.timeEntries.reduce((sum, entry) => sum + entry.totalCost, 0).toFixed(2)}
-                                                  </TableCell>
-                                                  <TableCell className="text-green-400">
-                                                    ${breakdown.timeEntries.reduce((sum, entry) => sum + entry.totalBillableAmount, 0).toFixed(2)}
-                                                  </TableCell>
-                                                </TableRow>
-                                              </TableBody>
-                                            </Table>
-                                          </div>
-                                        </div>
-                                      )}
-                                                    <TableCell className="text-purple-400">
-                                                      $
-                                                      {breakdown.rentalEntries
-                                                        .reduce(
-                                                          (sum, entry) =>
-                                                            sum +
-                                                            entry.totalCost,
-                                                          0,
-                                                        )
-                                                        .toFixed(2)}
-                                                    </TableCell>
-                                                  </TableRow>
-                                                </TableBody>
-                                              </Table>
-                                            </div>
-                                          </div>
-                                        )}
-
-                                        {/* Summary */}
-                                        <div className="bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg p-4">
-                                          <h3 className="text-lg font-semibold text-gray-100 mb-3">
-                                            Day Summary
-                                          </h3>
-                                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            <div className="text-center">
-                                              <div className="text-xl font-bold text-blue-400">
-                                                {breakdown.timeEntries
-                                                  .reduce(
-                                                    (sum, entry) =>
-                                                      sum + entry.hours,
-                                                    0,
-                                                  )
-                                                  .toFixed(1)}
-                                                h
-                                              </div>
-                                              <div className="text-sm text-gray-300">
-                                                Total Hours
-                                              </div>
-                                            </div>
-                                            <div className="text-center">
-                                              <div className="text-xl font-bold text-purple-400">
-                                                {breakdown.timeEntries.reduce(
-                                                  (sum, entry) =>
-                                                    sum + (entry.loaCount || 0),
-                                                  0,
-                                                )}
-                                              </div>
-                                              <div className="text-sm text-gray-300">
-                                                LOA Count
-                                              </div>
-                                            </div>
-                                            <div className="text-center">
-                                              <div className="text-xl font-bold text-green-400">
-                                                $
-                                                {(
-                                                  breakdown.timeEntries.reduce(
-                                                    (sum, entry) =>
-                                                      sum +
-                                                      entry.totalBillableAmount,
-                                                    0,
-                                                  ) +
-                                                  breakdown.rentalEntries.reduce(
-                                                    (sum, entry) =>
-                                                      sum + entry.totalCost,
-                                                    0,
-                                                  )
-                                                ).toFixed(2)}
-                                              </div>
-                                              <div className="text-sm text-gray-300">
-                                                Total Billable
-                                              </div>
-                                            </div>
-                                            <div className="text-center">
-                                              <div className="text-xl font-bold text-orange-400">
-                                                $
-                                                {breakdown.timeEntries
-                                                  .reduce(
-                                                    (sum, entry) =>
-                                                      sum + entry.totalCost,
-                                                    0,
-                                                  )
-                                                  .toFixed(2)}
-                                              </div>
-                                              <div className="text-sm text-gray-300">
-                                                Labor Cost
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </>
-                                    );
-                                  })()}
-                                </div>
-                              )}
-                          </DialogContent>
+                                  {/* Time Entries Grouped by Title and Hour Type */}
+                                  {breakdown.timeEntries.length > 0 && (
+                                    <div>
+                                      <h3 className="text-lg font-semibold text-gray-100 mb-3">
+                                        Time Entries by Title & Hour Type
+                                      </h3>
+                                      <div className="overflow-x-auto">
+                                        <Table>
+                                          <TableHeader>
+                                            <TableRow>
+                                              <TableHead className="text-gray-200">Title & Hour Type</TableHead>
+                                              <TableHead className="text-gray-200">Employees</TableHead>
+                                              <TableHead className="text-gray-200">Total Hours</TableHead>
+                                              <TableHead className="text-gray-200">Effective Hours</TableHead>
+                                              <TableHead className="text-gray-200">Total Cost</TableHead>
+                                              <TableHead className="text-gray-200">Total Billable</TableHead>
+                                            </TableRow>
+                                          </TableHeader>
+                                          <TableBody>
+                                            {Object.values(groupedEntries).map((group, index) => (
+                                              <TableRow key={index}>
+                                                <TableCell className="text-gray-100">
+                                                  <div className="font-semibold">{group.title}</div>
+                                                  <div className="text-sm text-orange-400">{group.hourType}</div>
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  <div className="space-y-1">
+                                                    {[...new Set(group.employees)].map((employee, empIndex) => (
+                                                      <div key={empIndex} className="text-sm bg-gray-800/50 px-2 py-1 rounded">
+                                                        {employee}
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  <div className="font-semibold text-blue-400">
+                                                    {group.totalHours.toFixed(2)}h
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  <div className="text-blue-300">
+                                                    {group.totalEffectiveHours.toFixed(2)}h
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  <div className="font-semibold text-green-400">
+                                                    ${group.totalCost.toFixed(2)}
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell className="text-gray-100">
+                                                  <div className="font-semibold text-green-400">
+                                                    ${group.totalBillable.toFixed(2)}
+                                                  </div>
+                                                </TableCell>
+                                              </TableRow>
+                                            ))}
+                                            <TableRow className="border-t-2 border-orange-500/50 font-bold">
+                                              <TableCell colSpan={2} className="text-orange-200">
+                                                Grand Totals:
+                                              </TableCell>
+                                              <TableCell className="text-blue-400">
+                                                {breakdown.timeEntries.reduce((sum, entry) => sum + entry.hours, 0).toFixed(2)}h
+                                              </TableCell>
+                                              <TableCell className="text-blue-400">
+                                                {breakdown.timeEntries.reduce((sum, entry) => sum + entry.effectiveHours, 0).toFixed(2)}h
+                                              </TableCell>
+                                              <TableCell className="text-green-400">
+                                                ${breakdown.timeEntries.reduce((sum, entry) => sum + entry.totalCost, 0).toFixed(2)}
+                                              </TableCell>
+                                              <TableCell className="text-green-400">
+                                                ${breakdown.timeEntries.reduce((sum, entry) => sum + entry.totalBillableAmount, 0).toFixed(2)}
+                                              </TableCell>
+                                            </TableRow>
+                                          </TableBody>
+                                        </Table>
+                                      </div>
+                                    </div>
+                                  )}
                         </Dialog>
 
                         <Button
