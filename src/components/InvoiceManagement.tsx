@@ -791,6 +791,22 @@ export function InvoiceManagement() {
                 >
                   Unpaid
                 </Button>
+                <Button
+                  variant={showBillableJobs ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowBillableJobs(!showBillableJobs)}
+                  className="h-7 px-2 text-xs"
+                >
+                  Billable
+                </Button>
+                <Button
+                  variant={showNonBillableJobs ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowNonBillableJobs(!showNonBillableJobs)}
+                  className="h-7 px-2 text-xs"
+                >
+                  Non-Billable
+                </Button>
               </div>
 
               <span className="text-xs text-gray-500">
