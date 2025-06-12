@@ -432,19 +432,31 @@ export function SummaryReports() {
       let subordinateGstTotal = 0;
 
       // Find ALL employees that report to this manager (by finding manager by ID)
-      const managerRecord = employees.find(
-        (emp) => emp.name === manager.employeeName,
-      );
+      const managerRecord = employees.find(emp => emp.name === manager.employeeName);
       if (managerRecord) {
-        const allSubordinates = employees.filter(
-          (emp) => emp.managerId === managerRecord.id,
-        );
+        const allSubordinates = employees.filter(emp => emp.managerId === managerRecord.id);
 
-        allSubordinates.forEach((subordinateEmployee) => {
+        console.log(`Manager ${manager.employeeName} has ${allSubordinates.length} subordinates:`, allSubordinates.map(s => s.name));
+
+        allSubordinates.forEach(subordinateEmployee => {
           // Get all time entries for this subordinate (not just filtered ones)
-          const subordinateEntries = timeEntrySummaries.filter(
-            (entry) => entry.employeeName === subordinateEmployee.name,
+          const subordinateEntries = timeEntrySummaries.filter(entry =>
+            entry.employeeName === subordinateEmployee.name
           );
+
+          // Calculate total cost for this subordinate across all their entries
+          const subordinateTotalCost = subordinateEntries.reduce((sum, entry) =>
+            sum + (entry.totalCost || 0), 0
+          );
+
+          // Calculate GST for this subordinate
+          const subordinateGst = calculateGST(subordinateEmployee, subordinateTotalCost);
+          console.log(`  Subordinate ${subordinateEmployee.name}: cost=${subordinateTotalCost}, GST=${subordinateGst}, category=${subordinateEmployee.category}`);
+          subordinateGstTotal += subordinateGst;
+        });
+
+        console.log(`Manager ${manager.employeeName} total subordinate GST: ${subordinateGstTotal}`);
+      }
 
           // Calculate total cost for this subordinate across all their entries
           const subordinateTotalCost = subordinateEntries.reduce(
