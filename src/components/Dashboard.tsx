@@ -383,7 +383,7 @@ export function Dashboard() {
                           }`}
                         >
                           {invoice.profitPercentage >= 0 ? "+" : ""}
-                          {invoice.profitPercentage.toFixed(1)}% profit
+                          {invoice.profitPercentage.toFixed(2)}% profit
                         </div>
                       </div>
                     </div>
