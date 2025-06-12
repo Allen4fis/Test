@@ -256,7 +256,7 @@ export function Dashboard() {
               <div className="flex justify-between items-baseline">
                 <span className="text-sm text-gray-400">Billable:</span>
                 <span className="text-lg font-bold text-green-400">
-                  ${allTimeTotalBillable.toFixed(0)}
+                  ${allTimeTotalBillable.toFixed(2)}
                 </span>
               </div>
               <div className="border-t border-gray-700 pt-2">
