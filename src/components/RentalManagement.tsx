@@ -689,10 +689,94 @@ export function RentalManagement() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Rate</TableHead>
-                        <TableHead>Unit</TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (itemsSortBy === "name") {
+                              setItemsSortDirection(
+                                itemsSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setItemsSortBy("name");
+                              setItemsSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Name
+                            {itemsSortBy === "name" && (
+                              <span className="text-blue-500 text-xs">
+                                {itemsSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (itemsSortBy === "category") {
+                              setItemsSortDirection(
+                                itemsSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setItemsSortBy("category");
+                              setItemsSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Category
+                            {itemsSortBy === "category" && (
+                              <span className="text-blue-500 text-xs">
+                                {itemsSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (itemsSortBy === "dailyRate") {
+                              setItemsSortDirection(
+                                itemsSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setItemsSortBy("dailyRate");
+                              setItemsSortDirection("desc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Rate
+                            {itemsSortBy === "dailyRate" && (
+                              <span className="text-blue-500 text-xs">
+                                {itemsSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
+                        <TableHead
+                          className="cursor-pointer hover:bg-gray-50 select-none"
+                          onClick={() => {
+                            if (itemsSortBy === "unit") {
+                              setItemsSortDirection(
+                                itemsSortDirection === "asc" ? "desc" : "asc",
+                              );
+                            } else {
+                              setItemsSortBy("unit");
+                              setItemsSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            Unit
+                            {itemsSortBy === "unit" && (
+                              <span className="text-blue-500 text-xs">
+                                {itemsSortDirection === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </div>
+                        </TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
