@@ -658,7 +658,7 @@ export function InvoiceManagement() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">
-                  Total Invoiced
+                  Total Invoiced (Billable)
                 </p>
                 <p className="text-2xl font-bold text-green-400">
                   $
