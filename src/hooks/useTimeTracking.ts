@@ -501,6 +501,46 @@ export function useTimeTracking() {
     }));
   };
 
+  // Paid date management for jobs
+  const updateJobPaidDates = (jobId: string, dates: string[]) => {
+    setAppData((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job) =>
+        job.id === jobId ? { ...job, paidDates: dates } : job,
+      ),
+    }));
+  };
+
+  const addPaidDates = (jobId: string, dates: string[]) => {
+    setAppData((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job) =>
+        job.id === jobId
+          ? {
+              ...job,
+              paidDates: [...new Set([...(job.paidDates || []), ...dates])],
+            }
+          : job,
+      ),
+    }));
+  };
+
+  const removePaidDates = (jobId: string, dates: string[]) => {
+    setAppData((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job) =>
+        job.id === jobId
+          ? {
+              ...job,
+              paidDates: (job.paidDates || []).filter(
+                (date) => !dates.includes(date),
+              ),
+            }
+          : job,
+      ),
+    }));
+  };
+
   // Time entry operations
   const addTimeEntry = (entry: Omit<TimeEntry, "id" | "createdAt">) => {
     const now = Date.now();
