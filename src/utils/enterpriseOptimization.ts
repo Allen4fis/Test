@@ -189,11 +189,11 @@ export class DataProcessor {
 
       // Limit concurrency
       if (promises.length >= concurrency) {
-        await Promise.race(promises);
-        promises.splice(
-          promises.findIndex((p) => p === (await Promise.race(promises))),
-          1,
-        );
+        const completedPromise = await Promise.race(promises);
+        const index = promises.findIndex((p) => p === completedPromise);
+        if (index !== -1) {
+          promises.splice(index, 1);
+        }
       }
     }
 
