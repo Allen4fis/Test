@@ -762,7 +762,7 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-4 gap-4 text-center">
+                              <div className="grid grid-cols-5 gap-4 text-center">
                                 <div>
                                   <div className="text-lg font-bold text-blue-400">
                                     {employee.totalHours.toFixed(2)}h
@@ -776,42 +776,16 @@ export function SummaryReports() {
                                     ${employee.totalCost.toFixed(2)}
                                   </div>
                                   <div className="text-xs text-gray-400">
-                                    Cost
+                                    Labor Cost
                                   </div>
                                 </div>
                                 {totalGst > 0 ? (
                                   <div>
-                                    <div className="text-lg font-bold text-orange-400">
-                                      ${totalGst.toFixed(2)}
+                                    <div className="text-lg font-bold text-orange-400">${totalGst.toFixed(2)}
                                     </div>
                                     <div className="text-xs text-gray-400">
                                       GST
                                     </div>
-                                    {employee.gstAmount > 0 &&
-                                    employee.subordinateGstTotal > 0 ? (
-                                      <div className="text-xs">
-                                        <span className="text-orange-300">
-                                          ${employee.gstAmount.toFixed(2)}{" "}
-                                          personal
-                                        </span>
-                                        <span className="text-blue-300">
-                                          {" "}
-                                          + $
-                                          {employee.subordinateGstTotal.toFixed(
-                                            2,
-                                          )}{" "}
-                                          team
-                                        </span>
-                                      </div>
-                                    ) : employee.gstAmount > 0 ? (
-                                      <div className="text-xs text-orange-300">
-                                        Personal GST
-                                      </div>
-                                    ) : (
-                                      <div className="text-xs text-blue-300">
-                                        Team GST
-                                      </div>
-                                    )}
                                   </div>
                                 ) : (
                                   <div>
@@ -823,6 +797,27 @@ export function SummaryReports() {
                                     </div>
                                   </div>
                                 )}
+                                <div>
+                                  {employee.totalDspEarnings > 0 ? (
+                                    <div>
+                                      <div className="text-lg font-bold text-cyan-400">
+                                        ${employee.totalDspEarnings.toFixed(2)}
+                                      </div>
+                                      <div className="text-xs text-gray-400">
+                                        DSP Earnings
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <div className="text-lg font-bold text-gray-500">
+                                        $0.00
+                                      </div>
+                                      <div className="text-xs text-gray-400">
+                                        DSP Earnings
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
                                 <div>
                                   {employee.totalLoaCount > 0 ? (
                                     <div>
@@ -845,88 +840,6 @@ export function SummaryReports() {
                                   )}
                                 </div>
                               </div>
-                            </div>
-
-                            {/* Hour Type Breakdown */}
-                            {employee.hourTypeBreakdown &&
-                              Object.keys(employee.hourTypeBreakdown).length >
-                                0 && (
-                                <div className="space-y-2">
-                                  <div className="text-sm font-medium text-gray-300 mb-2">
-                                    Hour Type Breakdown:
-                                  </div>
-                                  <div className="flex flex-wrap gap-2">
-                                    {Object.entries(employee.hourTypeBreakdown)
-                                      .sort(([, a], [, b]) => b.hours - a.hours)
-                                      .map(([hourType, data]) => (
-                                        <div
-                                          key={hourType}
-                                          className="bg-orange-600/20 border border-orange-500/30 rounded px-3 py-1"
-                                        >
-                                          <div className="text-sm font-medium text-orange-200">
-                                            {hourType}
-                                          </div>
-                                          <div className="text-xs text-orange-300">
-                                            {data.hours.toFixed(2)}h • $
-                                            {data.rateEntries &&
-                                            data.rateEntries.length > 0
-                                              ? (() => {
-                                                  const avgRate =
-                                                    data.rateEntries.reduce(
-                                                      (sum, entry) =>
-                                                        sum +
-                                                        entry.hourlyRate *
-                                                          entry.hours,
-                                                      0,
-                                                    ) /
-                                                    data.rateEntries.reduce(
-                                                      (sum, entry) =>
-                                                        sum + entry.hours,
-                                                      0,
-                                                    );
-                                                  return (
-                                                    data.hours * avgRate
-                                                  ).toFixed(2);
-                                                })()
-                                              : data.cost.toFixed(2)}
-                                            {data.rateEntries &&
-                                              data.rateEntries.length > 0 && (
-                                                <div className="text-orange-400">
-                                                  @$
-                                                  {(
-                                                    data.rateEntries.reduce(
-                                                      (sum, entry) =>
-                                                        sum +
-                                                        entry.hourlyRate *
-                                                          entry.hours,
-                                                      0,
-                                                    ) /
-                                                    data.rateEntries.reduce(
-                                                      (sum, entry) =>
-                                                        sum + entry.hours,
-                                                      0,
-                                                    )
-                                                  ).toFixed(2)}
-                                                  /hr
-                                                </div>
-                                              )}
-                                          </div>
-                                          {/* Province Breakdown */}
-                                          {data.provinces &&
-                                            Object.keys(data.provinces).length >
-                                              0 && (
-                                              <div className="mt-1 pt-1 border-t border-orange-500/20">
-                                                <div className="text-xs text-orange-400 space-y-0.5">
-                                                  {Object.entries(
-                                                    data.provinces,
-                                                  ).map(
-                                                    ([
-                                                      provinceName,
-                                                      provinceData,
-                                                    ]) => (
-                                                      <div
-                                                        key={provinceName}
-                                                        className="truncate"
                                                       >
                                                         {provinceName}:{" "}
                                                         {provinceData.hours.toFixed(
