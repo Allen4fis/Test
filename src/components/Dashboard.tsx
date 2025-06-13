@@ -125,48 +125,51 @@ export function Dashboard({
             // Get rental entries for this job with safe operations
             const jobRentalEntries = safeArray(rentalSummaries).filter(
               (entry) => entry?.jobNumber === job?.jobNumber,
-        );
+            );
 
-        // Calculate total billable (labor + rentals)
-        const laborBillable = jobTimeEntries.reduce(
-          (sum, entry) =>
-            sum + (entry.totalBillableAmount || entry.totalCost || 0),
-          0,
-        );
+            // Calculate total billable (labor + rentals) with safe operations
+            const laborBillable = safeArrayReduce(
+              jobTimeEntries,
+              (sum, entry) =>
+                sum +
+                safeNumber(entry?.totalBillableAmount || entry?.totalCost, 0),
+              0,
+            );
 
-        const rentalBillable = jobRentalEntries.reduce(
-          (sum, entry) => sum + (entry.totalCost || 0),
-          0,
-        );
+            const rentalBillable = safeArrayReduce(
+              jobRentalEntries,
+              (sum, entry) => sum + safeNumber(entry?.totalCost, 0),
+              0,
+            );
 
-        const totalBillable = laborBillable + rentalBillable;
+            const totalBillable = safeNumber(laborBillable) + safeNumber(rentalBillable);
 
-        // Calculate total cost (for profit calculation)
-        const totalCost =
-          jobTimeEntries.reduce(
-            (sum, entry) => sum + (entry.totalCost || 0),
-            0,
-          ) + rentalBillable; // Rental cost equals rental billable
+            // Calculate total cost (for profit calculation) with safe operations
+            const totalCost =
+              safeArrayReduce(
+                jobTimeEntries,
+                (sum, entry) => sum + safeNumber(entry?.totalCost, 0),
+                0,
+              ) + safeNumber(rentalBillable); // Rental cost equals rental billable
 
-        // Calculate profit percentage
-        const profitAmount = totalBillable - totalCost;
-        const profitPercentage =
-          totalBillable > 0 ? (profitAmount / totalBillable) * 100 : 0;
+            // Calculate profit percentage with safe division
+            const profitAmount = totalBillable - totalCost;
+            const profitPercentage = safeDivide(profitAmount * 100, totalBillable, 0);
 
-        return {
-          jobNumber: job.jobNumber,
-          jobName: job.name,
-          totalBillable,
-          totalCost,
-          profitAmount,
-          profitPercentage,
-        };
-      })
-      .filter((invoice) => invoice.totalBillable > 0) // Only jobs with billable amounts
-      .sort((a, b) => b.totalBillable - a.totalBillable) // Sort by highest billable
-      .slice(0, 5); // Top 5
+            return {
+              jobNumber: job?.jobNumber || "Unknown",
+              jobName: job?.name || "Unknown Job",
+              totalBillable,
+              totalCost,
+              profitAmount,
+              profitPercentage,
+            };
+          })
+          .filter((invoice) => safeNumber(invoice?.totalBillable) > 0) // Only jobs with billable amounts
+          .sort((a, b) => safeNumber(b?.totalBillable) - safeNumber(a?.totalBillable)) // Sort by highest billable
+          .slice(0, 5); // Top 5
 
-    return jobInvoiceData;
+        return jobInvoiceData;
   };
 
   // Calculate active metrics
