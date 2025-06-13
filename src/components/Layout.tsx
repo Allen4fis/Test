@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,9 +39,64 @@ export function Layout({ children, timeTracking }: LayoutProps) {
     manualSave,
   } = timeTracking;
 
-  // Use useMemo to ensure navigation items update when counts change
-  const navigationItems = useMemo(
-    () => [
+  // Debug: Track when counts change
+  const prevCounts = useRef({
+    employees: employees.length,
+    jobs: jobs.length,
+    timeEntries: timeEntries.length,
+    rentalItems: rentalItems.length,
+  });
+
+  useEffect(() => {
+    const currentCounts = {
+      employees: employees.length,
+      jobs: jobs.length,
+      timeEntries: timeEntries.length,
+      rentalItems: rentalItems.length,
+    };
+
+    // Log when counts change
+    if (
+      process.env.NODE_ENV === "development" &&
+      (currentCounts.employees !== prevCounts.current.employees ||
+        currentCounts.jobs !== prevCounts.current.jobs ||
+        currentCounts.timeEntries !== prevCounts.current.timeEntries ||
+        currentCounts.rentalItems !== prevCounts.current.rentalItems)
+    ) {
+      console.log("🔄 Layout counts updated:", {
+        employees: `${prevCounts.current.employees} → ${currentCounts.employees}`,
+        jobs: `${prevCounts.current.jobs} → ${currentCounts.jobs}`,
+        timeEntries: `${prevCounts.current.timeEntries} → ${currentCounts.timeEntries}`,
+        rentalItems: `${prevCounts.current.rentalItems} → ${currentCounts.rentalItems}`,
+      });
+    }
+
+    prevCounts.current = currentCounts;
+  }, [employees.length, jobs.length, timeEntries.length, rentalItems.length]);
+
+  // Calculate derived counts with memoization
+  const activeJobsCount = useMemo(() => {
+    const count = jobs.filter((job) => job.isActive).length;
+    console.log("📊 Active jobs count calculated:", count);
+    return count;
+  }, [jobs]);
+
+  const activeRentalItemsCount = useMemo(() => {
+    const count = rentalItems.filter((item) => item.isActive).length;
+    console.log("📊 Active rental items count calculated:", count);
+    return count;
+  }, [rentalItems]);
+
+  // Memoize navigation items to ensure they update when counts change
+  const navigationItems = useMemo(() => {
+    console.log("🔄 Recalculating navigation items with counts:", {
+      employees: employees.length,
+      jobs: activeJobsCount,
+      timeEntries: timeEntries.length,
+      rentalItems: activeRentalItemsCount,
+    });
+
+    return [
       {
         id: "dashboard" as const,
         label: "Dashboard",
@@ -83,7 +138,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         label: "Rentals",
         icon: Truck,
         description: "Equipment & item rentals",
-        count: rentalItems.filter((item) => item.isActive).length,
+        count: activeRentalItemsCount,
         color: "text-cyan-400",
       },
       {
@@ -99,7 +154,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         label: "Jobs",
         icon: Briefcase,
         description: "Manage projects",
-        count: jobs.filter((job) => job.isActive).length,
+        count: activeJobsCount,
         color: "text-indigo-400",
       },
       {
@@ -116,17 +171,19 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         description: "Manage data backups",
         color: "text-amber-400",
       },
-    ],
-    [
-      timeEntries.length,
-      rentalItems.length,
-      employees.length,
-      jobs.length,
-      // Also depend on the filtered counts
-      rentalItems.filter((item) => item.isActive).length,
-      jobs.filter((job) => job.isActive).length,
-    ],
-  );
+    ];
+  }, [
+    employees.length,
+    activeJobsCount,
+    timeEntries.length,
+    activeRentalItemsCount,
+  ]);
+
+  // Memoize the header entry count to ensure reactivity
+  const timeEntriesCount = useMemo(() => {
+    console.log("🔄 Header entries count updated:", timeEntries.length);
+    return timeEntries.length;
+  }, [timeEntries.length]);
 
   return (
     <div className="min-h-screen modern-gradient">
@@ -165,7 +222,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                   }}
                 >
                   <Activity className="h-4 w-4 mr-2" />
-                  {timeEntries.length} entries
+                  {timeEntriesCount} entries
                 </Badge>
               </div>
             </div>
@@ -208,149 +265,98 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-3">
-            <Card className="modern-card hover-scale overflow-hidden">
-              <div
-                className="p-6 border-b border-orange-500/20"
-                style={{
-                  background:
-                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
-                }}
-              >
-                <h2 className="text-xl font-bold text-gray-100 mb-2 flex items-center gap-3">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
-                  Navigation
-                </h2>
-                <p className="text-gray-400 text-sm">Choose your workspace</p>
-              </div>
+            <Card className="sticky top-8 modern-card">
               <div className="p-6">
-                <nav className="space-y-3">
+                <div className="space-y-2">
                   {navigationItems.map((item) => {
-                    const Icon = item.icon;
                     const isActive = selectedView === item.id;
+                    const Icon = item.icon;
 
                     return (
-                      <Button
+                      <button
                         key={item.id}
-                        variant={isActive ? "default" : "ghost"}
-                        className={`w-full justify-start gap-4 h-auto p-4 smooth-transition group ${
+                        onClick={() => setSelectedView(item.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-left group relative overflow-hidden ${
                           isActive
-                            ? "orange-gradient text-white shadow-2xl transform scale-105 font-bold border border-orange-400/30"
-                            : "text-gray-300 hover:bg-gray-800/50 hover:text-white hover:scale-105 border border-transparent hover:border-orange-500/20"
+                            ? "bg-gradient-to-r from-orange-500/20 to-orange-400/10 text-orange-300 shadow-lg border border-orange-500/30"
+                            : "text-gray-300 hover:text-orange-300 hover:bg-gray-800/50"
                         }`}
-                        onClick={() => {
-                          console.log("Navigating to:", item.id);
-                          setSelectedView(item.id);
-                        }}
+                        style={
+                          isActive
+                            ? {
+                                background:
+                                  "linear-gradient(135deg, hsl(24, 100%, 50%, 0.15) 0%, hsl(24, 100%, 60%, 0.05) 100%)",
+                                boxShadow:
+                                  "0 4px 20px rgba(251, 146, 60, 0.15)",
+                              }
+                            : {}
+                        }
                       >
-                        <Icon
-                          className={`h-6 w-6 ${
+                        <div
+                          className={`p-2 rounded-lg transition-all duration-300 ${
                             isActive
-                              ? "drop-shadow-lg"
-                              : `${item.color} group-hover:text-orange-400`
+                              ? "bg-orange-500/20 shadow-lg"
+                              : "bg-gray-700/50 group-hover:bg-orange-500/10"
                           }`}
-                        />
-                        <div className="flex-1 text-left">
+                        >
+                          <Icon
+                            className={`h-5 w-5 transition-all duration-300 ${
+                              isActive
+                                ? "text-orange-400 drop-shadow-lg"
+                                : `${item.color} group-hover:text-orange-400`
+                            }`}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className="font-semibold text-base">
+                            <span
+                              className={`font-medium transition-all duration-300 ${
+                                isActive
+                                  ? "text-orange-200"
+                                  : "text-gray-200 group-hover:text-orange-200"
+                              }`}
+                            >
                               {item.label}
                             </span>
                             {item.count !== undefined && (
                               <Badge
-                                className={`ml-2 ${
+                                key={`${item.id}-${item.count}`} // Force re-render when count changes
+                                className={`text-xs font-bold transition-all duration-300 ${
                                   isActive
-                                    ? "bg-white/20 text-white border-white/30"
-                                    : "bg-orange-500/20 text-orange-300 border-orange-500/30"
+                                    ? "bg-orange-400/30 text-orange-200 border-orange-400/50"
+                                    : "bg-gray-600/50 text-gray-300 border-gray-500/50 group-hover:bg-orange-400/20 group-hover:text-orange-200"
                                 }`}
+                                style={{
+                                  fontSize: "0.75rem",
+                                  padding: "2px 8px",
+                                  minWidth: "24px",
+                                  height: "20px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
                               >
                                 {item.count}
                               </Badge>
                             )}
                           </div>
                           <p
-                            className={`text-sm mt-1 ${
+                            className={`text-xs transition-all duration-300 truncate ${
                               isActive
-                                ? "text-white/80"
-                                : "text-gray-400 group-hover:text-gray-300"
+                                ? "text-orange-300/80"
+                                : "text-gray-400 group-hover:text-orange-300/80"
                             }`}
                           >
                             {item.description}
                           </p>
                         </div>
-                      </Button>
+                      </button>
                     );
                   })}
-                </nav>
-              </div>
-            </Card>
+                </div>
 
-            {/* Enhanced Quick Stats */}
-            <Card className="modern-card mt-8 hover-scale overflow-hidden">
-              <div
-                className="p-6 border-b border-orange-500/20"
-                style={{
-                  background:
-                    "linear-gradient(90deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
-                }}
-              >
-                <h3 className="font-bold text-gray-100 text-lg flex items-center gap-3">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
-                  Quick Analytics
-                </h3>
-              </div>
-              <div className="p-6">
-                <div className="space-y-4">
-                  <div className="glass-card p-4 rounded-xl">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300 font-semibold flex items-center gap-2">
-                        <Users className="h-4 w-4 text-pink-400" />
-                        Total Employees:
-                      </span>
-                      <span className="font-bold text-gray-100 text-xl">
-                        {employees.length}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="glass-card p-4 rounded-xl">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300 font-semibold flex items-center gap-2">
-                        <Briefcase className="h-4 w-4 text-indigo-400" />
-                        Active Jobs:
-                      </span>
-                      <span className="font-bold text-gray-100 text-xl">
-                        {jobs.filter((j) => j.isActive).length}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="glass-card p-4 rounded-xl">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300 font-semibold flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-purple-400" />
-                        Time Entries:
-                      </span>
-                      <span className="font-bold text-gray-100 text-xl">
-                        {timeEntries.length}
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    className="p-4 rounded-xl border border-orange-500/30"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, hsl(24, 100%, 50%, 0.1) 0%, hsl(24, 100%, 50%, 0.05) 100%)",
-                    }}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-orange-200 font-bold flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5 text-orange-400" />
-                        Total Hours:
-                      </span>
-                      <span className="font-bold text-orange-300 text-2xl">
-                        {timeEntries
-                          .reduce((sum, entry) => sum + entry.hours, 0)
-                          .toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
+                <div className="mt-8 pt-6 border-t border-gray-700/50">
+                  <DiscreetReset />
                 </div>
               </div>
             </Card>
@@ -358,15 +364,10 @@ export function Layout({ children, timeTracking }: LayoutProps) {
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <div className="modern-card rounded-3xl overflow-hidden animate-fade-in">
-              <div className="p-8">{children}</div>
-            </div>
+            <div className="space-y-6">{children}</div>
           </div>
         </div>
       </div>
-
-      {/* Discreet reset button - nearly invisible */}
-      <DiscreetReset />
     </div>
   );
 }
