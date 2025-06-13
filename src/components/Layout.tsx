@@ -39,83 +39,94 @@ export function Layout({ children, timeTracking }: LayoutProps) {
     manualSave,
   } = timeTracking;
 
-  const navigationItems = [
-    {
-      id: "dashboard" as const,
-      label: "Dashboard",
-      icon: Home,
-      description: "Overview and analytics",
-      color: "text-blue-400",
-    },
-    {
-      id: "timeEntry" as const,
-      label: "Time Entry",
-      icon: Clock,
-      description: "Log work hours",
-      color: "text-green-400",
-    },
-    {
-      id: "viewer" as const,
-      label: "Time Viewer",
-      icon: Eye,
-      description: "View & manage entries",
-      count: timeEntries.length,
-      color: "text-purple-400",
-    },
-    {
-      id: "reports" as const,
-      label: "Payroll Information",
-      icon: BarChart3,
-      description: "Summary reports",
-      color: "text-orange-400",
-    },
-
-    {
-      id: "invoices" as const,
-      label: "Invoices",
-      icon: Receipt,
-      description: "Manage invoiced dates",
-      color: "text-yellow-400",
-    },
-    {
-      id: "rentals" as const,
-      label: "Rentals",
-      icon: Truck,
-      description: "Equipment & item rentals",
-      count: rentalItems.filter((item) => item.isActive).length,
-      color: "text-cyan-400",
-    },
-    {
-      id: "employees" as const,
-      label: "Employees",
-      icon: Users,
-      description: "Manage staff",
-      count: employees.length,
-      color: "text-pink-400",
-    },
-    {
-      id: "jobs" as const,
-      label: "Jobs",
-      icon: Briefcase,
-      description: "Manage projects",
-      count: jobs.filter((job) => job.isActive).length,
-      color: "text-indigo-400",
-    },
-    {
-      id: "export" as const,
-      label: "Data Export",
-      icon: Download,
-      description: "Export for accountant",
-      color: "text-emerald-400",
-    },
-    {
-      id: "backup" as const,
-      label: "Backup & Restore",
-      icon: Database,
-      description: "Manage data backups",
-      color: "text-amber-400",
-    },
-  ];
+  // Use useMemo to ensure navigation items update when counts change
+  const navigationItems = useMemo(
+    () => [
+      {
+        id: "dashboard" as const,
+        label: "Dashboard",
+        icon: Home,
+        description: "Overview and analytics",
+        color: "text-blue-400",
+      },
+      {
+        id: "timeEntry" as const,
+        label: "Time Entry",
+        icon: Clock,
+        description: "Log work hours",
+        color: "text-green-400",
+      },
+      {
+        id: "viewer" as const,
+        label: "Time Viewer",
+        icon: Eye,
+        description: "View & manage entries",
+        count: timeEntries.length,
+        color: "text-purple-400",
+      },
+      {
+        id: "reports" as const,
+        label: "Payroll Information",
+        icon: BarChart3,
+        description: "Summary reports",
+        color: "text-orange-400",
+      },
+      {
+        id: "invoices" as const,
+        label: "Invoices",
+        icon: Receipt,
+        description: "Manage invoiced dates",
+        color: "text-yellow-400",
+      },
+      {
+        id: "rentals" as const,
+        label: "Rentals",
+        icon: Truck,
+        description: "Equipment & item rentals",
+        count: rentalItems.filter((item) => item.isActive).length,
+        color: "text-cyan-400",
+      },
+      {
+        id: "employees" as const,
+        label: "Employees",
+        icon: Users,
+        description: "Manage staff",
+        count: employees.length,
+        color: "text-pink-400",
+      },
+      {
+        id: "jobs" as const,
+        label: "Jobs",
+        icon: Briefcase,
+        description: "Manage projects",
+        count: jobs.filter((job) => job.isActive).length,
+        color: "text-indigo-400",
+      },
+      {
+        id: "export" as const,
+        label: "Data Export",
+        icon: Download,
+        description: "Export for accountant",
+        color: "text-emerald-400",
+      },
+      {
+        id: "backup" as const,
+        label: "Backup & Restore",
+        icon: Database,
+        description: "Manage data backups",
+        color: "text-amber-400",
+      },
+    ],
+    [
+      timeEntries.length,
+      rentalItems.length,
+      employees.length,
+      jobs.length,
+      // Also depend on the filtered counts
+      rentalItems.filter((item) => item.isActive).length,
+      jobs.filter((job) => job.isActive).length,
+    ],
+  );
 
   return (
     <div className="min-h-screen modern-gradient">
