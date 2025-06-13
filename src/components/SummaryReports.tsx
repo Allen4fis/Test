@@ -1059,7 +1059,7 @@ export function SummaryReports() {
                                                           </span>
                                                         )}{" "}
                                                         @ $
-                                                        {" "}@ ${entry.hourlyRate.toFixed(2)}/h
+                                                        {entry.hourlyRate.toFixed(
                                                           2,
                                                         )}
                                                         /h = $
