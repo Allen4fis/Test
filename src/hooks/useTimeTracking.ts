@@ -15,6 +15,18 @@ import {
   CostSummaryByEmployee,
   CostSummaryByJob,
 } from "@/types";
+import {
+  safeNumber,
+  safeDivide,
+  safeArray,
+  safeArrayReduce,
+  safeArrayMap,
+  safeArrayFilter,
+  safeString,
+  validateAppData,
+  withErrorBoundary,
+  systemHealthCheck,
+} from "@/utils/systemReliability";
 
 // Default data to initialize the app
 const getDefaultAppData = (): AppData => ({
