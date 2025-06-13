@@ -802,6 +802,15 @@ export function TimeEntryViewer() {
                     </TableHead>
                     <TableHead
                       className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("billable")}
+                    >
+                      <div className="flex items-center gap-2">
+                        Job Type
+                        {getSortIcon("billable")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:bg-gray-50"
                       onClick={() => handleSort("hourType")}
                     >
                       <div className="flex items-center gap-2">
@@ -810,25 +819,10 @@ export function TimeEntryViewer() {
                       </div>
                     </TableHead>
                     <TableHead>Province</TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-gray-50"
-                      onClick={() => handleSort("job")}
-                    >
-                      <div className="flex items-center gap-2">
-                        Job
-                        {getSortIcon("job")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer hover:bg-gray-50"
-                      onClick={() => handleSort("billable")}
-                    >
-                      <div className="flex items-center gap-2">
-                        Job Type
-                        {getSortIcon("billable")}
-                      </div>
-                    </TableHead>
-                    <TableHead>Province</TableHead>
+                    <TableHead>Hours</TableHead>
+                    <TableHead>LOA</TableHead>
+                    <TableHead>Billable Rate</TableHead>
+                    <TableHead>Cost Rate</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
