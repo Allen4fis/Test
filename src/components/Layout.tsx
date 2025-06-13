@@ -365,7 +365,9 @@ export function Layout({ children, timeTracking }: LayoutProps) {
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <div className="space-y-6">{children}</div>
+            <ErrorBoundary>
+              <div className="space-y-6">{children}</div>
+            </ErrorBoundary>
           </div>
         </div>
       </div>
