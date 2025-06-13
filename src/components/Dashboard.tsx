@@ -77,18 +77,37 @@ export function Dashboard({
     getAutosaveInfo,
   } = useTimeTracking();
 
-  // Get recent entries (last 7 days)
+  // Get recent entries (last 7 days) with safe array operations
   const getRecentEntries = () => {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    return withErrorBoundary(
+      () => {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    return timeEntrySummaries
-      .filter((summary) => {
-        const entryDate = parseLocalDate(summary.date);
-        return entryDate >= sevenDaysAgo;
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 5);
+        return safeArray(timeEntrySummaries)
+          .filter((summary) => {
+            try {
+              const entryDate = parseLocalDate(summary?.date);
+              return entryDate >= sevenDaysAgo;
+            } catch {
+              return false;
+            }
+          })
+          .sort((a, b) => {
+            try {
+              return (
+                new Date(b?.date || 0).getTime() -
+                new Date(a?.date || 0).getTime()
+              );
+            } catch {
+              return 0;
+            }
+          })
+          .slice(0, 5);
+      },
+      [],
+      "Error getting recent entries",
+    );
   };
 
   // Get top 5 invoices by billable total
