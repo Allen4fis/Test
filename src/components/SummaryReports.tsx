@@ -260,7 +260,7 @@ export function SummaryReports() {
     };
   }, [filteredSummaries, filteredRentalSummaries, employees]);
 
-  // Optimized employee summaries with single pass calculation
+  // Optimized employee summaries with single pass calculation including DSP rates
   const employeeSummariesData = useMemo(() => {
     const employeeGroups = filteredSummaries.reduce(
       (acc, summary) => {
@@ -273,6 +273,8 @@ export function SummaryReports() {
             totalEffectiveHours: 0,
             totalCost: 0,
             totalLoaCount: 0,
+            totalDspEarnings: 0,
+            dspRateInfo: {},
             entries: [],
             hourTypeBreakdown: {},
           };
@@ -284,6 +286,39 @@ export function SummaryReports() {
         group.totalCost += summary.totalCost || 0;
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
+
+        // Calculate DSP earnings for this employee from rental entries
+        const employeeRentalEntries = filteredRentalSummaries.filter(
+          (rental) => rental.employeeName === summary.employeeName,
+        );
+
+        let employeeDspTotal = 0;
+        const dspRatesByItem = {};
+
+        employeeRentalEntries.forEach((rental) => {
+          const dspRate = rental.dspRate || 0;
+          const dspEarning = dspRate * rental.duration * rental.quantity;
+          employeeDspTotal += dspEarning;
+
+          // Track DSP rates by rental item for detailed breakdown
+          if (dspRate > 0) {
+            if (!dspRatesByItem[rental.rentalItemName]) {
+              dspRatesByItem[rental.rentalItemName] = {
+                rate: dspRate,
+                totalEarnings: 0,
+                totalDuration: 0,
+                entries: [],
+              };
+            }
+            dspRatesByItem[rental.rentalItemName].totalEarnings += dspEarning;
+            dspRatesByItem[rental.rentalItemName].totalDuration +=
+              rental.duration * rental.quantity;
+            dspRatesByItem[rental.rentalItemName].entries.push(rental);
+          }
+        });
+
+        group.totalDspEarnings = employeeDspTotal;
+        group.dspRateInfo = dspRatesByItem;
 
         // Build hour type breakdown from individual summary data
         const hourTypeName = summary.hourTypeName || "Unknown";
