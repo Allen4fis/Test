@@ -5,7 +5,7 @@
  * to identify why counts or other reactive data might not be updating.
  */
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 // Track component re-renders
 export const useRenderTracker = (componentName: string) => {
