@@ -976,13 +976,27 @@ export function SummaryReports() {
                             {employee.subordinates &&
                               employee.subordinates.length > 0 && (
                                 <div className="ml-8 space-y-2 mt-2">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <h4 className="text-sm font-semibold text-blue-300">
+                                      Team Members
+                                    </h4>
+                                    <Badge
+                                      variant="outline"
+                                      className="bg-blue-400/10 text-blue-300 border-blue-400/30"
+                                    >
+                                      {employee.subordinates.length} subordinate
+                                      {employee.subordinates.length !== 1
+                                        ? "s"
+                                        : ""}
+                                    </Badge>
+                                  </div>
                                   {employee.subordinates.map((subordinate) => (
                                     <div
                                       key={subordinate.employeeName}
-                                      className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3"
+                                      className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3 space-y-3"
                                     >
                                       <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
-                                      <div className="flex items-center justify-between mb-2">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
                                             ↳
@@ -1051,6 +1065,127 @@ export function SummaryReports() {
                                           </div>
                                         </div>
                                       </div>
+
+                                      {/* Subordinate DSP Rate Breakdown */}
+                                      {subordinate.totalDspEarnings > 0 &&
+                                        subordinate.dspRateInfo &&
+                                        Object.keys(subordinate.dspRateInfo)
+                                          .length > 0 && (
+                                          <div className="mt-2 p-2 bg-cyan-900/20 border border-cyan-500/30 rounded">
+                                            <h5 className="text-xs font-semibold text-cyan-300 mb-1">
+                                              DSP Rate Breakdown
+                                            </h5>
+                                            <div className="grid gap-1">
+                                              {Object.entries(
+                                                subordinate.dspRateInfo,
+                                              ).map(
+                                                ([itemName, info]: [
+                                                  string,
+                                                  any,
+                                                ]) => (
+                                                  <div
+                                                    key={itemName}
+                                                    className="flex items-center justify-between text-xs"
+                                                  >
+                                                    <span className="text-cyan-200">
+                                                      {itemName} ($
+                                                      {info.rate.toFixed(2)}
+                                                      /unit)
+                                                    </span>
+                                                    <span className="text-cyan-300 font-medium">
+                                                      $
+                                                      {info.totalEarnings.toFixed(
+                                                        2,
+                                                      )}
+                                                    </span>
+                                                  </div>
+                                                ),
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+
+                                      {/* Subordinate Hour Type Breakdown */}
+                                      {subordinate.hourTypeBreakdown &&
+                                        Object.keys(
+                                          subordinate.hourTypeBreakdown,
+                                        ).length > 0 && (
+                                          <div className="mt-2">
+                                            <h5 className="text-xs font-semibold text-blue-300 mb-1">
+                                              Hour Type Breakdown
+                                            </h5>
+                                            <div className="grid gap-1">
+                                              {Object.entries(
+                                                subordinate.hourTypeBreakdown,
+                                              ).map(
+                                                ([hourType, data]: [
+                                                  string,
+                                                  any,
+                                                ]) => (
+                                                  <div
+                                                    key={hourType}
+                                                    className="bg-blue-800/20 rounded p-2"
+                                                  >
+                                                    <div className="flex items-center justify-between text-xs">
+                                                      <span className="text-blue-200 font-medium">
+                                                        {hourType}
+                                                      </span>
+                                                      <div className="text-blue-300">
+                                                        {data.hours.toFixed(2)}h
+                                                        {data.effectiveHours !==
+                                                          data.hours && (
+                                                          <span className="text-blue-400">
+                                                            {" "}
+                                                            (
+                                                            {data.effectiveHours.toFixed(
+                                                              2,
+                                                            )}{" "}
+                                                            eff)
+                                                          </span>
+                                                        )}{" "}
+                                                        - $
+                                                        {data.cost.toFixed(2)}
+                                                      </div>
+                                                    </div>
+
+                                                    {/* Province breakdown for subordinate hour types */}
+                                                    {Object.keys(data.provinces)
+                                                      .length > 0 && (
+                                                      <div className="mt-1">
+                                                        <div className="flex flex-wrap gap-1">
+                                                          {Object.entries(
+                                                            data.provinces,
+                                                          ).map(
+                                                            ([
+                                                              provinceName,
+                                                              provinceData,
+                                                            ]: [
+                                                              string,
+                                                              any,
+                                                            ]) => (
+                                                              <div
+                                                                key={
+                                                                  provinceName
+                                                                }
+                                                                className="text-xs bg-blue-700/30 px-1 py-0.5 rounded"
+                                                              >
+                                                                {provinceName}:{" "}
+                                                                {provinceData.hours.toFixed(
+                                                                  1,
+                                                                )}
+                                                                h
+                                                              </div>
+                                                            ),
+                                                          )}
+                                                        </div>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                ),
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
                                     </div>
                                   ))}
                                 </div>
