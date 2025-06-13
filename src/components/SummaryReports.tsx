@@ -846,7 +846,7 @@ export function SummaryReports() {
                               </div>
                             </div>
 
-                            {/* DSP Rate Breakdown - NEW SECTION */}
+                            {/* DSP Rate Breakdown */}
                             {employee.totalDspEarnings > 0 &&
                               Object.keys(employee.dspRateInfo).length > 0 && (
                                 <div className="mt-3 p-3 bg-cyan-900/20 border border-cyan-500/30 rounded-lg">
@@ -895,6 +895,104 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                               )}
+
+                            {/* GST Breakdown - NEW SECTION */}
+                            {totalGst > 0 && (
+                              <div className="mt-3 p-3 bg-orange-900/20 border border-orange-500/30 rounded-lg">
+                                <h4 className="text-sm font-semibold text-orange-300 mb-2">
+                                  GST Breakdown
+                                </h4>
+                                <div className="grid gap-2">
+                                  {/* Manager's own GST */}
+                                  {(employee.gstAmount || 0) > 0 && (
+                                    <div className="flex items-center justify-between text-sm">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-orange-200">
+                                          {employee.employeeName} (Manager)
+                                        </span>
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-orange-400/10 text-orange-300 border-orange-400/30"
+                                        >
+                                          5% GST
+                                        </Badge>
+                                      </div>
+                                      <div className="text-orange-300 font-medium">
+                                        ${(employee.gstAmount || 0).toFixed(2)}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Subordinates GST */}
+                                  {(employee.subordinateGstTotal || 0) > 0 && (
+                                    <>
+                                      <div className="flex items-center justify-between text-sm">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-orange-200">
+                                            Team Members (
+                                            {employee.subordinates?.length || 0}
+                                            )
+                                          </span>
+                                          <Badge
+                                            variant="outline"
+                                            className="bg-orange-400/10 text-orange-300 border-orange-400/30"
+                                          >
+                                            Combined
+                                          </Badge>
+                                        </div>
+                                        <div className="text-orange-300 font-medium">
+                                          $
+                                          {(
+                                            employee.subordinateGstTotal || 0
+                                          ).toFixed(2)}
+                                        </div>
+                                      </div>
+
+                                      {/* Individual subordinate GST breakdown */}
+                                      {employee.subordinates &&
+                                        employee.subordinates.length > 0 && (
+                                          <div className="ml-4 space-y-1 border-l-2 border-orange-500/20 pl-2">
+                                            {employee.subordinates
+                                              .filter(
+                                                (sub) =>
+                                                  (sub.gstAmount || 0) > 0,
+                                              )
+                                              .map((subordinate) => (
+                                                <div
+                                                  key={subordinate.employeeName}
+                                                  className="flex items-center justify-between text-xs"
+                                                >
+                                                  <span className="text-orange-200/80">
+                                                    ↳ {subordinate.employeeName}
+                                                  </span>
+                                                  <span className="text-orange-300">
+                                                    $
+                                                    {(
+                                                      subordinate.gstAmount || 0
+                                                    ).toFixed(2)}
+                                                  </span>
+                                                </div>
+                                              ))}
+                                          </div>
+                                        )}
+                                    </>
+                                  )}
+                                </div>
+                                <div className="mt-2 pt-2 border-t border-orange-500/20 text-sm">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-orange-300 font-medium">
+                                      Total GST Collected:
+                                    </span>
+                                    <span className="text-orange-300 font-bold">
+                                      ${totalGst.toFixed(2)}
+                                    </span>
+                                  </div>
+                                  <div className="text-xs text-orange-400 mt-1">
+                                    Applies to DSPs and contractors only
+                                  </div>
+                                </div>
+                              </div>
+                            )}
 
                             {/* Hour Type Breakdown */}
                             {employee.hourTypeBreakdown &&
