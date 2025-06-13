@@ -184,21 +184,44 @@ export function Dashboard({
     );
   };
 
-  // Calculate active metrics
-  const todaysEntries = timeEntrySummaries.filter(
-    (summary) => summary.date === getTodayString(),
+  // Calculate active metrics with safe operations
+  const todaysEntries = withErrorBoundary(
+    () =>
+      safeArray(timeEntrySummaries).filter(
+        (summary) => summary?.date === getTodayString(),
+      ),
+    [],
+    "Error filtering today's entries",
   );
 
-  const thisWeekEntries = timeEntrySummaries.filter((summary) => {
-    const entryDate = parseLocalDate(summary.date);
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return entryDate >= weekAgo;
-  });
+  const thisWeekEntries = withErrorBoundary(
+    () =>
+      safeArray(timeEntrySummaries).filter((summary) => {
+        try {
+          const entryDate = parseLocalDate(summary?.date);
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return entryDate >= weekAgo;
+        } catch {
+          return false;
+        }
+      }),
+    [],
+    "Error filtering this week's entries",
+  );
 
-  const totalHours = timeEntrySummaries
-    .filter((summary) => summary.hourTypeName !== "Live Out Allowance")
-    .reduce((sum, summary) => sum + summary.hours, 0);
+  const totalHours = withErrorBoundary(
+    () =>
+      safeArrayReduce(
+        safeArray(timeEntrySummaries).filter(
+          (summary) => summary?.hourTypeName !== "Live Out Allowance",
+        ),
+        (sum, summary) => sum + safeNumber(summary?.hours, 0),
+        0,
+      ),
+    0,
+    "Error calculating total hours",
+  );
 
   // Filter for billable jobs only
   const billableJobNumbers = jobs
