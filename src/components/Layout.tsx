@@ -172,6 +172,20 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         description: "Manage data backups",
         color: "text-amber-400",
       },
+      {
+        id: "enterprise-stress-test" as const,
+        label: "Enterprise Test",
+        icon: Activity,
+        description: "Multi-million dollar stress test",
+        color: "text-red-400",
+      },
+      {
+        id: "system-stress-test" as const,
+        label: "System Test",
+        icon: TrendingUp,
+        description: "System stress testing",
+        color: "text-red-400",
+      },
     ];
   }, [
     employees.length,
