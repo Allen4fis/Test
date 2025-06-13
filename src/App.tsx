@@ -5,33 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import {
-  initializeEnterpriseOptimizations,
-  cleanupEnterpriseOptimizations,
-} from "./utils/enterpriseOptimization";
-import { initializeEnterpriseErrorHandling } from "./utils/enterpriseErrorHandling";
-import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
-    // Initialize enterprise-grade optimizations and error handling
-    console.log("🚀 Initializing Enterprise-Grade System...");
-
-    initializeEnterpriseOptimizations();
-    initializeEnterpriseErrorHandling();
-
-    console.log(
-      "✅ Enterprise System Ready for Multi-Million Dollar Operations",
-    );
-
-    // Cleanup on unmount
-    return () => {
-      cleanupEnterpriseOptimizations();
-    };
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

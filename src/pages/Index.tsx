@@ -14,8 +14,6 @@ import { RentalManagement } from "@/components/RentalManagement";
 import { DatabaseErrorHandler } from "@/components/DatabaseErrorHandler";
 import { DataExport } from "@/components/DataExport";
 import { BackupManagement } from "@/components/BackupManagement";
-import EnterpriseStressTestRunner from "@/components/EnterpriseStressTestRunner";
-import SystemStressTester from "@/components/SystemStressTester";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 import { useGlobalAutosave } from "@/hooks/useGlobalAutosave";
@@ -152,12 +150,6 @@ const Index = () => {
         break;
       case "backup":
         component = <BackupManagement />;
-        break;
-      case "enterprise-stress-test":
-        component = <EnterpriseStressTestRunner />;
-        break;
-      case "system-stress-test":
-        component = <SystemStressTester />;
         break;
       default:
         component = <Dashboard />;

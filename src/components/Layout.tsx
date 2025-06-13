@@ -16,7 +16,6 @@ import {
   Database,
   Save,
   Activity,
-  TrendingUp,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
@@ -171,20 +170,6 @@ export function Layout({ children, timeTracking }: LayoutProps) {
         icon: Database,
         description: "Manage data backups",
         color: "text-amber-400",
-      },
-      {
-        id: "enterprise-stress-test" as const,
-        label: "Enterprise Test",
-        icon: Activity,
-        description: "Multi-million dollar stress test",
-        color: "text-red-400",
-      },
-      {
-        id: "system-stress-test" as const,
-        label: "System Test",
-        icon: TrendingUp,
-        description: "System stress testing",
-        color: "text-red-400",
       },
     ];
   }, [
