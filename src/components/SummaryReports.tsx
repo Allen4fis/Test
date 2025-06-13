@@ -1059,7 +1059,7 @@ export function SummaryReports() {
                                                           </span>
                                                         )}{" "}
                                                         @ $
-                                                        {employee.baseCostWage.toFixed(
+                                                        {" "}@ ${entry.hourlyRate.toFixed(2)}/h
                                                           2,
                                                         )}
                                                         /h = $
