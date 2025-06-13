@@ -342,9 +342,11 @@ export function SummaryReports() {
 
         // Track individual rate entries for this hour type
         if (summary.hours > 0) {
-          // Calculate hourly cost excluding LOA and other non-hourly costs
-          const hourlyCost = summary.effectiveHours * summary.costWage;
-          const hourlyRate = hourlyCost / summary.hours;
+          // Calculate the actual hourly rate used for this entry
+          // Since totalCost includes LOA costs, we need to calculate just the hourly portion
+          const loaCost = (summary.loaCount || 0) * 200;
+          const hourlyCost = summary.totalCost - loaCost;
+          const hourlyRate = hourlyCost / summary.effectiveHours; // Rate per effective hour
 
           group.hourTypeBreakdown[hourTypeName].rateEntries.push({
             date: summary.date,
