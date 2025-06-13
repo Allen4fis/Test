@@ -1042,12 +1042,19 @@ export function SummaryReports() {
                                                       className="text-xs bg-gray-600/30 px-2 py-1 rounded flex justify-between items-center"
                                                     >
                                                       <span className="text-gray-300">
-                                                        )}{" "}
-                                                        @ $
-                                                        {employee.baseCostWage.toFixed(
-                                                          2,
-                                                        )}
-                                                        /h = $
+                                                        {entry.date}
+                                                      </span>
+                                                      <span className="text-gray-200">
+                                                        {entry.hours.toFixed(2)}
+                                                        h
+                                                        {entry.effectiveHours !==
+                                                          entry.hours && (
+                                                          <span className="text-gray-400">
+                                                            {" "}
+                                                            (
+                                                            {entry.effectiveHours.toFixed(
+                                                              2,
+                                                            )}{" "}
                                                             eff)
                                                           </span>
                                                         )}{" "}
