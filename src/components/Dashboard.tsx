@@ -40,6 +40,13 @@ import {
   formatLocalDate,
   getTodayString,
 } from "@/utils/dateUtils";
+import {
+  safeNumber,
+  safeDivide,
+  safeArray,
+  safeArrayReduce,
+  withErrorBoundary,
+} from "@/utils/systemReliability";
 
 interface DashboardProps {
   autosaveInfo?: {
