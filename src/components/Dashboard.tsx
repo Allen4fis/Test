@@ -110,19 +110,21 @@ export function Dashboard({
     );
   };
 
-  // Get top 5 invoices by billable total
+  // Get top 5 invoices by billable total with safe calculations
   const getTopInvoices = () => {
-    const jobInvoiceData = jobs
-      .filter((job) => job.isBillable !== false) // Only include billable jobs
-      .map((job) => {
-        // Get time entries for this job
-        const jobTimeEntries = timeEntrySummaries.filter(
-          (entry) => entry.jobNumber === job.jobNumber,
-        );
+    return withErrorBoundary(
+      () => {
+        const jobInvoiceData = safeArray(jobs)
+          .filter((job) => job?.isBillable !== false) // Only include billable jobs
+          .map((job) => {
+            // Get time entries for this job with safe operations
+            const jobTimeEntries = safeArray(timeEntrySummaries).filter(
+              (entry) => entry?.jobNumber === job?.jobNumber,
+            );
 
-        // Get rental entries for this job
-        const jobRentalEntries = rentalSummaries.filter(
-          (entry) => entry.jobNumber === job.jobNumber,
+            // Get rental entries for this job with safe operations
+            const jobRentalEntries = safeArray(rentalSummaries).filter(
+              (entry) => entry?.jobNumber === job?.jobNumber,
         );
 
         // Calculate total billable (labor + rentals)
