@@ -142,7 +142,8 @@ export function Dashboard({
               0,
             );
 
-            const totalBillable = safeNumber(laborBillable) + safeNumber(rentalBillable);
+            const totalBillable =
+              safeNumber(laborBillable) + safeNumber(rentalBillable);
 
             // Calculate total cost (for profit calculation) with safe operations
             const totalCost =
@@ -154,7 +155,11 @@ export function Dashboard({
 
             // Calculate profit percentage with safe division
             const profitAmount = totalBillable - totalCost;
-            const profitPercentage = safeDivide(profitAmount * 100, totalBillable, 0);
+            const profitPercentage = safeDivide(
+              profitAmount * 100,
+              totalBillable,
+              0,
+            );
 
             return {
               jobNumber: job?.jobNumber || "Unknown",
@@ -166,10 +171,17 @@ export function Dashboard({
             };
           })
           .filter((invoice) => safeNumber(invoice?.totalBillable) > 0) // Only jobs with billable amounts
-          .sort((a, b) => safeNumber(b?.totalBillable) - safeNumber(a?.totalBillable)) // Sort by highest billable
+          .sort(
+            (a, b) =>
+              safeNumber(b?.totalBillable) - safeNumber(a?.totalBillable),
+          ) // Sort by highest billable
           .slice(0, 5); // Top 5
 
         return jobInvoiceData;
+      },
+      [],
+      "Error calculating top invoices",
+    );
   };
 
   // Calculate active metrics
