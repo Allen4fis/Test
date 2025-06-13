@@ -1261,14 +1261,14 @@ export function SummaryReports() {
                                                         )}{" "}
                                                         - $
                                                         {data.cost.toFixed(2)}
-                                                        {data.hours > 0 && (
+                                                        {subordinate.baseCostWage >
+                                                          0 && (
                                                           <span className="text-yellow-300">
                                                             {" "}
                                                             ($
-                                                            {(
-                                                              data.cost /
-                                                              data.hours
-                                                            ).toFixed(2)}
+                                                            {subordinate.baseCostWage.toFixed(
+                                                              2,
+                                                            )}
                                                             /h)
                                                           </span>
                                                         )}
