@@ -1336,7 +1336,7 @@ export function SummaryReports() {
                                                             Daily Breakdown (
                                                             {
                                                               data.rateEntries
-                                                                {" "}@ ${employee.baseCostWage.toFixed(2)}/h
+                                                                .length
                                                             }{" "}
                                                             entries):
                                                           </div>
