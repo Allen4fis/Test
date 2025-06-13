@@ -153,6 +153,12 @@ const Index = () => {
       case "backup":
         component = <BackupManagement />;
         break;
+      case "enterprise-stress-test":
+        component = <EnterpriseStressTestRunner />;
+        break;
+      case "system-stress-test":
+        component = <SystemStressTester />;
+        break;
       default:
         component = <Dashboard />;
     }
