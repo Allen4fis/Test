@@ -786,7 +786,9 @@ export function SummaryReports() {
                                       ${totalGst.toFixed(2)}
                                     </div>
                                     <div className="text-xs text-gray-400">
-                                      GST
+                                      {employee.subordinateGstTotal > 0
+                                        ? "Total GST"
+                                        : "GST"}
                                     </div>
                                   </div>
                                 ) : (
