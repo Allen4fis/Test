@@ -204,7 +204,7 @@ const HourTypeBreakdown = memo(
                   </div>
 
                   {/* Detailed entries breakdown */}
-                  {data.rateEntries && data.rateEntries.length > 1 && (
+                  {data.rateEntries && data.rateEntries.length > 0 && (
                     <div className="mt-2">
                       <div className="text-xs text-gray-400 mb-1">
                         Daily Breakdown ({data.rateEntries.length} entries):
