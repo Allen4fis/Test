@@ -1459,40 +1459,6 @@ export function SummaryReports() {
             </CardContent>
           </Card>
         </TabsContent>
-
-        {/* Time Analysis Tab */}
-        <TabsContent value="time-analysis">
-          <Card className="bg-gray-900 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-gray-100">Time Analysis</CardTitle>
-              <CardDescription className="text-gray-300">
-                Detailed breakdown of time allocation and productivity metrics
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-gray-500">
-                Time analysis features coming soon...
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Job Performance Tab */}
-        <TabsContent value="job-performance">
-          <Card className="bg-gray-900 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-gray-100">Job Performance</CardTitle>
-              <CardDescription className="text-gray-300">
-                Job profitability and performance analysis
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-gray-500">
-                Job performance analysis features coming soon...
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );
