@@ -468,7 +468,6 @@ export function JobManagement() {
                     )}
                   </div>
                 </TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Billing Type</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
