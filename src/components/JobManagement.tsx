@@ -484,6 +484,9 @@ export function JobManagement() {
                     </Badge>
                   </TableCell>
                   <TableCell>
+                    {new Date(job.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
                     <Badge
                       variant={(job.isBillable ?? true) ? "default" : "outline"}
                       className={
