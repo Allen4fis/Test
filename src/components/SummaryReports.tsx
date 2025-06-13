@@ -93,37 +93,34 @@ const calculateGST = (employee: any, totalCost: number): number => {
   // Also apply GST to employees who have managers but no explicit category (subordinate contractors)
   if (
     employee?.managerId &&
-    (!employee.category || employee.category !== "employee")
+    employee?.category !== "employee" &&
+    !employee?.category
   ) {
     return totalCost * 0.05;
   }
   return 0;
 };
 
+const getInitialDateFilter = () => {
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  return {
+    start: startOfMonth.toISOString().split("T")[0],
+    end: today.toISOString().split("T")[0],
+  };
+};
+
 export function SummaryReports() {
   const {
     employees,
     jobs,
-    hourTypes,
-    provinces,
-    timeEntries,
     timeEntrySummaries,
     rentalSummaries,
+    hourTypes,
+    provinces,
   } = useTimeTracking();
 
-  // Get initial date range (last 30 days)
-  const getInitialDateFilter = () => {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 30);
-
-    return {
-      start: startDate.toISOString().split("T")[0],
-      end: endDate.toISOString().split("T")[0],
-    };
-  };
-
-  // State for filters
+  // Filter state
   const [dateFilter, setDateFilter] = useState(getInitialDateFilter());
   const [employeeFilter, setEmployeeFilter] = useState("all-employees");
   const [jobFilter, setJobFilter] = useState("all-jobs");
@@ -131,15 +128,11 @@ export function SummaryReports() {
   const [includeInvoiced, setIncludeInvoiced] = useState(false);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
-  // Filter summaries based on selected criteria
+  // Filter time entries based on criteria
   const filteredSummaries = useMemo(() => {
     return timeEntrySummaries.filter((summary) => {
       // Date filter
-      const summaryDate = parseLocalDate(summary.date);
-      const startDate = parseLocalDate(dateFilter.start);
-      const endDate = parseLocalDate(dateFilter.end);
-
-      if (summaryDate < startDate || summaryDate > endDate) {
+      if (summary.date < dateFilter.start || summary.date > dateFilter.end) {
         return false;
       }
 
@@ -174,6 +167,14 @@ export function SummaryReports() {
         return false;
       }
 
+      // Invoice filter
+      if (!includeInvoiced) {
+        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
+        if (job?.invoicedDates.includes(summary.date)) {
+          return false;
+        }
+      }
+
       return true;
     });
   }, [
@@ -182,18 +183,18 @@ export function SummaryReports() {
     employeeFilter,
     jobFilter,
     provinceFilter,
+    includeInvoiced,
     jobs,
   ]);
 
-  // Filter rental summaries
+  // Filter rental summaries based on same criteria
   const filteredRentalSummaries = useMemo(() => {
     return rentalSummaries.filter((rental) => {
-      // Date filter - use start date for filtering
-      const rentalDate = parseLocalDate(rental.startDate);
-      const startDate = parseLocalDate(dateFilter.start);
-      const endDate = parseLocalDate(dateFilter.end);
-
-      if (rentalDate < startDate || rentalDate > endDate) {
+      // Date filter
+      if (
+        rental.startDate < dateFilter.start ||
+        rental.startDate > dateFilter.end
+      ) {
         return false;
       }
 
@@ -380,7 +381,7 @@ export function SummaryReports() {
     return Object.values(employeeGroups).filter(
       (group) => showEmptyResults || group.totalHours > 0,
     );
-  }, [filteredSummaries, showEmptyResults]);
+  }, [filteredSummaries, filteredRentalSummaries, showEmptyResults]);
 
   // Calculate hierarchical employee summaries (managers and subordinates)
   const hierarchicalEmployeeSummaries = useMemo(() => {
@@ -721,7 +722,7 @@ export function SummaryReports() {
                         <div className="text-sm text-gray-300">Total GST</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-400">
+                        <div className="text-2xl font-bold text-cyan-400">
                           ${summaryStats.totalDspEarnings.toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-300">
@@ -781,7 +782,8 @@ export function SummaryReports() {
                                 </div>
                                 {totalGst > 0 ? (
                                   <div>
-                                    <div className="text-lg font-bold text-orange-400">${totalGst.toFixed(2)}
+                                    <div className="text-lg font-bold text-orange-400">
+                                      ${totalGst.toFixed(2)}
                                     </div>
                                     <div className="text-xs text-gray-400">
                                       GST
@@ -840,20 +842,117 @@ export function SummaryReports() {
                                   )}
                                 </div>
                               </div>
-                                                      >
-                                                        {provinceName}:{" "}
-                                                        {provinceData.hours.toFixed(
-                                                          2,
-                                                        )}
-                                                        h
-                                                      </div>
-                                                    ),
-                                                  )}
-                                                </div>
-                                              </div>
-                                            )}
+                            </div>
+
+                            {/* DSP Rate Breakdown - NEW SECTION */}
+                            {employee.totalDspEarnings > 0 &&
+                              Object.keys(employee.dspRateInfo).length > 0 && (
+                                <div className="mt-3 p-3 bg-cyan-900/20 border border-cyan-500/30 rounded-lg">
+                                  <h4 className="text-sm font-semibold text-cyan-300 mb-2">
+                                    DSP Rate Breakdown
+                                  </h4>
+                                  <div className="grid gap-2">
+                                    {Object.entries(employee.dspRateInfo).map(
+                                      ([itemName, info]: [string, any]) => (
+                                        <div
+                                          key={itemName}
+                                          className="flex items-center justify-between text-sm"
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-cyan-200">
+                                              {itemName}
+                                            </span>
+                                            <Badge
+                                              variant="outline"
+                                              className="bg-cyan-400/10 text-cyan-300 border-cyan-400/30"
+                                            >
+                                              ${info.rate.toFixed(2)}/unit
+                                            </Badge>
+                                          </div>
+                                          <div className="text-right">
+                                            <div className="text-cyan-300 font-medium">
+                                              ${info.totalEarnings.toFixed(2)}
+                                            </div>
+                                            <div className="text-xs text-cyan-400">
+                                              {info.totalDuration} units
+                                            </div>
+                                          </div>
                                         </div>
-                                      ))}
+                                      ),
+                                    )}
+                                  </div>
+                                  <div className="mt-2 pt-2 border-t border-cyan-500/20 text-sm">
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-cyan-300 font-medium">
+                                        Total DSP Earnings:
+                                      </span>
+                                      <span className="text-cyan-300 font-bold">
+                                        ${employee.totalDspEarnings.toFixed(2)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                            {/* Hour Type Breakdown */}
+                            {employee.hourTypeBreakdown &&
+                              Object.keys(employee.hourTypeBreakdown).length >
+                                0 && (
+                                <div className="space-y-2">
+                                  <h4 className="text-sm font-semibold text-gray-300">
+                                    Hour Type Breakdown
+                                  </h4>
+                                  <div className="grid gap-2">
+                                    {Object.entries(
+                                      employee.hourTypeBreakdown,
+                                    ).map(([hourType, data]: [string, any]) => (
+                                      <div
+                                        key={hourType}
+                                        className="bg-gray-700/30 rounded p-2"
+                                      >
+                                        <div className="flex items-center justify-between mb-1">
+                                          <span className="text-sm font-medium text-gray-200">
+                                            {hourType}
+                                          </span>
+                                          <div className="text-sm text-gray-300">
+                                            {data.hours.toFixed(2)}h (
+                                            {data.effectiveHours.toFixed(2)}{" "}
+                                            effective) - ${data.cost.toFixed(2)}
+                                          </div>
+                                        </div>
+
+                                        {/* Province breakdown for this hour type */}
+                                        {Object.keys(data.provinces).length >
+                                          0 && (
+                                          <div className="mt-2">
+                                            <div className="text-xs text-gray-400 mb-1">
+                                              Provinces:
+                                            </div>
+                                            <div className="flex flex-wrap gap-1">
+                                              {Object.entries(
+                                                data.provinces,
+                                              ).map(
+                                                ([provinceName, provinceData]: [
+                                                  string,
+                                                  any,
+                                                ]) => (
+                                                  <div
+                                                    key={provinceName}
+                                                    className="text-xs bg-gray-600/50 px-2 py-1 rounded"
+                                                  >
+                                                    {provinceName}:{" "}
+                                                    {provinceData.hours.toFixed(
+                                                      2,
+                                                    )}
+                                                    h
+                                                  </div>
+                                                ),
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
                                   </div>
                                   {Object.keys(employee.hourTypeBreakdown)
                                     .length > 0 && (
@@ -877,118 +976,116 @@ export function SummaryReports() {
                             {employee.subordinates &&
                               employee.subordinates.length > 0 && (
                                 <div className="ml-8 space-y-2 mt-2">
-                                  {employee.subordinates.map((subordinate) => {
-                                    const subDspCalc = {
-                                      dspEarnings: subordinate.dspEarnings || 0,
-                                    };
-
-                                    return (
-                                      <div
-                                        key={subordinate.employeeName}
-                                        className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3"
-                                      >
-                                        <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
-                                        <div className="flex items-center justify-between mb-2">
-                                          <div className="flex items-center gap-2">
-                                            <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-                                              ↳
-                                            </span>
-                                            <div>
-                                              <div className="font-medium text-blue-300">
-                                                {subordinate.employeeName}
-                                              </div>
-                                              <div className="text-xs text-blue-200">
-                                                {subordinate.employeeTitle}
-                                              </div>
+                                  {employee.subordinates.map((subordinate) => (
+                                    <div
+                                      key={subordinate.employeeName}
+                                      className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3"
+                                    >
+                                      <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
+                                      <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+                                            ↳
+                                          </span>
+                                          <div>
+                                            <div className="font-medium text-blue-300">
+                                              {subordinate.employeeName}
                                             </div>
-                                          </div>
-                                        </div>
-                                        <div className="grid grid-cols-4 gap-3 text-center">
-                                          <div className="text-center">
-                                            <div className="font-semibold text-blue-300">
-                                              {subordinate.totalHours.toFixed(
-                                                2,
-                                              )}
-                                              h
-                                            </div>
-                                            <div className="text-xs text-blue-400">
-                                              Hours
-                                            </div>
-                                          </div>
-                                          <div className="text-center">
-                                            <div className="font-semibold text-green-300">
-                                              $
-                                              {subordinate.totalCost.toFixed(2)}
-                                            </div>
-                                            <div className="text-xs text-blue-400">
-                                              Cost
-                                            </div>
-                                          </div>
-                                          <div className="text-center">
-                                            <div className="font-semibold text-orange-300">
-                                              $
-                                              {(
-                                                subordinate.gstAmount || 0
-                                              ).toFixed(2)}
-                                            </div>
-                                            <div className="text-xs text-blue-400">
-                                              GST
-                                            </div>
-                                          </div>
-                                          <div className="text-center">
-                                            {subDspCalc.dspEarnings > 0 ? (
-                                              <div className="font-semibold text-purple-300">
-                                                $
-                                                {subDspCalc.dspEarnings.toFixed(
-                                                  2,
-                                                )}
-                                              </div>
-                                            ) : (
-                                              <div className="text-blue-400">
-                                                -
-                                              </div>
-                                            )}
-                                            <div className="text-xs text-blue-400">
-                                              DSP
+                                            <div className="text-xs text-blue-200">
+                                              {subordinate.employeeTitle}
                                             </div>
                                           </div>
                                         </div>
                                       </div>
-                                    );
-                                  })}
+                                      <div className="grid grid-cols-5 gap-3 text-center">
+                                        <div className="text-center">
+                                          <div className="font-semibold text-blue-300">
+                                            {subordinate.totalHours.toFixed(2)}h
+                                          </div>
+                                          <div className="text-xs text-blue-400">
+                                            Hours
+                                          </div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="font-semibold text-green-300">
+                                            ${subordinate.totalCost.toFixed(2)}
+                                          </div>
+                                          <div className="text-xs text-blue-400">
+                                            Labor Cost
+                                          </div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="font-semibold text-orange-300">
+                                            $
+                                            {(
+                                              subordinate.gstAmount || 0
+                                            ).toFixed(2)}
+                                          </div>
+                                          <div className="text-xs text-blue-400">
+                                            GST
+                                          </div>
+                                        </div>
+                                        <div className="text-center">
+                                          {subordinate.totalDspEarnings > 0 ? (
+                                            <div className="font-semibold text-cyan-300">
+                                              $
+                                              {subordinate.totalDspEarnings.toFixed(
+                                                2,
+                                              )}
+                                            </div>
+                                          ) : (
+                                            <div className="text-blue-400">
+                                              $0.00
+                                            </div>
+                                          )}
+                                          <div className="text-xs text-blue-400">
+                                            DSP Earnings
+                                          </div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="font-semibold text-purple-300">
+                                            {subordinate.totalLoaCount || 0}
+                                          </div>
+                                          <div className="text-xs text-blue-400">
+                                            LOA
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
                                 </div>
                               )}
                           </div>
                         </div>
                       );
                     })}
+
+                    {/* Pagination Controls */}
+                    {hierarchicalEmployeeSummaries.length > itemsPerPage && (
+                      <div className="mt-6">
+                        <PaginationControls
+                          currentPage={pagination.currentPage}
+                          totalPages={pagination.totalPages}
+                          totalItems={pagination.totalItems}
+                          pageInfo={pagination.pageInfo}
+                          canGoNext={pagination.canGoNext}
+                          canGoPrevious={pagination.canGoPrevious}
+                          onPageChange={pagination.goToPage}
+                          onNextPage={pagination.goToNextPage}
+                          onPreviousPage={pagination.goToPreviousPage}
+                          itemsPerPage={itemsPerPage}
+                          onItemsPerPageChange={(newItemsPerPage) => {
+                            setItemsPerPage(newItemsPerPage);
+                            pagination.goToPage(1);
+                          }}
+                          itemsPerPageOptions={[5, 10, 20, 50]}
+                          className="border-t border-gray-700/50 pt-4"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-
-              {/* Pagination Controls */}
-              {hierarchicalEmployeeSummaries.length > 0 && (
-                <div className="mt-6">
-                  <PaginationControls
-                    currentPage={pagination.currentPage}
-                    totalPages={pagination.totalPages}
-                    totalItems={pagination.totalItems}
-                    pageInfo={pagination.pageInfo}
-                    canGoNext={pagination.canGoNext}
-                    canGoPrevious={pagination.canGoPrevious}
-                    onPageChange={pagination.goToPage}
-                    onNextPage={pagination.goToNextPage}
-                    onPreviousPage={pagination.goToPreviousPage}
-                    itemsPerPage={itemsPerPage}
-                    onItemsPerPageChange={(newItemsPerPage) => {
-                      setItemsPerPage(newItemsPerPage);
-                      pagination.goToPage(1);
-                    }}
-                    itemsPerPageOptions={[5, 10, 20, 50]}
-                    className="border-t border-gray-700/50 pt-4"
-                  />
-                </div>
-              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -997,17 +1094,14 @@ export function SummaryReports() {
         <TabsContent value="time-analysis">
           <Card className="bg-gray-900 border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-100">
-                <Clock className="h-5 w-5 text-blue-400" />
-                Time Analysis
-              </CardTitle>
+              <CardTitle className="text-gray-100">Time Analysis</CardTitle>
               <CardDescription className="text-gray-300">
-                Detailed breakdown of time entries by various categories
+                Detailed breakdown of time allocation and productivity metrics
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-gray-500">
-                Time analysis content will be implemented here
+                Time analysis features coming soon...
               </div>
             </CardContent>
           </Card>
@@ -1017,17 +1111,14 @@ export function SummaryReports() {
         <TabsContent value="job-performance">
           <Card className="bg-gray-900 border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-100">
-                <TrendingUp className="h-5 w-5 text-green-400" />
-                Job Performance
-              </CardTitle>
+              <CardTitle className="text-gray-100">Job Performance</CardTitle>
               <CardDescription className="text-gray-300">
-                Analysis of job costs, efficiency, and profitability
+                Job profitability and performance analysis
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-gray-500">
-                Job performance content will be implemented here
+                Job performance analysis features coming soon...
               </div>
             </CardContent>
           </Card>
