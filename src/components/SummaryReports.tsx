@@ -479,10 +479,8 @@ export function SummaryReports() {
       </div>
 
       <Tabs defaultValue="payroll-info" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-1">
           <TabsTrigger value="payroll-info">Payroll Information</TabsTrigger>
-          <TabsTrigger value="time-analysis">Time Analysis</TabsTrigger>
-          <TabsTrigger value="job-performance">Job Performance</TabsTrigger>
         </TabsList>
 
         {/* Payroll Information Tab */}
