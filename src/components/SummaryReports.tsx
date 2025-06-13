@@ -404,6 +404,7 @@ export function SummaryReports() {
         managerName: manager?.name,
         managerId: employee?.managerId,
         gstAmount,
+        baseCostWage: employee?.costWage || 0,
       };
     });
 
