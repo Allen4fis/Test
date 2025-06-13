@@ -1327,6 +1327,64 @@ export function SummaryReports() {
                                                       </div>
                                                     </div>
 
+                                                    {/* Detailed entries breakdown for subordinate hour type */}
+                                                    {data.rateEntries &&
+                                                      data.rateEntries.length >
+                                                        1 && (
+                                                        <div className="mt-1">
+                                                          <div className="text-xs text-blue-400 mb-1">
+                                                            Daily Breakdown (
+                                                            {
+                                                              data.rateEntries
+                                                                .length
+                                                            }{" "}
+                                                            entries):
+                                                          </div>
+                                                          <div className="space-y-1 max-h-24 overflow-y-auto">
+                                                            {data.rateEntries.map(
+                                                              (
+                                                                entry: any,
+                                                                index: number,
+                                                              ) => (
+                                                                <div
+                                                                  key={`${entry.date}-${index}`}
+                                                                  className="text-xs bg-blue-700/20 px-2 py-1 rounded flex justify-between items-center"
+                                                                >
+                                                                  <span className="text-blue-300">
+                                                                    {entry.date}
+                                                                  </span>
+                                                                  <span className="text-blue-200">
+                                                                    {entry.hours.toFixed(
+                                                                      2,
+                                                                    )}
+                                                                    h
+                                                                    {entry.effectiveHours !==
+                                                                      entry.hours && (
+                                                                      <span className="text-blue-400">
+                                                                        {" "}
+                                                                        (
+                                                                        {entry.effectiveHours.toFixed(
+                                                                          2,
+                                                                        )}{" "}
+                                                                        eff)
+                                                                      </span>
+                                                                    )}{" "}
+                                                                    @ $
+                                                                    {subordinate.baseCostWage.toFixed(
+                                                                      2,
+                                                                    )}
+                                                                    /h = $
+                                                                    {entry.totalCost.toFixed(
+                                                                      2,
+                                                                    )}
+                                                                  </span>
+                                                                </div>
+                                                              ),
+                                                            )}
+                                                          </div>
+                                                        </div>
+                                                      )}
+
                                                     {/* Province breakdown for subordinate hour types */}
                                                     {Object.keys(data.provinces)
                                                       .length > 0 && (
