@@ -1111,13 +1111,28 @@ export function SummaryReports() {
                                           </div>
                                         </div>
                                       </div>
-                                      <div className="grid grid-cols-5 gap-3 text-center">
+                                      <div className="grid grid-cols-6 gap-3 text-center">
                                         <div className="text-center">
                                           <div className="font-semibold text-blue-300">
                                             {subordinate.totalHours.toFixed(2)}h
                                           </div>
                                           <div className="text-xs text-blue-400">
                                             Hours
+                                          </div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="font-semibold text-yellow-300">
+                                            $
+                                            {subordinate.totalHours > 0
+                                              ? (
+                                                  subordinate.totalCost /
+                                                  subordinate.totalHours
+                                                ).toFixed(2)
+                                              : "0.00"}
+                                            /h
+                                          </div>
+                                          <div className="text-xs text-blue-400">
+                                            Hourly Cost
                                           </div>
                                         </div>
                                         <div className="text-center">
