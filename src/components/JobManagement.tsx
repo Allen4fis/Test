@@ -498,9 +498,6 @@ export function JobManagement() {
                       {(job.isBillable ?? true) ? "Billable" : "Non-Billable"}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    {new Date(job.createdAt).toLocaleDateString()}
-                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button
