@@ -896,25 +896,25 @@ export function SummaryReports() {
                     <div className="grid grid-cols-4 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-400">
-                          {summaryStats.totalHours.toFixed(2)}h
+                          {filteredSummaryStats.totalHours.toFixed(2)}h
                         </div>
                         <div className="text-sm text-gray-300">Total Hours</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-400">
-                          ${summaryStats.totalCombinedCost.toFixed(2)}
+                          ${filteredSummaryStats.totalCombinedCost.toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-300">Total Cost</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-orange-400">
-                          ${summaryStats.totalGst.toFixed(2)}
+                          ${filteredSummaryStats.totalGst.toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-300">Total GST</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-cyan-400">
-                          ${summaryStats.totalDspEarnings.toFixed(2)}
+                          ${filteredSummaryStats.totalDspEarnings.toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-300">
                           Total DSP Rentals
