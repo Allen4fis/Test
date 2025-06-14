@@ -515,6 +515,7 @@ export function SummaryReports() {
     setJobFilter("all-jobs");
     setProvinceFilter("all-provinces");
     setBillableFilter("all");
+    setEmployeeTypeFilter("all");
     setIncludeInvoiced(false);
     setShowEmptyResults(false);
   };
