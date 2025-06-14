@@ -41,8 +41,8 @@ const Index = () => {
   const optimizedTimeTracking = useOptimizedTimeTracking();
   const [retryKey, setRetryKey] = useState(0);
 
-  // Determine which components to use based on data size and get the primary data source
-  const dataMetrics: DataMetrics = useMemo(
+  // Determine which components to use based on data size - use whichever has more data
+  const regularMetrics: DataMetrics = useMemo(
     () => ({
       employeeCount: regularTimeTracking.employees.length,
       jobCount: regularTimeTracking.jobs.length,
@@ -54,6 +54,32 @@ const Index = () => {
       regularTimeTracking.timeEntries.length,
     ],
   );
+
+  const optimizedMetrics: DataMetrics = useMemo(
+    () => ({
+      employeeCount: optimizedTimeTracking.employees.length,
+      jobCount: optimizedTimeTracking.jobs.length,
+      timeEntryCount: optimizedTimeTracking.timeEntries.length,
+    }),
+    [
+      optimizedTimeTracking.employees.length,
+      optimizedTimeTracking.jobs.length,
+      optimizedTimeTracking.timeEntries.length,
+    ],
+  );
+
+  // Use the data source with higher counts, or regular if they're equal
+  const dataMetrics = useMemo(() => {
+    const regularTotal =
+      regularMetrics.employeeCount +
+      regularMetrics.jobCount +
+      regularMetrics.timeEntryCount;
+    const optimizedTotal =
+      optimizedMetrics.employeeCount +
+      optimizedMetrics.jobCount +
+      optimizedMetrics.timeEntryCount;
+    return optimizedTotal > regularTotal ? optimizedMetrics : regularMetrics;
+  }, [regularMetrics, optimizedMetrics]);
 
   const useOptimized = shouldUseOptimizedComponents(dataMetrics);
   const timeTracking = useOptimized
