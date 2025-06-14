@@ -430,6 +430,7 @@ export function TimeEntryViewer() {
   const clearFilters = () => {
     setEmployeeFilter("all-employees");
     setJobFilter("all-jobs");
+    setBillableFilter("all");
     setDateRange("today");
     setSelectedDate(getLocalDateString());
     setSortField("date");
