@@ -199,7 +199,7 @@ export function TimeEntryViewer() {
       // Date filter
       const matchesDate =
         dateRange === "custom"
-          ? entry.date === selectedDate
+          ? entry.date >= customStartDate && entry.date <= customEndDate
           : entry.date >= startDate && entry.date <= endDate;
 
       // Employee filter
