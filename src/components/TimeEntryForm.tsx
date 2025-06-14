@@ -350,11 +350,19 @@ export function TimeEntryForm() {
     resetForm();
   };
 
-  const handleDelete = async (entry: TimeEntry) => {
+  const handleDelete = async (entryId: string) => {
     try {
-      await deleteTimeEntry(entry.id);
+      await deleteTimeEntry(entryId);
+      toast({
+        title: "Entry Deleted",
+        description: "Time entry has been successfully deleted.",
+      });
     } catch (error) {
-      console.error("Error deleting time entry:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete time entry. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1058,4 +1066,19 @@ export function TimeEntryForm() {
       </Card>
     </div>
   );
-}
+      }
+
+      setIsSubmitting(false);
+      resetForm();
+      toast({
+        title: "Success",
+        description: "Time entry saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save time entry. Please check your data and try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }

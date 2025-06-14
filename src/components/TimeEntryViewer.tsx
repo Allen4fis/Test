@@ -360,8 +360,16 @@ export function TimeEntryViewer() {
   const handleDelete = async (entryId: string) => {
     try {
       await deleteTimeEntry(entryId);
+      toast({
+        title: "Entry Deleted",
+        description: "Time entry has been successfully deleted.",
+      });
     } catch (error) {
-      console.error("Error deleting time entry:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete time entry. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
