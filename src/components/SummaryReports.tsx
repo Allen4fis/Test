@@ -470,10 +470,42 @@ export function SummaryReports() {
     return managersWithSubordinateGST;
   }, [employeeSummariesData, employees]);
 
+  // Apply employee type filtering
+  const filteredHierarchicalSummaries = useMemo(() => {
+    if (employeeTypeFilter === "all") {
+      return hierarchicalEmployeeSummaries;
+    }
+
+    if (employeeTypeFilter === "dsps-with-subordinates") {
+      // Show only DSPs (employees who have subordinates)
+      return hierarchicalEmployeeSummaries.filter(
+        (emp) => emp.subordinates && emp.subordinates.length > 0,
+      );
+    }
+
+    if (employeeTypeFilter === "regular-employees") {
+      // Show only regular employees (no subordinates and not subordinates themselves)
+      return hierarchicalEmployeeSummaries.filter(
+        (emp) =>
+          (!emp.subordinates || emp.subordinates.length === 0) &&
+          !emp.isSubordinate,
+      );
+    }
+
+    if (employeeTypeFilter === "dsps-only") {
+      // Show only DSP managers without their subordinate details
+      return hierarchicalEmployeeSummaries
+        .filter((emp) => emp.subordinates && emp.subordinates.length > 0)
+        .map((emp) => ({ ...emp, subordinates: [] }));
+    }
+
+    return hierarchicalEmployeeSummaries;
+  }, [hierarchicalEmployeeSummaries, employeeTypeFilter]);
+
   // Pagination for employee summaries
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const pagination = usePagination({
-    data: hierarchicalEmployeeSummaries,
+    data: filteredHierarchicalSummaries,
     itemsPerPage,
   });
 
