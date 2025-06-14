@@ -575,6 +575,25 @@ export function TimeEntryViewer() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="billableFilter">Filter by Billing</Label>
+                <Select
+                  value={billableFilter}
+                  onValueChange={setBillableFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All entries" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Entries</SelectItem>
+                    <SelectItem value="billable">Billable Only</SelectItem>
+                    <SelectItem value="non-billable">
+                      Non-Billable Only
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Current View</Label>
                 <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-md">
                   <Eye className="h-4 w-4 text-blue-600" />
