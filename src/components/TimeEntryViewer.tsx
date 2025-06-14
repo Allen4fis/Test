@@ -435,7 +435,8 @@ export function TimeEntryViewer() {
     setJobFilter("all-jobs");
     setBillableFilter("all");
     setDateRange("today");
-    setSelectedDate(getLocalDateString());
+    setCustomStartDate(getLocalDateString());
+    setCustomEndDate(getLocalDateString());
     setSortField("date");
     setSortDirection("desc");
   };
