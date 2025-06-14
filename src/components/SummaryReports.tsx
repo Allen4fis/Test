@@ -628,7 +628,10 @@ export function SummaryReports() {
     setProvinceFilter("all-provinces");
     setBillableFilter("all");
     setEmployeeTypeFilter("all");
-    setIncludeInvoiced(false);
+    setIncludeInvoiced(true);
+    setIncludeUninvoiced(true);
+    setIncludePaid(true);
+    setIncludeUnpaid(true);
     setShowEmptyResults(false);
   };
 
