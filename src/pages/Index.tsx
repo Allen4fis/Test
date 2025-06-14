@@ -44,27 +44,27 @@ const Index = () => {
   // Determine which components to use based on data size - use whichever has more data
   const regularMetrics: DataMetrics = useMemo(
     () => ({
-      employeeCount: regularTimeTracking.employees.length,
-      jobCount: regularTimeTracking.jobs.length,
-      timeEntryCount: regularTimeTracking.timeEntries.length,
+      employeeCount: regularTimeTracking.employees?.length || 0,
+      jobCount: regularTimeTracking.jobs?.length || 0,
+      timeEntryCount: regularTimeTracking.timeEntries?.length || 0,
     }),
     [
-      regularTimeTracking.employees.length,
-      regularTimeTracking.jobs.length,
-      regularTimeTracking.timeEntries.length,
+      regularTimeTracking.employees?.length,
+      regularTimeTracking.jobs?.length,
+      regularTimeTracking.timeEntries?.length,
     ],
   );
 
   const optimizedMetrics: DataMetrics = useMemo(
     () => ({
-      employeeCount: optimizedTimeTracking.employees.length,
-      jobCount: optimizedTimeTracking.jobs.length,
-      timeEntryCount: optimizedTimeTracking.timeEntries.length,
+      employeeCount: optimizedTimeTracking.employees?.length || 0,
+      jobCount: optimizedTimeTracking.jobs?.length || 0,
+      timeEntryCount: optimizedTimeTracking.timeEntries?.length || 0,
     }),
     [
-      optimizedTimeTracking.employees.length,
-      optimizedTimeTracking.jobs.length,
-      optimizedTimeTracking.timeEntries.length,
+      optimizedTimeTracking.employees?.length,
+      optimizedTimeTracking.jobs?.length,
+      optimizedTimeTracking.timeEntries?.length,
     ],
   );
 
@@ -86,6 +86,26 @@ const Index = () => {
     ? optimizedTimeTracking
     : regularTimeTracking;
 
+  // Early return if timeTracking is not ready
+  if (
+    !timeTracking ||
+    !timeTracking.employees ||
+    !timeTracking.jobs ||
+    !timeTracking.timeEntries
+  ) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg font-medium text-gray-600 mb-2">
+            Loading...
+          </div>
+          <div className="text-sm text-gray-500">
+            Initializing time tracking system
+          </div>
+        </div>
+      </div>
+    );
+  }
   // Initialize global autosave with the current app data
   const globalAutosave = useGlobalAutosave({
     employees: timeTracking.employees,
