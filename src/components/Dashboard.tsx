@@ -241,6 +241,10 @@ export function Dashboard({
     (sum, summary) => sum + summary.totalCost,
     0,
   );
+  const allTimeRentalBillable = billableRentalSummaries.reduce(
+    (sum, rental) => sum + rental.totalBillable,
+    0,
+  );
   const allTimeRentalCost = billableRentalSummaries.reduce(
     (sum, rental) => sum + rental.totalCost,
     0,
@@ -250,7 +254,7 @@ export function Dashboard({
       (sum, summary) =>
         sum + (summary.totalBillableAmount || summary.totalCost),
       0,
-    ) + allTimeRentalCost;
+    ) + allTimeRentalBillable;
   const allTimeCombinedCost = allTimeTotalCost + allTimeRentalCost;
 
   // Calculate profit percentage
@@ -270,8 +274,11 @@ export function Dashboard({
     .reduce((sum, summary) => sum + summary.totalCost, 0);
 
   const nonBillableRentalCosts = rentalSummaries
-    .filter((rental) => nonBillableJobNumbers.includes(rental.jobNumber))
-    .reduce((sum, rental) => sum + rental.totalCost, 0);
+    .filter((rental) => {
+      const job = jobs.find((j) => j.jobNumber === rental.jobNumber);
+      return job?.isBillable === false;
+    })
+    .reduce((sum, rental) => sum + rental.totalBillable, 0); // For non-billable, use billable amount as cost
 
   const totalNonBillableCosts = nonBillableJobCosts + nonBillableRentalCosts;
   const activeEmployees = employees.length;
