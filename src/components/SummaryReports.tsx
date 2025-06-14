@@ -246,22 +246,25 @@ export function SummaryReports() {
       );
       return sum + calculateGST(employee, summary.totalCost);
     }, 0);
+    const rentalBillable = filteredRentalSummaries.reduce(
+      (sum, rental) => sum + rental.totalBillable,
+      0,
+    );
     const rentalCost = filteredRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalCost,
       0,
     );
-    const totalDspEarnings = filteredRentalSummaries.reduce((sum, rental) => {
-      const dspRate = rental.dspRate || 0;
-      return sum + dspRate * rental.duration * rental.quantity;
-    }, 0);
+    const totalDspEarnings = rentalCost; // DSP earnings are now properly calculated in totalCost
 
     return {
       totalHours,
       totalCost,
       totalGst,
+      rentalBillable,
       rentalCost,
       totalDspEarnings,
-      totalCombinedCost: totalCost + rentalCost + totalDspEarnings,
+      totalCombinedCost: totalCost + rentalCost,
+      totalCombinedBillable: totalCost + rentalBillable,
     };
   }, [filteredSummaries, filteredRentalSummaries, employees]);
 
@@ -531,22 +534,25 @@ export function SummaryReports() {
       );
       return sum + calculateGST(employee, summary.totalCost);
     }, 0);
+    const rentalBillable = relevantRentalSummaries.reduce(
+      (sum, rental) => sum + rental.totalBillable,
+      0,
+    );
     const rentalCost = relevantRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalCost,
       0,
     );
-    const totalDspEarnings = relevantRentalSummaries.reduce((sum, rental) => {
-      const dspRate = rental.dspRate || 0;
-      return sum + dspRate * rental.duration * rental.quantity;
-    }, 0);
+    const totalDspEarnings = rentalCost; // DSP earnings are now properly calculated in totalCost
 
     return {
       totalHours,
       totalCost,
       totalGst,
+      rentalBillable,
       rentalCost,
       totalDspEarnings,
-      totalCombinedCost: totalCost + rentalCost + totalDspEarnings,
+      totalCombinedCost: totalCost + rentalCost,
+      totalCombinedBillable: totalCost + rentalBillable,
     };
   }, [
     filteredHierarchicalSummaries,
