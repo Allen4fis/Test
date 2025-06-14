@@ -195,6 +195,7 @@ export function SummaryReports() {
     employeeFilter,
     jobFilter,
     provinceFilter,
+    billableFilter,
     includeInvoiced,
     jobs,
   ]);
