@@ -147,17 +147,7 @@ export function SummaryReports() {
       }
 
       // Job filter
-      if (jobFilter === "billable-only") {
-        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
-        if (job?.isBillable === false) {
-          return false;
-        }
-      } else if (jobFilter === "non-billable-only") {
-        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
-        if (job?.isBillable !== false) {
-          return false;
-        }
-      } else if (jobFilter !== "all-jobs" && summary.jobNumber !== jobFilter) {
+      if (jobFilter !== "all-jobs" && summary.jobNumber !== jobFilter) {
         return false;
       }
 
@@ -743,18 +733,6 @@ export function SummaryReports() {
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
                           All Jobs
-                        </SelectItem>
-                        <SelectItem
-                          value="billable-only"
-                          className="text-gray-100 focus:bg-orange-500/20"
-                        >
-                          Billable Jobs Only
-                        </SelectItem>
-                        <SelectItem
-                          value="non-billable-only"
-                          className="text-gray-100 focus:bg-orange-500/20"
-                        >
-                          Non-Billable Jobs Only
                         </SelectItem>
                         {jobs.map((job) => (
                           <SelectItem
