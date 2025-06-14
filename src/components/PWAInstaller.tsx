@@ -76,7 +76,7 @@ export function PWAInstaller() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((registration) => {
-          console.log("✅ Service Worker registered:", registration);
+          // Service Worker registered successfully
         })
         .catch((error) => {
           console.error("❌ Service Worker registration failed:", error);
@@ -104,10 +104,10 @@ export function PWAInstaller() {
       const { outcome } = await deferredPrompt.userChoice;
 
       if (outcome === "accepted") {
-        console.log("✅ User accepted the install prompt");
+        // User accepted the install prompt
         setIsInstalled(true);
       } else {
-        console.log("❌ User dismissed the install prompt");
+        // User dismissed the install prompt
       }
 
       // Clear the deferredPrompt
