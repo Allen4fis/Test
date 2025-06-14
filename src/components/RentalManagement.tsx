@@ -316,7 +316,13 @@ export function RentalManagement() {
           break;
       }
 
-      const totalCost = entry.rateUsed * duration * entry.quantity;
+      // Calculate billable amount (what you charge the client)
+      const totalBillable = entry.rateUsed * duration * entry.quantity;
+
+      // Calculate actual cost (what you pay the DSP, if applicable)
+      const actualCost = entry.dspRate
+        ? entry.dspRate * duration * entry.quantity
+        : 0;
 
       return {
         id: entry.id,
@@ -329,9 +335,11 @@ export function RentalManagement() {
         endDate: entry.endDate,
         duration,
         quantity: entry.quantity,
-        rateUsed: entry.rateUsed,
-        dspRate: entry.dspRate,
-        totalCost,
+        rateUsed: entry.rateUsed, // Billable rate
+        dspRate: entry.dspRate, // Cost rate
+        totalBillable, // What we charge client
+        totalCost: actualCost, // What we pay DSP
+        totalProfit: totalBillable - actualCost, // Profit margin
         description: entry.description,
       };
     });
