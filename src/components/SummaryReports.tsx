@@ -481,6 +481,7 @@ export function SummaryReports() {
     setEmployeeFilter("all-employees");
     setJobFilter("all-jobs");
     setProvinceFilter("all-provinces");
+    setBillableFilter("all");
     setIncludeInvoiced(false);
     setShowEmptyResults(false);
   };
