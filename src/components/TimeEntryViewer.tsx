@@ -445,8 +445,13 @@ export function TimeEntryViewer() {
     const { startDate, endDate } = getDateRange(dateRange);
     if (dateRange === "today") return "Today";
     if (dateRange === "yesterday") return "Yesterday";
-    if (dateRange === "custom")
-      return `Selected Date: ${new Date(selectedDate).toLocaleDateString()}`;
+    if (dateRange === "custom") {
+      if (customStartDate === customEndDate) {
+        return `Selected Date: ${new Date(customStartDate).toLocaleDateString()}`;
+      } else {
+        return `Date Range: ${new Date(customStartDate).toLocaleDateString()} - ${new Date(customEndDate).toLocaleDateString()}`;
+      }
+    }
     if (startDate === endDate) {
       return new Date(startDate).toLocaleDateString();
     }
