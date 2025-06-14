@@ -245,9 +245,40 @@ export function SummaryReports() {
         return false;
       }
 
+      // Invoice and Payment status filters for rentals
+      const job = jobs.find((j) => j.jobNumber === rental.jobNumber);
+      const isInvoiced = job?.invoicedDates.includes(rental.startDate) || false;
+      const isPaid = job?.paidDates.includes(rental.startDate) || false;
+
+      // Invoice status filter
+      if (!includeInvoiced && isInvoiced) {
+        return false;
+      }
+      if (!includeUninvoiced && !isInvoiced) {
+        return false;
+      }
+
+      // Payment status filter
+      if (!includePaid && isPaid) {
+        return false;
+      }
+      if (!includeUnpaid && !isPaid) {
+        return false;
+      }
+
       return true;
     });
-  }, [rentalSummaries, dateFilter, employeeFilter, jobFilter, jobs]);
+  }, [
+    rentalSummaries,
+    dateFilter,
+    employeeFilter,
+    jobFilter,
+    includeInvoiced,
+    includeUninvoiced,
+    includePaid,
+    includeUnpaid,
+    jobs,
+  ]);
 
   // Calculate summary statistics
   const summaryStats = useMemo(() => {
