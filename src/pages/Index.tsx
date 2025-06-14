@@ -108,13 +108,13 @@ const Index = () => {
   }
   // Initialize global autosave with the current app data
   const globalAutosave = useGlobalAutosave({
-    employees: timeTracking.employees,
-    jobs: timeTracking.jobs,
-    hourTypes: timeTracking.hourTypes,
-    provinces: timeTracking.provinces,
-    timeEntries: timeTracking.timeEntries,
-    rentalItems: timeTracking.rentalItems,
-    rentalEntries: timeTracking.rentalEntries,
+    employees: timeTracking.employees || [],
+    jobs: timeTracking.jobs || [],
+    hourTypes: timeTracking.hourTypes || [],
+    provinces: timeTracking.provinces || [],
+    timeEntries: timeTracking.timeEntries || [],
+    rentalItems: timeTracking.rentalItems || [],
+    rentalEntries: timeTracking.rentalEntries || [],
   });
 
   const { selectedView } = timeTracking;
