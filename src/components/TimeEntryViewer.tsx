@@ -291,6 +291,7 @@ export function TimeEntryViewer() {
     selectedDate,
     employeeFilter,
     jobFilter,
+    billableFilter,
     sortField,
     sortDirection,
     employees,
