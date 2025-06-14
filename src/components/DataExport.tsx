@@ -1116,15 +1116,15 @@ export function DataExport() {
         </Card>
       </div>
 
-      {/* Tax Compliance - Employee Categories */}
+      {/* Tax Compliance - Employee Categories by Province */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Tax Compliance - Employee Categories
+            Tax Compliance - Employee Categories by Province
           </CardTitle>
           <CardDescription>
-            Breakdown by employee type for T4/T4A reporting and GST compliance
+            Breakdown by employee type and province for T4/T4A reporting and GST compliance
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -1132,6 +1132,7 @@ export function DataExport() {
             <TableHeader>
               <TableRow>
                 <TableHead>Category</TableHead>
+                <TableHead>Province</TableHead>
                 <TableHead>Count</TableHead>
                 <TableHead>Hours</TableHead>
                 <TableHead>Cost</TableHead>
@@ -1141,25 +1142,36 @@ export function DataExport() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Object.entries(summary.employeeCategories).map(
-                ([category, data]) => (
-                  <TableRow key={category}>
+              {Object.values(summary.employeeCategoriesByProvince)
+                .sort((a, b) => {
+                  if (a.category !== b.category) {
+                    return a.category.localeCompare(b.category);
+                  }
+                  return a.province.localeCompare(b.province);
+                })
+                .map((data) => (
+                  <TableRow key={`${data.category}-${data.province}`}>
                     <TableCell className="font-medium">
                       <Badge
                         variant={
-                          category === "employee" ? "default" : "secondary"
+                          data.category === "employee" ? "default" : "secondary"
                         }
                         className={
-                          category === "dsp"
+                          data.category === "dsp"
                             ? "bg-orange-100 text-orange-800"
                             : ""
                         }
                       >
-                        {category === "dsp"
+                        {data.category === "dsp"
                           ? "DSP (Contractor)"
-                          : category === "employee"
+                          : data.category === "employee"
                             ? "Employee (T4)"
                             : "Contractor"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-medium">
+                        {data.province}
                       </Badge>
                     </TableCell>
                     <TableCell>{data.count}</TableCell>
@@ -1170,13 +1182,74 @@ export function DataExport() {
                       ${data.gst.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {category === "employee"
+                      {data.category === "employee"
                         ? "T4 Employment Income"
                         : "T4A Other Income + GST"}
                     </TableCell>
                   </TableRow>
-                ),
-              )}
+                ))}
+            </TableBody>
+          </Table>
+
+          {/* Category Summary Totals */}
+          <div className="mt-6">
+            <h4 className="text-lg font-semibold mb-3">Category Summary (All Provinces)</h4>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="font-semibold">Category</TableHead>
+                  <TableHead className="font-semibold">Total Count</TableHead>
+                  <TableHead className="font-semibold">Total Hours</TableHead>
+                  <TableHead className="font-semibold">Total Cost</TableHead>
+                  <TableHead className="font-semibold">Total Revenue</TableHead>
+                  <TableHead className="font-semibold">Total GST</TableHead>
+                  <TableHead className="font-semibold">Tax Treatment</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Object.entries(summary.employeeCategories).map(
+                  ([category, data]) => (
+                    <TableRow key={`summary-${category}`} className="bg-gray-25">
+                      <TableCell className="font-medium">
+                        <Badge
+                          variant={
+                            category === "employee" ? "default" : "secondary"
+                          }
+                          className={
+                            category === "dsp"
+                              ? "bg-orange-100 text-orange-800"
+                              : ""
+                          }
+                        >
+                          {category === "dsp"
+                            ? "DSP (Contractor)"
+                            : category === "employee"
+                              ? "Employee (T4)"
+                              : "Contractor"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold">{data.count}</TableCell>
+                      <TableCell className="font-semibold">{data.hours.toFixed(1)}h</TableCell>
+                      <TableCell className="font-semibold">${data.cost.toFixed(2)}</TableCell>
+                      <TableCell className="font-semibold">${data.revenue.toFixed(2)}</TableCell>
+                      <TableCell className="font-semibold text-orange-600">
+                        ${data.gst.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-sm font-medium">
+                        {category === "employee"
+                          ? "T4 Employment Income"
+                          : "T4A Other Income + GST"}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Original Category Totals for Reference */}
             </TableBody>
           </Table>
         </CardContent>
