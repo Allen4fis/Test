@@ -1029,7 +1029,21 @@ export function SummaryReports() {
                                           <div className="text-sm text-gray-300">
                                             {data.hours.toFixed(2)}h (
                                             {data.effectiveHours.toFixed(2)}{" "}
-                                            effective) - ${data.cost.toFixed(2)}
+                                            effective) - $
+                                            {data.hourlyCost.toFixed(2)}
+                                            {data.loaCount > 0 && (
+                                              <span className="text-yellow-400">
+                                                {" "}
+                                                + {data.loaCount} LOA ($
+                                                {data.loaCost.toFixed(2)})
+                                              </span>
+                                            )}
+                                            {data.loaCount > 0 && (
+                                              <span className="text-gray-300">
+                                                {" "}
+                                                = ${data.cost.toFixed(2)}
+                                              </span>
+                                            )}
                                           </div>
                                         </div>
 
