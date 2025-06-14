@@ -533,15 +533,33 @@ export function TimeEntryViewer() {
             </div>
 
             {/* Advanced Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="customDate">Custom Date</Label>
+                <Label htmlFor="customStartDate">Start Date</Label>
                 <Input
-                  id="customDate"
+                  id="customStartDate"
                   type="date"
-                  value={selectedDate}
+                  value={customStartDate}
                   onChange={(e) => {
-                    setSelectedDate(e.target.value);
+                    setCustomStartDate(e.target.value);
+                    // Auto-adjust end date if it's before start date
+                    if (e.target.value > customEndDate) {
+                      setCustomEndDate(e.target.value);
+                    }
+                    setDateRange("custom");
+                  }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="customEndDate">End Date</Label>
+                <Input
+                  id="customEndDate"
+                  type="date"
+                  value={customEndDate}
+                  min={customStartDate}
+                  onChange={(e) => {
+                    setCustomEndDate(e.target.value);
                     setDateRange("custom");
                   }}
                 />
