@@ -1681,6 +1681,8 @@ export function RentalManagement() {
                         <TableHead>Category</TableHead>
                         <TableHead>Daily Rate</TableHead>
                         <TableHead>Total Revenue</TableHead>
+                        <TableHead>Total Cost</TableHead>
+                        <TableHead>Total Profit</TableHead>
                         <TableHead>Total Days</TableHead>
                         <TableHead>Avg Daily</TableHead>
                         <TableHead>Rentals</TableHead>
@@ -1700,6 +1702,12 @@ export function RentalManagement() {
                           </TableCell>
                           <TableCell className="font-semibold text-green-600">
                             ${item.totalRevenue.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="font-semibold text-red-600">
+                            ${item.totalCosts.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="font-semibold text-blue-600">
+                            ${item.totalProfit.toFixed(2)}
                           </TableCell>
                           <TableCell>
                             <Badge variant="secondary">
