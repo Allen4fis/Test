@@ -759,7 +759,8 @@ export function TimeEntryViewer() {
             {totalEntries} entries found • Sorted by {sortField} (
             {sortDirection === "asc" ? "ascending" : "descending"})
             {((employeeFilter && employeeFilter !== "all-employees") ||
-              (jobFilter && jobFilter !== "all-jobs")) && (
+              (jobFilter && jobFilter !== "all-jobs") ||
+              (billableFilter && billableFilter !== "all")) && (
               <span>
                 {" "}
                 • Filtered by{" "}
@@ -768,10 +769,18 @@ export function TimeEntryViewer() {
                   `Employee: ${employeeFilter}`}
                 {employeeFilter &&
                   employeeFilter !== "all-employees" &&
-                  jobFilter &&
-                  jobFilter !== "all-jobs" &&
+                  ((jobFilter && jobFilter !== "all-jobs") ||
+                    (billableFilter && billableFilter !== "all")) &&
                   ", "}
                 {jobFilter && jobFilter !== "all-jobs" && `Job: ${jobFilter}`}
+                {jobFilter &&
+                  jobFilter !== "all-jobs" &&
+                  billableFilter &&
+                  billableFilter !== "all" &&
+                  ", "}
+                {billableFilter &&
+                  billableFilter !== "all" &&
+                  `Billing: ${billableFilter === "billable" ? "Billable Only" : "Non-Billable Only"}`}
               </span>
             )}
           </CardDescription>
