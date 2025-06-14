@@ -859,6 +859,31 @@ export function SummaryReports() {
                       </div>
                     </div>
 
+                    {/* Employee Count Indicator */}
+                    <div className="flex items-center justify-between mb-4 p-3 bg-gray-800/30 border border-gray-600/30 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-orange-400" />
+                        <span className="text-sm text-gray-300">
+                          Showing {pagination.paginatedData.length} of{" "}
+                          {filteredHierarchicalSummaries.length} employees
+                          {employeeTypeFilter !== "all" && (
+                            <span className="text-orange-400 font-medium">
+                              {" "}
+                              (
+                              {employeeTypeFilter === "dsps-with-subordinates"
+                                ? "DSPs with Subordinates"
+                                : employeeTypeFilter === "dsps-only"
+                                  ? "DSPs Only"
+                                  : employeeTypeFilter === "regular-employees"
+                                    ? "Regular Employees"
+                                    : ""}
+                              )
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
                     {/* Hierarchical Employee Display */}
                     {pagination.paginatedData.map((employee, index) => {
                       const totalGst =
