@@ -55,20 +55,16 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       rentalItems: rentalItems.length,
     };
 
-    // Log when counts change
-    if (
-      process.env.NODE_ENV === "development" &&
-      (currentCounts.employees !== prevCounts.current.employees ||
+    // Track when counts change (development only)
+    if (process.env.NODE_ENV === "development") {
+      if (
+        currentCounts.employees !== prevCounts.current.employees ||
         currentCounts.jobs !== prevCounts.current.jobs ||
         currentCounts.timeEntries !== prevCounts.current.timeEntries ||
-        currentCounts.rentalItems !== prevCounts.current.rentalItems)
-    ) {
-      console.log("🔄 Layout counts updated:", {
-        employees: `${prevCounts.current.employees} → ${currentCounts.employees}`,
-        jobs: `${prevCounts.current.jobs} → ${currentCounts.jobs}`,
-        timeEntries: `${prevCounts.current.timeEntries} → ${currentCounts.timeEntries}`,
-        rentalItems: `${prevCounts.current.rentalItems} → ${currentCounts.rentalItems}`,
-      });
+        currentCounts.rentalItems !== prevCounts.current.rentalItems
+      ) {
+        // Development debugging - removed console.log for production performance
+      }
     }
 
     prevCounts.current = currentCounts;
@@ -76,26 +72,15 @@ export function Layout({ children, timeTracking }: LayoutProps) {
 
   // Calculate derived counts with memoization
   const activeJobsCount = useMemo(() => {
-    const count = jobs.filter((job) => job.isActive).length;
-    console.log("📊 Active jobs count calculated:", count);
-    return count;
+    return jobs.filter((job) => job.isActive).length;
   }, [jobs]);
 
   const activeRentalItemsCount = useMemo(() => {
-    const count = rentalItems.filter((item) => item.isActive).length;
-    console.log("📊 Active rental items count calculated:", count);
-    return count;
+    return rentalItems.filter((item) => item.isActive).length;
   }, [rentalItems]);
 
   // Memoize navigation items to ensure they update when counts change
   const navigationItems = useMemo(() => {
-    console.log("🔄 Recalculating navigation items with counts:", {
-      employees: employees.length,
-      jobs: activeJobsCount,
-      timeEntries: timeEntries.length,
-      rentalItems: activeRentalItemsCount,
-    });
-
     return [
       {
         id: "dashboard" as const,
@@ -181,7 +166,6 @@ export function Layout({ children, timeTracking }: LayoutProps) {
 
   // Memoize the header entry count to ensure reactivity
   const timeEntriesCount = useMemo(() => {
-    console.log("🔄 Header entries count updated:", timeEntries.length);
     return timeEntries.length;
   }, [timeEntries.length]);
 
