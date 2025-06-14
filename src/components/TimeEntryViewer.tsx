@@ -160,7 +160,7 @@ export function TimeEntryViewer() {
         startDate = getLocalDateString(thirtyDaysAgo);
         break;
       case "custom":
-        startDate = selectedDate;
+        startDate = customStartDate;
         break;
       default:
         startDate = endDate;
