@@ -1246,7 +1246,11 @@ export function RentalManagement() {
                                             `DSP Rate: $${entry.dspRate.toFixed(2)}`,
                                           ]
                                         : []),
-                                      `Total Cost: $${entry.totalCost.toFixed(2)}`,
+                                      `Billable Amount: $${entry.totalBillable.toFixed(2)}`,
+                                      ...(entry.dspRate
+                                        ? [`DSP Cost: $${entry.totalCost.toFixed(2)}`,
+                                           `Profit: $${entry.totalProfit.toFixed(2)}`]
+                                        : []),
                                       ...(entry.description
                                         ? [`Description: ${entry.description}`]
                                         : []),
@@ -1700,10 +1704,9 @@ export function RentalManagement() {
                           <TableCell className="font-medium text-green-600">
                             ${item.dailyRate.toFixed(2)}
                           </TableCell>
-                          <TableCell className="font-semibold text-green-600">
-                            ${item.totalRevenue.toFixed(2)}
+                          <TableCell className="text-right font-semibold text-green-600">
+                            ${entry.totalBillable.toFixed(2)}
                           </TableCell>
-                          <TableCell className="font-semibold text-red-600">
                             ${item.totalCosts.toFixed(2)}
                           </TableCell>
                           <TableCell className="font-semibold text-blue-600">
