@@ -173,12 +173,25 @@ export function SummaryReports() {
         }
       }
 
-      // Invoice filter
-      if (!includeInvoiced) {
-        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
-        if (job?.invoicedDates.includes(summary.date)) {
-          return false;
-        }
+      // Invoice and Payment status filters
+      const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
+      const isInvoiced = job?.invoicedDates.includes(summary.date) || false;
+      const isPaid = job?.paidDates.includes(summary.date) || false;
+
+      // Invoice status filter
+      if (!includeInvoiced && isInvoiced) {
+        return false;
+      }
+      if (!includeUninvoiced && !isInvoiced) {
+        return false;
+      }
+
+      // Payment status filter
+      if (!includePaid && isPaid) {
+        return false;
+      }
+      if (!includeUnpaid && !isPaid) {
+        return false;
       }
 
       return true;
@@ -191,6 +204,9 @@ export function SummaryReports() {
     provinceFilter,
     billableFilter,
     includeInvoiced,
+    includeUninvoiced,
+    includePaid,
+    includeUnpaid,
     jobs,
   ]);
 
