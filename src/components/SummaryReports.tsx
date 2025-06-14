@@ -126,6 +126,7 @@ export function SummaryReports() {
   const [jobFilter, setJobFilter] = useState("all-jobs");
   const [provinceFilter, setProvinceFilter] = useState("all-provinces");
   const [billableFilter, setBillableFilter] = useState("all");
+  const [employeeTypeFilter, setEmployeeTypeFilter] = useState("all");
   const [includeInvoiced, setIncludeInvoiced] = useState(false);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
