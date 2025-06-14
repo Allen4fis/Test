@@ -1445,8 +1445,33 @@ export function SummaryReports() {
                                                                       2,
                                                                     )}
                                                                     /h = $
-                                                                    {entry.totalCost.toFixed(
+                                                                    {entry.hourlyCost.toFixed(
                                                                       2,
+                                                                    )}
+                                                                    {entry.loaCount >
+                                                                      0 && (
+                                                                      <span className="text-yellow-400">
+                                                                        {" "}
+                                                                        +{" "}
+                                                                        {
+                                                                          entry.loaCount
+                                                                        }{" "}
+                                                                        LOA ($
+                                                                        {entry.loaCost.toFixed(
+                                                                          2,
+                                                                        )}
+                                                                        )
+                                                                      </span>
+                                                                    )}
+                                                                    {entry.loaCount >
+                                                                      0 && (
+                                                                      <span className="text-blue-200">
+                                                                        {" "}
+                                                                        = $
+                                                                        {entry.totalCost.toFixed(
+                                                                          2,
+                                                                        )}
+                                                                      </span>
                                                                     )}
                                                                   </span>
                                                                 </div>
