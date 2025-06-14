@@ -1359,7 +1359,31 @@ export function SummaryReports() {
                                                           </span>
                                                         )}{" "}
                                                         - $
-                                                        {data.cost.toFixed(2)}
+                                                        {data.hourlyCost.toFixed(
+                                                          2,
+                                                        )}
+                                                        {data.loaCount > 0 && (
+                                                          <span className="text-yellow-400">
+                                                            {" "}
+                                                            + {
+                                                              data.loaCount
+                                                            }{" "}
+                                                            LOA ($
+                                                            {data.loaCost.toFixed(
+                                                              2,
+                                                            )}
+                                                            )
+                                                          </span>
+                                                        )}
+                                                        {data.loaCount > 0 && (
+                                                          <span className="text-blue-300">
+                                                            {" "}
+                                                            = $
+                                                            {data.cost.toFixed(
+                                                              2,
+                                                            )}
+                                                          </span>
+                                                        )}
                                                         {subordinate.baseCostWage >
                                                           0 && (
                                                           <span className="text-yellow-300">
