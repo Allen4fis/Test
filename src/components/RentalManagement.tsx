@@ -773,7 +773,9 @@ export function RentalManagement() {
                         <TableHead>Unit</TableHead>
                         <TableHead>DSP Rate</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-right">
+                          Billable Amount
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -918,7 +920,9 @@ export function RentalManagement() {
                         <SelectItem value="job">Job</SelectItem>
                         <SelectItem value="employee">Employee</SelectItem>
                         <SelectItem value="quantity">Quantity</SelectItem>
-                        <SelectItem value="totalCost">Total Cost</SelectItem>
+                        <SelectItem value="totalBillable">
+                          Billable Amount
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <Button
