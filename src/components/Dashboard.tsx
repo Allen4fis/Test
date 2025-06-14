@@ -138,7 +138,7 @@ export function Dashboard({
 
             const rentalBillable = safeArrayReduce(
               jobRentalEntries,
-              (sum, entry) => sum + safeNumber(entry?.totalCost, 0),
+              (sum, entry) => sum + safeNumber(entry?.totalBillable, 0),
               0,
             );
 
