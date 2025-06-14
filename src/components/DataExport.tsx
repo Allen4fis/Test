@@ -269,28 +269,91 @@ export function DataExport() {
     const totalCombinedCost = totalLaborCost + totalRentalCost;
     const totalProfit = totalBillableRevenue - totalBillableLaborCost;
 
-    // Tax breakdowns by employee category
-    const employeeCategories = employees.reduce(
+    // Tax breakdowns by employee category and province
+    const employeeCategoriesByProvince = employees.reduce(
       (acc, emp) => {
         const category = emp.category || "employee";
         const empEntries = billableTimeEntries.filter(
           (e) => e.employeeId === emp.id,
         );
-        const cost = empEntries.reduce((sum, e) => sum + e.laborCost, 0);
-        const revenue = empEntries.reduce(
-          (sum, e) => sum + e.billableAmount,
-          0,
-        );
-        const gst = empEntries.reduce((sum, e) => sum + e.gstAmount, 0);
 
-        if (!acc[category]) {
-          acc[category] = { cost: 0, revenue: 0, gst: 0, count: 0, hours: 0 };
+        // Group entries by province for this employee
+        const entriesByProvince = empEntries.reduce(
+          (provAcc, entry) => {
+            const province = provinces.find((p) => p.id === entry.provinceId);
+            const provinceName = province?.name || "Unknown Province";
+
+            if (!provAcc[provinceName]) {
+              provAcc[provinceName] = { cost: 0, revenue: 0, gst: 0, hours: 0 };
+            }
+            provAcc[provinceName].cost += entry.laborCost;
+            provAcc[provinceName].revenue += entry.billableAmount;
+            provAcc[provinceName].gst += entry.gstAmount;
+            provAcc[provinceName].hours += entry.hours;
+            return provAcc;
+          },
+          {} as Record<
+            string,
+            { cost: number; revenue: number; gst: number; hours: number }
+          >,
+        );
+
+        // Add to category totals for each province
+        Object.entries(entriesByProvince).forEach(([provinceName, data]) => {
+          const key = `${category}-${provinceName}`;
+          if (!acc[key]) {
+            acc[key] = {
+              category,
+              province: provinceName,
+              cost: 0,
+              revenue: 0,
+              gst: 0,
+              count: 0,
+              hours: 0,
+            };
+          }
+          acc[key].cost += data.cost;
+          acc[key].revenue += data.revenue;
+          acc[key].gst += data.gst;
+          acc[key].hours += data.hours;
+          acc[key].count += 1; // Count employees who worked in this province
+        });
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          category: string;
+          province: string;
+          cost: number;
+          revenue: number;
+          gst: number;
+          count: number;
+          hours: number;
         }
-        acc[category].cost += cost;
-        acc[category].revenue += revenue;
-        acc[category].gst += gst;
-        acc[category].count += 1;
-        acc[category].hours += empEntries.reduce((sum, e) => sum + e.hours, 0);
+      >,
+    );
+
+    // Legacy format for backward compatibility (aggregated by category only)
+    const employeeCategories = Object.values(
+      employeeCategoriesByProvince,
+    ).reduce(
+      (acc, item) => {
+        if (!acc[item.category]) {
+          acc[item.category] = {
+            cost: 0,
+            revenue: 0,
+            gst: 0,
+            count: 0,
+            hours: 0,
+          };
+        }
+        acc[item.category].cost += item.cost;
+        acc[item.category].revenue += item.revenue;
+        acc[item.category].gst += item.gst;
+        acc[item.category].hours += item.hours;
+        // Note: count is handled differently for province breakdown
         return acc;
       },
       {} as Record<
@@ -304,6 +367,13 @@ export function DataExport() {
         }
       >,
     );
+
+    // Calculate unique employee counts per category
+    Object.keys(employeeCategories).forEach((category) => {
+      employeeCategories[category].count = employees.filter(
+        (emp) => (emp.category || "employee") === category,
+      ).length;
+    });
 
     // Province breakdown
     const provinceBreakdown = provinces.reduce(
