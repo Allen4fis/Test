@@ -97,7 +97,8 @@ export function TimeEntryViewer() {
   } = useTimeTracking();
 
   // Filter states
-  const [selectedDate, setSelectedDate] = useState(getLocalDateString());
+  const [customStartDate, setCustomStartDate] = useState(getLocalDateString());
+  const [customEndDate, setCustomEndDate] = useState(getLocalDateString());
   const [dateRange, setDateRange] = useState("today");
   const [employeeFilter, setEmployeeFilter] = useState("all-employees");
   const [jobFilter, setJobFilter] = useState("all-jobs");
