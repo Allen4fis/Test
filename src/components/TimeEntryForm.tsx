@@ -1059,3 +1059,4 @@ export function TimeEntryForm() {
       </Card>
     </div>
   );
+}
