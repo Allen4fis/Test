@@ -362,13 +362,16 @@ export function SummaryReports() {
           // Since totalCost includes LOA costs, we need to calculate just the hourly portion
           const loaCost = (summary.loaCount || 0) * 200;
           const hourlyCost = summary.totalCost - loaCost;
-          const hourlyRate = hourlyCost / summary.effectiveHours; // Rate per effective hour
+
+          // Calculate the effective hourly rate (what they were paid per actual hour worked)
+          // This should show the multiplied rate (e.g., $37.50 for 1.5x overtime at $25 base)
+          const effectiveHourlyRate = hourlyCost / summary.hours; // Rate per actual hour worked
 
           group.hourTypeBreakdown[hourTypeName].rateEntries.push({
             date: summary.date,
             hours: summary.hours,
             effectiveHours: summary.effectiveHours,
-            hourlyRate: hourlyRate,
+            hourlyRate: effectiveHourlyRate,
             hourlyCost: hourlyCost,
             loaCount: summary.loaCount || 0,
             loaCost: loaCost,
