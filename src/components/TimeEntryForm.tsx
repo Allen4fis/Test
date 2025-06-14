@@ -318,7 +318,7 @@ export function TimeEntryForm() {
       }
     } catch (error) {
       setFormError("Error saving time entry. Please try again.");
-      console.error("Error saving time entry:", error);
+      // Error handling in place - toast notification could be added here
     } finally {
       setIsSubmitting(false);
       setSubmissionProgress("");
