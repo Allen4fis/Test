@@ -168,6 +168,17 @@ export function SummaryReports() {
         return false;
       }
 
+      // Billable filter
+      if (billableFilter !== "all") {
+        const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
+        if (
+          (billableFilter === "billable" && job?.isBillable !== true) ||
+          (billableFilter === "non-billable" && job?.isBillable !== false)
+        ) {
+          return false;
+        }
+      }
+
       // Invoice filter
       if (!includeInvoiced) {
         const job = jobs.find((j) => j.jobNumber === summary.jobNumber);
