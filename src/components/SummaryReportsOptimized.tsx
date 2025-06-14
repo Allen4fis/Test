@@ -228,7 +228,20 @@ const HourTypeBreakdown = memo(
                                 </span>
                               )}{" "}
                               @ ${entry.hourlyRate.toFixed(2)}/h = $
-                              {entry.totalCost.toFixed(2)}
+                              {entry.hourlyCost.toFixed(2)}
+                              {entry.loaCount > 0 && (
+                                <span className="text-yellow-400">
+                                  {" "}
+                                  + {entry.loaCount} LOA ($
+                                  {entry.loaCost.toFixed(2)})
+                                </span>
+                              )}
+                              {entry.loaCount > 0 && (
+                                <span className="text-gray-300">
+                                  {" "}
+                                  = ${entry.totalCost.toFixed(2)}
+                                </span>
+                              )}
                             </span>
                           </div>
                         ))}
