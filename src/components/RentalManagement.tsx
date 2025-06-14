@@ -1711,7 +1711,7 @@ export function RentalManagement() {
                             ${item.dailyRate.toFixed(2)}
                           </TableCell>
                           <TableCell className="text-right font-semibold text-green-600">
-                            ${entry.totalBillable.toFixed(2)}
+                            ${item.totalBillable.toFixed(2)}
                           </TableCell>
                           <TableCell className="font-semibold text-red-600">
                             ${item.totalCosts.toFixed(2)}
