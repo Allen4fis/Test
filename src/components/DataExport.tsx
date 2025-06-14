@@ -582,15 +582,58 @@ export function DataExport() {
     ]);
     csvData.push([""]);
 
-    // TAX COMPLIANCE - EMPLOYEE CATEGORY BREAKDOWN
-    csvData.push(["TAX COMPLIANCE - EMPLOYEE CATEGORY BREAKDOWN"]);
+    // TAX COMPLIANCE - EMPLOYEE CATEGORY BREAKDOWN BY PROVINCE
+    csvData.push(["TAX COMPLIANCE - EMPLOYEE CATEGORY BREAKDOWN BY PROVINCE"]);
     csvData.push([
       "Category",
+      "Province",
       "Employee Count",
       "Hours",
       "Labor Cost",
       "Revenue",
       "GST Collected",
+      "Tax Treatment",
+    ]);
+
+    // Sort by category, then by province for better readability
+    const sortedCategoryData = Object.values(
+      summary.employeeCategoriesByProvince,
+    ).sort((a, b) => {
+      if (a.category !== b.category) {
+        return a.category.localeCompare(b.category);
+      }
+      return a.province.localeCompare(b.province);
+    });
+
+    sortedCategoryData.forEach((data) => {
+      csvData.push([
+        data.category === "dsp"
+          ? "DSP (Contractor)"
+          : data.category === "employee"
+            ? "Employee (T4)"
+            : "Contractor",
+        data.province,
+        data.count.toString(),
+        data.hours.toFixed(2),
+        `$${data.cost.toFixed(2)}`,
+        `$${data.revenue.toFixed(2)}`,
+        `$${data.gst.toFixed(2)}`,
+        data.category === "employee"
+          ? "T4 Employment Income"
+          : "T4A Other Income + GST",
+      ]);
+    });
+    csvData.push([""]);
+
+    // TAX COMPLIANCE - CATEGORY SUMMARY (Totals across all provinces)
+    csvData.push(["TAX COMPLIANCE - CATEGORY SUMMARY"]);
+    csvData.push([
+      "Category",
+      "Total Employee Count",
+      "Total Hours",
+      "Total Labor Cost",
+      "Total Revenue",
+      "Total GST Collected",
       "Tax Treatment",
     ]);
     Object.entries(summary.employeeCategories).forEach(([category, data]) => {
