@@ -456,9 +456,14 @@ export function RentalManagement() {
       });
 
       const totalRevenue = itemEntries.reduce(
+        (sum, entry) => sum + entry.totalBillable,
+        0,
+      );
+      const totalCosts = itemEntries.reduce(
         (sum, entry) => sum + entry.totalCost,
         0,
       );
+      const totalProfit = totalRevenue - totalCosts;
       const totalDays = itemEntries.reduce(
         (sum, entry) => sum + entry.duration,
         0,
