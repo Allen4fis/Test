@@ -101,6 +101,7 @@ export function TimeEntryViewer() {
   const [dateRange, setDateRange] = useState("today");
   const [employeeFilter, setEmployeeFilter] = useState("all-employees");
   const [jobFilter, setJobFilter] = useState("all-jobs");
+  const [billableFilter, setBillableFilter] = useState("all");
 
   // Sorting states
   const [sortField, setSortField] = useState<SortField>("date");
