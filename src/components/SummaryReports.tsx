@@ -127,7 +127,10 @@ export function SummaryReports() {
   const [provinceFilter, setProvinceFilter] = useState("all-provinces");
   const [billableFilter, setBillableFilter] = useState("all");
   const [employeeTypeFilter, setEmployeeTypeFilter] = useState("all");
-  const [includeInvoiced, setIncludeInvoiced] = useState(false);
+  const [includeInvoiced, setIncludeInvoiced] = useState(true);
+  const [includeUninvoiced, setIncludeUninvoiced] = useState(true);
+  const [includePaid, setIncludePaid] = useState(true);
+  const [includeUnpaid, setIncludeUnpaid] = useState(true);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
   // Filter time entries based on criteria
