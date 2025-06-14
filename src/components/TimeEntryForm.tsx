@@ -318,7 +318,6 @@ export function TimeEntryForm() {
       }
     } catch (error) {
       setFormError("Error saving time entry. Please try again.");
-      // Error handling in place - toast notification could be added here
     } finally {
       setIsSubmitting(false);
       setSubmissionProgress("");
@@ -355,16 +354,8 @@ export function TimeEntryForm() {
   const handleDelete = async (entryId: string) => {
     try {
       await deleteTimeEntry(entryId);
-      toast({
-        title: "Entry Deleted",
-        description: "Time entry has been successfully deleted.",
-      });
     } catch (error) {
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete time entry. Please try again.",
-        variant: "destructive",
-      });
+      // Error handled by component
     }
   };
 
@@ -1068,19 +1059,3 @@ export function TimeEntryForm() {
       </Card>
     </div>
   );
-      }
-
-      setIsSubmitting(false);
-      resetForm();
-      toast({
-        title: "Success",
-        description: "Time entry saved successfully.",
-      });
-    } catch (error) {
-      toast({
-        title: "Save Failed",
-        description: "Failed to save time entry. Please check your data and try again.",
-        variant: "destructive",
-      });
-      setIsSubmitting(false);
-    }
