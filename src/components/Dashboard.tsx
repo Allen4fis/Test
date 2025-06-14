@@ -658,16 +658,11 @@ export function Dashboard({
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  console.log("🔍 Autosave Status Check:");
-                  console.log("📊 Current autosave info:", currentAutosaveInfo);
+                  // Development debugging - removed for production performance
                   const autosaves = localStorage.getItem(
                     "timeTrackingApp-autosave",
                   );
-                  if (autosaves) {
-                    console.log("💾 Raw autosave data:", JSON.parse(autosaves));
-                  } else {
-                    console.log("❌ No autosave data found in localStorage");
-                  }
+                  // Autosave status check functionality preserved without logging
                 }}
                 className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-blue-500/20 hover:border-blue-400 smooth-transition"
               >
