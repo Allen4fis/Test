@@ -773,6 +773,43 @@ export function SummaryReports() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Employee Type</Label>
+                    <Select
+                      value={employeeTypeFilter}
+                      onValueChange={setEmployeeTypeFilter}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        <SelectItem
+                          value="all"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          All Employees
+                        </SelectItem>
+                        <SelectItem
+                          value="dsps-with-subordinates"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          DSPs with Subordinates
+                        </SelectItem>
+                        <SelectItem
+                          value="dsps-only"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          DSPs Only (No Subordinate Details)
+                        </SelectItem>
+                        <SelectItem
+                          value="regular-employees"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          Regular Employees Only
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
