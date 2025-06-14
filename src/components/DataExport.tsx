@@ -1124,7 +1124,8 @@ export function DataExport() {
             Tax Compliance - Employee Categories by Province
           </CardTitle>
           <CardDescription>
-            Breakdown by employee type and province for T4/T4A reporting and GST compliance
+            Breakdown by employee type and province for T4/T4A reporting and GST
+            compliance
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -1193,7 +1194,9 @@ export function DataExport() {
 
           {/* Category Summary Totals */}
           <div className="mt-6">
-            <h4 className="text-lg font-semibold mb-3">Category Summary (All Provinces)</h4>
+            <h4 className="text-lg font-semibold mb-3">
+              Category Summary (All Provinces)
+            </h4>
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
@@ -1209,7 +1212,10 @@ export function DataExport() {
               <TableBody>
                 {Object.entries(summary.employeeCategories).map(
                   ([category, data]) => (
-                    <TableRow key={`summary-${category}`} className="bg-gray-25">
+                    <TableRow
+                      key={`summary-${category}`}
+                      className="bg-gray-25"
+                    >
                       <TableCell className="font-medium">
                         <Badge
                           variant={
@@ -1228,10 +1234,18 @@ export function DataExport() {
                               : "Contractor"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-semibold">{data.count}</TableCell>
-                      <TableCell className="font-semibold">{data.hours.toFixed(1)}h</TableCell>
-                      <TableCell className="font-semibold">${data.cost.toFixed(2)}</TableCell>
-                      <TableCell className="font-semibold">${data.revenue.toFixed(2)}</TableCell>
+                      <TableCell className="font-semibold">
+                        {data.count}
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        {data.hours.toFixed(1)}h
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        ${data.cost.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        ${data.revenue.toFixed(2)}
+                      </TableCell>
                       <TableCell className="font-semibold text-orange-600">
                         ${data.gst.toFixed(2)}
                       </TableCell>
@@ -1246,12 +1260,6 @@ export function DataExport() {
               </TableBody>
             </Table>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Original Category Totals for Reference */}
-            </TableBody>
-          </Table>
         </CardContent>
       </Card>
 
