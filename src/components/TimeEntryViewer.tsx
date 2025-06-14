@@ -289,7 +289,8 @@ export function TimeEntryViewer() {
   }, [
     timeEntries,
     dateRange,
-    selectedDate,
+    customStartDate,
+    customEndDate,
     employeeFilter,
     jobFilter,
     billableFilter,
