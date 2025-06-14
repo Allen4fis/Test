@@ -417,9 +417,9 @@ export function RentalManagement() {
           aValue = a.quantity;
           bValue = b.quantity;
           break;
-        case "totalCost":
-          aValue = a.totalCost;
-          bValue = b.totalCost;
+        case "totalBillable":
+          aValue = a.totalBillable;
+          bValue = b.totalBillable;
           break;
         default:
           aValue = new Date(a.startDate).getTime();
