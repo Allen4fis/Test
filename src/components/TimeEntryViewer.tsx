@@ -215,9 +215,14 @@ export function TimeEntryViewer() {
         jobFilter === "all-jobs" ||
         job?.jobNumber.toLowerCase().includes(jobFilter.toLowerCase()) ||
         job?.name.toLowerCase().includes(jobFilter.toLowerCase());
-      job?.name.toLowerCase().includes(jobFilter.toLowerCase());
 
-      return matchesDate && matchesEmployee && matchesJob;
+      // Billable filter
+      const matchesBillable =
+        billableFilter === "all" ||
+        (billableFilter === "billable" && job?.isBillable === true) ||
+        (billableFilter === "non-billable" && job?.isBillable === false);
+
+      return matchesDate && matchesEmployee && matchesJob && matchesBillable;
     });
 
     // Then, sort the filtered results
