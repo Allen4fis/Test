@@ -28,11 +28,20 @@ if (process.env.NODE_ENV === "development") {
   import("@/utils/databaseCleanup");
 
   // One-time clear of existing data to show clean state (preserve backups)
-  if (!localStorage.getItem("app_cleared")) {
-    localStorage.removeItem("timeTrackingApp");
-    localStorage.removeItem("timeTrackingApp_fallback");
-    localStorage.setItem("app_cleared", "true");
-    window.location.reload();
+  // Only clear if we haven't already cleared and if localStorage is available
+  try {
+    if (
+      typeof window !== "undefined" &&
+      window.localStorage &&
+      !localStorage.getItem("app_cleared")
+    ) {
+      localStorage.removeItem("timeTrackingApp");
+      localStorage.removeItem("timeTrackingApp_fallback");
+      localStorage.setItem("app_cleared", "true");
+      window.location.reload();
+    }
+  } catch (error) {
+    // Ignore localStorage errors during development
   }
 }
 
