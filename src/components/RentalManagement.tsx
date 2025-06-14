@@ -475,6 +475,8 @@ export function RentalManagement() {
         category: item.category,
         dailyRate: item.dailyRate,
         totalRevenue,
+        totalCosts,
+        totalProfit,
         totalDays,
         avgDaily,
         rentals: itemEntries.length,
