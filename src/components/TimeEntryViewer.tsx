@@ -425,7 +425,8 @@ export function TimeEntryViewer() {
   const handleDateRangeChange = (range: string) => {
     setDateRange(range);
     if (range !== "custom") {
-      setSelectedDate(getLocalDateString());
+      setCustomStartDate(getLocalDateString());
+      setCustomEndDate(getLocalDateString());
     }
   };
 
