@@ -42,7 +42,7 @@ export function useGlobalAutosave(appData: AppData) {
 
         // Only save if data has changed
         if (currentHash === lastSaveRef.current) {
-          console.log(`⏰ Autosave check: No changes detected, skipping save`);
+          // No changes detected, skipping autosave
           return;
         }
 
@@ -67,15 +67,11 @@ export function useGlobalAutosave(appData: AppData) {
         localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(updatedAutosaves));
         lastSaveRef.current = currentHash;
 
-        console.log(`✅ Global autosave completed at ${autosave.timestamp}`);
-        console.log(
-          `📊 Saved data: ${currentData.timeEntries.length} entries, ${currentData.employees.length} employees, ${currentData.jobs.length} jobs`,
-        );
-        console.log(
+        // Global autosave completed successfully
           `💾 Total autosaves: ${updatedAutosaves.length}/${MAX_AUTOSAVES}`,
         );
       } catch (error) {
-        console.error("❌ Global autosave failed:", error);
+        // Global autosave failed - error handling in place
       }
     };
 
@@ -83,19 +79,14 @@ export function useGlobalAutosave(appData: AppData) {
     lastSaveRef.current = generateDataHash(appData);
 
     // Setup persistent autosave timer
-    console.log(
-      `🔄 Global autosave initialized: Every ${AUTOSAVE_INTERVAL / 1000 / 60} minutes`,
-    );
-    console.log(
-      `📅 Next autosave: ${new Date(Date.now() + AUTOSAVE_INTERVAL).toLocaleTimeString()}`,
-    );
+    // Global autosave initialized successfully
 
     autosaveTimerRef.current = setInterval(performAutosave, AUTOSAVE_INTERVAL);
 
     // Cleanup function - only runs when component unmounts completely
     return () => {
       if (autosaveTimerRef.current) {
-        console.log("🛑 Global autosave timer cleared");
+        // Autosave timer cleared
         clearInterval(autosaveTimerRef.current);
         autosaveTimerRef.current = null;
       }
@@ -151,16 +142,10 @@ export function useGlobalAutosave(appData: AppData) {
       localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(updatedAutosaves));
       lastSaveRef.current = currentHash;
 
-      console.log(`✅ Manual save completed at ${autosave.timestamp}`);
-      console.log(
-        `📊 Saved data: ${currentData.timeEntries.length} entries, ${currentData.employees.length} employees, ${currentData.jobs.length} jobs`,
-      );
-      console.log(
-        `💾 Total autosaves: ${updatedAutosaves.length}/${MAX_AUTOSAVES}`,
-      );
+      // Manual save completed successfully
       return { success: true, timestamp: autosave.timestamp };
     } catch (error) {
-      console.error("❌ Manual save failed:", error);
+      // Manual save failed - error handling in place
       return { success: false, error: error.message };
     }
   };

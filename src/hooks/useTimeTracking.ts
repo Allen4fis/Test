@@ -315,16 +315,10 @@ export function useTimeTracking() {
       localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(updatedAutosaves));
       lastSaveRef.current = currentHash;
 
-      console.log(`✅ Manual save completed at ${autosave.timestamp}`);
-      console.log(
-        `📊 Saved data: ${appData.timeEntries.length} entries, ${appData.employees.length} employees, ${appData.jobs.length} jobs`,
-      );
-      console.log(
-        `💾 Total autosaves: ${updatedAutosaves.length}/${MAX_AUTOSAVES}`,
-      );
+      // Manual save completed successfully
       return { success: true, timestamp: autosave.timestamp };
     } catch (error) {
-      console.error("Manual save failed:", error);
+      // Manual save failed - error handling in place
       return { success: false, error: error };
     }
   };
