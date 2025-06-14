@@ -68,8 +68,6 @@ export function useGlobalAutosave(appData: AppData) {
         lastSaveRef.current = currentHash;
 
         // Global autosave completed successfully
-          `💾 Total autosaves: ${updatedAutosaves.length}/${MAX_AUTOSAVES}`,
-        );
       } catch (error) {
         // Global autosave failed - error handling in place
       }
