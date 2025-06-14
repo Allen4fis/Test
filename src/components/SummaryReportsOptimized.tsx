@@ -446,15 +446,25 @@ export default function SummaryReportsOptimized() {
               hours: 0,
               effectiveHours: 0,
               cost: 0,
-              rateEntries: [],
+              hourlyCost: 0,
+              loaCost: 0,
+              loaCount: 0,
               provinces: {},
+              rateEntries: [],
             };
           }
+
+          const loaCost = (summary.loaCount || 0) * 200;
+          const hourlyCost = summary.totalCost - loaCost;
 
           group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
           group.hourTypeBreakdown[hourTypeName].effectiveHours +=
             summary.effectiveHours || 0;
           group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+          group.hourTypeBreakdown[hourTypeName].hourlyCost += hourlyCost;
+          group.hourTypeBreakdown[hourTypeName].loaCost += loaCost;
+          group.hourTypeBreakdown[hourTypeName].loaCount +=
+            summary.loaCount || 0;
 
           // Track rate entries for detailed breakdown
           if (summary.hours > 0) {
