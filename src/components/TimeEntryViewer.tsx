@@ -529,6 +529,25 @@ export function TimeEntryViewer() {
                 >
                   Last 30 Days
                 </Button>
+                <Button
+                  variant={dateRange === "custom" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    // Set to current week (Monday to Sunday)
+                    const today = new Date();
+                    const dayOfWeek = today.getDay();
+                    const monday = new Date(today);
+                    monday.setDate(today.getDate() - dayOfWeek + 1);
+                    const sunday = new Date(monday);
+                    sunday.setDate(monday.getDate() + 6);
+
+                    setCustomStartDate(monday.toISOString().split("T")[0]);
+                    setCustomEndDate(sunday.toISOString().split("T")[0]);
+                    setDateRange("custom");
+                  }}
+                >
+                  This Week
+                </Button>
               </div>
             </div>
 
