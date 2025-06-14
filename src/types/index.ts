@@ -156,9 +156,11 @@ export interface RentalSummary {
   endDate: string;
   duration: number; // Calculated duration in billing units
   quantity: number;
-  rateUsed: number;
-  dspRate?: number; // DSP rate for this rental
-  totalCost: number;
+  rateUsed: number; // Rate charged to client (billable rate)
+  dspRate?: number; // Rate paid to DSP (cost rate)
+  totalBillable: number; // What we charge the client
+  totalCost: number; // What we pay the DSP
+  totalProfit: number; // Profit margin (billable - cost)
 }
 
 export interface AppData {
