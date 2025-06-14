@@ -612,7 +612,13 @@ export function useTimeTracking() {
           break;
       }
 
-      const totalCost = duration * entry.quantity * entry.rateUsed;
+      // Calculate billable amount (what you charge the client)
+      const totalBillable = duration * entry.quantity * entry.rateUsed;
+
+      // Calculate actual cost (what you pay the DSP, if applicable)
+      const actualCost = entry.dspRate
+        ? duration * entry.quantity * entry.dspRate
+        : 0;
 
       return {
         id: entry.id,
@@ -627,9 +633,11 @@ export function useTimeTracking() {
         duration,
         quantity: entry.quantity,
         billingUnit: entry.billingUnit,
-        rateUsed: entry.rateUsed,
-        dspRate: entry.dspRate, // Include DSP rate from the rental entry
-        totalCost,
+        rateUsed: entry.rateUsed, // Billable rate
+        dspRate: entry.dspRate, // Cost rate (what we pay DSP)
+        totalBillable, // What we charge client
+        totalCost: actualCost, // What we pay DSP
+        totalProfit: totalBillable - actualCost, // Profit margin
         description: entry.description,
         date: entry.startDate, // Use start date for filtering compatibility
       };
