@@ -502,6 +502,69 @@ export function SummaryReports() {
     return hierarchicalEmployeeSummaries;
   }, [hierarchicalEmployeeSummaries, employeeTypeFilter]);
 
+  // Calculate summary statistics based on filtered employees
+  const filteredSummaryStats = useMemo(() => {
+    // Get the names of employees that are currently being displayed
+    const displayedEmployeeNames = new Set();
+
+    filteredHierarchicalSummaries.forEach((emp) => {
+      displayedEmployeeNames.add(emp.employeeName);
+      // Also include subordinates if they're being shown
+      if (emp.subordinates && emp.subordinates.length > 0) {
+        emp.subordinates.forEach((sub) => {
+          displayedEmployeeNames.add(sub.employeeName);
+        });
+      }
+    });
+
+    // Filter summaries to only include displayed employees
+    const relevantSummaries = filteredSummaries.filter((summary) =>
+      displayedEmployeeNames.has(summary.employeeName),
+    );
+
+    // Filter rental summaries to only include displayed employees
+    const relevantRentalSummaries = filteredRentalSummaries.filter((rental) =>
+      displayedEmployeeNames.has(rental.employeeName),
+    );
+
+    const totalHours = relevantSummaries.reduce(
+      (sum, summary) => sum + summary.hours,
+      0,
+    );
+    const totalCost = relevantSummaries.reduce(
+      (sum, summary) => sum + summary.totalCost,
+      0,
+    );
+    const totalGst = relevantSummaries.reduce((sum, summary) => {
+      const employee = employees.find(
+        (emp) => emp.name === summary.employeeName,
+      );
+      return sum + calculateGST(employee, summary.totalCost);
+    }, 0);
+    const rentalCost = relevantRentalSummaries.reduce(
+      (sum, rental) => sum + rental.totalCost,
+      0,
+    );
+    const totalDspEarnings = relevantRentalSummaries.reduce((sum, rental) => {
+      const dspRate = rental.dspRate || 0;
+      return sum + dspRate * rental.duration * rental.quantity;
+    }, 0);
+
+    return {
+      totalHours,
+      totalCost,
+      totalGst,
+      rentalCost,
+      totalDspEarnings,
+      totalCombinedCost: totalCost + rentalCost + totalDspEarnings,
+    };
+  }, [
+    filteredHierarchicalSummaries,
+    filteredSummaries,
+    filteredRentalSummaries,
+    employees,
+  ]);
+
   // Pagination for employee summaries
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const pagination = usePagination({
