@@ -146,12 +146,19 @@ export function Dashboard({
               safeNumber(laborBillable) + safeNumber(rentalBillable);
 
             // Calculate total cost (for profit calculation) with safe operations
-            const totalCost =
-              safeArrayReduce(
-                jobTimeEntries,
-                (sum, entry) => sum + safeNumber(entry?.totalCost, 0),
-                0,
-              ) + safeNumber(rentalBillable); // Rental cost equals rental billable
+            const laborCost = safeArrayReduce(
+              jobTimeEntries,
+              (sum, entry) => sum + safeNumber(entry?.totalCost, 0),
+              0,
+            );
+
+            const rentalCost = safeArrayReduce(
+              jobRentalEntries,
+              (sum, entry) => sum + safeNumber(entry?.totalCost, 0),
+              0,
+            );
+
+            const totalCost = safeNumber(laborCost) + safeNumber(rentalCost);
 
             // Calculate profit percentage with safe division
             const profitAmount = totalBillable - totalCost;
