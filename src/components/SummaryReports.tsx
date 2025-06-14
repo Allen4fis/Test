@@ -707,6 +707,37 @@ export function SummaryReports() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Billing Type</Label>
+                    <Select
+                      value={billableFilter}
+                      onValueChange={setBillableFilter}
+                    >
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600">
+                        <SelectItem
+                          value="all"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          All Entries
+                        </SelectItem>
+                        <SelectItem
+                          value="billable"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          Billable Only
+                        </SelectItem>
+                        <SelectItem
+                          value="non-billable"
+                          className="text-gray-100 focus:bg-orange-500/20"
+                        >
+                          Non-Billable Only
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
