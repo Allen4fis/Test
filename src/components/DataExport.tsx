@@ -497,6 +497,7 @@ export function DataExport() {
 
       // Detailed breakdowns
       employeeCategories,
+      employeeCategoriesByProvince,
       provinceBreakdown,
       monthlyBreakdown,
     };
