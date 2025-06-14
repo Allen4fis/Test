@@ -457,6 +457,8 @@ export default function SummaryReportsOptimized() {
               effectiveHours: summary.effectiveHours,
               hourlyRate: hourlyRate,
               hourlyCost: hourlyCost,
+              loaCount: summary.loaCount || 0,
+              loaCost: loaCost,
               totalCost: summary.totalCost,
             });
           }
