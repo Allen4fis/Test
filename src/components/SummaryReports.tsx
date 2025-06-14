@@ -1401,7 +1401,7 @@ export function SummaryReports() {
                                                     {/* Detailed entries breakdown for subordinate hour type */}
                                                     {data.rateEntries &&
                                                       data.rateEntries.length >
-                                                        1 && (
+                                                        0 && (
                                                         <div className="mt-1">
                                                           <div className="text-xs text-blue-400 mb-1">
                                                             Daily Breakdown (
