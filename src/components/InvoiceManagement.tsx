@@ -177,7 +177,7 @@ export function InvoiceManagement() {
         0,
       );
       const rentalBillable = dayRentalEntries.reduce(
-        (sum, entry) => sum + entry.totalCost,
+        (sum, entry) => sum + entry.totalBillable,
         0,
       );
       const loaCost = totalLoaCount * 200;
