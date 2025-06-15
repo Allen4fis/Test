@@ -657,21 +657,6 @@ export function Dashboard({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  // Development debugging - removed for production performance
-                  const autosaves = localStorage.getItem(
-                    "timeTrackingApp-autosave",
-                  );
-                  // Autosave status check functionality preserved without logging
-                }}
-                className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-blue-500/20 hover:border-blue-400 smooth-transition"
-              >
-                <Activity className="h-4 w-4 mr-2" />
-                Test Autosave
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
                 onClick={() => window.location.reload()}
                 className="bg-gray-800/50 border-gray-600 text-gray-100 hover:bg-orange-500/20 hover:border-orange-400 smooth-transition"
               >
