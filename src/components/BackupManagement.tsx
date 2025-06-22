@@ -677,8 +677,8 @@ export function BackupManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {storedBackups.map((backup) => (
-                    <TableRow key={backup.id}>
+                  {storedBackups.map((backup, index) => (
+                    <TableRow key={`${backup.id}-${index}`}>
                       <TableCell>
                         <div>
                           <p className="font-medium">{backup.name}</p>
