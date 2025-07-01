@@ -126,16 +126,14 @@ export function BackupManagement() {
     warning3: false,
   });
 
-  // Get stored backups from localStorage
+  // Get stored backups from localStorage with versioning support
   const storedBackups = useMemo(() => {
     try {
       const stored = localStorage.getItem(BACKUP_STORAGE_KEY);
       if (stored) {
-        const backups: StoredBackup[] = JSON.parse(stored);
-        return backups.sort(
-          (a, b) =>
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-        );
+        // Use the new versioned loading system
+        const backups = loadAndValidateBackups(stored);
+        return backups;
       }
     } catch (error) {
       console.error("Error loading backups:", error);
