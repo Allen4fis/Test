@@ -388,6 +388,8 @@ export function TimeEntryViewer() {
       loaCount: (entry.loaCount || 0).toString(),
       description: entry.description || "",
       title: entry.title || "",
+      billableWageUsed: (entry.billableWageUsed || 0).toString(),
+      costWageUsed: (entry.costWageUsed || 0).toString(),
     });
     setIsEditDialogOpen(true);
   };
