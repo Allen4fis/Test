@@ -264,8 +264,8 @@ export function BackupManagement() {
     });
   };
 
-  // Restore from backup
-  const restoreBackup = async (backup: BackupMetadata) => {
+  // Restore from backup with compatibility checks
+  const restoreBackup = async (backup: VersionedBackupMetadata) => {
     setIsRestoring(true);
 
     try {
@@ -275,15 +275,27 @@ export function BackupManagement() {
         throw new Error("Backup data not found");
       }
 
-      // Restore all data using the time tracking methods
-      // Note: We'll need to clear existing data and restore from backup
-      // This is a destructive operation, so we should be careful
+      // Check compatibility before restore
+      const compatibility = checkRestoreCompatibility(fullBackup);
 
-      // Multi-step confirmation process is handled in the UI
+      if (!compatibility.compatible) {
+        throw new Error(
+          `Backup is not compatible: ${compatibility.errors.join(", ")}`,
+        );
+      }
+
+      // Show warnings if any
+      if (compatibility.warnings.length > 0) {
+        toast({
+          title: "Restore Warnings",
+          description: compatibility.warnings.join(". "),
+          variant: "default",
+        });
+      }
 
       toast({
         title: "Restore Initiated",
-        description: `Restoring from "${backup.name}"...`,
+        description: `Restoring from "${backup.name}" (${getVersionInfo(fullBackup)})...`,
       });
 
       // Restore the data using the time tracking hook
@@ -300,7 +312,10 @@ export function BackupManagement() {
       console.error("Restore failed:", error);
       toast({
         title: "Restore Failed",
-        description: "Could not restore from backup. Data may be corrupted.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Could not restore from backup. Data may be corrupted.",
         variant: "destructive",
       });
     } finally {
