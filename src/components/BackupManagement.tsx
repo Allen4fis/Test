@@ -742,6 +742,16 @@ export function BackupManagement() {
                         </Badge>
                       </TableCell>
                       <TableCell>
+                        <div className="text-sm">
+                          <p className="font-medium">
+                            v{backup.version || "Legacy"}
+                          </p>
+                          {backup.migratedFrom && (
+                            <p className="text-gray-500">Migrated</p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex items-center gap-2">
                           <Dialog
                             open={selectedBackup?.id === backup.id}
@@ -1000,7 +1010,7 @@ export function BackupManagement() {
                                           </p>
                                           <div className="mt-3 p-4 bg-yellow-100 border-2 border-yellow-400 rounded">
                                             <p className="text-yellow-900 font-bold text-center">
-                                              ⚡ CLICKING NEXT WILL IMMEDIATELY
+                                              ��� CLICKING NEXT WILL IMMEDIATELY
                                               START THE DESTRUCTIVE PROCESS ⚡
                                             </p>
                                           </div>
