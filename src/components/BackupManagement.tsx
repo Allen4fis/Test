@@ -694,6 +694,7 @@ export function BackupManagement() {
                     <TableHead>Created</TableHead>
                     <TableHead>Records</TableHead>
                     <TableHead>Size</TableHead>
+                    <TableHead>Version</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
