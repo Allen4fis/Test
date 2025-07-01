@@ -1278,6 +1278,36 @@ export function TimeEntryViewer() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="edit-billable-rate">Billable Rate ($/hour)</Label>
+              <Input
+                id="edit-billable-rate"
+                type="number"
+                step="0.01"
+                min="0"
+                value={editForm.billableWageUsed}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, billableWageUsed: e.target.value })
+                }
+                placeholder="Billable hourly rate"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-cost-rate">Cost Rate ($/hour)</Label>
+              <Input
+                id="edit-cost-rate"
+                type="number"
+                step="0.01"
+                min="0"
+                value={editForm.costWageUsed}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, costWageUsed: e.target.value })
+                }
+                placeholder="Cost hourly rate"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="edit-description">Description</Label>
               <Input
                 id="edit-description"
