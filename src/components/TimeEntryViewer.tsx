@@ -1145,6 +1145,12 @@ export function TimeEntryViewer() {
                     ...editForm,
                     employeeId: value,
                     title: selectedEmployee?.title || editForm.title, // Auto-fill title when employee changes, but keep custom title if already set
+                    billableWageUsed:
+                      selectedEmployee?.billableWage.toString() ||
+                      editForm.billableWageUsed,
+                    costWageUsed:
+                      selectedEmployee?.costWage.toString() ||
+                      editForm.costWageUsed,
                   });
                 }}
               >
