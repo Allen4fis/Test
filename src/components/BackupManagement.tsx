@@ -58,7 +58,17 @@ import {
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { AppData } from "@/types";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
+import {
+  VersionedStoredBackup,
+  VersionedBackupMetadata,
+  createVersionedBackup,
+  loadAndValidateBackups,
+  checkRestoreCompatibility,
+  getVersionInfo,
+  CURRENT_BACKUP_VERSION,
+} from "@/utils/backupCompatibility";
 
+// Legacy interface for backward compatibility
 interface BackupMetadata {
   id: string;
   name: string;
