@@ -432,6 +432,8 @@ export function TimeEntryViewer() {
       loaCount: "",
       description: "",
       title: "",
+      billableWageUsed: "",
+      costWageUsed: "",
     });
   };
 
