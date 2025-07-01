@@ -202,7 +202,6 @@ export function BackupManagement() {
     setIsCreatingBackup(true);
 
     try {
-      const timestamp = new Date().toISOString();
       const data: AppData = {
         employees,
         jobs,
@@ -213,15 +212,14 @@ export function BackupManagement() {
         provinces,
       };
 
-      const backup: StoredBackup = {
-        id: `backup_${Date.now()}`,
-        name: backupName.trim(),
-        description: backupDescription.trim() || undefined,
-        timestamp,
-        dataSize: new Blob([JSON.stringify(data)]).size,
-        recordCounts: currentDataSummary.recordCounts,
+      // Create versioned backup
+      const backup = createVersionedBackup(
+        `backup_${Date.now()}`,
+        backupName.trim(),
+        backupDescription.trim() || undefined,
         data,
-      };
+        CURRENT_BACKUP_VERSION, // Track app version
+      );
 
       // Get existing backups
       const existing = storedBackups;
