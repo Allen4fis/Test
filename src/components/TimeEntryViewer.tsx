@@ -122,6 +122,8 @@ export function TimeEntryViewer() {
     loaCount: "",
     description: "",
     title: "",
+    billableWageUsed: "",
+    costWageUsed: "",
   });
 
   // Calculate date ranges
