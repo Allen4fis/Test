@@ -1474,7 +1474,7 @@ export function InvoiceManagement() {
                               0,
                             ) +
                             breakdown.rentalEntries.reduce(
-                              (sum, entry) => sum + entry.totalCost,
+                              (sum, entry) => sum + entry.totalBillable,
                               0,
                             )
                           ).toFixed(2)}
