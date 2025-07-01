@@ -409,8 +409,8 @@ export function TimeEntryViewer() {
       hours: parseFloat(editForm.hours) || 0,
       loaCount: parseInt(editForm.loaCount) || 0,
       title: editForm.title || employee.title, // Use custom title or fall back to employee's current title
-      billableWageUsed: employee.billableWage,
-      costWageUsed: employee.costWage,
+      billableWageUsed: parseFloat(editForm.billableWageUsed) || 0,
+      costWageUsed: parseFloat(editForm.costWageUsed) || 0,
       description: editForm.description,
     };
 
