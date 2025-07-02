@@ -272,7 +272,7 @@ export function JobManagement() {
   // Pagination for jobs
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const pagination = usePagination({
-    data: filteredAndSortedJobs,
+    data: filteredAndSortedJobsWithProfit,
     itemsPerPage,
   });
 
