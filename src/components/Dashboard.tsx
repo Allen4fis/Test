@@ -469,7 +469,7 @@ export function Dashboard({
                 <p>No invoice data available</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-800">
+              <div className="max-h-80 overflow-y-auto divide-y divide-gray-800 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
                 {getTopInvoices().map((invoice, index) => (
                   <div
                     key={`${invoice.jobNumber}-${index}`}
