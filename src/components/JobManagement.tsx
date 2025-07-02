@@ -488,6 +488,102 @@ export function JobManagement() {
         </div>
       </CardHeader>
       <CardContent>
+        {/* Profit Summary Cards */}
+        {jobs.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-red-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Cost
+                    </p>
+                    <p className="text-xl font-bold text-red-600">
+                      $
+                      {filteredAndSortedJobsWithProfit
+                        .reduce((sum, jobData) => sum + jobData.totalCost, 0)
+                        .toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-green-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Billable
+                    </p>
+                    <p className="text-xl font-bold text-green-600">
+                      $
+                      {filteredAndSortedJobsWithProfit
+                        .reduce(
+                          (sum, jobData) => sum + jobData.totalBillable,
+                          0,
+                        )
+                        .toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Profit
+                    </p>
+                    <p className="text-xl font-bold text-blue-600">
+                      $
+                      {filteredAndSortedJobsWithProfit
+                        .reduce((sum, jobData) => sum + jobData.totalProfit, 0)
+                        .toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-purple-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Avg Margin
+                    </p>
+                    <p className="text-xl font-bold text-purple-600">
+                      {(() => {
+                        const billableJobs =
+                          filteredAndSortedJobsWithProfit.filter(
+                            (jobData) =>
+                              jobData.job.isBillable !== false &&
+                              jobData.totalBillable > 0,
+                          );
+                        const avgMargin =
+                          billableJobs.length > 0
+                            ? billableJobs.reduce(
+                                (sum, jobData) => sum + jobData.profitMargin,
+                                0,
+                              ) / billableJobs.length
+                            : 0;
+                        return `${avgMargin.toFixed(1)}%`;
+                      })()}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {jobs.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No jobs found. Add your first job to get started.
