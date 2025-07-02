@@ -412,6 +412,9 @@ export function JobManagement() {
                   <SelectItem value="jobNumber">Job Number</SelectItem>
                   <SelectItem value="name">Job Name</SelectItem>
                   <SelectItem value="createdAt">Date Created</SelectItem>
+                  <SelectItem value="profitMargin">Profit Margin</SelectItem>
+                  <SelectItem value="totalBillable">Total Billable</SelectItem>
+                  <SelectItem value="totalCost">Total Cost</SelectItem>
                 </SelectContent>
               </Select>
               <Button
@@ -422,7 +425,7 @@ export function JobManagement() {
                 }
                 className="px-2"
               >
-                {sortDirection === "asc" ? "↑" : "↓"}
+                {sortDirection === "asc" ? "��" : "↓"}
               </Button>
             </div>
 
