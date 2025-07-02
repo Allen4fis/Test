@@ -57,6 +57,8 @@ import {
   Filter,
   Eye,
   EyeOff,
+  DollarSign,
+  TrendingUp,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { Job } from "@/types";
