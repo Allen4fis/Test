@@ -791,7 +791,7 @@ export function JobManagement() {
         )}
 
         {/* Pagination Controls */}
-        {filteredAndSortedJobs.length > 0 && (
+        {filteredAndSortedJobsWithProfit.length > 0 && (
           <div className="mt-4">
             <PaginationControls
               currentPage={pagination.currentPage}
