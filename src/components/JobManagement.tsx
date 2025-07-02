@@ -557,24 +557,27 @@ export function JobManagement() {
                   <TrendingUp className="h-5 w-5 text-purple-500" />
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Avg Margin
+                      Overall Margin
                     </p>
                     <p className="text-xl font-bold text-purple-600">
                       {(() => {
-                        const billableJobs =
-                          filteredAndSortedJobsWithProfit.filter(
-                            (jobData) =>
-                              jobData.job.isBillable !== false &&
-                              jobData.totalBillable > 0,
+                        const totalBillable = filteredAndSortedJobsWithProfit
+                          .filter((jobData) => jobData.job.isBillable !== false)
+                          .reduce(
+                            (sum, jobData) => sum + jobData.totalBillable,
+                            0,
                           );
-                        const avgMargin =
-                          billableJobs.length > 0
-                            ? billableJobs.reduce(
-                                (sum, jobData) => sum + jobData.profitMargin,
-                                0,
-                              ) / billableJobs.length
+                        const totalProfit = filteredAndSortedJobsWithProfit
+                          .filter((jobData) => jobData.job.isBillable !== false)
+                          .reduce(
+                            (sum, jobData) => sum + jobData.totalProfit,
+                            0,
+                          );
+                        const overallMargin =
+                          totalBillable > 0
+                            ? (totalProfit / totalBillable) * 100
                             : 0;
-                        return `${avgMargin.toFixed(1)}%`;
+                        return `${overallMargin.toFixed(1)}%`;
                       })()}
                     </p>
                   </div>
