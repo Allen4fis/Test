@@ -492,7 +492,7 @@ export function JobManagement() {
           <div className="text-center py-8 text-gray-500">
             No jobs found. Add your first job to get started.
           </div>
-        ) : filteredAndSortedJobs.length === 0 ? (
+        ) : filteredAndSortedJobsWithProfit.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No jobs match the current filters. Try adjusting your filter
             settings.
