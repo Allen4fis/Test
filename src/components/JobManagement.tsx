@@ -425,7 +425,7 @@ export function JobManagement() {
                 }
                 className="px-2"
               >
-                {sortDirection === "asc" ? "��" : "↓"}
+                {sortDirection === "asc" ? "↑" : "↓"}
               </Button>
             </div>
 
@@ -480,7 +480,8 @@ export function JobManagement() {
               </Button>
 
               <div className="ml-auto text-sm text-gray-500">
-                Showing {filteredAndSortedJobs.length} of {jobs.length} jobs
+                Showing {filteredAndSortedJobsWithProfit.length} of{" "}
+                {jobs.length} jobs
               </div>
             </div>
           </div>
