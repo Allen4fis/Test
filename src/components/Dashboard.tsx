@@ -546,7 +546,7 @@ export function Dashboard({
                 <p>No data available</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-800">
+              <div className="max-h-80 overflow-y-auto divide-y divide-gray-800 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
                 {performersArray.map((performer, index) => (
                   <div
                     key={performer.name}
