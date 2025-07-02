@@ -75,6 +75,18 @@ const getDefaultAppData = (): AppData => ({
       description: "Nightshift double time (base pay + $3) x2",
       multiplier: 2.0,
     },
+    {
+      id: "9",
+      name: "Stat Holiday",
+      description: "Statutory holiday hours (base pay x1)",
+      multiplier: 1.0,
+    },
+    {
+      id: "10",
+      name: "NS Stat Holiday",
+      description: "Nightshift statutory holiday (base pay + $3) x1",
+      multiplier: 1.0,
+    },
   ],
   provinces: [
     { id: "1", name: "Alberta", code: "AB" },
