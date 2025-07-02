@@ -207,15 +207,15 @@ export function JobManagement() {
     updateJob(job.id, { isActive: !job.isActive });
   };
 
-  // Filtered and sorted jobs
-  const filteredAndSortedJobs = useMemo(() => {
-    let filtered = jobs;
+  // Filtered and sorted jobs with profit data
+  const filteredAndSortedJobsWithProfit = useMemo(() => {
+    let filtered = jobProfitData;
 
     // Apply status filters
     if (!showActive || !showInactive) {
-      filtered = jobs.filter((job) => {
-        if (!showActive && job.isActive) return false;
-        if (!showInactive && !job.isActive) return false;
+      filtered = jobProfitData.filter((jobData) => {
+        if (!showActive && jobData.job.isActive) return false;
+        if (!showInactive && !jobData.job.isActive) return false;
         return true;
       });
     }
@@ -227,29 +227,47 @@ export function JobManagement() {
 
       switch (sortBy) {
         case "jobNumber":
-          aValue = a.jobNumber.toLowerCase();
-          bValue = b.jobNumber.toLowerCase();
+          aValue = a.job.jobNumber.toLowerCase();
+          bValue = b.job.jobNumber.toLowerCase();
           break;
         case "name":
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
+          aValue = a.job.name.toLowerCase();
+          bValue = b.job.name.toLowerCase();
           break;
         case "createdAt":
-          aValue = new Date(a.createdAt).getTime();
-          bValue = new Date(b.createdAt).getTime();
+          aValue = new Date(a.job.createdAt).getTime();
+          bValue = new Date(b.job.createdAt).getTime();
+          break;
+        case "profitMargin":
+          aValue = a.profitMargin;
+          bValue = b.profitMargin;
+          break;
+        case "totalBillable":
+          aValue = a.totalBillable;
+          bValue = b.totalBillable;
+          break;
+        case "totalCost":
+          aValue = a.totalCost;
+          bValue = b.totalCost;
           break;
         default:
-          aValue = a.jobNumber.toLowerCase();
-          bValue = b.jobNumber.toLowerCase();
+          aValue = a.job.jobNumber.toLowerCase();
+          bValue = b.job.jobNumber.toLowerCase();
       }
 
-      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
-      return 0;
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      } else {
+        const numA = Number(aValue);
+        const numB = Number(bValue);
+        return sortDirection === "asc" ? numA - numB : numB - numA;
+      }
     });
 
     return sorted;
-  }, [jobs, showActive, showInactive, sortBy, sortDirection]);
+  }, [jobProfitData, showActive, showInactive, sortBy, sortDirection]);
 
   // Pagination for jobs
   const [itemsPerPage, setItemsPerPage] = useState(20);
