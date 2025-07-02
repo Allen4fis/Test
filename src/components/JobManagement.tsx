@@ -640,77 +640,152 @@ export function JobManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pagination.paginatedData.map((job) => (
-                <TableRow key={job.id}>
-                  <TableCell className="font-medium">{job.jobNumber}</TableCell>
-                  <TableCell>{job.name}</TableCell>
-                  <TableCell>{job.description || "—"}</TableCell>
-                  <TableCell>
-                    <Badge variant={job.isActive ? "default" : "secondary"}>
-                      {job.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(job.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={(job.isBillable ?? true) ? "default" : "outline"}
-                      className={
-                        (job.isBillable ?? true)
-                          ? "bg-green-600"
-                          : "bg-orange-600 text-white"
-                      }
-                    >
-                      {(job.isBillable ?? true) ? "Billable" : "Non-Billable"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => toggleJobStatus(job)}
-                      >
-                        {job.isActive ? "Deactivate" : "Activate"}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(job)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <DeleteConfirmationDialog
-                        item={{
-                          id: job.id,
-                          name: `${job.jobNumber} - ${job.name}`,
-                          type: "job",
-                          associatedData: {
-                            timeEntries: timeEntries.filter(
-                              (entry) => entry.jobId === job.id,
-                            ).length,
-                            rentalEntries: rentalEntries.filter(
-                              (entry) => entry.jobId === job.id,
-                            ).length,
-                            additionalInfo: [
-                              `Status: ${job.isActive ? "Active" : "Inactive"}`,
-                              `Invoiced dates: ${job.invoicedDates?.length || 0} dates`,
-                              `Created: ${new Date(job.createdAt).toLocaleDateString()}`,
-                            ],
-                          },
-                        }}
-                        trigger={
-                          <Button variant="outline" size="sm">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+              {pagination.paginatedData.map((jobData) => {
+                const { job } = jobData;
+                const profitMarginColor =
+                  jobData.profitMargin >= 30
+                    ? "text-green-600"
+                    : jobData.profitMargin >= 15
+                      ? "text-yellow-600"
+                      : jobData.profitMargin >= 0
+                        ? "text-orange-600"
+                        : "text-red-600";
+
+                return (
+                  <TableRow key={job.id}>
+                    <TableCell className="font-medium">
+                      {job.jobNumber}
+                    </TableCell>
+                    <TableCell>{job.name}</TableCell>
+                    <TableCell>{job.description || "—"}</TableCell>
+                    <TableCell>
+                      <Badge variant={job.isActive ? "default" : "secondary"}>
+                        {job.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(job.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          (job.isBillable ?? true) ? "default" : "outline"
                         }
-                        onConfirm={handleDelete}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        className={
+                          (job.isBillable ?? true)
+                            ? "bg-green-600"
+                            : "bg-orange-600 text-white"
+                        }
+                      >
+                        {(job.isBillable ?? true) ? "Billable" : "Non-Billable"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-right">
+                        <div className="font-medium text-red-600">
+                          ${jobData.totalCost.toFixed(2)}
+                        </div>
+                        {jobData.entryCount > 0 && (
+                          <div className="text-xs text-gray-500">
+                            {jobData.entryCount} entries,{" "}
+                            {jobData.totalHours.toFixed(1)}h
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-right">
+                        {job.isBillable === false ? (
+                          <div className="text-gray-500 text-sm">
+                            Non-billable
+                          </div>
+                        ) : (
+                          <div className="font-medium text-green-600">
+                            ${jobData.totalBillable.toFixed(2)}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-right">
+                        {job.isBillable === false ? (
+                          <div className="text-gray-500 text-sm">—</div>
+                        ) : jobData.totalBillable === 0 ? (
+                          <div className="text-gray-500 text-sm">
+                            No activity
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-end gap-1">
+                            <TrendingUp
+                              className={`h-4 w-4 ${profitMarginColor}`}
+                            />
+                            <div className={`font-medium ${profitMarginColor}`}>
+                              {jobData.profitMargin.toFixed(1)}%
+                            </div>
+                          </div>
+                        )}
+                        {job.isBillable !== false &&
+                          jobData.totalBillable > 0 && (
+                            <div className="text-xs text-gray-500">
+                              ${jobData.totalProfit.toFixed(2)} profit
+                            </div>
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleJobStatus(job)}
+                        >
+                          {job.isActive ? "Deactivate" : "Activate"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(job)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <DeleteConfirmationDialog
+                          item={{
+                            id: job.id,
+                            name: `${job.jobNumber} - ${job.name}`,
+                            type: "job",
+                            associatedData: {
+                              timeEntries: timeEntries.filter(
+                                (entry) => entry.jobId === job.id,
+                              ).length,
+                              rentalEntries: rentalEntries.filter(
+                                (entry) => entry.jobId === job.id,
+                              ).length,
+                              additionalInfo: [
+                                `Status: ${job.isActive ? "Active" : "Inactive"}`,
+                                `Invoiced dates: ${job.invoicedDates?.length || 0} dates`,
+                                `Created: ${new Date(job.createdAt).toLocaleDateString()}`,
+                                `Total Cost: $${jobData.totalCost.toFixed(2)}`,
+                                job.isBillable !== false
+                                  ? `Total Billable: $${jobData.totalBillable.toFixed(2)}`
+                                  : null,
+                                job.isBillable !== false
+                                  ? `Profit Margin: ${jobData.profitMargin.toFixed(1)}%`
+                                  : null,
+                              ].filter(Boolean),
+                            },
+                          }}
+                          trigger={
+                            <Button variant="outline" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          }
+                          onConfirm={() => handleDelete(job.id)}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         )}
