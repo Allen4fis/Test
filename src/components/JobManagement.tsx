@@ -570,6 +570,72 @@ export function JobManagement() {
                   </div>
                 </TableHead>
                 <TableHead>Billing Type</TableHead>
+                <TableHead
+                  className="cursor-pointer hover:bg-gray-50 select-none"
+                  onClick={() => {
+                    if (sortBy === "totalCost") {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setSortBy("totalCost");
+                      setSortDirection("desc");
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    Total Cost
+                    {sortBy === "totalCost" && (
+                      <span className="text-blue-500">
+                        {sortDirection === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead
+                  className="cursor-pointer hover:bg-gray-50 select-none"
+                  onClick={() => {
+                    if (sortBy === "totalBillable") {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setSortBy("totalBillable");
+                      setSortDirection("desc");
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    Total Billable
+                    {sortBy === "totalBillable" && (
+                      <span className="text-blue-500">
+                        {sortDirection === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead
+                  className="cursor-pointer hover:bg-gray-50 select-none"
+                  onClick={() => {
+                    if (sortBy === "profitMargin") {
+                      setSortDirection(
+                        sortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setSortBy("profitMargin");
+                      setSortDirection("desc");
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    Profit Margin
+                    {sortBy === "profitMargin" && (
+                      <span className="text-blue-500">
+                        {sortDirection === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
