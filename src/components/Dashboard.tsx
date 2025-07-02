@@ -181,8 +181,7 @@ export function Dashboard({
           .sort(
             (a, b) =>
               safeNumber(b?.totalBillable) - safeNumber(a?.totalBillable),
-          ) // Sort by highest billable
-          .slice(0, 5); // Top 5
+          ); // Sort by highest billable
 
         return jobInvoiceData;
       },
