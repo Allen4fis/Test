@@ -179,9 +179,8 @@ export function Dashboard({
           })
           .filter((invoice) => safeNumber(invoice?.totalBillable) > 0) // Only jobs with billable amounts
           .sort(
-            (a, b) =>
-              safeNumber(b?.totalBillable) - safeNumber(a?.totalBillable),
-          ); // Sort by highest billable
+            (a, b) => safeNumber(b?.profitAmount) - safeNumber(a?.profitAmount),
+          ); // Sort by highest profit
 
         return jobInvoiceData;
       },
