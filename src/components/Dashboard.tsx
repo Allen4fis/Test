@@ -312,9 +312,7 @@ export function Dashboard({
         },
         {} as Record<string, { name: string; hours: number; cost: number }>,
       ),
-  )
-    .sort((a, b) => b.hours - a.hours)
-    .slice(0, 5);
+  ).sort((a, b) => b.hours - a.hours);
 
   const getHourTypeName = (hourTypeId: string) => {
     const hourType = hourTypes.find((ht) => ht.id === hourTypeId);
