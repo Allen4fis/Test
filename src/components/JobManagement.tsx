@@ -86,12 +86,81 @@ export function JobManagement() {
   });
 
   // Sorting and filtering state
-  const [sortBy, setSortBy] = useState<"jobNumber" | "name" | "createdAt">(
-    "jobNumber",
-  );
+  const [sortBy, setSortBy] = useState<
+    | "jobNumber"
+    | "name"
+    | "createdAt"
+    | "profitMargin"
+    | "totalBillable"
+    | "totalCost"
+  >("jobNumber");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [showActive, setShowActive] = useState(true);
   const [showInactive, setShowInactive] = useState(true);
+
+  // Calculate profit margins for each job
+  const jobProfitData = useMemo(() => {
+    return jobs.map((job) => {
+      // Get time entries for this job
+      const jobTimeEntries = timeEntrySummaries.filter(
+        (entry) => entry.jobNumber === job.jobNumber,
+      );
+
+      // Get rental entries for this job
+      const jobRentalEntries = rentalSummaries.filter(
+        (entry) => entry.jobNumber === job.jobNumber,
+      );
+
+      // Calculate totals from time entries
+      const laborCost = jobTimeEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      );
+      const laborBillable = jobTimeEntries.reduce(
+        (sum, entry) => sum + entry.totalBillableAmount,
+        0,
+      );
+
+      // Calculate totals from rental entries
+      const rentalCost = jobRentalEntries.reduce(
+        (sum, entry) => sum + entry.totalCost,
+        0,
+      );
+      const rentalBillable = jobRentalEntries.reduce(
+        (sum, entry) => sum + entry.totalBillable,
+        0,
+      );
+
+      // Calculate combined totals
+      const totalCost = laborCost + rentalCost;
+      const totalBillable =
+        job.isBillable === false ? 0 : laborBillable + rentalBillable;
+      const totalProfit = totalBillable - totalCost;
+      const profitMargin =
+        totalBillable > 0 ? (totalProfit / totalBillable) * 100 : 0;
+
+      // Calculate activity metrics
+      const totalHours = jobTimeEntries.reduce(
+        (sum, entry) => sum + entry.hours,
+        0,
+      );
+      const entryCount = jobTimeEntries.length + jobRentalEntries.length;
+
+      return {
+        job,
+        laborCost,
+        laborBillable,
+        rentalCost,
+        rentalBillable,
+        totalCost,
+        totalBillable,
+        totalProfit,
+        profitMargin,
+        totalHours,
+        entryCount,
+      };
+    });
+  }, [jobs, timeEntrySummaries, rentalSummaries]);
 
   const resetForm = () => {
     setFormData({
