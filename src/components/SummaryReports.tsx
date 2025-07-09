@@ -481,20 +481,72 @@ export function SummaryReports() {
       };
     });
 
+    // Get all managers who appear in the filtered results (including those who are subordinates themselves)
+    const managersInResults = new Set();
+    enhancedEmployees.forEach((emp) => {
+      if (!emp.isSubordinate) {
+        managersInResults.add(emp.employeeName);
+      }
+      // Also add managers of subordinates who appear in results
+      if (emp.isSubordinate && emp.managerName) {
+        managersInResults.add(emp.managerName);
+      }
+    });
+
+    // Create enhanced employee data for ALL subordinates of managers in results,
+    // even if the subordinates don't have entries on this specific job
+    const allSubordinatesOfRelevantManagers = employees
+      .filter((emp) => {
+        if (!emp.managerId) return false;
+        const manager = employees.find((e) => e.id === emp.managerId);
+        return manager && managersInResults.has(manager.name);
+      })
+      .map((emp) => {
+        const manager = employees.find((e) => e.id === emp.managerId);
+        // Check if this subordinate already has data from time entries
+        const existingData = enhancedEmployees.find(
+          (existing) => existing.employeeName === emp.name,
+        );
+
+        if (existingData) {
+          // Use existing data if subordinate has time entries
+          return existingData;
+        } else {
+          // Create empty data structure for subordinates without entries on this job
+          const gstAmount = 0; // No GST if no time entries
+          return {
+            employeeName: emp.name,
+            employeeTitle: emp.title,
+            totalHours: 0,
+            totalEffectiveHours: 0,
+            totalCost: 0,
+            totalLoaCount: 0,
+            totalDspEarnings: 0,
+            dspRateInfo: {},
+            entries: [],
+            hourTypeBreakdown: {},
+            employeeCategory: emp.category,
+            isSubordinate: true,
+            managerName: manager?.name,
+            managerId: emp.managerId,
+            gstAmount,
+            baseCostWage: emp.costWage || 0,
+          };
+        }
+      });
+
     // Group subordinates by their managers
-    const subordinatesByManager = enhancedEmployees
-      .filter((emp) => emp.isSubordinate)
-      .reduce(
-        (acc, emp) => {
-          const managerName = emp.managerName || "Unknown";
-          if (!acc[managerName]) {
-            acc[managerName] = [];
-          }
-          acc[managerName].push(emp);
-          return acc;
-        },
-        {} as Record<string, any[]>,
-      );
+    const subordinatesByManager = allSubordinatesOfRelevantManagers.reduce(
+      (acc, emp) => {
+        const managerName = emp.managerName || "Unknown";
+        if (!acc[managerName]) {
+          acc[managerName] = [];
+        }
+        acc[managerName].push(emp);
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
 
     // Calculate subordinate GST totals for managers
     const managersWithSubordinateGST = enhancedEmployees
@@ -513,7 +565,49 @@ export function SummaryReports() {
         };
       });
 
-    return managersWithSubordinateGST;
+    // Also include managers who don't have direct entries but have subordinates with entries
+    const managersOnlyFromSubordinates = Array.from(managersInResults)
+      .filter(
+        (managerName) =>
+          !managersWithSubordinateGST.find(
+            (m) => m.employeeName === managerName,
+          ),
+      )
+      .map((managerName) => {
+        const manager = employees.find((emp) => emp.name === managerName);
+        if (!manager) return null;
+
+        const subordinates = subordinatesByManager[managerName] || [];
+        const subordinateGstTotal = subordinates.reduce(
+          (sum, sub) => sum + (sub.gstAmount || 0),
+          0,
+        );
+
+        const gstAmount = 0; // Manager has no direct entries
+        return {
+          employeeName: manager.name,
+          employeeTitle: manager.title,
+          totalHours: 0,
+          totalEffectiveHours: 0,
+          totalCost: 0,
+          totalLoaCount: 0,
+          totalDspEarnings: 0,
+          dspRateInfo: {},
+          entries: [],
+          hourTypeBreakdown: {},
+          employeeCategory: manager.category,
+          isSubordinate: false,
+          managerName: null,
+          managerId: null,
+          gstAmount,
+          baseCostWage: manager.costWage || 0,
+          subordinates,
+          subordinateGstTotal,
+        };
+      })
+      .filter(Boolean);
+
+    return [...managersWithSubordinateGST, ...managersOnlyFromSubordinates];
   }, [employeeSummariesData, employees]);
 
   // Apply employee type filtering
