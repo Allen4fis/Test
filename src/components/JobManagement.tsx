@@ -227,8 +227,9 @@ export function JobManagement() {
 
       switch (sortBy) {
         case "jobNumber":
-          aValue = a.job.jobNumber.toLowerCase();
-          bValue = b.job.jobNumber.toLowerCase();
+          // Parse job numbers as integers for proper numerical sorting
+          aValue = parseInt(a.job.jobNumber) || 0;
+          bValue = parseInt(b.job.jobNumber) || 0;
           break;
         case "name":
           aValue = a.job.name.toLowerCase();
