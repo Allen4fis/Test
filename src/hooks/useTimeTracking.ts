@@ -1069,8 +1069,14 @@ export function useTimeTracking() {
           {
             id: "10",
             name: "NS Stat Holiday",
-            description: "Nightshift statutory holiday (base pay + $3) x1",
-            multiplier: 1.0,
+            description: "Nightshift statutory holiday (base pay + $3) x1.5",
+            multiplier: 1.5,
+          },
+          {
+            id: "11",
+            name: "Stat Holiday OT",
+            description: "Statutory holiday overtime (base pay x1.5)",
+            multiplier: 1.5,
           },
         ],
         provinces: [
