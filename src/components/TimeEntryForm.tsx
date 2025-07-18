@@ -102,6 +102,14 @@ export function TimeEntryForm() {
     description: "",
   });
 
+  // Rental entry form state
+  const [rentalFormData, setRentalFormData] = useState({
+    rentalItemId: "",
+    quantity: "1",
+    dspRate: "",
+    description: "",
+  });
+
   const [formError, setFormError] = useState("");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
   const [showAllEntries, setShowAllEntries] = useState(false);
