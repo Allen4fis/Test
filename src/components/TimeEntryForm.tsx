@@ -1269,7 +1269,7 @@ export function TimeEntryForm() {
                       );
 
                       return (
-                        <TableRow key={`time-${entry.id}`}>
+                        <TableRow key={(entry as any).uniqueKey}>
                           <TableCell>
                             <Badge variant="default" className="bg-blue-600">
                               <Clock className="h-3 w-3 mr-1" />
