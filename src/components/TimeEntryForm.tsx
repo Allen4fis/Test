@@ -76,11 +76,14 @@ export function TimeEntryForm() {
     provinces,
     timeEntries,
     rentalItems,
+    rentalEntries,
     addTimeEntry,
     addMultipleTimeEntries,
     updateTimeEntry,
     deleteTimeEntry,
     addRentalEntry,
+    updateRentalEntry,
+    deleteRentalEntry,
   } = useTimeTracking();
 
   const [formData, setFormData] = useState({
