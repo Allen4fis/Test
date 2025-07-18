@@ -158,6 +158,12 @@ export function TimeEntryForm() {
       costWageUsed: "",
       description: "",
     });
+    setRentalFormData({
+      rentalItemId: "",
+      quantity: "1",
+      dspRate: "",
+      description: "",
+    });
     setFormError("");
     setEditingEntry(null);
   };
