@@ -64,6 +64,7 @@ import {
   Truck,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { toast } from "@/hooks/use-toast";
 import { RentalItem, RentalEntry } from "@/types";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
