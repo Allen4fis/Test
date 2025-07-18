@@ -529,6 +529,7 @@ export function TimeEntryForm() {
                         costWageUsed: e.target.value,
                       })
                     }
+                    onWheel={(e) => e.currentTarget.blur()}
                     className="pl-10"
                     placeholder="45.00"
                     required
