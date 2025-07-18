@@ -56,6 +56,7 @@ import {
   MapPin,
   Building,
   Activity,
+  Truck,
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
