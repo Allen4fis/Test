@@ -941,6 +941,194 @@ export function TimeEntryForm() {
               </div>
             </div>
 
+            {/* Rental Entry Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Truck className="h-5 w-5 text-blue-500" />
+                <Label className="text-lg font-semibold">
+                  Optional Rental Entry
+                </Label>
+              </div>
+              <p className="text-sm text-gray-600">
+                Optionally add a rental item for the same employee, job, and
+                date.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Rental Item Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="rentalItem" className="text-sm font-medium">
+                    Rental Item
+                  </Label>
+                  <Select
+                    value={rentalFormData.rentalItemId}
+                    onValueChange={(value) => {
+                      const selectedItem = rentalItems.find(
+                        (item) => item.id === value,
+                      );
+                      setRentalFormData({
+                        ...rentalFormData,
+                        rentalItemId: value,
+                        // Auto-populate DSP rate if available
+                        dspRate: selectedItem?.dspRate?.toString() || "",
+                      });
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select rental item (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {rentalItems
+                        .filter((item) => item.isActive)
+                        .map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            <div className="flex flex-col">
+                              <span>{item.name}</span>
+                              <span className="text-xs text-gray-500">
+                                ${item.dailyRate}/{item.unit} - {item.category}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Quantity */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="rentalQuantity"
+                    className="text-sm font-medium"
+                  >
+                    Quantity
+                  </Label>
+                  <Input
+                    id="rentalQuantity"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={rentalFormData.quantity}
+                    onChange={(e) =>
+                      setRentalFormData({
+                        ...rentalFormData,
+                        quantity: e.target.value,
+                      })
+                    }
+                    onWheel={(e) => e.currentTarget.blur()}
+                    placeholder="1"
+                    disabled={!rentalFormData.rentalItemId}
+                  />
+                </div>
+
+                {/* DSP Rate (if applicable) */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="rentalDspRate"
+                    className="text-sm font-medium"
+                  >
+                    DSP Rate ($/unit)
+                  </Label>
+                  <Input
+                    id="rentalDspRate"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={rentalFormData.dspRate}
+                    onChange={(e) =>
+                      setRentalFormData({
+                        ...rentalFormData,
+                        dspRate: e.target.value,
+                      })
+                    }
+                    onWheel={(e) => e.currentTarget.blur()}
+                    placeholder="DSP rate (optional)"
+                    disabled={!rentalFormData.rentalItemId}
+                  />
+                  {rentalFormData.rentalItemId &&
+                    (() => {
+                      const selectedItem = rentalItems.find(
+                        (item) => item.id === rentalFormData.rentalItemId,
+                      );
+                      return selectedItem?.dspRate &&
+                        parseFloat(rentalFormData.dspRate) !==
+                          selectedItem.dspRate ? (
+                        <p className="text-xs text-blue-600">
+                          Default DSP rate: ${selectedItem.dspRate.toFixed(2)}
+                        </p>
+                      ) : null;
+                    })()}
+                </div>
+
+                {/* Rental Description */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="rentalDescription"
+                    className="text-sm font-medium"
+                  >
+                    Rental Notes
+                  </Label>
+                  <Input
+                    id="rentalDescription"
+                    value={rentalFormData.description}
+                    onChange={(e) =>
+                      setRentalFormData({
+                        ...rentalFormData,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Optional rental notes"
+                    disabled={!rentalFormData.rentalItemId}
+                  />
+                </div>
+              </div>
+
+              {/* Rental Summary */}
+              {rentalFormData.rentalItemId &&
+                (() => {
+                  const selectedItem = rentalItems.find(
+                    (item) => item.id === rentalFormData.rentalItemId,
+                  );
+                  const quantity = parseFloat(rentalFormData.quantity) || 1;
+                  const dspRate = rentalFormData.dspRate
+                    ? parseFloat(rentalFormData.dspRate)
+                    : selectedItem?.dspRate || 0;
+                  const billableAmount = selectedItem
+                    ? selectedItem.dailyRate * quantity
+                    : 0;
+                  const costAmount = dspRate * quantity;
+
+                  return selectedItem ? (
+                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="text-sm space-y-1">
+                        <p>
+                          <strong>Item:</strong> {selectedItem.name} (
+                          {selectedItem.category})
+                        </p>
+                        <p>
+                          <strong>Rate:</strong> $
+                          {selectedItem.dailyRate.toFixed(2)}/
+                          {selectedItem.unit}
+                        </p>
+                        <p>
+                          <strong>Quantity:</strong> {quantity}{" "}
+                          {selectedItem.unit}(s)
+                        </p>
+                        <div className="flex justify-between items-center pt-2 border-t border-blue-200 dark:border-blue-700">
+                          <span className="font-medium text-green-600">
+                            Billable: ${billableAmount.toFixed(2)}
+                          </span>
+                          {dspRate > 0 && (
+                            <span className="font-medium text-red-600">
+                              DSP Cost: ${costAmount.toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+            </div>
+
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description" className="text-sm font-medium">
