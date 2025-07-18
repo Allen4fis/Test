@@ -695,6 +695,7 @@ export function TimeEntryForm() {
                     onChange={(e) =>
                       setFormData({ ...formData, hours1: e.target.value })
                     }
+                    onWheel={(e) => e.currentTarget.blur()}
                     placeholder="8.0"
                   />
                 </div>
