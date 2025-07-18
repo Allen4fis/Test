@@ -177,6 +177,39 @@ export function JobManagement() {
     e.preventDefault();
     if (!formData.jobNumber.trim() || !formData.name.trim()) return;
 
+    // Check for duplicate job number when creating new job
+    if (!editingJob) {
+      const existingJob = jobs.find(
+        (job) =>
+          job.jobNumber.toLowerCase() ===
+          formData.jobNumber.trim().toLowerCase(),
+      );
+      if (existingJob) {
+        toast({
+          title: "Duplicate Job Number",
+          description: `Job number "${formData.jobNumber}" already exists. Please use a different job number.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      // Check for duplicate job number when editing (excluding current job)
+      const existingJob = jobs.find(
+        (job) =>
+          job.id !== editingJob.id &&
+          job.jobNumber.toLowerCase() ===
+            formData.jobNumber.trim().toLowerCase(),
+      );
+      if (existingJob) {
+        toast({
+          title: "Duplicate Job Number",
+          description: `Job number "${formData.jobNumber}" already exists. Please use a different job number.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     if (editingJob) {
       updateJob(editingJob.id, formData);
     } else {
