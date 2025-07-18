@@ -1209,30 +1209,28 @@ export function TimeEntryForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Recent Time Entries
+            Recent Entries
           </CardTitle>
           <CardDescription>
-            Last 50 time entries, sorted by newest first
+            Recent time and rental entries, sorted by newest first
           </CardDescription>
         </CardHeader>
         <CardContent>
           {recentEntries.length === 0 ? (
             <p className="text-gray-500 text-center py-8">
-              No time entries yet. Add your first entry above!
+              No entries yet. Add your first entry above!
             </p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Type</TableHead>
                     <TableHead>Employee</TableHead>
                     <TableHead>Job</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Hour Type</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead className="text-purple-600">
-                      Live Out Allowance
-                    </TableHead>
+                    <TableHead>Details</TableHead>
+                    <TableHead>Amount</TableHead>
                     <TableHead>Total Cost</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
