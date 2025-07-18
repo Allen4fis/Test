@@ -1241,129 +1241,255 @@ export function TimeEntryForm() {
                       (emp) => emp.id === entry.employeeId,
                     );
                     const job = jobs.find((job) => job.id === entry.jobId);
-                    const hourType = hourTypes.find(
-                      (ht) => ht.id === entry.hourTypeId,
-                    );
-                    const province = provinces.find(
-                      (prov) => prov.id === entry.provinceId,
-                    );
 
-                    return (
-                      <TableRow key={entry.id}>
-                        <TableCell className="font-medium">
-                          <div>
-                            <p>{employee?.name || "Unknown"}</p>
-                            <p className="text-sm text-gray-500">
-                              {entry.title}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">
-                              {job?.jobNumber || "Unknown"}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {job?.name || ""}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {formatLocalDate(entry.date, {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {hourType?.name || "Unknown"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4 text-blue-600" />
-                            <span className="font-medium">
-                              {entry.hours.toFixed(2)}h
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {entry.loaCount && entry.loaCount > 0 ? (
-                            <div className="text-purple-600">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
-                                <span className="font-medium">
-                                  {entry.loaCount}
-                                </span>
-                              </div>
-                              <div className="text-xs">
-                                ${(entry.loaCount * 200).toFixed(2)}
+                    if (entry.entryType === "time") {
+                      // Time Entry Row
+                      const hourType = hourTypes.find(
+                        (ht) => ht.id === (entry as any).hourTypeId,
+                      );
+                      const province = provinces.find(
+                        (prov) => prov.id === (entry as any).provinceId,
+                      );
+
+                      return (
+                        <TableRow key={`time-${entry.id}`}>
+                          <TableCell>
+                            <Badge variant="default" className="bg-blue-600">
+                              <Clock className="h-3 w-3 mr-1" />
+                              Time
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            <div>
+                              <p>{employee?.name || "Unknown"}</p>
+                              <p className="text-sm text-gray-500">
+                                {(entry as any).title}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">
+                                {job?.jobNumber || "Unknown"}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {job?.name || ""}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {formatLocalDate((entry as any).date, {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <Badge variant="outline">
+                                {hourType?.name || "Unknown"}
+                              </Badge>
+                              <div className="text-sm text-gray-500 mt-1">
+                                {(entry as any).hours.toFixed(2)}h
+                                {(entry as any).loaCount &&
+                                  (entry as any).loaCount > 0 && (
+                                    <span className="text-purple-600 ml-2">
+                                      + {(entry as any).loaCount} LOA
+                                    </span>
+                                  )}
                               </div>
                             </div>
-                          ) : (
-                            <span className="text-gray-400">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-green-600 font-medium">
-                            $
-                            {(
-                              entry.hours *
-                                entry.billableWageUsed *
-                                (hourType?.multiplier || 1) +
-                              (entry.loaCount || 0) * 200
-                            ).toFixed(2)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(entry)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <DeleteConfirmationDialog
-                              item={{
-                                id: entry.id,
-                                name: `${employee?.name || "Unknown"} - ${formatLocalDate(entry.date)} - ${hourType?.name || "Unknown"}`,
-                                type: "time-entry",
-                                associatedData: {
-                                  additionalInfo: [
-                                    `Employee: ${employee?.name || "Unknown"} (${entry.title})`,
-                                    `Job: ${job?.jobNumber || "Unknown"} - ${job?.name || ""}`,
-                                    `Date: ${formatLocalDate(entry.date)}`,
-                                    `Hours: ${entry.hours.toFixed(2)}h`,
-                                    `Hour Type: ${hourType?.name || "Unknown"}`,
-                                    `Province: ${province?.name || "Unknown"}`,
-                                    ...(entry.loaCount && entry.loaCount > 0
-                                      ? [
-                                          `LOA: ${entry.loaCount} ($${(entry.loaCount * 200).toFixed(2)})`,
-                                        ]
-                                      : []),
-                                    `Total Cost: $${(
-                                      entry.hours *
-                                        entry.billableWageUsed *
-                                        (hourType?.multiplier || 1) +
-                                      (entry.loaCount || 0) * 200
-                                    ).toFixed(2)}`,
-                                    `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
-                                  ],
-                                },
-                              }}
-                              trigger={
-                                <Button variant="ghost" size="sm">
-                                  <Trash2 className="h-4 w-4 text-red-500" />
-                                </Button>
-                              }
-                              onConfirm={(entryId) => handleDelete(entry)}
-                            />
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-green-600 font-medium">
+                              $
+                              {(
+                                (entry as any).hours *
+                                  (entry as any).billableWageUsed *
+                                  (hourType?.multiplier || 1) +
+                                ((entry as any).loaCount || 0) * 200
+                              ).toFixed(2)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-green-600 font-medium">
+                              $
+                              {(
+                                (entry as any).hours *
+                                  (entry as any).billableWageUsed *
+                                  (hourType?.multiplier || 1) +
+                                ((entry as any).loaCount || 0) * 200
+                              ).toFixed(2)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(entry as any)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <DeleteConfirmationDialog
+                                item={{
+                                  id: entry.id,
+                                  name: `${employee?.name || "Unknown"} - ${formatLocalDate((entry as any).date)} - ${hourType?.name || "Unknown"}`,
+                                  type: "time-entry",
+                                  associatedData: {
+                                    additionalInfo: [
+                                      `Employee: ${employee?.name || "Unknown"} (${(entry as any).title})`,
+                                      `Job: ${job?.jobNumber || "Unknown"} - ${job?.name || ""}`,
+                                      `Date: ${formatLocalDate((entry as any).date)}`,
+                                      `Hours: ${(entry as any).hours.toFixed(2)}h`,
+                                      `Hour Type: ${hourType?.name || "Unknown"}`,
+                                      `Province: ${province?.name || "Unknown"}`,
+                                      ...((entry as any).loaCount &&
+                                      (entry as any).loaCount > 0
+                                        ? [
+                                            `LOA: ${(entry as any).loaCount} ($${((entry as any).loaCount * 200).toFixed(2)})`,
+                                          ]
+                                        : []),
+                                      `Total Cost: $${(
+                                        (entry as any).hours *
+                                          (entry as any).billableWageUsed *
+                                          (hourType?.multiplier || 1) +
+                                        ((entry as any).loaCount || 0) * 200
+                                      ).toFixed(2)}`,
+                                      `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
+                                    ],
+                                  },
+                                }}
+                                trigger={
+                                  <Button variant="ghost" size="sm">
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                }
+                                onConfirm={() => handleDelete(entry as any)}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    } else {
+                      // Rental Entry Row
+                      const rentalItem = rentalItems.find(
+                        (item) => item.id === (entry as any).rentalItemId,
+                      );
+
+                      return (
+                        <TableRow key={`rental-${entry.id}`}>
+                          <TableCell>
+                            <Badge variant="default" className="bg-orange-600">
+                              <Truck className="h-3 w-3 mr-1" />
+                              Rental
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            <div>
+                              <p>{employee?.name || "Unknown"}</p>
+                              <p className="text-sm text-gray-500">
+                                Rental User
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">
+                                {job?.jobNumber || "Unknown"}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {job?.name || ""}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {formatLocalDate((entry as any).startDate, {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <Badge
+                                variant="outline"
+                                className="bg-orange-100 dark:bg-orange-900"
+                              >
+                                {rentalItem?.name || "Unknown Item"}
+                              </Badge>
+                              <div className="text-sm text-gray-500 mt-1">
+                                {(entry as any).quantity} x $
+                                {(entry as any).rateUsed}/
+                                {(entry as any).billingUnit}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-green-600 font-medium">
+                              $
+                              {(
+                                (entry as any).quantity *
+                                (entry as any).rateUsed
+                              ).toFixed(2)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-red-600 font-medium">
+                              $
+                              {(
+                                ((entry as any).dspRate || 0) *
+                                (entry as any).quantity
+                              ).toFixed(2)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  // TODO: Add rental entry editing
+                                  toast({
+                                    title: "Rental Editing",
+                                    description:
+                                      "Rental entry editing coming soon!",
+                                  });
+                                }}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <DeleteConfirmationDialog
+                                item={{
+                                  id: entry.id,
+                                  name: `${employee?.name || "Unknown"} - ${formatLocalDate((entry as any).startDate)} - ${rentalItem?.name || "Unknown Item"}`,
+                                  type: "rental-entry",
+                                  associatedData: {
+                                    additionalInfo: [
+                                      `Employee: ${employee?.name || "Unknown"}`,
+                                      `Job: ${job?.jobNumber || "Unknown"} - ${job?.name || ""}`,
+                                      `Date: ${formatLocalDate((entry as any).startDate)}`,
+                                      `Item: ${rentalItem?.name || "Unknown Item"}`,
+                                      `Quantity: ${(entry as any).quantity}`,
+                                      `Rate: $${(entry as any).rateUsed}/${(entry as any).billingUnit}`,
+                                      `Total Billable: $${((entry as any).quantity * (entry as any).rateUsed).toFixed(2)}`,
+                                      `DSP Cost: $${(((entry as any).dspRate || 0) * (entry as any).quantity).toFixed(2)}`,
+                                      `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
+                                    ],
+                                  },
+                                }}
+                                trigger={
+                                  <Button variant="ghost" size="sm">
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                }
+                                onConfirm={() => deleteRentalEntry(entry.id)}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    }
                   })}
                 </TableBody>
               </Table>
