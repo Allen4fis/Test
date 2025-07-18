@@ -1114,7 +1114,7 @@ export function TimeEntryForm() {
                           <strong>Quantity:</strong> {quantity}{" "}
                           {selectedItem.unit}(s)
                         </p>
-                        <div className="flex justify-between items-center pt-2 border-t border-blue-200 dark:border-blue-700">
+                        <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-600">
                           <span className="font-medium text-green-600">
                             Billable: ${billableAmount.toFixed(2)}
                           </span>
