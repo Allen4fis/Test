@@ -491,10 +491,21 @@ export function TimeEntryForm() {
     }
   };
 
-  // Get recent time entries (sorted by latest input time) - Memoized for performance
+  // Get recent entries (both time and rental entries) - Memoized for performance
   const recentEntries = useMemo(() => {
-    return timeEntries.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  }, [timeEntries]);
+    // Combine time entries and rental entries with a type indicator
+    const combinedEntries = [
+      ...timeEntries.map((entry) => ({ ...entry, entryType: "time" as const })),
+      ...rentalEntries.map((entry) => ({
+        ...entry,
+        entryType: "rental" as const,
+      })),
+    ];
+
+    return combinedEntries.sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt),
+    );
+  }, [timeEntries, rentalEntries]);
 
   // Pagination for recent entries
   const [itemsPerPage, setItemsPerPage] = useState(25);
