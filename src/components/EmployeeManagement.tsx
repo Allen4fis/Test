@@ -107,6 +107,36 @@ export function EmployeeManagement() {
     )
       return;
 
+    // Check for duplicate employee name when creating new employee
+    if (!editingEmployee) {
+      const existingEmployee = employees.find(
+        (emp) => emp.name.toLowerCase() === formData.name.trim().toLowerCase(),
+      );
+      if (existingEmployee) {
+        toast({
+          title: "Duplicate Employee Name",
+          description: `Employee "${formData.name}" already exists. Please use a different name.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      // Check for duplicate employee name when editing (excluding current employee)
+      const existingEmployee = employees.find(
+        (emp) =>
+          emp.id !== editingEmployee.id &&
+          emp.name.toLowerCase() === formData.name.trim().toLowerCase(),
+      );
+      if (existingEmployee) {
+        toast({
+          title: "Duplicate Employee Name",
+          description: `Employee "${formData.name}" already exists. Please use a different name.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     const employeeData = {
       name: formData.name,
       title: formData.title,
