@@ -1312,6 +1312,7 @@ export function TimeEntryViewer() {
                 onChange={(e) =>
                   setEditForm({ ...editForm, costWageUsed: e.target.value })
                 }
+                onWheel={(e) => e.currentTarget.blur()}
                 placeholder="Cost hourly rate"
               />
             </div>
