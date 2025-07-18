@@ -505,12 +505,17 @@ export function TimeEntryForm() {
 
   // Get recent entries (both time and rental entries) - Memoized for performance
   const recentEntries = useMemo(() => {
-    // Combine time entries and rental entries with a type indicator
+    // Combine time entries and rental entries with a type indicator and unique keys
     const combinedEntries = [
-      ...timeEntries.map((entry) => ({ ...entry, entryType: "time" as const })),
+      ...timeEntries.map((entry) => ({
+        ...entry,
+        entryType: "time" as const,
+        uniqueKey: `time-${entry.id}`, // Ensure unique keys
+      })),
       ...rentalEntries.map((entry) => ({
         ...entry,
         entryType: "rental" as const,
+        uniqueKey: `rental-${entry.id}`, // Ensure unique keys
       })),
     ];
 
