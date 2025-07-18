@@ -469,7 +469,82 @@ export function TimeEntryForm() {
                     </p>
                   )}
               </div>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Billable Wage */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="billableWageUsed"
+                  className="text-sm font-medium"
+                >
+                  Billable Rate *
+                </Label>
+                <div className="relative">
+                  <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
+                  <Input
+                    id="billableWageUsed"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.billableWageUsed}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        billableWageUsed: e.target.value,
+                      })
+                    }
+                    className="pl-10"
+                    placeholder="65.00"
+                    required
+                  />
+                </div>
+                {selectedEmployee &&
+                  parseFloat(formData.billableWageUsed) &&
+                  parseFloat(formData.billableWageUsed) !==
+                    selectedEmployee.billableWage && (
+                    <p className="text-xs text-blue-600">
+                      Default rate: ${selectedEmployee.billableWage.toFixed(2)}
+                    </p>
+                  )}
+              </div>
+
+              {/* Cost Wage */}
+              <div className="space-y-2">
+                <Label htmlFor="costWageUsed" className="text-sm font-medium">
+                  Cost Rate *
+                </Label>
+                <div className="relative">
+                  <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-600" />
+                  <Input
+                    id="costWageUsed"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.costWageUsed}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        costWageUsed: e.target.value,
+                      })
+                    }
+                    className="pl-10"
+                    placeholder="45.00"
+                    required
+                  />
+                </div>
+                {selectedEmployee &&
+                  parseFloat(formData.costWageUsed) &&
+                  parseFloat(formData.costWageUsed) !==
+                    selectedEmployee.costWage && (
+                    <p className="text-xs text-blue-600">
+                      Default rate: ${selectedEmployee.costWage.toFixed(2)}
+                    </p>
+                  )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Job Selection */}
               <div className="space-y-2">
                 <Label htmlFor="job" className="text-sm font-medium">
