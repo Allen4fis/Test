@@ -179,6 +179,37 @@ export function RentalManagement() {
     )
       return;
 
+    // Check for duplicate rental item name when creating new item
+    if (!editingItem) {
+      const existingItem = rentalItems.find(
+        (item) =>
+          item.name.toLowerCase() === formData.name.trim().toLowerCase(),
+      );
+      if (existingItem) {
+        toast({
+          title: "Duplicate Rental Item",
+          description: `Rental item "${formData.name}" already exists. Please use a different name.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      // Check for duplicate rental item name when editing (excluding current item)
+      const existingItem = rentalItems.find(
+        (item) =>
+          item.id !== editingItem.id &&
+          item.name.toLowerCase() === formData.name.trim().toLowerCase(),
+      );
+      if (existingItem) {
+        toast({
+          title: "Duplicate Rental Item",
+          description: `Rental item "${formData.name}" already exists. Please use a different name.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     const itemData = {
       name: formData.name,
       description: formData.description,
