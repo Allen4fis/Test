@@ -1281,6 +1281,7 @@ export function TimeEntryViewer() {
                 onChange={(e) =>
                   setEditForm({ ...editForm, loaCount: e.target.value })
                 }
+                onWheel={(e) => e.currentTarget.blur()}
               />
             </div>
 
