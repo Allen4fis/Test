@@ -332,6 +332,9 @@ export function TimeEntryForm() {
         updateTimeEntry(editingEntry.id, entryData);
         resetForm();
       } else {
+        let timeEntriesCreated = false;
+        let rentalEntryCreated = false;
+
         // Create time entries if there are hour entries
         if (hourEntries.length > 0) {
           setSubmissionProgress(
@@ -357,6 +360,10 @@ export function TimeEntryForm() {
 
           // Create all entries in a single batch operation
           addMultipleTimeEntries(entriesToCreate);
+          timeEntriesCreated = true;
+
+          // Brief delay after time entries creation
+          await delay(300);
         }
 
         // If only LOA and no hours, create a single entry with 0 hours
@@ -378,6 +385,10 @@ export function TimeEntryForm() {
           };
 
           addTimeEntry(entryData);
+          timeEntriesCreated = true;
+
+          // Brief delay after LOA entry creation
+          await delay(300);
         }
 
         // Create rental entry if rental item is selected
@@ -385,6 +396,8 @@ export function TimeEntryForm() {
           rentalFormData.rentalItemId &&
           parseFloat(rentalFormData.quantity) > 0
         ) {
+          setSubmissionProgress("Creating rental entry...");
+
           const selectedRentalItem = rentalItems.find(
             (item) => item.id === rentalFormData.rentalItemId,
           );
@@ -407,23 +420,22 @@ export function TimeEntryForm() {
           };
 
           addRentalEntry(rentalEntryData);
+          rentalEntryCreated = true;
+
+          // Brief delay after rental entry creation
+          await delay(300);
         }
 
         // Set final success message based on what was created
-        const createdTimeEntries = hourEntries.length > 0 || loaCount > 0;
-        const createdRental =
-          rentalFormData.rentalItemId &&
-          parseFloat(rentalFormData.quantity) > 0;
-
-        if (createdTimeEntries && createdRental) {
+        if (timeEntriesCreated && rentalEntryCreated) {
           setSubmissionProgress(
             `Successfully created ${hourEntries.length || 1} time entries and 1 rental entry!`,
           );
-        } else if (createdTimeEntries) {
+        } else if (timeEntriesCreated) {
           setSubmissionProgress(
             `Successfully created ${hourEntries.length || 1} time entries!`,
           );
-        } else if (createdRental) {
+        } else if (rentalEntryCreated) {
           setSubmissionProgress("Successfully created 1 rental entry!");
         }
 
