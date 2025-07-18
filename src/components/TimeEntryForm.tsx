@@ -1395,7 +1395,7 @@ export function TimeEntryForm() {
                       );
 
                       return (
-                        <TableRow key={`rental-${entry.id}`}>
+                        <TableRow key={(entry as any).uniqueKey}>
                           <TableCell>
                             <Badge variant="default" className="bg-orange-600">
                               <Truck className="h-3 w-3 mr-1" />
