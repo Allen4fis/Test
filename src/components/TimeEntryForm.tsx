@@ -1099,7 +1099,7 @@ export function TimeEntryForm() {
                   const costAmount = dspRate * quantity;
 
                   return selectedItem ? (
-                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
                       <div className="text-sm space-y-1">
                         <p>
                           <strong>Item:</strong> {selectedItem.name} (
