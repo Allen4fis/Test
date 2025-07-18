@@ -636,6 +636,7 @@ export function TimeEntryForm() {
                   onChange={(e) =>
                     setFormData({ ...formData, loaCount: e.target.value })
                   }
+                  onWheel={(e) => e.currentTarget.blur()}
                   placeholder="0"
                 />
                 <p className="text-xs text-gray-500">
