@@ -118,6 +118,11 @@ export function TimeEntryForm() {
           title: selectedEmployee.title,
           billableWageUsed: selectedEmployee.billableWage.toString(),
           costWageUsed: selectedEmployee.costWage.toString(),
+          // Set default hour types: 1=regular, 2=overtime, 3=travel, 4=double time
+          hourType1: prev.hourType1 || "1", // Regular Time
+          hourType2: prev.hourType2 || "2", // Overtime
+          hourType3: prev.hourType3 || "4", // Travel Hours
+          hourType4: prev.hourType4 || "3", // Double Time
         }));
       }
     }
