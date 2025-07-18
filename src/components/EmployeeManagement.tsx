@@ -47,6 +47,7 @@ import {
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { toast } from "@/hooks/use-toast";
 import { Employee } from "@/types";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 export function EmployeeManagement() {
