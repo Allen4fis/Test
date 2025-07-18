@@ -378,10 +378,42 @@ export function TimeEntryForm() {
           setSubmissionProgress("LOA entry created successfully!");
         }
 
+        // Create rental entry if rental item is selected
+        if (
+          rentalFormData.rentalItemId &&
+          parseFloat(rentalFormData.quantity) > 0
+        ) {
+          setSubmissionProgress("Creating rental entry...");
+
+          const selectedRentalItem = rentalItems.find(
+            (item) => item.id === rentalFormData.rentalItemId,
+          );
+          const quantity = parseFloat(rentalFormData.quantity);
+          const dspRate = rentalFormData.dspRate
+            ? parseFloat(rentalFormData.dspRate)
+            : selectedRentalItem?.dspRate;
+
+          const rentalEntryData = {
+            rentalItemId: rentalFormData.rentalItemId,
+            jobId: formData.jobId,
+            employeeId: formData.employeeId,
+            startDate: formData.date,
+            endDate: formData.date, // Same day rental for now
+            quantity: quantity,
+            billingUnit: selectedRentalItem?.unit || "day",
+            rateUsed: selectedRentalItem?.dailyRate || 0,
+            dspRate: dspRate,
+            description: rentalFormData.description,
+          };
+
+          addRentalEntry(rentalEntryData);
+          setSubmissionProgress("Rental entry created successfully!");
+        }
+
         // Brief delay to show success message
         await delay(800);
 
-        // Preserve form data but clear hours and description for next entry
+        // Preserve form data but clear hours, description, and rental data for next entry
         setFormData((prev) => ({
           ...prev,
           hours1: "",
@@ -391,6 +423,12 @@ export function TimeEntryForm() {
           loaCount: "",
           description: "",
         }));
+        setRentalFormData({
+          rentalItemId: "",
+          quantity: "1",
+          dspRate: "",
+          description: "",
+        });
         setFormError("");
       }
     } catch (error) {
