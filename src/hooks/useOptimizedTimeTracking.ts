@@ -309,7 +309,9 @@ export function useOptimizedTimeTracking() {
   // Update index when data changes
   useEffect(() => {
     dataIndex.current.markDirty();
-    dataIndex.current.buildIndex(appData.timeEntries);
+    if (appData.timeEntries && Array.isArray(appData.timeEntries)) {
+      dataIndex.current.buildIndex(appData.timeEntries);
+    }
   }, [rawAppData.timeEntries]);
 
   // Validate and migrate data
