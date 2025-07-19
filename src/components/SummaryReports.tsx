@@ -271,7 +271,7 @@ export function SummaryReports() {
   }, [
     rentalSummaries,
     dateFilter,
-    employeeFilter,
+    selectedEmployees,
     jobFilter,
     includeInvoiced,
     includeUninvoiced,
