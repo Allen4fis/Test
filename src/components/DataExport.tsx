@@ -2131,56 +2131,205 @@ export function DataExport() {
                 })()}
 
                 {/* Travel by Job */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <Briefcase className="h-5 w-5" />
-                    Travel Hours by Job
-                  </h3>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Job</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Travel Hours</TableHead>
-                        <TableHead>Travel Cost</TableHead>
-                        <TableHead>Travel Revenue</TableHead>
-                        <TableHead>Entries</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {Object.values(travelByJob)
-                        .sort((a: any, b: any) => b.hours - a.hours)
-                        .slice(0, 10)
-                        .map((job: any) => (
-                          <TableRow key={job.jobNumber}>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">{job.jobNumber}</p>
-                                <p className="text-sm text-gray-500">
-                                  {job.jobName}
-                                </p>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  job.isBillable ? "default" : "secondary"
-                                }
+                {(() => {
+                  const [jobSortField, setJobSortField] =
+                    useState<string>("hours");
+                  const [jobSortDirection, setJobSortDirection] = useState<
+                    "asc" | "desc"
+                  >("desc");
+
+                  const handleJobSort = (field: string) => {
+                    if (jobSortField === field) {
+                      setJobSortDirection(
+                        jobSortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setJobSortField(field);
+                      setJobSortDirection("desc");
+                    }
+                  };
+
+                  const getJobSortIcon = (field: string) => {
+                    if (jobSortField !== field) {
+                      return <div className="w-4 h-4" />;
+                    }
+                    return jobSortDirection === "asc" ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    );
+                  };
+
+                  const sortedJobData = Object.values(travelByJob).sort(
+                    (a: any, b: any) => {
+                      let aValue, bValue;
+
+                      switch (jobSortField) {
+                        case "jobNumber":
+                          // Parse job numbers as integers for proper numerical sorting
+                          aValue = parseInt(a.jobNumber) || 0;
+                          bValue = parseInt(b.jobNumber) || 0;
+                          break;
+                        case "jobName":
+                          aValue = a.jobName.toLowerCase();
+                          bValue = b.jobName.toLowerCase();
+                          break;
+                        case "hours":
+                          aValue = a.hours;
+                          bValue = b.hours;
+                          break;
+                        case "cost":
+                          aValue = a.cost;
+                          bValue = b.cost;
+                          break;
+                        case "revenue":
+                          aValue = a.revenue;
+                          bValue = b.revenue;
+                          break;
+                        case "entries":
+                          aValue = a.entryCount;
+                          bValue = b.entryCount;
+                          break;
+                        case "status":
+                          aValue = a.isBillable ? 1 : 0;
+                          bValue = b.isBillable ? 1 : 0;
+                          break;
+                        default:
+                          aValue = a.hours;
+                          bValue = b.hours;
+                      }
+
+                      if (jobSortDirection === "asc") {
+                        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                      } else {
+                        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+                      }
+                    },
+                  );
+
+                  const jobPagination = usePagination({
+                    data: sortedJobData,
+                    itemsPerPage: 10,
+                  });
+
+                  return (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                        <Briefcase className="h-5 w-5" />
+                        Travel Hours by Job
+                      </h3>
+                      <div className="space-y-4">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleJobSort("jobNumber")}
                               >
-                                {job.isBillable ? "Billable" : "Non-Billable"}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>{job.hours.toFixed(1)}h</TableCell>
-                            <TableCell>${job.cost.toFixed(2)}</TableCell>
-                            <TableCell className="text-green-600">
-                              ${job.revenue.toFixed(2)}
-                            </TableCell>
-                            <TableCell>{job.entryCount}</TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                                <div className="flex items-center gap-1">
+                                  Job
+                                  {getJobSortIcon("jobNumber")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleJobSort("status")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Status
+                                  {getJobSortIcon("status")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleJobSort("hours")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Travel Hours
+                                  {getJobSortIcon("hours")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleJobSort("cost")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Travel Cost
+                                  {getJobSortIcon("cost")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleJobSort("revenue")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Travel Revenue
+                                  {getJobSortIcon("revenue")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleJobSort("entries")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Entries
+                                  {getJobSortIcon("entries")}
+                                </div>
+                              </TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {jobPagination.paginatedData.map((job: any) => (
+                              <TableRow key={job.jobNumber}>
+                                <TableCell>
+                                  <div>
+                                    <p className="font-medium">
+                                      {job.jobNumber}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                      {job.jobName}
+                                    </p>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant={
+                                      job.isBillable ? "default" : "secondary"
+                                    }
+                                  >
+                                    {job.isBillable
+                                      ? "Billable"
+                                      : "Non-Billable"}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{job.hours.toFixed(1)}h</TableCell>
+                                <TableCell>${job.cost.toFixed(2)}</TableCell>
+                                <TableCell className="text-green-600">
+                                  ${job.revenue.toFixed(2)}
+                                </TableCell>
+                                <TableCell>{job.entryCount}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+
+                        <PaginationControls
+                          currentPage={jobPagination.currentPage}
+                          totalPages={jobPagination.totalPages}
+                          totalItems={jobPagination.totalItems}
+                          pageInfo={jobPagination.pageInfo}
+                          canGoNext={jobPagination.canGoNext}
+                          canGoPrevious={jobPagination.canGoPrevious}
+                          onPageChange={jobPagination.goToPage}
+                          onNextPage={jobPagination.goToNextPage}
+                          onPreviousPage={jobPagination.goToPreviousPage}
+                          itemsPerPageOptions={[5, 10, 20, 50]}
+                          showItemsPerPage={false}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Travel Insights */}
                 <Card className="bg-blue-50 border-blue-200">
