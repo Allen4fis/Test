@@ -281,12 +281,11 @@ export function InvoiceManagement() {
 
       acc[key].totalHours += entry.hours;
       acc[key].totalEffectiveHours += entry.effectiveHours;
-      acc[key].totalCost += entry.totalCost;
-      acc[key].totalBillable += entry.totalBillableAmount;
+      // Don't accumulate costs here - we'll calculate from individual employees
       return acc;
     }, {});
 
-    // Recalculate group totals from individual employee costs to ensure accuracy
+    // Calculate group totals from individual employee costs only
     const result = Object.values(grouped).map((group: any) => ({
       ...group,
       totalCost: group.employees.reduce(
