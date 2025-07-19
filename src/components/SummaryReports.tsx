@@ -199,7 +199,7 @@ export function SummaryReports() {
   }, [
     timeEntrySummaries,
     dateFilter,
-    employeeFilter,
+    selectedEmployees,
     jobFilter,
     provinceFilter,
     billableFilter,
