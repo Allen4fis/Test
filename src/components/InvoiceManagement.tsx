@@ -260,6 +260,91 @@ export function InvoiceManagement() {
     }));
   };
 
+  // Handle sorting for breakdown table
+  const handleBreakdownSort = (
+    field:
+      | "title"
+      | "hourType"
+      | "employees"
+      | "totalHours"
+      | "totalEffectiveHours"
+      | "totalCost"
+      | "totalBillable",
+  ) => {
+    if (breakdownSortBy === field) {
+      setBreakdownSortDirection(
+        breakdownSortDirection === "asc" ? "desc" : "asc",
+      );
+    } else {
+      setBreakdownSortBy(field);
+      setBreakdownSortDirection("asc");
+    }
+  };
+
+  // Sort grouped time entries
+  const getSortedGroupedTimeEntries = (
+    groupedEntries: GroupedTimeEntry[],
+  ): GroupedTimeEntry[] => {
+    return [...groupedEntries].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (breakdownSortBy) {
+        case "title":
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case "hourType":
+          aValue = a.hourType.toLowerCase();
+          bValue = b.hourType.toLowerCase();
+          break;
+        case "employees":
+          aValue = a.employees.length;
+          bValue = b.employees.length;
+          break;
+        case "totalHours":
+          aValue = a.totalHours;
+          bValue = b.totalHours;
+          break;
+        case "totalEffectiveHours":
+          aValue = a.totalEffectiveHours;
+          bValue = b.totalEffectiveHours;
+          break;
+        case "totalCost":
+          aValue = a.totalCost;
+          bValue = b.totalCost;
+          break;
+        case "totalBillable":
+          aValue = a.totalBillable;
+          bValue = b.totalBillable;
+          break;
+        default:
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+      }
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        const comparison = aValue.localeCompare(bValue);
+        return breakdownSortDirection === "asc" ? comparison : -comparison;
+      } else {
+        const comparison = (aValue as number) - (bValue as number);
+        return breakdownSortDirection === "asc" ? comparison : -comparison;
+      }
+    });
+  };
+
+  // Get sort icon
+  const getBreakdownSortIcon = (field: string) => {
+    if (breakdownSortBy !== field) {
+      return <ArrowUpDown className="h-4 w-4 text-gray-500 ml-1" />;
+    }
+    return breakdownSortDirection === "asc" ? (
+      <ArrowUpDown className="h-4 w-4 text-blue-400 ml-1 rotate-180" />
+    ) : (
+      <ArrowUpDown className="h-4 w-4 text-blue-400 ml-1" />
+    );
+  };
+
   // Calculate payment-focused summary statistics for all jobs
   const jobStats = useMemo(() => {
     return jobs
