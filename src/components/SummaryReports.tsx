@@ -850,32 +850,82 @@ export function SummaryReports() {
                 {/* Other Filters */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">Employee</Label>
-                    <Select
-                      value={employeeFilter}
-                      onValueChange={setEmployeeFilter}
-                    >
-                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-600">
-                        <SelectItem
-                          value="all-employees"
-                          className="text-gray-100 focus:bg-orange-500/20"
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Employees</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            setSelectedEmployees(
+                              employees.map((emp) => emp.name),
+                            )
+                          }
+                          className="h-6 px-2 text-xs text-orange-400 hover:text-orange-300"
                         >
-                          All Employees
-                        </SelectItem>
-                        {employees.map((employee) => (
-                          <SelectItem
+                          Select All
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedEmployees([])}
+                          className="h-6 px-2 text-xs text-orange-400 hover:text-orange-300"
+                        >
+                          Clear All
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="max-h-40 overflow-y-auto space-y-2 p-3 bg-gray-800 border border-gray-600 rounded-md">
+                      {employees.length === 0 ? (
+                        <p className="text-gray-400 text-sm">
+                          No employees available
+                        </p>
+                      ) : (
+                        employees.map((employee) => (
+                          <div
                             key={employee.id}
-                            value={employee.name}
-                            className="text-gray-100 focus:bg-orange-500/20"
+                            className="flex items-center space-x-2"
                           >
-                            {employee.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                            <input
+                              type="checkbox"
+                              id={`employee-${employee.id}`}
+                              checked={selectedEmployees.includes(
+                                employee.name,
+                              )}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedEmployees((prev) => [
+                                    ...prev,
+                                    employee.name,
+                                  ]);
+                                } else {
+                                  setSelectedEmployees((prev) =>
+                                    prev.filter(
+                                      (name) => name !== employee.name,
+                                    ),
+                                  );
+                                }
+                              }}
+                              className="rounded border-gray-600 text-orange-500 bg-gray-700 focus:ring-orange-500 focus:ring-2"
+                            />
+                            <label
+                              htmlFor={`employee-${employee.id}`}
+                              className="text-sm text-gray-100 cursor-pointer flex-1"
+                            >
+                              {employee.name}
+                              <span className="text-xs text-gray-400 ml-2">
+                                ({employee.title})
+                              </span>
+                            </label>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {selectedEmployees.length === 0
+                        ? "All employees shown"
+                        : `${selectedEmployees.length} employee${selectedEmployees.length === 1 ? "" : "s"} selected`}
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Job</Label>
