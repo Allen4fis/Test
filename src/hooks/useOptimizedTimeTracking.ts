@@ -331,7 +331,7 @@ export function useOptimizedTimeTracking() {
           const result = data(prev);
           return {
             ...result,
-            jobs: result.jobs.map((job) => ({
+            jobs: (result.jobs || []).map((job) => ({
               ...job,
               invoicedDates: job.invoicedDates || [],
             })),
@@ -340,7 +340,7 @@ export function useOptimizedTimeTracking() {
       } else {
         setRawAppData({
           ...data,
-          jobs: data.jobs.map((job) => ({
+          jobs: (data.jobs || []).map((job) => ({
             ...job,
             invoicedDates: job.invoicedDates || [],
           })),
