@@ -825,8 +825,11 @@ export function useTimeTracking() {
           };
         }
 
-        acc[key].totalHours += entry.hours;
-        acc[key].totalEffectiveHours += effectiveHours;
+        // Only count hours towards daily totals if it's not "Billable" hour type
+        if (hourType.name !== "Billable") {
+          acc[key].totalHours += entry.hours;
+          acc[key].totalEffectiveHours += effectiveHours;
+        }
         acc[key].totalLoaCount += entry.loaCount || 0;
         acc[key].totalCost += cost + loaCost;
         acc[key].entries.push(entry);
