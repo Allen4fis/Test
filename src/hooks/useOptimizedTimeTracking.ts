@@ -352,6 +352,10 @@ export function useOptimizedTimeTracking() {
 
   // Optimized time entry summaries with caching
   const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
+    if (!appData.timeEntries || !Array.isArray(appData.timeEntries)) {
+      return [];
+    }
+
     const cacheKey = `timeEntrySummaries_${appData.timeEntries.length}_${JSON.stringify(appData.timeEntries.slice(-5).map((e) => e.id))}`;
     const cached = getCachedValue(cacheKey);
     if (cached) return cached;
