@@ -264,6 +264,9 @@ export function InvoiceManagement() {
         existingEmployee.effectiveHours += entry.effectiveHours;
         existingEmployee.individualCost += entry.totalCost;
         existingEmployee.individualBillable += entry.totalBillableAmount;
+        // Update cost wage to reflect the most recent entry's wage (in case it changed)
+        existingEmployee.costWage = entry.costWage;
+        existingEmployee.billableWage = entry.billableWage;
       } else {
         acc[key].employees.push({
           name: entry.employeeName,
