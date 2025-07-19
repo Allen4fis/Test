@@ -404,11 +404,8 @@ export function TimeEntryForm() {
             setSubmissionProgress("Successfully created LOA entry!");
           }
 
-          // If we also have a rental entry, wait and then process it
+          // If we also have a rental entry, set it as pending for delayed creation
           if (hasRentalEntry) {
-            await delay(1000);
-            setSubmissionProgress("Now creating rental entry...");
-
             const selectedRentalItem = rentalItems.find(
               (item) => item.id === rentalFormData.rentalItemId,
             );
@@ -430,9 +427,10 @@ export function TimeEntryForm() {
               description: rentalFormData.description,
             };
 
-            addRentalEntry(rentalEntryData);
+            // Set as pending instead of creating immediately
+            setPendingRentalEntry(rentalEntryData);
             setSubmissionProgress(
-              `Successfully created ${hourEntries.length || 1} time entries and 1 rental entry!`,
+              "Time entries created! Creating rental entry...",
             );
           }
         } else if (hasRentalEntry) {
