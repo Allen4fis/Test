@@ -223,9 +223,9 @@ export function SummaryReports() {
 
       // Employee filter (if rental has employee assigned)
       if (
-        employeeFilter !== "all-employees" &&
+        selectedEmployees.length > 0 &&
         rental.employeeName &&
-        rental.employeeName !== employeeFilter
+        !selectedEmployees.includes(rental.employeeName)
       ) {
         return false;
       }
