@@ -1467,7 +1467,7 @@ export function InvoiceManagement() {
                           ))}
                           <TableRow className="border-t-2 border-orange-500/50 font-bold">
                             <TableCell
-                              colSpan={2}
+                              colSpan={3}
                               className="text-orange-200 text-lg"
                             >
                               Grand Totals:
