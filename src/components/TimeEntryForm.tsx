@@ -335,14 +335,6 @@ export function TimeEntryForm() {
         let timeEntriesCreated = false;
         let rentalEntryCreated = false;
 
-        console.log("Creating entries:", {
-          hourEntries: hourEntries.length,
-          hasRental:
-            rentalFormData.rentalItemId &&
-            parseFloat(rentalFormData.quantity) > 0,
-          loaCount,
-        });
-
         // Create time entries if there are hour entries
         if (hourEntries.length > 0) {
           setSubmissionProgress(
