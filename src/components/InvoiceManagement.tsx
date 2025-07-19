@@ -1462,10 +1462,24 @@ export function InvoiceManagement() {
                                   {group.employees.map((employee, empIndex) => (
                                     <div
                                       key={empIndex}
-                                      className="text-sm bg-gray-800/50 px-2 py-1 rounded"
+                                      className="text-sm bg-gray-800/50 px-2 py-1 rounded space-y-1"
                                     >
-                                      {employee.name} -{" "}
-                                      {employee.hours.toFixed(1)}h
+                                      <div>
+                                        <span className="font-medium text-blue-300">
+                                          {employee.name}
+                                        </span>{" "}
+                                        - {employee.hours.toFixed(1)}h
+                                      </div>
+                                      <div className="text-xs text-gray-400 flex justify-between">
+                                        <span>
+                                          Rate: ${employee.costWage.toFixed(2)}
+                                          /hr
+                                        </span>
+                                        <span className="text-green-400">
+                                          Cost: $
+                                          {employee.individualCost.toFixed(2)}
+                                        </span>
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
