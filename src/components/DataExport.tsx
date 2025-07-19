@@ -651,7 +651,7 @@ export function DataExport() {
         `$${data.gst.toFixed(2)}`,
         category === "employee"
           ? "T4 Employment Income"
-          : "T4A Other Income + GST",
+          : "5018 Other Income + GST",
       ]);
     });
     csvData.push([""]);
