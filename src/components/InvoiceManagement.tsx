@@ -1427,7 +1427,7 @@ export function InvoiceManagement() {
                                 onClick={() => handleBreakdownSort("totalCost")}
                                 className="flex items-center hover:text-blue-400 transition-colors"
                               >
-                                Total Cost
+                                Total Cost (Sum of Individual Rates)
                                 {getBreakdownSortIcon("totalCost")}
                               </button>
                             </TableHead>
