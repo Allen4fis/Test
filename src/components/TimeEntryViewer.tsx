@@ -360,15 +360,9 @@ export function TimeEntryViewer() {
     return sum + hourlyCost + loaCost;
   }, 0);
 
-  const handleDelete = async (entryId: string) => {
+  const handleDelete = (entryId: string) => {
     try {
-      console.log("Attempting to delete entry with ID:", entryId);
-      console.log("Current entries before deletion:", timeEntries.length);
-
-      await deleteTimeEntry(entryId);
-
-      console.log("Delete function called successfully");
-
+      deleteTimeEntry(entryId);
       toast({
         title: "Entry Deleted",
         description: "Time entry has been successfully deleted.",
