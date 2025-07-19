@@ -1934,52 +1934,201 @@ export function DataExport() {
                 </div>
 
                 {/* Travel by Employee */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <Users className="h-5 w-5" />
-                    Travel Hours by Employee
-                  </h3>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Employee</TableHead>
-                        <TableHead>Travel Hours</TableHead>
-                        <TableHead>Travel Cost</TableHead>
-                        <TableHead>Travel Revenue</TableHead>
-                        <TableHead>Avg Rate</TableHead>
-                        <TableHead>Entries</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {Object.values(travelByEmployee)
-                        .sort((a: any, b: any) => b.hours - a.hours)
-                        .slice(0, 10)
-                        .map((emp: any) => {
-                          const avgRate =
-                            emp.hours > 0 ? emp.cost / emp.hours : 0;
-                          return (
-                            <TableRow key={emp.name}>
-                              <TableCell>
-                                <div>
-                                  <p className="font-medium">{emp.name}</p>
-                                  <p className="text-sm text-gray-500">
-                                    {emp.title}
-                                  </p>
+                {(() => {
+                  const [employeeSortField, setEmployeeSortField] =
+                    useState<string>("hours");
+                  const [employeeSortDirection, setEmployeeSortDirection] =
+                    useState<"asc" | "desc">("desc");
+
+                  const handleEmployeeSort = (field: string) => {
+                    if (employeeSortField === field) {
+                      setEmployeeSortDirection(
+                        employeeSortDirection === "asc" ? "desc" : "asc",
+                      );
+                    } else {
+                      setEmployeeSortField(field);
+                      setEmployeeSortDirection("desc");
+                    }
+                  };
+
+                  const getSortIcon = (field: string) => {
+                    if (employeeSortField !== field) {
+                      return <div className="w-4 h-4" />;
+                    }
+                    return employeeSortDirection === "asc" ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    );
+                  };
+
+                  const sortedEmployeeData = Object.values(
+                    travelByEmployee,
+                  ).sort((a: any, b: any) => {
+                    let aValue, bValue;
+
+                    switch (employeeSortField) {
+                      case "name":
+                        aValue = a.name.toLowerCase();
+                        bValue = b.name.toLowerCase();
+                        break;
+                      case "hours":
+                        aValue = a.hours;
+                        bValue = b.hours;
+                        break;
+                      case "cost":
+                        aValue = a.cost;
+                        bValue = b.cost;
+                        break;
+                      case "revenue":
+                        aValue = a.revenue;
+                        bValue = b.revenue;
+                        break;
+                      case "avgRate":
+                        aValue = a.hours > 0 ? a.cost / a.hours : 0;
+                        bValue = b.hours > 0 ? b.cost / b.hours : 0;
+                        break;
+                      case "entries":
+                        aValue = a.entryCount;
+                        bValue = b.entryCount;
+                        break;
+                      default:
+                        aValue = a.hours;
+                        bValue = b.hours;
+                    }
+
+                    if (employeeSortDirection === "asc") {
+                      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                    } else {
+                      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+                    }
+                  });
+
+                  const employeePagination = usePagination({
+                    data: sortedEmployeeData,
+                    itemsPerPage: 10,
+                  });
+
+                  return (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                        <Users className="h-5 w-5" />
+                        Travel Hours by Employee
+                      </h3>
+                      <div className="space-y-4">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleEmployeeSort("name")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Employee
+                                  {getSortIcon("name")}
                                 </div>
-                              </TableCell>
-                              <TableCell>{emp.hours.toFixed(1)}h</TableCell>
-                              <TableCell>${emp.cost.toFixed(2)}</TableCell>
-                              <TableCell className="text-green-600">
-                                ${emp.revenue.toFixed(2)}
-                              </TableCell>
-                              <TableCell>${avgRate.toFixed(2)}/h</TableCell>
-                              <TableCell>{emp.entryCount}</TableCell>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleEmployeeSort("hours")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Travel Hours
+                                  {getSortIcon("hours")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleEmployeeSort("cost")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Travel Cost
+                                  {getSortIcon("cost")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleEmployeeSort("revenue")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Travel Revenue
+                                  {getSortIcon("revenue")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleEmployeeSort("avgRate")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Avg Rate
+                                  {getSortIcon("avgRate")}
+                                </div>
+                              </TableHead>
+                              <TableHead
+                                className="cursor-pointer hover:bg-gray-50 select-none"
+                                onClick={() => handleEmployeeSort("entries")}
+                              >
+                                <div className="flex items-center gap-1">
+                                  Entries
+                                  {getSortIcon("entries")}
+                                </div>
+                              </TableHead>
                             </TableRow>
-                          );
-                        })}
-                    </TableBody>
-                  </Table>
-                </div>
+                          </TableHeader>
+                          <TableBody>
+                            {employeePagination.paginatedData.map(
+                              (emp: any) => {
+                                const avgRate =
+                                  emp.hours > 0 ? emp.cost / emp.hours : 0;
+                                return (
+                                  <TableRow key={emp.name}>
+                                    <TableCell>
+                                      <div>
+                                        <p className="font-medium">
+                                          {emp.name}
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                          {emp.title}
+                                        </p>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell>
+                                      {emp.hours.toFixed(1)}h
+                                    </TableCell>
+                                    <TableCell>
+                                      ${emp.cost.toFixed(2)}
+                                    </TableCell>
+                                    <TableCell className="text-green-600">
+                                      ${emp.revenue.toFixed(2)}
+                                    </TableCell>
+                                    <TableCell>
+                                      ${avgRate.toFixed(2)}/h
+                                    </TableCell>
+                                    <TableCell>{emp.entryCount}</TableCell>
+                                  </TableRow>
+                                );
+                              },
+                            )}
+                          </TableBody>
+                        </Table>
+
+                        <PaginationControls
+                          currentPage={employeePagination.currentPage}
+                          totalPages={employeePagination.totalPages}
+                          totalItems={employeePagination.totalItems}
+                          pageInfo={employeePagination.pageInfo}
+                          canGoNext={employeePagination.canGoNext}
+                          canGoPrevious={employeePagination.canGoPrevious}
+                          onPageChange={employeePagination.goToPage}
+                          onNextPage={employeePagination.goToNextPage}
+                          onPreviousPage={employeePagination.goToPreviousPage}
+                          itemsPerPageOptions={[5, 10, 20, 50]}
+                          showItemsPerPage={false}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Travel by Job */}
                 <div>
