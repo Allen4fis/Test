@@ -122,7 +122,7 @@ export function SummaryReports() {
 
   // Filter state
   const [dateFilter, setDateFilter] = useState(getInitialDateFilter());
-  const [employeeFilter, setEmployeeFilter] = useState("all-employees");
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]); // Changed to array for multi-select
   const [jobFilter, setJobFilter] = useState("all-jobs");
   const [provinceFilter, setProvinceFilter] = useState("all-provinces");
   const [billableFilter, setBillableFilter] = useState("all");
