@@ -1056,38 +1056,22 @@ export function TimeEntryViewer() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <DeleteConfirmationDialog
-                              item={{
-                                id: entry.id,
-                                name: `${employee?.name || "Unknown Employee"} - ${formatLocalDate(entry.date)}`,
-                                type: "time-entry",
-                                associatedData: {
-                                  additionalInfo: [
-                                    `Date: ${formatLocalDate(entry.date)}`,
-                                    `Hours: ${entry.hours}`,
-                                    `Job: ${job?.jobNumber} - ${job?.name}`,
-                                    `Hour Type: ${hourType?.name}`,
-                                    `Province: ${province?.name}`,
-                                    entry.loaCount
-                                      ? `Live Out Allowance Count: ${entry.loaCount}`
-                                      : null,
-                                    entry.description
-                                      ? `Description: ${entry.description}`
-                                      : null,
-                                  ].filter(Boolean) as string[],
-                                },
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    `Are you sure you want to delete this time entry for ${employee?.name}?`,
+                                  )
+                                ) {
+                                  handleDelete(entry.id);
+                                }
                               }}
-                              trigger={
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              }
-                              onConfirm={handleDelete}
-                            />
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
