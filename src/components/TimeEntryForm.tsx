@@ -388,8 +388,9 @@ export function TimeEntryForm() {
           addTimeEntry(entryData);
           timeEntriesCreated = true;
 
-          // Brief delay after LOA entry creation
-          await delay(300);
+          // Longer delay after LOA entry creation
+          await delay(800);
+          console.log("LOA entry created, proceeding to rental entry");
         }
 
         // Create rental entry if rental item is selected
