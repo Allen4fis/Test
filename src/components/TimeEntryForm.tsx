@@ -143,27 +143,6 @@ export function TimeEntryForm() {
     }
   }, [formData.employeeId, employees, editingEntry]);
 
-  // Handle pending rental entry creation after time entries are processed
-  useEffect(() => {
-    if (pendingRentalEntry) {
-      const timer = setTimeout(() => {
-        setSubmissionProgress("Creating rental entry...");
-        // Use the hook function directly
-        const {
-          rentalItems: currentRentalItems,
-          addRentalEntry: currentAddRentalEntry,
-        } = useTimeTracking();
-        currentAddRentalEntry(pendingRentalEntry);
-        setPendingRentalEntry(null);
-        setSubmissionProgress(
-          "Successfully created time entries and rental entry!",
-        );
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [pendingRentalEntry]);
-
   const resetForm = () => {
     setFormData({
       employeeId: "",
