@@ -1411,7 +1411,7 @@ export function InvoiceManagement() {
                                 onClick={() => handleBreakdownSort("employees")}
                                 className="flex items-center hover:text-blue-400 transition-colors"
                               >
-                                Employees (Individual Rates & Costs)
+                                Employees
                                 {getBreakdownSortIcon("employees")}
                               </button>
                             </TableHead>
