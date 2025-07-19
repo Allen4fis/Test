@@ -1352,8 +1352,17 @@ export function InvoiceManagement() {
                                 onClick={() => handleBreakdownSort("title")}
                                 className="flex items-center hover:text-blue-400 transition-colors"
                               >
-                                Title & Hour Type
+                                Title
                                 {getBreakdownSortIcon("title")}
+                              </button>
+                            </TableHead>
+                            <TableHead className="text-gray-200">
+                              <button
+                                onClick={() => handleBreakdownSort("hourType")}
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Hour Type
+                                {getBreakdownSortIcon("hourType")}
                               </button>
                             </TableHead>
                             <TableHead className="text-gray-200">
