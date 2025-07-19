@@ -1749,12 +1749,21 @@ export function SummaryReports() {
                                           <div className="font-semibold text-emerald-300">
                                             $
                                             {(() => {
-                                              // Calculate total billable amount for this subordinate's entries in the filtered data
+                                              // Calculate total billable amount for this subordinate's entries from billable jobs only
                                               const subordinateFilteredEntries =
                                                 filteredSummaries.filter(
-                                                  (entry) =>
-                                                    entry.employeeName ===
-                                                    subordinate.employeeName,
+                                                  (entry) => {
+                                                    const job = jobs.find(
+                                                      (j) =>
+                                                        j.jobNumber ===
+                                                        entry.jobNumber,
+                                                    );
+                                                    return (
+                                                      entry.employeeName ===
+                                                        subordinate.employeeName &&
+                                                      job?.isBillable !== false
+                                                    );
+                                                  },
                                                 );
                                               const totalBillable =
                                                 subordinateFilteredEntries.reduce(
