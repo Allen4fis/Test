@@ -1348,22 +1348,64 @@ export function InvoiceManagement() {
                         <TableHeader>
                           <TableRow>
                             <TableHead className="text-gray-200">
-                              Title & Hour Type
+                              <button
+                                onClick={() => handleBreakdownSort("title")}
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Title & Hour Type
+                                {getBreakdownSortIcon("title")}
+                              </button>
                             </TableHead>
                             <TableHead className="text-gray-200">
-                              Employees
+                              <button
+                                onClick={() => handleBreakdownSort("employees")}
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Employees
+                                {getBreakdownSortIcon("employees")}
+                              </button>
                             </TableHead>
                             <TableHead className="text-gray-200">
-                              Total Hours
+                              <button
+                                onClick={() =>
+                                  handleBreakdownSort("totalHours")
+                                }
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Total Hours
+                                {getBreakdownSortIcon("totalHours")}
+                              </button>
                             </TableHead>
                             <TableHead className="text-gray-200">
-                              Effective Hours
+                              <button
+                                onClick={() =>
+                                  handleBreakdownSort("totalEffectiveHours")
+                                }
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Effective Hours
+                                {getBreakdownSortIcon("totalEffectiveHours")}
+                              </button>
                             </TableHead>
                             <TableHead className="text-gray-200">
-                              Total Cost
+                              <button
+                                onClick={() => handleBreakdownSort("totalCost")}
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Total Cost
+                                {getBreakdownSortIcon("totalCost")}
+                              </button>
                             </TableHead>
                             <TableHead className="text-gray-200">
-                              Total Billable
+                              <button
+                                onClick={() =>
+                                  handleBreakdownSort("totalBillable")
+                                }
+                                className="flex items-center hover:text-blue-400 transition-colors"
+                              >
+                                Total Billable
+                                {getBreakdownSortIcon("totalBillable")}
+                              </button>
                             </TableHead>
                           </TableRow>
                         </TableHeader>
