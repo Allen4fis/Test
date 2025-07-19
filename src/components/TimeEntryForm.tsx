@@ -210,10 +210,12 @@ export function TimeEntryForm() {
       const billableWageUsed = parseFloat(formData.billableWageUsed);
       const costWageUsed = parseFloat(formData.costWageUsed);
 
-      // Validate at least one hour entry or LOA
-      if (hourEntries.length === 0 && loaCount === 0) {
+      // Validate at least one hour entry, LOA, or rental entry
+      const hasRentalEntry =
+        rentalFormData.rentalItemId && parseFloat(rentalFormData.quantity) > 0;
+      if (hourEntries.length === 0 && loaCount === 0 && !hasRentalEntry) {
         setFormError(
-          "Please enter at least one hour type with hours or a Live Out Allowance count.",
+          "Please enter at least one hour type with hours, a Live Out Allowance count, or a rental item.",
         );
         return;
       }
