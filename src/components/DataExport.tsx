@@ -1757,6 +1757,337 @@ export function DataExport() {
         </CardContent>
       </Card>
 
+      {/* Travel Hours Analysis */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Truck className="h-5 w-5" />
+            Travel Hours Detailed Analysis
+          </CardTitle>
+          <CardDescription>
+            Comprehensive breakdown of travel time, costs, and revenue
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {(() => {
+            const travelEntries = detailedTimeEntries.filter(
+              (entry) =>
+                entry.hourTypeName &&
+                entry.hourTypeName.toLowerCase().includes("travel"),
+            );
+
+            if (travelEntries.length === 0) {
+              return (
+                <div className="text-center py-8 text-gray-500">
+                  <Truck className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium">
+                    No Travel Hours Recorded
+                  </p>
+                  <p className="text-sm">
+                    No travel time entries found in the selected date range.
+                  </p>
+                </div>
+              );
+            }
+
+            const totalTravelHours = travelEntries.reduce(
+              (sum, entry) => sum + entry.hours,
+              0,
+            );
+            const totalTravelCost = travelEntries.reduce(
+              (sum, entry) => sum + entry.laborCost,
+              0,
+            );
+            const totalTravelRevenue = travelEntries.reduce(
+              (sum, entry) =>
+                entry.jobIsBillable ? sum + entry.billableAmount : sum,
+              0,
+            );
+
+            // Travel by Employee
+            const travelByEmployee = travelEntries.reduce(
+              (acc, entry) => {
+                const key = entry.employeeName;
+                if (!acc[key]) {
+                  acc[key] = {
+                    name: entry.employeeName,
+                    title: entry.employeeTitle,
+                    category: entry.employeeCategory,
+                    hours: 0,
+                    cost: 0,
+                    revenue: 0,
+                    entryCount: 0,
+                  };
+                }
+                acc[key].hours += entry.hours;
+                acc[key].cost += entry.laborCost;
+                acc[key].revenue += entry.jobIsBillable
+                  ? entry.billableAmount
+                  : 0;
+                acc[key].entryCount += 1;
+                return acc;
+              },
+              {} as Record<string, any>,
+            );
+
+            // Travel by Job
+            const travelByJob = travelEntries.reduce(
+              (acc, entry) => {
+                const key = entry.jobNumber;
+                if (!acc[key]) {
+                  acc[key] = {
+                    jobNumber: entry.jobNumber,
+                    jobName: entry.jobName,
+                    isBillable: entry.jobIsBillable,
+                    hours: 0,
+                    cost: 0,
+                    revenue: 0,
+                    entryCount: 0,
+                  };
+                }
+                acc[key].hours += entry.hours;
+                acc[key].cost += entry.laborCost;
+                acc[key].revenue += entry.jobIsBillable
+                  ? entry.billableAmount
+                  : 0;
+                acc[key].entryCount += 1;
+                return acc;
+              },
+              {} as Record<string, any>,
+            );
+
+            return (
+              <div className="space-y-6">
+                {/* Travel Summary */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <p className="text-sm font-medium text-blue-600">
+                            Total Travel Hours
+                          </p>
+                          <p className="text-2xl font-bold text-blue-800">
+                            {totalTravelHours.toFixed(1)}h
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-red-50 border-red-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-5 w-5 text-red-600" />
+                        <div>
+                          <p className="text-sm font-medium text-red-600">
+                            Travel Cost
+                          </p>
+                          <p className="text-2xl font-bold text-red-800">
+                            ${totalTravelCost.toFixed(0)}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-green-50 border-green-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-green-600" />
+                        <div>
+                          <p className="text-sm font-medium text-green-600">
+                            Travel Revenue
+                          </p>
+                          <p className="text-2xl font-bold text-green-800">
+                            ${totalTravelRevenue.toFixed(0)}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-purple-50 border-purple-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Calculator className="h-5 w-5 text-purple-600" />
+                        <div>
+                          <p className="text-sm font-medium text-purple-600">
+                            Avg Rate
+                          </p>
+                          <p className="text-2xl font-bold text-purple-800">
+                            $
+                            {totalTravelHours > 0
+                              ? (totalTravelCost / totalTravelHours).toFixed(0)
+                              : "0"}
+                            /h
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Travel by Employee */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Travel Hours by Employee
+                  </h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Travel Hours</TableHead>
+                        <TableHead>Travel Cost</TableHead>
+                        <TableHead>Travel Revenue</TableHead>
+                        <TableHead>Avg Rate</TableHead>
+                        <TableHead>Entries</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Object.values(travelByEmployee)
+                        .sort((a: any, b: any) => b.hours - a.hours)
+                        .slice(0, 10)
+                        .map((emp: any) => {
+                          const avgRate =
+                            emp.hours > 0 ? emp.cost / emp.hours : 0;
+                          return (
+                            <TableRow key={emp.name}>
+                              <TableCell>
+                                <div>
+                                  <p className="font-medium">{emp.name}</p>
+                                  <p className="text-sm text-gray-500">
+                                    {emp.title}
+                                  </p>
+                                </div>
+                              </TableCell>
+                              <TableCell>{emp.hours.toFixed(1)}h</TableCell>
+                              <TableCell>${emp.cost.toFixed(2)}</TableCell>
+                              <TableCell className="text-green-600">
+                                ${emp.revenue.toFixed(2)}
+                              </TableCell>
+                              <TableCell>${avgRate.toFixed(2)}/h</TableCell>
+                              <TableCell>{emp.entryCount}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Travel by Job */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" />
+                    Travel Hours by Job
+                  </h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Job</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Travel Hours</TableHead>
+                        <TableHead>Travel Cost</TableHead>
+                        <TableHead>Travel Revenue</TableHead>
+                        <TableHead>Entries</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Object.values(travelByJob)
+                        .sort((a: any, b: any) => b.hours - a.hours)
+                        .slice(0, 10)
+                        .map((job: any) => (
+                          <TableRow key={job.jobNumber}>
+                            <TableCell>
+                              <div>
+                                <p className="font-medium">{job.jobNumber}</p>
+                                <p className="text-sm text-gray-500">
+                                  {job.jobName}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={
+                                  job.isBillable ? "default" : "secondary"
+                                }
+                              >
+                                {job.isBillable ? "Billable" : "Non-Billable"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{job.hours.toFixed(1)}h</TableCell>
+                            <TableCell>${job.cost.toFixed(2)}</TableCell>
+                            <TableCell className="text-green-600">
+                              ${job.revenue.toFixed(2)}
+                            </TableCell>
+                            <TableCell>{job.entryCount}</TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Travel Insights */}
+                <Card className="bg-blue-50 border-blue-200">
+                  <CardContent className="p-4">
+                    <h4 className="font-semibold text-blue-800 mb-2">
+                      Travel Analysis Insights:
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
+                      <div>
+                        <p>
+                          • Travel represents{" "}
+                          {summary.totalHours > 0
+                            ? (
+                                (totalTravelHours / summary.totalHours) *
+                                100
+                              ).toFixed(1)
+                            : "0"}
+                          % of total work hours
+                        </p>
+                        <p>
+                          • Average travel session:{" "}
+                          {travelEntries.length > 0
+                            ? (totalTravelHours / travelEntries.length).toFixed(
+                                1,
+                              )
+                            : "0"}{" "}
+                          hours
+                        </p>
+                        <p>
+                          • {Object.keys(travelByEmployee).length} employees
+                          logged travel time
+                        </p>
+                      </div>
+                      <div>
+                        <p>
+                          • Travel across {Object.keys(travelByJob).length}{" "}
+                          different jobs
+                        </p>
+                        <p>
+                          • Travel profit margin:{" "}
+                          {totalTravelRevenue > 0
+                            ? (
+                                ((totalTravelRevenue - totalTravelCost) /
+                                  totalTravelRevenue) *
+                                100
+                              ).toFixed(1)
+                            : "0"}
+                          %
+                        </p>
+                        <p>• Total travel entries: {travelEntries.length}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
       {/* Accountant Notes */}
       <Card className="border-orange-200 bg-orange-50">
         <CardHeader>
