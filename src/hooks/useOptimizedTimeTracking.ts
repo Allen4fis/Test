@@ -425,6 +425,15 @@ export function useOptimizedTimeTracking() {
 
   // Optimized cost summaries with batch processing for large datasets
   const costSummaryByEmployee = useMemo((): CostSummaryByEmployee[] => {
+    if (
+      !appData.timeEntries ||
+      !Array.isArray(appData.timeEntries) ||
+      !appData.employees ||
+      !Array.isArray(appData.employees)
+    ) {
+      return [];
+    }
+
     const cacheKey = `costSummaryByEmployee_${appData.timeEntries.length}_${appData.employees.length}`;
     const cached = getCachedValue(cacheKey);
     if (cached) return cached;
