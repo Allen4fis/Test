@@ -135,6 +135,20 @@ export function InvoiceManagement() {
   const [showBillableJobs, setShowBillableJobs] = useState(true);
   const [showNonBillableJobs, setShowNonBillableJobs] = useState(true);
 
+  // Day breakdown table sorting state
+  const [breakdownSortBy, setBreakdownSortBy] = useState<
+    | "title"
+    | "hourType"
+    | "employees"
+    | "totalHours"
+    | "totalEffectiveHours"
+    | "totalCost"
+    | "totalBillable"
+  >("title");
+  const [breakdownSortDirection, setBreakdownSortDirection] = useState<
+    "asc" | "desc"
+  >("asc");
+
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
