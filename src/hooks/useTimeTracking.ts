@@ -685,8 +685,18 @@ export function useTimeTracking() {
         adjustedBillableWage += 3;
         adjustedCostWage += 3;
       }
+
+      // Calculate billable amount (always uses full multiplier)
       totalBillableAmount = effectiveHours * adjustedBillableWage;
-      totalCost = effectiveHours * adjustedCostWage;
+
+      // Calculate cost - DSPs are always at regular time rates (1x multiplier)
+      if (employee?.category === "dsp") {
+        // For DSPs, use regular time (1x) multiplier for cost calculation
+        totalCost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
+      } else {
+        // For regular employees, use the normal multiplier for cost calculation
+        totalCost = effectiveHours * adjustedCostWage;
+      }
 
       // Add LOA cost separately (fixed $200 per LOA count)
       const loaCost = (entry.loaCount || 0) * 200;
