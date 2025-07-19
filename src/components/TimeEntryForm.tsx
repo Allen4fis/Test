@@ -175,64 +175,6 @@ export function TimeEntryForm() {
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-  const handleDelete = (entry: TimeEntry) => {
-    try {
-      deleteTimeEntry(entry.id);
-      toast({
-        title: "Entry Deleted",
-        description: "Time entry has been successfully deleted.",
-      });
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete time entry. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleEdit = (entry: TimeEntry) => {
-    setEditingEntry(entry);
-    const employee = employees.find((emp) => emp.id === entry.employeeId);
-    const job = jobs.find((j) => j.id === entry.jobId);
-
-    setFormData({
-      employeeId: entry.employeeId,
-      jobId: entry.jobId,
-      provinceId: entry.provinceId,
-      date: entry.date,
-      hourType1: entry.hourTypeId,
-      hours1: entry.hours.toString(),
-      hourType2: "",
-      hours2: "",
-      hourType3: "",
-      hours3: "",
-      hourType4: "",
-      hours4: "",
-      loaCount: (entry.loaCount || 0).toString(),
-      title: entry.title || employee?.title || "",
-      billableWageUsed: (entry.billableWageUsed || 0).toString(),
-      costWageUsed: (entry.costWageUsed || 0).toString(),
-      description: entry.description || "",
-    });
-
-    // Clear rental form data when editing time entry
-    setRentalFormData({
-      rentalItemId: "",
-      quantity: "1",
-      dspRate: "",
-      description: "",
-    });
-
-    setFormError("");
-  };
-
-  const handleCancelEdit = () => {
-    setEditingEntry(null);
-    resetForm();
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
