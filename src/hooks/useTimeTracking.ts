@@ -849,7 +849,17 @@ export function useTimeTracking() {
           adjustedCostWage += 3;
           adjustedBillableWage += 3;
         }
-        cost = effectiveHours * adjustedCostWage;
+
+        // DSPs are always charged at regular time rates for cost calculations
+        if (employee.category === "dsp") {
+          // For DSPs, use regular time (1x) multiplier for cost calculation
+          cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
+        } else {
+          // For regular employees, use the normal multiplier for cost calculation
+          cost = effectiveHours * adjustedCostWage;
+        }
+
+        // Billable amount always uses the full multiplier (clients pay overtime rates)
         billableAmount = effectiveHours * adjustedBillableWage;
 
         // Add LOA cost separately (fixed $200 per LOA count)
