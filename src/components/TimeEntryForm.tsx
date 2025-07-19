@@ -119,7 +119,6 @@ export function TimeEntryForm() {
   const [showAllEntries, setShowAllEntries] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useState("");
-  const [pendingRentalEntry, setPendingRentalEntry] = useState<any>(null);
 
   // Update title and wages when employee is selected
   useEffect(() => {
