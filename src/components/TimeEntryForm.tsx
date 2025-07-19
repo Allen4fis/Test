@@ -210,10 +210,21 @@ export function TimeEntryForm() {
       const billableWageUsed = parseFloat(formData.billableWageUsed);
       const costWageUsed = parseFloat(formData.costWageUsed);
 
-      // Validate at least one hour entry, LOA, or rental entry
+      // Check for both time and rental entries
+      const hasTimeEntries = hourEntries.length > 0 || loaCount > 0;
       const hasRentalEntry =
         rentalFormData.rentalItemId && parseFloat(rentalFormData.quantity) > 0;
-      if (hourEntries.length === 0 && loaCount === 0 && !hasRentalEntry) {
+
+      // Prevent submission if both time and rental entries are present
+      if (hasTimeEntries && hasRentalEntry) {
+        setFormError(
+          "⚠️ Cannot submit both time entries and rental entries together. Please submit them separately to avoid conflicts. Clear either the hour fields or the rental item to proceed.",
+        );
+        return;
+      }
+
+      // Validate at least one entry type is present
+      if (!hasTimeEntries && !hasRentalEntry) {
         setFormError(
           "Please enter at least one hour type with hours, a Live Out Allowance count, or a rental item.",
         );
