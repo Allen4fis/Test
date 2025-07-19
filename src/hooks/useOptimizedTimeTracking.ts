@@ -636,6 +636,10 @@ export function useOptimizedTimeTracking() {
       dateRange?: { start: string; end: string };
       hourTypeId?: string;
     }): TimeEntry[] => {
+      if (!appData.timeEntries || !Array.isArray(appData.timeEntries)) {
+        return [];
+      }
+
       let results = appData.timeEntries;
 
       if (filters.employeeId) {
