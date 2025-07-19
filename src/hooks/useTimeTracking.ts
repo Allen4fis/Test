@@ -722,7 +722,7 @@ export function useTimeTracking() {
         effectiveHours: effectiveHours,
         loaCount: entry.loaCount,
         billableWage: entry.billableWageUsed || 0,
-        costWage: entry.costWageUsed || 0,
+        costWage: adjustedCostWage, // Use the actual wage used in cost calculation
         totalBillableAmount: totalBillableAmount,
         totalCost: totalCost,
       };
