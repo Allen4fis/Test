@@ -364,7 +364,6 @@ export function TimeEntryForm() {
 
           // Longer delay to ensure time entries are processed
           await delay(800);
-          console.log("Time entries created, proceeding to rental entry");
         }
 
         // If only LOA and no hours, create a single entry with 0 hours
