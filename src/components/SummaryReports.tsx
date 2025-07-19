@@ -1740,6 +1740,32 @@ export function SummaryReports() {
                                           </div>
                                         </div>
                                         <div className="text-center">
+                                          <div className="font-semibold text-emerald-300">
+                                            $
+                                            {(() => {
+                                              // Calculate total billable amount for this subordinate's entries in the filtered data
+                                              const subordinateFilteredEntries =
+                                                filteredSummaries.filter(
+                                                  (entry) =>
+                                                    entry.employeeName ===
+                                                    subordinate.employeeName,
+                                                );
+                                              const totalBillable =
+                                                subordinateFilteredEntries.reduce(
+                                                  (sum, entry) =>
+                                                    sum +
+                                                    (entry.totalBillableAmount ||
+                                                      0),
+                                                  0,
+                                                );
+                                              return totalBillable.toFixed(2);
+                                            })()}
+                                          </div>
+                                          <div className="text-xs text-blue-400">
+                                            Billable Amount
+                                          </div>
+                                        </div>
+                                        <div className="text-center">
                                           <div className="font-semibold text-orange-300">
                                             $
                                             {(
