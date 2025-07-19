@@ -1311,8 +1311,8 @@ export function InvoiceManagement() {
                 selectedJobForBreakdown,
                 selectedDateForBreakdown,
               );
-              const groupedTimeEntries = getGroupedTimeEntries(
-                breakdown.timeEntries,
+              const groupedTimeEntries = getSortedGroupedTimeEntries(
+                getGroupedTimeEntries(breakdown.timeEntries),
               );
               const totalLOA = breakdown.timeEntries.reduce(
                 (sum, entry) => sum + (entry.loaCount || 0),
