@@ -261,10 +261,18 @@ export function InvoiceManagement() {
       );
       if (existingEmployee) {
         existingEmployee.hours += entry.hours;
+        existingEmployee.effectiveHours += entry.effectiveHours;
+        existingEmployee.individualCost += entry.totalCost;
+        existingEmployee.individualBillable += entry.totalBillableAmount;
       } else {
         acc[key].employees.push({
           name: entry.employeeName,
           hours: entry.hours,
+          effectiveHours: entry.effectiveHours,
+          costWage: entry.costWage,
+          billableWage: entry.billableWage,
+          individualCost: entry.totalCost,
+          individualBillable: entry.totalBillableAmount,
         });
       }
 
