@@ -503,14 +503,24 @@ export function Dashboard({
                           ${invoice.totalBillable.toFixed(2)}
                         </div>
                         <div
-                          className={`text-sm font-medium ${
+                          className={`text-sm font-semibold ${
+                            invoice.profitAmount >= 0
+                              ? "text-emerald-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {invoice.profitAmount >= 0 ? "+" : ""}$
+                          {invoice.profitAmount.toFixed(2)}
+                        </div>
+                        <div
+                          className={`text-xs font-medium ${
                             invoice.profitPercentage >= 0
                               ? "text-blue-400"
                               : "text-red-400"
                           }`}
                         >
-                          {invoice.profitPercentage >= 0 ? "+" : ""}
-                          {invoice.profitPercentage.toFixed(2)}% profit
+                          ({invoice.profitPercentage >= 0 ? "+" : ""}
+                          {invoice.profitPercentage.toFixed(2)}%)
                         </div>
                       </div>
                     </div>
