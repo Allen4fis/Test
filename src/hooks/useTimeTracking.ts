@@ -960,8 +960,11 @@ export function useTimeTracking() {
           };
         }
 
-        acc[job.id].totalHours += entry.hours;
-        acc[job.id].totalEffectiveHours += effectiveHours;
+        // Only count hours towards job totals if it's not "Billable" hour type
+        if (hourType.name !== "Billable") {
+          acc[job.id].totalHours += entry.hours;
+          acc[job.id].totalEffectiveHours += effectiveHours;
+        }
         acc[job.id].totalCost += cost + loaCost;
         acc[job.id].entries.push(entry);
 
@@ -970,14 +973,17 @@ export function useTimeTracking() {
           (emp) => emp.employeeName === employee.name,
         );
         if (existingEmployee) {
-          existingEmployee.hours += entry.hours;
-          existingEmployee.effectiveHours += effectiveHours;
+          // Only count hours towards employee job totals if it's not "Billable" hour type
+          if (hourType.name !== "Billable") {
+            existingEmployee.hours += entry.hours;
+            existingEmployee.effectiveHours += effectiveHours;
+          }
           existingEmployee.cost += cost + loaCost;
         } else {
           acc[job.id].employees.push({
             employeeName: employee.name,
-            hours: entry.hours,
-            effectiveHours: effectiveHours,
+            hours: hourType.name !== "Billable" ? entry.hours : 0,
+            effectiveHours: hourType.name !== "Billable" ? effectiveHours : 0,
             cost: cost + loaCost,
           });
         }
