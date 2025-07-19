@@ -1186,7 +1186,7 @@ export function DataExport() {
                     <TableCell className="text-sm">
                       {data.category === "employee"
                         ? "T4 Employment Income"
-                        : "T4A Other Income + GST"}
+                        : "5018 Other Income + GST"}
                     </TableCell>
                   </TableRow>
                 ))}
