@@ -674,11 +674,11 @@ export function useOptimizedTimeTracking() {
 
   return {
     // Core data
-    employees: appData.employees,
-    jobs: appData.jobs,
-    hourTypes: appData.hourTypes,
-    provinces: appData.provinces,
-    timeEntries: appData.timeEntries,
+    employees: appData.employees || [],
+    jobs: appData.jobs || [],
+    hourTypes: appData.hourTypes || [],
+    provinces: appData.provinces || [],
+    timeEntries: appData.timeEntries || [],
     rentalItems: appData.rentalItems || [],
     rentalEntries: appData.rentalEntries || [],
 
