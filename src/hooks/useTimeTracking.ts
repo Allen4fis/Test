@@ -903,8 +903,11 @@ export function useTimeTracking() {
           };
         }
 
-        acc[employee.id].totalHours += entry.hours;
-        acc[employee.id].totalEffectiveHours += effectiveHours;
+        // Only count hours towards totals if it's not "Billable" hour type
+        if (hourType.name !== "Billable") {
+          acc[employee.id].totalHours += entry.hours;
+          acc[employee.id].totalEffectiveHours += effectiveHours;
+        }
         acc[employee.id].totalBillableAmount += billableAmount + loaBillable;
         acc[employee.id].totalCost += cost + loaCost;
         acc[employee.id].entries.push(entry);
