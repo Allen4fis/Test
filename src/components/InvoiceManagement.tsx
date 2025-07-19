@@ -1448,7 +1448,8 @@ export function InvoiceManagement() {
                                       key={empIndex}
                                       className="text-sm bg-gray-800/50 px-2 py-1 rounded"
                                     >
-                                      {employee}
+                                      {employee.name} -{" "}
+                                      {employee.hours.toFixed(1)}h
                                     </div>
                                   ))}
                                 </div>
