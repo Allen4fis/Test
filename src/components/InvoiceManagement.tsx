@@ -1462,22 +1462,22 @@ export function InvoiceManagement() {
                                   {group.employees.map((employee, empIndex) => (
                                     <div
                                       key={empIndex}
-                                      className="text-sm bg-gray-800/50 px-2 py-1 rounded space-y-1"
+                                      className="text-sm bg-gray-800/50 px-3 py-2 rounded border-l-2 border-blue-500/30 space-y-1"
                                     >
-                                      <div>
+                                      <div className="flex items-center justify-between">
                                         <span className="font-medium text-blue-300">
                                           {employee.name}
-                                        </span>{" "}
-                                        - {employee.hours.toFixed(1)}h
-                                      </div>
-                                      <div className="text-xs text-gray-400 flex justify-between">
-                                        <span>
-                                          Rate: ${employee.costWage.toFixed(2)}
-                                          /hr
                                         </span>
-                                        <span className="text-green-400">
-                                          Cost: $
-                                          {employee.individualCost.toFixed(2)}
+                                        <span className="text-blue-200">
+                                          {employee.hours.toFixed(1)}h
+                                        </span>
+                                      </div>
+                                      <div className="text-xs text-gray-400 flex justify-between items-center">
+                                        <span className="bg-gray-700/50 px-2 py-0.5 rounded">
+                                          ${employee.costWage.toFixed(2)}/hr
+                                        </span>
+                                        <span className="font-semibold text-green-400 bg-green-900/20 px-2 py-0.5 rounded">
+                                          ${employee.individualCost.toFixed(2)}
                                         </span>
                                       </div>
                                     </div>
