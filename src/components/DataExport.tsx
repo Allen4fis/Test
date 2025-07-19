@@ -922,7 +922,7 @@ export function DataExport() {
     csvData.push(["REPORT NOTES FOR ACCOUNTANT"]);
     csvData.push(["• DSPs and contractors are subject to 5% GST collection"]);
     csvData.push(["• Employees receive T4 employment income"]);
-    csvData.push(["• Contractors/DSPs receive T4A other income"]);
+    csvData.push(["• Contractors/DSPs receive 5018 other income"]);
     csvData.push(["• Non-billable jobs track internal costs only"]);
     csvData.push(["• Uninvoiced amounts represent pending receivables"]);
     csvData.push([
