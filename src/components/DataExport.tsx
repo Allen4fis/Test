@@ -1125,8 +1125,8 @@ export function DataExport() {
             Tax Compliance - Employee Categories by Province
           </CardTitle>
           <CardDescription>
-            Breakdown by employee type and province for T4/T4A reporting and GST
-            compliance
+            Breakdown by employee type and province for T4/5018 reporting and
+            GST compliance
           </CardDescription>
         </CardHeader>
         <CardContent>
