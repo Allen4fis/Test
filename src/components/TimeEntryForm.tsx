@@ -362,8 +362,8 @@ export function TimeEntryForm() {
           addMultipleTimeEntries(entriesToCreate);
           timeEntriesCreated = true;
 
-          // Longer delay to ensure time entries are processed
-          await delay(800);
+          // Much longer delay to ensure time entries are fully processed
+          await delay(2000);
         }
 
         // If only LOA and no hours, create a single entry with 0 hours
