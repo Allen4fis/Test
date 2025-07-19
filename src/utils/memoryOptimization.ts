@@ -226,7 +226,7 @@ export class MemoryCleanup {
     // This would be specific to the application's caching strategy
 
     // Clear any global component state
-    if (window as any).__COMPONENT_CACHE__) {
+    if ((window as any).__COMPONENT_CACHE__) {
       (window as any).__COMPONENT_CACHE__ = {};
     }
   }
