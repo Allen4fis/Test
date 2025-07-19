@@ -1521,7 +1521,7 @@ export function DataExport() {
               <ul className="space-y-1 text-orange-700">
                 <li>• DSPs and contractors are subject to 5% GST collection</li>
                 <li>• Employees receive T4 employment income</li>
-                <li>• Contractors/DSPs receive T4A other income</li>
+                <li>• Contractors/DSPs receive 5018 other income</li>
                 <li>• All GST amounts are tracked and included in totals</li>
               </ul>
             </div>
