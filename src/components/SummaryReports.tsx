@@ -141,10 +141,10 @@ export function SummaryReports() {
         return false;
       }
 
-      // Employee filter
+      // Employee filter - if any employees are selected, only show those
       if (
-        employeeFilter !== "all-employees" &&
-        summary.employeeName !== employeeFilter
+        selectedEmployees.length > 0 &&
+        !selectedEmployees.includes(summary.employeeName)
       ) {
         return false;
       }
