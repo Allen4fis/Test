@@ -332,70 +332,94 @@ export function TimeEntryForm() {
         updateTimeEntry(editingEntry.id, entryData);
         resetForm();
       } else {
-        let timeEntriesCreated = false;
-        let rentalEntryCreated = false;
+        // Determine what needs to be created
+        const hasTimeEntries = hourEntries.length > 0 || loaCount > 0;
+        const hasRentalEntry =
+          rentalFormData.rentalItemId &&
+          parseFloat(rentalFormData.quantity) > 0;
 
-        // Create time entries if there are hour entries
-        if (hourEntries.length > 0) {
-          setSubmissionProgress(
-            `Creating ${hourEntries.length} time entries...`,
-          );
+        // Create time entries first (if any)
+        if (hasTimeEntries) {
+          if (hourEntries.length > 0) {
+            setSubmissionProgress(
+              `Creating ${hourEntries.length} time entries...`,
+            );
 
-          const entriesToCreate = hourEntries.map((entry, i) => {
-            const hours = parseFloat(entry.hours);
-            return {
+            const entriesToCreate = hourEntries.map((entry, i) => {
+              const hours = parseFloat(entry.hours);
+              return {
+                employeeId: formData.employeeId,
+                jobId: formData.jobId,
+                hourTypeId: entry.hourTypeId,
+                provinceId: formData.provinceId,
+                date: formData.date,
+                hours: hours,
+                loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
+                title: formData.title,
+                billableWageUsed: billableWageUsed,
+                costWageUsed: costWageUsed,
+                description: formData.description,
+              };
+            });
+
+            addMultipleTimeEntries(entriesToCreate);
+            setSubmissionProgress(
+              `Successfully created ${hourEntries.length} time entries!`,
+            );
+          } else if (loaCount > 0) {
+            setSubmissionProgress("Creating LOA entry...");
+
+            const entryData = {
               employeeId: formData.employeeId,
               jobId: formData.jobId,
-              hourTypeId: entry.hourTypeId,
+              hourTypeId: formData.hourType1 || hourTypes[0]?.id || "",
               provinceId: formData.provinceId,
               date: formData.date,
-              hours: hours,
-              loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
+              hours: 0,
+              loaCount: loaCount,
               title: formData.title,
               billableWageUsed: billableWageUsed,
               costWageUsed: costWageUsed,
               description: formData.description,
             };
-          });
 
-          // Create all entries in a single batch operation
-          addMultipleTimeEntries(entriesToCreate);
-          timeEntriesCreated = true;
+            addTimeEntry(entryData);
+            setSubmissionProgress("Successfully created LOA entry!");
+          }
 
-          // Much longer delay to ensure time entries are fully processed
-          await delay(2000);
-        }
+          // If we also have a rental entry, wait and then process it
+          if (hasRentalEntry) {
+            await delay(1000);
+            setSubmissionProgress("Now creating rental entry...");
 
-        // If only LOA and no hours, create a single entry with 0 hours
-        if (hourEntries.length === 0 && loaCount > 0) {
-          setSubmissionProgress("Creating LOA entry...");
+            const selectedRentalItem = rentalItems.find(
+              (item) => item.id === rentalFormData.rentalItemId,
+            );
+            const quantity = parseFloat(rentalFormData.quantity);
+            const dspRate = rentalFormData.dspRate
+              ? parseFloat(rentalFormData.dspRate)
+              : selectedRentalItem?.dspRate;
 
-          const entryData = {
-            employeeId: formData.employeeId,
-            jobId: formData.jobId,
-            hourTypeId: formData.hourType1 || hourTypes[0]?.id || "",
-            provinceId: formData.provinceId,
-            date: formData.date,
-            hours: 0,
-            loaCount: loaCount,
-            title: formData.title,
-            billableWageUsed: billableWageUsed,
-            costWageUsed: costWageUsed,
-            description: formData.description,
-          };
+            const rentalEntryData = {
+              rentalItemId: rentalFormData.rentalItemId,
+              jobId: formData.jobId,
+              employeeId: formData.employeeId,
+              startDate: formData.date,
+              endDate: formData.date,
+              quantity: quantity,
+              billingUnit: selectedRentalItem?.unit || "day",
+              rateUsed: selectedRentalItem?.dailyRate || 0,
+              dspRate: dspRate,
+              description: rentalFormData.description,
+            };
 
-          addTimeEntry(entryData);
-          timeEntriesCreated = true;
-
-          // Much longer delay after LOA entry creation
-          await delay(2000);
-        }
-
-        // Create rental entry if rental item is selected
-        if (
-          rentalFormData.rentalItemId &&
-          parseFloat(rentalFormData.quantity) > 0
-        ) {
+            addRentalEntry(rentalEntryData);
+            setSubmissionProgress(
+              `Successfully created ${hourEntries.length || 1} time entries and 1 rental entry!`,
+            );
+          }
+        } else if (hasRentalEntry) {
+          // Only rental entry, no time entries
           setSubmissionProgress("Creating rental entry...");
 
           const selectedRentalItem = rentalItems.find(
@@ -411,7 +435,7 @@ export function TimeEntryForm() {
             jobId: formData.jobId,
             employeeId: formData.employeeId,
             startDate: formData.date,
-            endDate: formData.date, // Same day rental for now
+            endDate: formData.date,
             quantity: quantity,
             billingUnit: selectedRentalItem?.unit || "day",
             rateUsed: selectedRentalItem?.dailyRate || 0,
@@ -420,22 +444,6 @@ export function TimeEntryForm() {
           };
 
           addRentalEntry(rentalEntryData);
-          rentalEntryCreated = true;
-
-          // Brief delay after rental entry creation
-          await delay(500);
-        }
-
-        // Set final success message based on what was created
-        if (timeEntriesCreated && rentalEntryCreated) {
-          setSubmissionProgress(
-            `Successfully created ${hourEntries.length || 1} time entries and 1 rental entry!`,
-          );
-        } else if (timeEntriesCreated) {
-          setSubmissionProgress(
-            `Successfully created ${hourEntries.length || 1} time entries!`,
-          );
-        } else if (rentalEntryCreated) {
           setSubmissionProgress("Successfully created 1 rental entry!");
         }
 
