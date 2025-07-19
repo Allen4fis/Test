@@ -40,9 +40,13 @@ import {
   AlertCircle,
   PieChart,
   BarChart3,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { usePagination } from "@/hooks/usePagination";
+import { PaginationControls } from "@/components/ui/pagination-controls";
 
 // Helper function to get local date string in YYYY-MM-DD format
 const getLocalDateString = (date: Date = new Date()) => {
