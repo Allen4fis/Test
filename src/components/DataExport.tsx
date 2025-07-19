@@ -919,6 +919,258 @@ export function DataExport() {
     });
 
     csvData.push([""]);
+
+    // TRAVEL HOURS ANALYSIS
+    csvData.push(["TRAVEL HOURS DETAILED ANALYSIS"]);
+    csvData.push([""]);
+
+    // Calculate travel-specific data
+    const travelHourType = hourTypes.find((ht) =>
+      ht.name.toLowerCase().includes("travel"),
+    );
+    const travelEntries = detailedTimeEntries.filter(
+      (entry) =>
+        entry.hourTypeName &&
+        entry.hourTypeName.toLowerCase().includes("travel"),
+    );
+
+    if (travelEntries.length > 0) {
+      // Travel Summary
+      csvData.push(["TRAVEL SUMMARY"]);
+      const totalTravelHours = travelEntries.reduce(
+        (sum, entry) => sum + entry.hours,
+        0,
+      );
+      const totalTravelCost = travelEntries.reduce(
+        (sum, entry) => sum + entry.laborCost,
+        0,
+      );
+      const totalTravelRevenue = travelEntries.reduce(
+        (sum, entry) =>
+          entry.jobIsBillable ? sum + entry.billableAmount : sum,
+        0,
+      );
+      const avgTravelRate =
+        totalTravelHours > 0 ? totalTravelCost / totalTravelHours : 0;
+
+      csvData.push(["Total Travel Hours", totalTravelHours.toFixed(2)]);
+      csvData.push(["Total Travel Cost", `$${totalTravelCost.toFixed(2)}`]);
+      csvData.push([
+        "Total Travel Revenue",
+        `$${totalTravelRevenue.toFixed(2)}`,
+      ]);
+      csvData.push([
+        "Average Travel Rate",
+        `$${avgTravelRate.toFixed(2)}/hour`,
+      ]);
+      csvData.push([""]);
+
+      // Travel by Employee
+      csvData.push(["TRAVEL HOURS BY EMPLOYEE"]);
+      csvData.push([
+        "Employee Name",
+        "Title",
+        "Total Travel Hours",
+        "Travel Cost",
+        "Travel Revenue",
+        "Avg Rate",
+        "Category",
+        "Number of Travel Entries",
+      ]);
+
+      const travelByEmployee = travelEntries.reduce((acc, entry) => {
+        const key = entry.employeeName;
+        if (!acc[key]) {
+          acc[key] = {
+            name: entry.employeeName,
+            title: entry.employeeTitle,
+            category: entry.employeeCategory,
+            hours: 0,
+            cost: 0,
+            revenue: 0,
+            entryCount: 0,
+          };
+        }
+        acc[key].hours += entry.hours;
+        acc[key].cost += entry.laborCost;
+        acc[key].revenue += entry.jobIsBillable ? entry.billableAmount : 0;
+        acc[key].entryCount += 1;
+        return acc;
+      }, {});
+
+      Object.values(travelByEmployee)
+        .sort((a, b) => b.hours - a.hours)
+        .forEach((emp) => {
+          const avgRate = emp.hours > 0 ? emp.cost / emp.hours : 0;
+          csvData.push([
+            emp.name,
+            emp.title,
+            emp.hours.toFixed(2),
+            `$${emp.cost.toFixed(2)}`,
+            `$${emp.revenue.toFixed(2)}`,
+            `$${avgRate.toFixed(2)}`,
+            emp.category === "dsp"
+              ? "DSP"
+              : emp.category === "employee"
+                ? "Employee"
+                : "Contractor",
+            emp.entryCount.toString(),
+          ]);
+        });
+
+      csvData.push([""]);
+
+      // Travel by Job
+      csvData.push(["TRAVEL HOURS BY JOB"]);
+      csvData.push([
+        "Job Number",
+        "Job Name",
+        "Billable Status",
+        "Total Travel Hours",
+        "Travel Cost",
+        "Travel Revenue",
+        "Number of Travel Entries",
+        "Employees with Travel",
+      ]);
+
+      const travelByJob = travelEntries.reduce((acc, entry) => {
+        const key = entry.jobNumber;
+        if (!acc[key]) {
+          acc[key] = {
+            jobNumber: entry.jobNumber,
+            jobName: entry.jobName,
+            isBillable: entry.jobIsBillable,
+            hours: 0,
+            cost: 0,
+            revenue: 0,
+            entryCount: 0,
+            employees: new Set(),
+          };
+        }
+        acc[key].hours += entry.hours;
+        acc[key].cost += entry.laborCost;
+        acc[key].revenue += entry.jobIsBillable ? entry.billableAmount : 0;
+        acc[key].entryCount += 1;
+        acc[key].employees.add(entry.employeeName);
+        return acc;
+      }, {});
+
+      Object.values(travelByJob)
+        .sort((a, b) => b.hours - a.hours)
+        .forEach((job) => {
+          csvData.push([
+            job.jobNumber,
+            job.jobName,
+            job.isBillable ? "Billable" : "Non-Billable",
+            job.hours.toFixed(2),
+            `$${job.cost.toFixed(2)}`,
+            `$${job.revenue.toFixed(2)}`,
+            job.entryCount.toString(),
+            job.employees.size.toString(),
+          ]);
+        });
+
+      csvData.push([""]);
+
+      // Travel by Month
+      csvData.push(["TRAVEL HOURS BY MONTH"]);
+      csvData.push([
+        "Month",
+        "Travel Hours",
+        "Travel Cost",
+        "Travel Revenue",
+        "Number of Entries",
+        "Average Hours per Entry",
+      ]);
+
+      const travelByMonth = travelEntries.reduce((acc, entry) => {
+        const month = entry.date.substring(0, 7); // YYYY-MM
+        if (!acc[month]) {
+          acc[month] = {
+            hours: 0,
+            cost: 0,
+            revenue: 0,
+            entryCount: 0,
+          };
+        }
+        acc[month].hours += entry.hours;
+        acc[month].cost += entry.laborCost;
+        acc[month].revenue += entry.jobIsBillable ? entry.billableAmount : 0;
+        acc[month].entryCount += 1;
+        return acc;
+      }, {});
+
+      Object.entries(travelByMonth)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([month, data]) => {
+          const avgHours =
+            data.entryCount > 0 ? data.hours / data.entryCount : 0;
+          csvData.push([
+            month,
+            data.hours.toFixed(2),
+            `$${data.cost.toFixed(2)}`,
+            `$${data.revenue.toFixed(2)}`,
+            data.entryCount.toString(),
+            avgHours.toFixed(2),
+          ]);
+        });
+
+      csvData.push([""]);
+
+      // Detailed Travel Log
+      if (exportFormat === "comprehensive") {
+        csvData.push(["DETAILED TRAVEL LOG"]);
+        csvData.push([
+          "Date",
+          "Employee",
+          "Job Number",
+          "Job Name",
+          "Travel Hours",
+          "Cost Rate",
+          "Travel Cost",
+          "Billable Rate",
+          "Travel Revenue",
+          "Province",
+          "Description",
+        ]);
+
+        travelEntries
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .forEach((entry) => {
+            csvData.push([
+              entry.date,
+              entry.employeeName,
+              entry.jobNumber,
+              entry.jobName,
+              entry.hours.toFixed(2),
+              `$${entry.costWageUsed.toFixed(2)}`,
+              `$${entry.laborCost.toFixed(2)}`,
+              `$${entry.billableWageUsed.toFixed(2)}`,
+              `$${entry.jobIsBillable ? entry.billableAmount.toFixed(2) : "0.00"}`,
+              entry.provinceName,
+              entry.description || "No description",
+            ]);
+          });
+
+        csvData.push([""]);
+      }
+
+      // Travel Analysis Notes
+      csvData.push(["TRAVEL ANALYSIS NOTES"]);
+      csvData.push(["• Travel hours are typically billable to clients"]);
+      csvData.push(["• Travel rates may vary by employee and location"]);
+      csvData.push(["• DSP travel costs subject to 5% GST collection"]);
+      csvData.push([
+        "• Travel time includes site-to-site and base-to-site transportation",
+      ]);
+      csvData.push([
+        `• Total travel represents ${((totalTravelHours / (summary.totalHours || 1)) * 100).toFixed(1)}% of all work hours`,
+      ]);
+    } else {
+      csvData.push(["No travel hours recorded in the selected date range."]);
+    }
+
+    csvData.push([""]);
     csvData.push(["REPORT NOTES FOR ACCOUNTANT"]);
     csvData.push(["• DSPs and contractors are subject to 5% GST collection"]);
     csvData.push(["• Employees receive T4 employment income"]);
