@@ -143,6 +143,22 @@ export function TimeEntryForm() {
     }
   }, [formData.employeeId, employees, editingEntry]);
 
+  // Handle pending rental entry creation after time entries are processed
+  useEffect(() => {
+    if (pendingRentalEntry) {
+      const timer = setTimeout(() => {
+        setSubmissionProgress("Creating rental entry...");
+        addRentalEntry(pendingRentalEntry);
+        setPendingRentalEntry(null);
+        setSubmissionProgress(
+          "Successfully created time entries and rental entry!",
+        );
+      }, 1500); // Wait 1.5 seconds for time entries to be fully processed
+
+      return () => clearTimeout(timer);
+    }
+  }, [pendingRentalEntry, addRentalEntry]);
+
   const resetForm = () => {
     setFormData({
       employeeId: "",
