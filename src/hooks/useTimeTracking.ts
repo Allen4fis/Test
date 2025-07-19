@@ -1104,6 +1104,13 @@ export function useTimeTracking() {
             description: "Statutory holiday overtime (base pay x1.5)",
             multiplier: 1.5,
           },
+          {
+            id: "12",
+            name: "Billable",
+            description:
+              "Billable time (does not count towards job hours total)",
+            multiplier: 1.0,
+          },
         ],
         provinces: [
           { id: "1", name: "Alberta", code: "AB" },
