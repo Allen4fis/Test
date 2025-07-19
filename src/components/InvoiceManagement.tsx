@@ -246,7 +246,20 @@ export function InvoiceManagement() {
           totalBillable: 0,
         };
       }
-      acc[key].employees.push(entry.employeeName);
+
+      // Find existing employee or add new one
+      const existingEmployee = acc[key].employees.find(
+        (emp: any) => emp.name === entry.employeeName,
+      );
+      if (existingEmployee) {
+        existingEmployee.hours += entry.hours;
+      } else {
+        acc[key].employees.push({
+          name: entry.employeeName,
+          hours: entry.hours,
+        });
+      }
+
       acc[key].totalHours += entry.hours;
       acc[key].totalEffectiveHours += entry.effectiveHours;
       acc[key].totalCost += entry.totalCost;
@@ -254,10 +267,7 @@ export function InvoiceManagement() {
       return acc;
     }, {});
 
-    return Object.values(grouped).map((group: any) => ({
-      ...group,
-      employees: [...new Set(group.employees)], // Remove duplicates
-    }));
+    return Object.values(grouped);
   };
 
   // Handle sorting for breakdown table
