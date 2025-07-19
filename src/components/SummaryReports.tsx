@@ -1267,13 +1267,19 @@ export function SummaryReports() {
                                   <div className="text-lg font-bold text-emerald-400">
                                     $
                                     {(() => {
-                                      // Calculate total billable amount for this employee's entries in the filtered data
+                                      // Calculate total billable amount for this employee's entries from billable jobs only
                                       const employeeFilteredEntries =
-                                        filteredSummaries.filter(
-                                          (entry) =>
+                                        filteredSummaries.filter((entry) => {
+                                          const job = jobs.find(
+                                            (j) =>
+                                              j.jobNumber === entry.jobNumber,
+                                          );
+                                          return (
                                             entry.employeeName ===
-                                            employee.employeeName,
-                                        );
+                                              employee.employeeName &&
+                                            job?.isBillable !== false
+                                          );
+                                        });
                                       const totalBillable =
                                         employeeFilteredEntries.reduce(
                                           (sum, entry) =>
