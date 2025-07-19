@@ -233,7 +233,7 @@ export class MemoryCleanup {
 
   private clearCalculationCaches(): void {
     // Clear any calculation caches that might exist
-    if (window as any).__CALCULATION_CACHE__) {
+    if ((window as any).__CALCULATION_CACHE__) {
       (window as any).__CALCULATION_CACHE__ = new Map();
     }
   }
