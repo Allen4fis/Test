@@ -334,9 +334,9 @@ export function TimeEntryForm() {
       } else {
         // Determine what needs to be created
         const hasTimeEntries = hourEntries.length > 0 || loaCount > 0;
-        const hasRentalEntry =
-          rentalFormData.rentalItemId &&
-          parseFloat(rentalFormData.quantity) > 0;
+        const hasRentalEntry = false; // Temporarily disable rental creation to test time entries
+        // rentalFormData.rentalItemId &&
+        // parseFloat(rentalFormData.quantity) > 0;
 
         // Create time entries first (if any)
         if (hasTimeEntries) {
