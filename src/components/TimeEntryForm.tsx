@@ -148,16 +148,21 @@ export function TimeEntryForm() {
     if (pendingRentalEntry) {
       const timer = setTimeout(() => {
         setSubmissionProgress("Creating rental entry...");
-        addRentalEntry(pendingRentalEntry);
+        // Use the hook function directly
+        const {
+          rentalItems: currentRentalItems,
+          addRentalEntry: currentAddRentalEntry,
+        } = useTimeTracking();
+        currentAddRentalEntry(pendingRentalEntry);
         setPendingRentalEntry(null);
         setSubmissionProgress(
           "Successfully created time entries and rental entry!",
         );
-      }, 1500); // Wait 1.5 seconds for time entries to be fully processed
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
-  }, [pendingRentalEntry, addRentalEntry]);
+  }, [pendingRentalEntry]);
 
   const resetForm = () => {
     setFormData({
