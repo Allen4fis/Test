@@ -1425,6 +1425,8 @@ export function InvoiceManagement() {
                                 <div className="font-semibold text-blue-300">
                                   {group.title}
                                 </div>
+                              </TableCell>
+                              <TableCell className="text-gray-100">
                                 <div className="text-sm text-orange-400">
                                   {group.hourType}
                                 </div>
