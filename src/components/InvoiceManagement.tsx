@@ -283,7 +283,20 @@ export function InvoiceManagement() {
       return acc;
     }, {});
 
-    return Object.values(grouped);
+    // Recalculate group totals from individual employee costs to ensure accuracy
+    const result = Object.values(grouped).map((group: any) => ({
+      ...group,
+      totalCost: group.employees.reduce(
+        (sum: number, emp: any) => sum + emp.individualCost,
+        0,
+      ),
+      totalBillable: group.employees.reduce(
+        (sum: number, emp: any) => sum + emp.individualBillable,
+        0,
+      ),
+    }));
+
+    return result;
   };
 
   // Handle sorting for breakdown table
