@@ -79,7 +79,15 @@ interface JobDateInfo {
 interface GroupedTimeEntry {
   title: string;
   hourType: string;
-  employees: Array<{ name: string; hours: number }>;
+  employees: Array<{
+    name: string;
+    hours: number;
+    effectiveHours: number;
+    costWage: number;
+    billableWage: number;
+    individualCost: number;
+    individualBillable: number;
+  }>;
   totalHours: number;
   totalEffectiveHours: number;
   totalCost: number;
