@@ -529,23 +529,10 @@ export function useTimeTracking() {
   };
 
   const deleteTimeEntry = (id: string) => {
-    console.log("deleteTimeEntry called with ID:", id);
-    setAppData((prev) => {
-      const filteredEntries = prev.timeEntries.filter(
-        (entry) => entry.id !== id,
-      );
-      console.log("Entries before deletion:", prev.timeEntries.length);
-      console.log("Entries after deletion:", filteredEntries.length);
-      console.log(
-        "Was entry found and removed?",
-        prev.timeEntries.length !== filteredEntries.length,
-      );
-
-      return {
-        ...prev,
-        timeEntries: filteredEntries,
-      };
-    });
+    setAppData((prev) => ({
+      ...prev,
+      timeEntries: prev.timeEntries.filter((entry) => entry.id !== id),
+    }));
   };
 
   // Rental item operations
