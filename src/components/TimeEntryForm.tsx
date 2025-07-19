@@ -338,8 +338,60 @@ export function TimeEntryForm() {
           rentalFormData.rentalItemId &&
           parseFloat(rentalFormData.quantity) > 0;
 
-        // Create time entries first (if any)
-        if (hasTimeEntries) {
+        // For now, only create time entries if both are present to avoid conflicts
+        if (hasTimeEntries && hasRentalEntry) {
+          if (hourEntries.length > 0) {
+            setSubmissionProgress(
+              `Creating ${hourEntries.length} time entries only (rental entry skipped to avoid conflicts)...`,
+            );
+
+            const entriesToCreate = hourEntries.map((entry, i) => {
+              const hours = parseFloat(entry.hours);
+              return {
+                employeeId: formData.employeeId,
+                jobId: formData.jobId,
+                hourTypeId: entry.hourTypeId,
+                provinceId: formData.provinceId,
+                date: formData.date,
+                hours: hours,
+                loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
+                title: formData.title,
+                billableWageUsed: billableWageUsed,
+                costWageUsed: costWageUsed,
+                description: formData.description,
+              };
+            });
+
+            addMultipleTimeEntries(entriesToCreate);
+            setSubmissionProgress(
+              `Successfully created ${hourEntries.length} time entries! Please create rental entry separately to avoid conflicts.`,
+            );
+          } else if (loaCount > 0) {
+            setSubmissionProgress(
+              "Creating LOA entry only (rental entry skipped)...",
+            );
+
+            const entryData = {
+              employeeId: formData.employeeId,
+              jobId: formData.jobId,
+              hourTypeId: formData.hourType1 || hourTypes[0]?.id || "",
+              provinceId: formData.provinceId,
+              date: formData.date,
+              hours: 0,
+              loaCount: loaCount,
+              title: formData.title,
+              billableWageUsed: billableWageUsed,
+              costWageUsed: costWageUsed,
+              description: formData.description,
+            };
+
+            addTimeEntry(entryData);
+            setSubmissionProgress(
+              "Successfully created LOA entry! Please create rental entry separately.",
+            );
+          }
+        } else if (hasTimeEntries) {
+          // Only time entries
           if (hourEntries.length > 0) {
             setSubmissionProgress(
               `Creating ${hourEntries.length} time entries...`,
@@ -385,41 +437,6 @@ export function TimeEntryForm() {
 
             addTimeEntry(entryData);
             setSubmissionProgress("Successfully created LOA entry!");
-          }
-
-          // If we also have a rental entry, create it with a timeout delay
-          if (hasRentalEntry) {
-            setSubmissionProgress(
-              "Time entries created! Creating rental entry...",
-            );
-
-            setTimeout(() => {
-              const selectedRentalItem = rentalItems.find(
-                (item) => item.id === rentalFormData.rentalItemId,
-              );
-              const quantity = parseFloat(rentalFormData.quantity);
-              const dspRate = rentalFormData.dspRate
-                ? parseFloat(rentalFormData.dspRate)
-                : selectedRentalItem?.dspRate;
-
-              const rentalEntryData = {
-                rentalItemId: rentalFormData.rentalItemId,
-                jobId: formData.jobId,
-                employeeId: formData.employeeId,
-                startDate: formData.date,
-                endDate: formData.date,
-                quantity: quantity,
-                billingUnit: selectedRentalItem?.unit || "day",
-                rateUsed: selectedRentalItem?.dailyRate || 0,
-                dspRate: dspRate,
-                description: rentalFormData.description,
-              };
-
-              addRentalEntry(rentalEntryData);
-              setSubmissionProgress(
-                "Successfully created time entries and rental entry!",
-              );
-            }, 1500);
           }
         } else if (hasRentalEntry) {
           // Only rental entry, no time entries
