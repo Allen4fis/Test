@@ -388,34 +388,39 @@ export function TimeEntryForm() {
             setSubmissionProgress("Successfully created LOA entry!");
           }
 
-          // If we also have a rental entry, set it as pending for delayed creation
+          // If we also have a rental entry, create it with a timeout delay
           if (hasRentalEntry) {
-            const selectedRentalItem = rentalItems.find(
-              (item) => item.id === rentalFormData.rentalItemId,
-            );
-            const quantity = parseFloat(rentalFormData.quantity);
-            const dspRate = rentalFormData.dspRate
-              ? parseFloat(rentalFormData.dspRate)
-              : selectedRentalItem?.dspRate;
-
-            const rentalEntryData = {
-              rentalItemId: rentalFormData.rentalItemId,
-              jobId: formData.jobId,
-              employeeId: formData.employeeId,
-              startDate: formData.date,
-              endDate: formData.date,
-              quantity: quantity,
-              billingUnit: selectedRentalItem?.unit || "day",
-              rateUsed: selectedRentalItem?.dailyRate || 0,
-              dspRate: dspRate,
-              description: rentalFormData.description,
-            };
-
-            // Set as pending instead of creating immediately
-            setPendingRentalEntry(rentalEntryData);
             setSubmissionProgress(
               "Time entries created! Creating rental entry...",
             );
+
+            setTimeout(() => {
+              const selectedRentalItem = rentalItems.find(
+                (item) => item.id === rentalFormData.rentalItemId,
+              );
+              const quantity = parseFloat(rentalFormData.quantity);
+              const dspRate = rentalFormData.dspRate
+                ? parseFloat(rentalFormData.dspRate)
+                : selectedRentalItem?.dspRate;
+
+              const rentalEntryData = {
+                rentalItemId: rentalFormData.rentalItemId,
+                jobId: formData.jobId,
+                employeeId: formData.employeeId,
+                startDate: formData.date,
+                endDate: formData.date,
+                quantity: quantity,
+                billingUnit: selectedRentalItem?.unit || "day",
+                rateUsed: selectedRentalItem?.dailyRate || 0,
+                dspRate: dspRate,
+                description: rentalFormData.description,
+              };
+
+              addRentalEntry(rentalEntryData);
+              setSubmissionProgress(
+                "Successfully created time entries and rental entry!",
+              );
+            }, 1500);
           }
         } else if (hasRentalEntry) {
           // Only rental entry, no time entries
