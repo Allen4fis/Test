@@ -1246,7 +1246,7 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-5 gap-4 text-center">
+                              <div className="grid grid-cols-6 gap-3 text-center">
                                 <div>
                                   <div className="text-lg font-bold text-blue-400">
                                     {employee.totalHours.toFixed(2)}h
@@ -1261,6 +1261,31 @@ export function SummaryReports() {
                                   </div>
                                   <div className="text-xs text-gray-400">
                                     Labor Cost
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-lg font-bold text-emerald-400">
+                                    $
+                                    {(() => {
+                                      // Calculate total billable amount for this employee's entries in the filtered data
+                                      const employeeFilteredEntries =
+                                        filteredSummaries.filter(
+                                          (entry) =>
+                                            entry.employeeName ===
+                                            employee.employeeName,
+                                        );
+                                      const totalBillable =
+                                        employeeFilteredEntries.reduce(
+                                          (sum, entry) =>
+                                            sum +
+                                            (entry.totalBillableAmount || 0),
+                                          0,
+                                        );
+                                      return totalBillable.toFixed(2);
+                                    })()}
+                                  </div>
+                                  <div className="text-xs text-gray-400">
+                                    Billable Amount
                                   </div>
                                 </div>
                                 {totalGst > 0 ? (
