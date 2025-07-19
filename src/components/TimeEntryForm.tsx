@@ -536,11 +536,20 @@ export function TimeEntryForm() {
     resetForm();
   };
 
-  const handleDelete = async (entryId: string) => {
+  const handleDelete = (entry: TimeEntry) => {
     try {
-      await deleteTimeEntry(entryId);
+      deleteTimeEntry(entry.id);
+      toast({
+        title: "Entry Deleted",
+        description: "Time entry has been successfully deleted.",
+      });
     } catch (error) {
-      // Error handled by component
+      console.error("Delete error:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete time entry. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
