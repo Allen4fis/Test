@@ -424,7 +424,6 @@ export function TimeEntryForm() {
 
           // Brief delay after rental entry creation
           await delay(500);
-          console.log("Rental entry created");
         }
 
         // Set final success message based on what was created
