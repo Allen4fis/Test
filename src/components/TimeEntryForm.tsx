@@ -1472,7 +1472,7 @@ export function TimeEntryForm() {
                             <div>
                               <Badge
                                 variant="outline"
-                                className="bg-orange-100 dark:bg-orange-900"
+                                className="bg-orange-100 dark:bg-orange-900/50 text-orange-900 dark:text-orange-200 border-orange-300 dark:border-orange-700"
                               >
                                 {rentalItem?.name || "Unknown Item"}
                               </Badge>
