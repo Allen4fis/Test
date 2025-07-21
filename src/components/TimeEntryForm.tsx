@@ -208,6 +208,7 @@ export function TimeEntryForm() {
       );
 
       const loaCount = formData.loaCount ? parseFloat(formData.loaCount) : 0;
+      const loaAmount = formData.loaAmount ? parseFloat(formData.loaAmount) : 200;
       const billableWageUsed = parseFloat(formData.billableWageUsed);
       const costWageUsed = parseFloat(formData.costWageUsed);
 
