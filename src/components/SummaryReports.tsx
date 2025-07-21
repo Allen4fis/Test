@@ -1370,18 +1370,12 @@ export function SummaryReports() {
                                   DSP Invoice Summary
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
-                                  {/* Individual DSP Billable & GST */}
+                                  {/* Individual DSP Cost & GST */}
                                   <div className="space-y-2">
                                     <div className="flex justify-between items-center">
-                                      <span className="text-purple-200">Billable Amount:</span>
+                                      <span className="text-purple-200">Cost Amount:</span>
                                       <span className="text-emerald-300 font-medium">
-                                        ${(() => {
-                                          const employeeFilteredEntries = filteredSummaries.filter((entry) => {
-                                            const job = jobs.find(j => j.jobNumber === entry.jobNumber);
-                                            return entry.employeeName === employee.employeeName && job?.isBillable !== false;
-                                          });
-                                          return employeeFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0).toFixed(2);
-                                        })()}
+                                        ${employee.totalCost.toFixed(2)}
                                       </span>
                                     </div>
                                     <div className="flex justify-between items-center">
@@ -1396,18 +1390,14 @@ export function SummaryReports() {
                                   {employee.subordinates && employee.subordinates.length > 0 && (
                                     <div className="space-y-2">
                                       <div className="flex justify-between items-center">
-                                        <span className="text-purple-200">Team Billable:</span>
+                                        <span className="text-purple-200">Team Cost:</span>
                                         <span className="text-emerald-300 font-medium">
                                           ${(() => {
-                                            let teamBillable = 0;
+                                            let teamCost = 0;
                                             employee.subordinates.forEach((sub) => {
-                                              const subFilteredEntries = filteredSummaries.filter((entry) => {
-                                                const job = jobs.find(j => j.jobNumber === entry.jobNumber);
-                                                return entry.employeeName === sub.employeeName && job?.isBillable !== false;
-                                              });
-                                              teamBillable += subFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+                                              teamCost += sub.totalCost || 0;
                                             });
-                                            return teamBillable.toFixed(2);
+                                            return teamCost.toFixed(2);
                                           })()}
                                         </span>
                                       </div>
