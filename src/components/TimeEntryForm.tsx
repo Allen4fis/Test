@@ -1403,7 +1403,7 @@ export function TimeEntryForm() {
                                 (entry as any).hours *
                                   (entry as any).costWageUsed *
                                   (hourType?.multiplier || 1) +
-                                ((entry as any).loaCount || 0) * 200
+                                ((entry as any).loaCount || 0) * ((entry as any).loaAmount || 200)
                               ).toFixed(2)}
                             </div>
                           </TableCell>
