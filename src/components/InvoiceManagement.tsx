@@ -106,19 +106,12 @@ export function InvoiceManagement() {
     removePaidDates,
   } = useTimeTracking();
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
-    endDate: "",
-  });
   const [selectedDateForBreakdown, setSelectedDateForBreakdown] = useState<
     string | null
   >(null);
   const [selectedJobForBreakdown, setSelectedJobForBreakdown] =
     useState<Job | null>(null);
   const [isBreakdownDialogOpen, setIsBreakdownDialogOpen] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Sorting and filtering state
   const [sortBy, setSortBy] = useState<
