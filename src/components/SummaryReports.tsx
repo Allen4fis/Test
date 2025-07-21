@@ -1442,26 +1442,18 @@ export function SummaryReports() {
                                       <div className="text-center">
                                         <div className="text-purple-300 font-bold text-lg">
                                           ${(() => {
-                                            // Manager's billable
-                                            const managerFilteredEntries = filteredSummaries.filter((entry) => {
-                                              const job = jobs.find(j => j.jobNumber === entry.jobNumber);
-                                              return entry.employeeName === employee.employeeName && job?.isBillable !== false;
-                                            });
-                                            const managerBillable = managerFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+                                            // Manager's cost
+                                            const managerCost = employee.totalCost || 0;
 
-                                            // Team billable
-                                            let teamBillable = 0;
+                                            // Team cost
+                                            let teamCost = 0;
                                             employee.subordinates.forEach((sub) => {
-                                              const subFilteredEntries = filteredSummaries.filter((entry) => {
-                                                const job = jobs.find(j => j.jobNumber === entry.jobNumber);
-                                                return entry.employeeName === sub.employeeName && job?.isBillable !== false;
-                                              });
-                                              teamBillable += subFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+                                              teamCost += sub.totalCost || 0;
                                             });
 
-                                            const totalBillable = managerBillable + teamBillable;
+                                            const totalCost = managerCost + teamCost;
                                             const totalGst = (employee.gstAmount || 0) + (employee.subordinateGstTotal || 0);
-                                            return (totalBillable + totalGst).toFixed(2);
+                                            return (totalCost + totalGst).toFixed(2);
                                           })()}
                                         </div>
                                         <div className="text-xs text-purple-400">Grand Total</div>
