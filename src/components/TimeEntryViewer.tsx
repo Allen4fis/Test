@@ -339,8 +339,8 @@ export function TimeEntryViewer() {
     // Calculate hourly billable amount
     const hourlyBillable = effectiveHours * adjustedBillableWage;
 
-    // Add Live Out Allowance amount separately (fixed $200 per Live Out Allowance count)
-    const loaBillable = (entry.loaCount || 0) * 200;
+    // Add Live Out Allowance amount separately (use actual loaAmount or default $200)
+    const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
 
     return sum + hourlyBillable + loaBillable;
   }, 0);
