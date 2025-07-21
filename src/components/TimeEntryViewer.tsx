@@ -391,6 +391,7 @@ export function TimeEntryViewer() {
       date: entry.date,
       hours: entry.hours.toString(),
       loaCount: (entry.loaCount || 0).toString(),
+      loaAmount: (entry.loaAmount || 200).toString(),
       description: entry.description || "",
       title: entry.title || "",
       billableWageUsed: (entry.billableWageUsed || 0).toString(),
