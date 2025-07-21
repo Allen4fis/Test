@@ -1011,10 +1011,10 @@ export function TimeEntryViewer() {
                                 variant="secondary"
                                 className="bg-purple-100 text-purple-800"
                               >
-                                {entry.loaCount} × $200
+                                {entry.loaCount} × ${(entry.loaAmount || 200).toFixed(2)}
                               </Badge>
                               <span className="text-xs text-purple-600 font-medium">
-                                = ${(entry.loaCount * 200).toFixed(2)}
+                                = ${(entry.loaCount * (entry.loaAmount || 200)).toFixed(2)}
                               </span>
                             </div>
                           ) : (
