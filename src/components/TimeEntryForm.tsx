@@ -828,28 +828,46 @@ export function TimeEntryForm() {
                 />
               </div>
 
-              {/* Live Out Allowance Count */}
-              <div className="space-y-2">
-                <Label htmlFor="loaCount" className="text-sm font-medium">
-                  Live Out Allowance Count
-                </Label>
-                <Input
-                  id="loaCount"
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={formData.loaCount}
-                  onChange={(e) =>
-                    setFormData({ ...formData, loaCount: e.target.value })
-                  }
-                  onWheel={(e) => e.currentTarget.blur()}
-                  placeholder="0"
-                />
-                <p className="text-xs text-gray-500">
-                  Live Out Allowance count ($200 per LOA) - applies to first
-                  entry only
-                </p>
+              {/* Live Out Allowance Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="loaCount" className="text-sm font-medium">
+                    Live Out Allowance Count
+                  </Label>
+                  <Input
+                    id="loaCount"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={formData.loaCount}
+                    onChange={(e) =>
+                      setFormData({ ...formData, loaCount: e.target.value })
+                    }
+                    onWheel={(e) => e.currentTarget.blur()}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="loaAmount" className="text-sm font-medium">
+                    LOA Amount ($ per LOA)
+                  </Label>
+                  <Input
+                    id="loaAmount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.loaAmount}
+                    onChange={(e) =>
+                      setFormData({ ...formData, loaAmount: e.target.value })
+                    }
+                    onWheel={(e) => e.currentTarget.blur()}
+                    placeholder="200.00"
+                  />
+                </div>
               </div>
+              <p className="text-xs text-gray-500">
+                Live Out Allowance count and amount per LOA - applies to first entry only
+              </p>
             </div>
 
             {/* Hour Type and Hours Section */}
