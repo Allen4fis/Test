@@ -1063,22 +1063,44 @@ export function TimeEntryViewer() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => {
-                                if (
-                                  window.confirm(
-                                    `Are you sure you want to delete this time entry for ${employee?.name}?`,
-                                  )
-                                ) {
-                                  handleDelete(entry.id);
-                                }
+                            <DeleteConfirmationDialog
+                              item={{
+                                id: entry.id,
+                                name: `${employee?.name || "Unknown Employee"} - ${formatLocalDate(entry.date)}`,
+                                type: "time-entry",
+                                associatedData: {
+                                  additionalInfo: [
+                                    `Date: ${formatLocalDate(entry.date)}`,
+                                    `Hours: ${entry.hours}h`,
+                                    `Job: ${job?.jobNumber} - ${job?.name || "Unknown Job"}`,
+                                    `Hour Type: ${hourType?.name || "Unknown"}`,
+                                    `Province: ${province?.name || "Unknown"}`,
+                                    entry.loaCount && entry.loaCount > 0
+                                      ? `LOA: ${entry.loaCount} × $${(entry.loaAmount || 200).toFixed(2)} = $${(entry.loaCount * (entry.loaAmount || 200)).toFixed(2)}`
+                                      : null,
+                                    `Billable Rate: $${entry.billableWageUsed?.toFixed(2) || "0.00"}`,
+                                    `Cost Rate: $${entry.costWageUsed?.toFixed(2) || "0.00"}`,
+                                    entry.description ? `Description: ${entry.description}` : null,
+                                  ].filter(Boolean),
+                                },
                               }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                              trigger={
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              }
+                              onConfirm={(id) => {
+                                handleDelete(id);
+                                toast({
+                                  title: "Time Entry Deleted",
+                                  description: `Successfully deleted time entry for ${employee?.name} on ${formatLocalDate(entry.date)}`,
+                                });
+                              }}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>
