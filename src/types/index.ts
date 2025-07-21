@@ -44,6 +44,7 @@ export interface TimeEntry {
   date: string; // YYYY-MM-DD format
   hours: number;
   loaCount?: number; // Live Out Allowance count as separate field (not hourly)
+  loaAmount?: number; // Live Out Allowance amount per LOA (defaults to $200)
   title: string; // Employee title at time of entry
   billableWageUsed: number; // Billable wage at time of entry
   costWageUsed: number; // Cost wage at time of entry
