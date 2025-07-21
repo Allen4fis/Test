@@ -650,7 +650,7 @@ export function SummaryReports() {
     // Get the names of employees that are currently being displayed
     const displayedEmployeeNames = new Set();
 
-    filteredHierarchicalSummaries.forEach((emp) => {
+    sortedHierarchicalSummaries.forEach((emp) => {
       displayedEmployeeNames.add(emp.employeeName);
       // Also include subordinates if they're being shown
       if (emp.subordinates && emp.subordinates.length > 0) {
