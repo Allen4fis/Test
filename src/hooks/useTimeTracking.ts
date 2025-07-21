@@ -888,9 +888,9 @@ export function useTimeTracking() {
         // Billable amount always uses the full multiplier (clients pay overtime rates)
         billableAmount = effectiveHours * adjustedBillableWage;
 
-        // Add LOA cost separately (fixed $200 per LOA count)
-        const loaCost = (entry.loaCount || 0) * 200;
-        const loaBillable = (entry.loaCount || 0) * 200;
+        // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
+        const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+        const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
 
         if (!acc[employee.id]) {
           acc[employee.id] = {
