@@ -1095,10 +1095,6 @@ export function TimeEntryViewer() {
                               }
                               onConfirm={(id) => {
                                 handleDelete(id);
-                                toast({
-                                  title: "Time Entry Deleted",
-                                  description: `Successfully deleted time entry for ${employee?.name} on ${formatLocalDate(entry.date)}`,
-                                });
                               }}
                             />
                           </div>
