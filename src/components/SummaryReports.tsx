@@ -705,7 +705,7 @@ export function SummaryReports() {
       totalCombinedBillable: totalCost + rentalBillable,
     };
   }, [
-    filteredHierarchicalSummaries,
+    sortedHierarchicalSummaries,
     filteredSummaries,
     filteredRentalSummaries,
     employees,
