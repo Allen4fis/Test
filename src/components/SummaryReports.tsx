@@ -1267,6 +1267,18 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                                 <div>
+                                  <div className="text-lg font-bold text-yellow-400">
+                                    $
+                                    {employee.totalHours > 0
+                                      ? (employee.totalCost / employee.totalHours).toFixed(2)
+                                      : "0.00"}
+                                    /h
+                                  </div>
+                                  <div className="text-xs text-gray-400">
+                                    Hourly Cost
+                                  </div>
+                                </div>
+                                <div>
                                   <div className="text-lg font-bold text-emerald-400">
                                     $
                                     {(() => {
