@@ -1249,7 +1249,7 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-7 gap-2 text-center">
+                              <div className="grid grid-cols-8 gap-2 text-center">
                                 <div>
                                   <div className="text-lg font-bold text-blue-400">
                                     {employee.totalHours.toFixed(2)}h
