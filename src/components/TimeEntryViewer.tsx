@@ -413,6 +413,7 @@ export function TimeEntryViewer() {
       date: editForm.date,
       hours: parseFloat(editForm.hours) || 0,
       loaCount: parseInt(editForm.loaCount) || 0,
+      loaAmount: parseFloat(editForm.loaAmount) || 200,
       title: editForm.title || employee.title, // Use custom title or fall back to employee's current title
       billableWageUsed: parseFloat(editForm.billableWageUsed) || 0,
       costWageUsed: parseFloat(editForm.costWageUsed) || 0,
