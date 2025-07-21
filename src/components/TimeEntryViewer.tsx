@@ -322,7 +322,10 @@ export function TimeEntryViewer() {
     (sum, entry) => sum + (entry.loaCount || 0),
     0,
   );
-  const totalLoaAmount = totalLoaCount * 200;
+  const totalLoaAmount = filteredAndSortedEntries.reduce(
+    (sum, entry) => sum + (entry.loaCount || 0) * (entry.loaAmount || 200),
+    0,
+  );
   const totalBillableAmount = filteredAndSortedEntries.reduce((sum, entry) => {
     const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
     const effectiveHours = entry.hours * (hourType?.multiplier || 1);
