@@ -43,7 +43,6 @@ import {
   DollarSign,
   Check,
   X,
-  Plus,
   Minus,
   Eye,
   ArrowUpDown,
