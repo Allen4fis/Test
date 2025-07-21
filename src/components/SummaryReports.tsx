@@ -1309,6 +1309,39 @@ export function SummaryReports() {
                                     Billable Amount
                                   </div>
                                 </div>
+                                <div>
+                                  <div className="text-lg font-bold text-cyan-400">
+                                    $
+                                    {(() => {
+                                      if (employee.totalHours === 0) return "0.00";
+                                      // Calculate total billable amount for this employee's entries from billable jobs only
+                                      const employeeFilteredEntries =
+                                        filteredSummaries.filter((entry) => {
+                                          const job = jobs.find(
+                                            (j) =>
+                                              j.jobNumber === entry.jobNumber,
+                                          );
+                                          return (
+                                            entry.employeeName ===
+                                              employee.employeeName &&
+                                            job?.isBillable !== false
+                                          );
+                                        });
+                                      const totalBillable =
+                                        employeeFilteredEntries.reduce(
+                                          (sum, entry) =>
+                                            sum +
+                                            (entry.totalBillableAmount || 0),
+                                          0,
+                                        );
+                                      return (totalBillable / employee.totalHours).toFixed(2);
+                                    })()}
+                                    /h
+                                  </div>
+                                  <div className="text-xs text-gray-400">
+                                    Hourly Billable
+                                  </div>
+                                </div>
                                 {totalGst > 0 ? (
                                   <div>
                                     <div className="text-lg font-bold text-orange-400">
