@@ -114,6 +114,7 @@ export function SummaryReports() {
   const {
     employees,
     jobs,
+    timeEntries,
     timeEntrySummaries,
     rentalSummaries,
     hourTypes,
