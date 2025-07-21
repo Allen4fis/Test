@@ -711,10 +711,17 @@ export function SummaryReports() {
     employees,
   ]);
 
+  // Sort employees alphabetically
+  const sortedHierarchicalSummaries = useMemo(() => {
+    return [...filteredHierarchicalSummaries].sort((a, b) =>
+      a.employeeName.localeCompare(b.employeeName)
+    );
+  }, [filteredHierarchicalSummaries]);
+
   // Pagination for employee summaries
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const pagination = usePagination({
-    data: filteredHierarchicalSummaries,
+    data: sortedHierarchicalSummaries,
     itemsPerPage,
   });
 
