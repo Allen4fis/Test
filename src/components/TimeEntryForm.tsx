@@ -400,6 +400,7 @@ export function TimeEntryForm() {
               date: formData.date,
               hours: 0,
               loaCount: loaCount,
+              loaAmount: loaAmount,
               title: formData.title,
               billableWageUsed: billableWageUsed,
               costWageUsed: costWageUsed,
