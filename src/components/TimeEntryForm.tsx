@@ -208,7 +208,9 @@ export function TimeEntryForm() {
       );
 
       const loaCount = formData.loaCount ? parseFloat(formData.loaCount) : 0;
-      const loaAmount = formData.loaAmount ? parseFloat(formData.loaAmount) : 200;
+      const loaAmount = formData.loaAmount
+        ? parseFloat(formData.loaAmount)
+        : 200;
       const billableWageUsed = parseFloat(formData.billableWageUsed);
       const costWageUsed = parseFloat(formData.costWageUsed);
 
@@ -876,7 +878,8 @@ export function TimeEntryForm() {
                 </div>
               </div>
               <p className="text-xs text-gray-500">
-                Live Out Allowance count and amount per LOA - applies to first entry only
+                Live Out Allowance count and amount per LOA - applies to first
+                entry only
               </p>
             </div>
 
@@ -1403,7 +1406,8 @@ export function TimeEntryForm() {
                                 (entry as any).hours *
                                   (entry as any).costWageUsed *
                                   (hourType?.multiplier || 1) +
-                                ((entry as any).loaCount || 0) * ((entry as any).loaAmount || 200)
+                                ((entry as any).loaCount || 0) *
+                                  ((entry as any).loaAmount || 200)
                               ).toFixed(2)}
                             </div>
                           </TableCell>
@@ -1414,7 +1418,8 @@ export function TimeEntryForm() {
                                 (entry as any).hours *
                                   (entry as any).billableWageUsed *
                                   (hourType?.multiplier || 1) +
-                                ((entry as any).loaCount || 0) * ((entry as any).loaAmount || 200)
+                                ((entry as any).loaCount || 0) *
+                                  ((entry as any).loaAmount || 200)
                               ).toFixed(2)}
                             </div>
                           </TableCell>

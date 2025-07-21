@@ -1011,10 +1011,14 @@ export function TimeEntryViewer() {
                                 variant="secondary"
                                 className="bg-purple-100 text-purple-800"
                               >
-                                {entry.loaCount} × ${(entry.loaAmount || 200).toFixed(2)}
+                                {entry.loaCount} × $
+                                {(entry.loaAmount || 200).toFixed(2)}
                               </Badge>
                               <span className="text-xs text-purple-600 font-medium">
-                                = ${(entry.loaCount * (entry.loaAmount || 200)).toFixed(2)}
+                                = $
+                                {(
+                                  entry.loaCount * (entry.loaAmount || 200)
+                                ).toFixed(2)}
                               </span>
                             </div>
                           ) : (
@@ -1080,7 +1084,9 @@ export function TimeEntryViewer() {
                                       : null,
                                     `Billable Rate: $${entry.billableWageUsed?.toFixed(2) || "0.00"}`,
                                     `Cost Rate: $${entry.costWageUsed?.toFixed(2) || "0.00"}`,
-                                    entry.description ? `Description: ${entry.description}` : null,
+                                    entry.description
+                                      ? `Description: ${entry.description}`
+                                      : null,
                                   ].filter(Boolean),
                                 },
                               }}

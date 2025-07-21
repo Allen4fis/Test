@@ -397,10 +397,13 @@ export function SummaryReports() {
         }
 
         // Find the actual time entry to get the correct loaAmount
-        const timeEntry = timeEntries.find(entry =>
-          entry.employeeId === employees.find(emp => emp.name === summary.employeeName)?.id &&
-          entry.date === summary.date &&
-          hourTypes.find(ht => ht.name === summary.hourTypeName)?.id === entry.hourTypeId
+        const timeEntry = timeEntries.find(
+          (entry) =>
+            entry.employeeId ===
+              employees.find((emp) => emp.name === summary.employeeName)?.id &&
+            entry.date === summary.date &&
+            hourTypes.find((ht) => ht.name === summary.hourTypeName)?.id ===
+              entry.hourTypeId,
         );
         const actualLoaAmount = timeEntry?.loaAmount || 200;
         const loaCost = (summary.loaCount || 0) * actualLoaAmount;
@@ -419,10 +422,14 @@ export function SummaryReports() {
           // Calculate the actual hourly rate used for this entry
           // Since totalCost includes LOA costs, we need to calculate just the hourly portion
           // Find the actual time entry to get the correct loaAmount
-          const timeEntry = timeEntries.find(entry =>
-            entry.employeeId === employees.find(emp => emp.name === summary.employeeName)?.id &&
-            entry.date === summary.date &&
-            hourTypes.find(ht => ht.name === summary.hourTypeName)?.id === entry.hourTypeId
+          const timeEntry = timeEntries.find(
+            (entry) =>
+              entry.employeeId ===
+                employees.find((emp) => emp.name === summary.employeeName)
+                  ?.id &&
+              entry.date === summary.date &&
+              hourTypes.find((ht) => ht.name === summary.hourTypeName)?.id ===
+                entry.hourTypeId,
           );
           const actualLoaAmount = timeEntry?.loaAmount || 200;
           const loaCost = (summary.loaCount || 0) * actualLoaAmount;
@@ -663,7 +670,7 @@ export function SummaryReports() {
   // Sort employees alphabetically
   const sortedHierarchicalSummaries = useMemo(() => {
     return [...filteredHierarchicalSummaries].sort((a, b) =>
-      a.employeeName.localeCompare(b.employeeName)
+      a.employeeName.localeCompare(b.employeeName),
     );
   }, [filteredHierarchicalSummaries]);
 
@@ -1292,7 +1299,10 @@ export function SummaryReports() {
                                   <div className="text-lg font-bold text-yellow-400">
                                     $
                                     {employee.totalHours > 0
-                                      ? (employee.totalCost / employee.totalHours).toFixed(2)
+                                      ? (
+                                          employee.totalCost /
+                                          employee.totalHours
+                                        ).toFixed(2)
                                       : "0.00"}
                                     /h
                                   </div>
@@ -1335,7 +1345,8 @@ export function SummaryReports() {
                                   <div className="text-lg font-bold text-cyan-400">
                                     $
                                     {(() => {
-                                      if (employee.totalHours === 0) return "0.00";
+                                      if (employee.totalHours === 0)
+                                        return "0.00";
                                       // Calculate total billable amount for this employee's entries from billable jobs only
                                       const employeeFilteredEntries =
                                         filteredSummaries.filter((entry) => {
@@ -1356,7 +1367,9 @@ export function SummaryReports() {
                                             (entry.totalBillableAmount || 0),
                                           0,
                                         );
-                                      return (totalBillable / employee.totalHours).toFixed(2);
+                                      return (
+                                        totalBillable / employee.totalHours
+                                      ).toFixed(2);
                                     })()}
                                     /h
                                   </div>
@@ -1440,13 +1453,17 @@ export function SummaryReports() {
                                   {/* Individual DSP Cost & GST */}
                                   <div className="space-y-2">
                                     <div className="flex justify-between items-center">
-                                      <span className="text-purple-200">Cost Amount:</span>
+                                      <span className="text-purple-200">
+                                        Cost Amount:
+                                      </span>
                                       <span className="text-emerald-300 font-medium">
                                         ${employee.totalCost.toFixed(2)}
                                       </span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                      <span className="text-purple-200">GST Amount:</span>
+                                      <span className="text-purple-200">
+                                        GST Amount:
+                                      </span>
                                       <span className="text-orange-300 font-medium">
                                         ${(employee.gstAmount || 0).toFixed(2)}
                                       </span>
@@ -1454,89 +1471,140 @@ export function SummaryReports() {
                                   </div>
 
                                   {/* Subordinates Totals (if applicable) */}
-                                  {employee.subordinates && employee.subordinates.length > 0 && (
-                                    <div className="space-y-2">
-                                      <div className="flex justify-between items-center">
-                                        <span className="text-purple-200">Team Cost:</span>
-                                        <span className="text-emerald-300 font-medium">
-                                          ${(() => {
-                                            let teamCost = 0;
-                                            employee.subordinates.forEach((sub) => {
-                                              teamCost += sub.totalCost || 0;
-                                            });
-                                            return teamCost.toFixed(2);
-                                          })()}
-                                        </span>
+                                  {employee.subordinates &&
+                                    employee.subordinates.length > 0 && (
+                                      <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-purple-200">
+                                            Team Cost:
+                                          </span>
+                                          <span className="text-emerald-300 font-medium">
+                                            $
+                                            {(() => {
+                                              let teamCost = 0;
+                                              employee.subordinates.forEach(
+                                                (sub) => {
+                                                  teamCost +=
+                                                    sub.totalCost || 0;
+                                                },
+                                              );
+                                              return teamCost.toFixed(2);
+                                            })()}
+                                          </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-purple-200">
+                                            Team GST:
+                                          </span>
+                                          <span className="text-orange-300 font-medium">
+                                            $
+                                            {(
+                                              employee.subordinateGstTotal || 0
+                                            ).toFixed(2)}
+                                          </span>
+                                        </div>
                                       </div>
-                                      <div className="flex justify-between items-center">
-                                        <span className="text-purple-200">Team GST:</span>
-                                        <span className="text-orange-300 font-medium">
-                                          ${(employee.subordinateGstTotal || 0).toFixed(2)}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  )}
+                                    )}
                                 </div>
 
                                 {/* Combined Totals for DSPs with subordinates */}
-                                {employee.subordinates && employee.subordinates.length > 0 && (
-                                  <div className="mt-3 pt-3 border-t border-purple-500/30">
-                                    <h5 className="text-xs font-semibold text-purple-300 mb-2">Combined Totals</h5>
-                                    <div className="grid grid-cols-3 gap-4 text-sm">
-                                      <div className="text-center">
-                                        <div className="text-emerald-300 font-bold text-lg">
-                                          ${(() => {
-                                            // Manager's cost
-                                            const managerCost = employee.totalCost || 0;
+                                {employee.subordinates &&
+                                  employee.subordinates.length > 0 && (
+                                    <div className="mt-3 pt-3 border-t border-purple-500/30">
+                                      <h5 className="text-xs font-semibold text-purple-300 mb-2">
+                                        Combined Totals
+                                      </h5>
+                                      <div className="grid grid-cols-3 gap-4 text-sm">
+                                        <div className="text-center">
+                                          <div className="text-emerald-300 font-bold text-lg">
+                                            $
+                                            {(() => {
+                                              // Manager's cost
+                                              const managerCost =
+                                                employee.totalCost || 0;
 
-                                            // Team cost
-                                            let teamCost = 0;
-                                            employee.subordinates.forEach((sub) => {
-                                              teamCost += sub.totalCost || 0;
-                                            });
+                                              // Team cost
+                                              let teamCost = 0;
+                                              employee.subordinates.forEach(
+                                                (sub) => {
+                                                  teamCost +=
+                                                    sub.totalCost || 0;
+                                                },
+                                              );
 
-                                            return (managerCost + teamCost).toFixed(2);
-                                          })()}
+                                              return (
+                                                managerCost + teamCost
+                                              ).toFixed(2);
+                                            })()}
+                                          </div>
+                                          <div className="text-xs text-purple-400">
+                                            Total Cost
+                                          </div>
                                         </div>
-                                        <div className="text-xs text-purple-400">Total Cost</div>
-                                      </div>
-                                      <div className="text-center">
-                                        <div className="text-orange-300 font-bold text-lg">
-                                          ${((employee.gstAmount || 0) + (employee.subordinateGstTotal || 0)).toFixed(2)}
+                                        <div className="text-center">
+                                          <div className="text-orange-300 font-bold text-lg">
+                                            $
+                                            {(
+                                              (employee.gstAmount || 0) +
+                                              (employee.subordinateGstTotal ||
+                                                0)
+                                            ).toFixed(2)}
+                                          </div>
+                                          <div className="text-xs text-purple-400">
+                                            Total GST
+                                          </div>
                                         </div>
-                                        <div className="text-xs text-purple-400">Total GST</div>
-                                      </div>
-                                      <div className="text-center">
-                                        <div className="text-purple-300 font-bold text-lg">
-                                          ${(() => {
-                                            // Manager's cost
-                                            const managerCost = employee.totalCost || 0;
+                                        <div className="text-center">
+                                          <div className="text-purple-300 font-bold text-lg">
+                                            $
+                                            {(() => {
+                                              // Manager's cost
+                                              const managerCost =
+                                                employee.totalCost || 0;
 
-                                            // Team cost
-                                            let teamCost = 0;
-                                            employee.subordinates.forEach((sub) => {
-                                              teamCost += sub.totalCost || 0;
-                                            });
+                                              // Team cost
+                                              let teamCost = 0;
+                                              employee.subordinates.forEach(
+                                                (sub) => {
+                                                  teamCost +=
+                                                    sub.totalCost || 0;
+                                                },
+                                              );
 
-                                            const totalCost = managerCost + teamCost;
-                                            const totalGst = (employee.gstAmount || 0) + (employee.subordinateGstTotal || 0);
-                                            return (totalCost + totalGst).toFixed(2);
-                                          })()}
+                                              const totalCost =
+                                                managerCost + teamCost;
+                                              const totalGst =
+                                                (employee.gstAmount || 0) +
+                                                (employee.subordinateGstTotal ||
+                                                  0);
+                                              return (
+                                                totalCost + totalGst
+                                              ).toFixed(2);
+                                            })()}
+                                          </div>
+                                          <div className="text-xs text-purple-400">
+                                            Grand Total
+                                          </div>
                                         </div>
-                                        <div className="text-xs text-purple-400">Grand Total</div>
                                       </div>
                                     </div>
-                                  </div>
-                                )}
+                                  )}
 
                                 {/* Total for DSPs without subordinates */}
-                                {(!employee.subordinates || employee.subordinates.length === 0) && (
+                                {(!employee.subordinates ||
+                                  employee.subordinates.length === 0) && (
                                   <div className="mt-3 pt-3 border-t border-purple-500/30">
                                     <div className="text-center">
                                       <div className="text-purple-300 font-bold text-lg">
-                                        ${((employee.totalCost || 0) + (employee.gstAmount || 0)).toFixed(2)}
+                                        $
+                                        {(
+                                          (employee.totalCost || 0) +
+                                          (employee.gstAmount || 0)
+                                        ).toFixed(2)}
                                       </div>
-                                      <div className="text-xs text-purple-400">Cost + GST Total</div>
+                                      <div className="text-xs text-purple-400">
+                                        Cost + GST Total
+                                      </div>
                                     </div>
                                   </div>
                                 )}

@@ -658,8 +658,6 @@ export function InvoiceManagement() {
             Manage invoicing and payment tracking for your jobs.
           </p>
         </div>
-
-
       </div>
 
       {/* Summary Cards */}

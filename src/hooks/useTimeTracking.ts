@@ -696,9 +696,11 @@ export function useTimeTracking() {
       totalBillableAmount = effectiveHours * adjustedBillableWage;
 
       // Calculate cost - DSPs and their subordinates are always at regular time rates (1x multiplier)
-      const isDspOrSubordinate = employee?.category === "dsp" ||
+      const isDspOrSubordinate =
+        employee?.category === "dsp" ||
         (employee?.managerId &&
-         appData.employees.find(emp => emp.id === employee.managerId)?.category === "dsp");
+          appData.employees.find((emp) => emp.id === employee.managerId)
+            ?.category === "dsp");
 
       if (isDspOrSubordinate) {
         // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
