@@ -1363,6 +1363,133 @@ export function SummaryReports() {
                               </div>
                             </div>
 
+                            {/* DSP Invoice Summary - For matching invoices and bills */}
+                            {employee.employeeCategory === "dsp" && (
+                              <div className="mt-3 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg">
+                                <h4 className="text-sm font-semibold text-purple-300 mb-2">
+                                  DSP Invoice Summary
+                                </h4>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                  {/* Individual DSP Billable & GST */}
+                                  <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-purple-200">Billable Amount:</span>
+                                      <span className="text-emerald-300 font-medium">
+                                        ${(() => {
+                                          const employeeFilteredEntries = filteredSummaries.filter((entry) => {
+                                            const job = jobs.find(j => j.jobNumber === entry.jobNumber);
+                                            return entry.employeeName === employee.employeeName && job?.isBillable !== false;
+                                          });
+                                          return employeeFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0).toFixed(2);
+                                        })()}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-purple-200">GST Amount:</span>
+                                      <span className="text-orange-300 font-medium">
+                                        ${(employee.gstAmount || 0).toFixed(2)}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Subordinates Totals (if applicable) */}
+                                  {employee.subordinates && employee.subordinates.length > 0 && (
+                                    <div className="space-y-2">
+                                      <div className="flex justify-between items-center">
+                                        <span className="text-purple-200">Team Billable:</span>
+                                        <span className="text-emerald-300 font-medium">
+                                          ${(() => {
+                                            let teamBillable = 0;
+                                            employee.subordinates.forEach((sub) => {
+                                              const subFilteredEntries = filteredSummaries.filter((entry) => {
+                                                const job = jobs.find(j => j.jobNumber === entry.jobNumber);
+                                                return entry.employeeName === sub.employeeName && job?.isBillable !== false;
+                                              });
+                                              teamBillable += subFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+                                            });
+                                            return teamBillable.toFixed(2);
+                                          })()}
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-between items-center">
+                                        <span className="text-purple-200">Team GST:</span>
+                                        <span className="text-orange-300 font-medium">
+                                          ${(employee.subordinateGstTotal || 0).toFixed(2)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Combined Totals for DSPs with subordinates */}
+                                {employee.subordinates && employee.subordinates.length > 0 && (
+                                  <div className="mt-3 pt-3 border-t border-purple-500/30">
+                                    <h5 className="text-xs font-semibold text-purple-300 mb-2">Combined Totals</h5>
+                                    <div className="grid grid-cols-3 gap-4 text-sm">
+                                      <div className="text-center">
+                                        <div className="text-emerald-300 font-bold text-lg">
+                                          ${(() => {
+                                            // Manager's billable
+                                            const managerFilteredEntries = filteredSummaries.filter((entry) => {
+                                              const job = jobs.find(j => j.jobNumber === entry.jobNumber);
+                                              return entry.employeeName === employee.employeeName && job?.isBillable !== false;
+                                            });
+                                            const managerBillable = managerFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+
+                                            // Team billable
+                                            let teamBillable = 0;
+                                            employee.subordinates.forEach((sub) => {
+                                              const subFilteredEntries = filteredSummaries.filter((entry) => {
+                                                const job = jobs.find(j => j.jobNumber === entry.jobNumber);
+                                                return entry.employeeName === sub.employeeName && job?.isBillable !== false;
+                                              });
+                                              teamBillable += subFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+                                            });
+
+                                            return (managerBillable + teamBillable).toFixed(2);
+                                          })()}
+                                        </div>
+                                        <div className="text-xs text-purple-400">Total Billable</div>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="text-orange-300 font-bold text-lg">
+                                          ${((employee.gstAmount || 0) + (employee.subordinateGstTotal || 0)).toFixed(2)}
+                                        </div>
+                                        <div className="text-xs text-purple-400">Total GST</div>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="text-purple-300 font-bold text-lg">
+                                          ${(() => {
+                                            // Manager's billable
+                                            const managerFilteredEntries = filteredSummaries.filter((entry) => {
+                                              const job = jobs.find(j => j.jobNumber === entry.jobNumber);
+                                              return entry.employeeName === employee.employeeName && job?.isBillable !== false;
+                                            });
+                                            const managerBillable = managerFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+
+                                            // Team billable
+                                            let teamBillable = 0;
+                                            employee.subordinates.forEach((sub) => {
+                                              const subFilteredEntries = filteredSummaries.filter((entry) => {
+                                                const job = jobs.find(j => j.jobNumber === entry.jobNumber);
+                                                return entry.employeeName === sub.employeeName && job?.isBillable !== false;
+                                              });
+                                              teamBillable += subFilteredEntries.reduce((sum, entry) => sum + (entry.totalBillableAmount || 0), 0);
+                                            });
+
+                                            const totalBillable = managerBillable + teamBillable;
+                                            const totalGst = (employee.gstAmount || 0) + (employee.subordinateGstTotal || 0);
+                                            return (totalBillable + totalGst).toFixed(2);
+                                          })()}
+                                        </div>
+                                        <div className="text-xs text-purple-400">Grand Total</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
                             {/* DSP Rate Breakdown */}
                             {employee.totalDspEarnings > 0 &&
                               Object.keys(employee.dspRateInfo).length > 0 && (
