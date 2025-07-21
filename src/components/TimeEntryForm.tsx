@@ -429,6 +429,7 @@ export function TimeEntryForm() {
                 date: formData.date,
                 hours: hours,
                 loaCount: i === 0 && loaCount > 0 ? loaCount : undefined, // LOA only on first entry
+                loaAmount: i === 0 && loaCount > 0 ? loaAmount : undefined, // LOA amount only on first entry
                 title: formData.title,
                 billableWageUsed: billableWageUsed,
                 costWageUsed: costWageUsed,
