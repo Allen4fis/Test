@@ -1368,11 +1368,11 @@ export function TimeEntryForm() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="text-green-600 font-medium">
+                            <div className="text-red-600 font-medium">
                               $
                               {(
                                 (entry as any).hours *
-                                  (entry as any).billableWageUsed *
+                                  (entry as any).costWageUsed *
                                   (hourType?.multiplier || 1) +
                                 ((entry as any).loaCount || 0) * 200
                               ).toFixed(2)}
