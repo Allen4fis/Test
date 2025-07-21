@@ -1297,8 +1297,8 @@ export function TimeEntryForm() {
                     <TableHead>Job</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Details</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Total Cost</TableHead>
+                    <TableHead>Cost</TableHead>
+                    <TableHead>Billable</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
