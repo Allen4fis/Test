@@ -634,10 +634,12 @@ export function SummaryReports() {
     }
 
     if (employeeTypeFilter === "dsps-only") {
-      // Show only DSP managers without their subordinate details
-      return hierarchicalEmployeeSummaries
-        .filter((emp) => emp.subordinates && emp.subordinates.length > 0)
-        .map((emp) => ({ ...emp, subordinates: [] }));
+      // Show only DSPs who have no subordinates
+      return hierarchicalEmployeeSummaries.filter(
+        (emp) =>
+          emp.employeeCategory === "dsp" &&
+          (!emp.subordinates || emp.subordinates.length === 0),
+      );
     }
 
     return hierarchicalEmployeeSummaries;
