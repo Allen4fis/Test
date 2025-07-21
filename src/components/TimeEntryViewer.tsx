@@ -436,6 +436,7 @@ export function TimeEntryViewer() {
       date: "",
       hours: "",
       loaCount: "",
+      loaAmount: "",
       description: "",
       title: "",
       billableWageUsed: "",
