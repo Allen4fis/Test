@@ -1278,6 +1278,22 @@ export function TimeEntryViewer() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="edit-loa-amount">LOA Amount ($ per LOA)</Label>
+              <Input
+                id="edit-loa-amount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={editForm.loaAmount}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, loaAmount: e.target.value })
+                }
+                onWheel={(e) => e.currentTarget.blur()}
+                placeholder="200.00"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="edit-billable-rate">Billable Rate ($/hour)</Label>
               <Input
                 id="edit-billable-rate"
