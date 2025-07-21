@@ -396,7 +396,14 @@ export function SummaryReports() {
           };
         }
 
-        const loaCost = (summary.loaCount || 0) * 200;
+        // Find the actual time entry to get the correct loaAmount
+        const timeEntry = timeEntries.find(entry =>
+          entry.employeeId === employees.find(emp => emp.name === summary.employeeName)?.id &&
+          entry.date === summary.date &&
+          hourTypes.find(ht => ht.name === summary.hourTypeName)?.id === entry.hourTypeId
+        );
+        const actualLoaAmount = timeEntry?.loaAmount || 200;
+        const loaCost = (summary.loaCount || 0) * actualLoaAmount;
         const hourlyCost = summary.totalCost - loaCost;
 
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
