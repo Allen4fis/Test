@@ -1528,6 +1528,18 @@ export function SummaryReports() {
                                     </div>
                                   </div>
                                 )}
+
+                                {/* Total for DSPs without subordinates */}
+                                {(!employee.subordinates || employee.subordinates.length === 0) && (
+                                  <div className="mt-3 pt-3 border-t border-purple-500/30">
+                                    <div className="text-center">
+                                      <div className="text-purple-300 font-bold text-lg">
+                                        ${((employee.totalCost || 0) + (employee.gstAmount || 0)).toFixed(2)}
+                                      </div>
+                                      <div className="text-xs text-purple-400">Cost + GST Total</div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             )}
 
