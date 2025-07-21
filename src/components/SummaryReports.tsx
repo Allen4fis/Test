@@ -624,11 +624,12 @@ export function SummaryReports() {
     }
 
     if (employeeTypeFilter === "regular-employees") {
-      // Show only regular employees (no subordinates and not subordinates themselves)
+      // Show only regular employees (no subordinates, not subordinates themselves, and not DSPs)
       return hierarchicalEmployeeSummaries.filter(
         (emp) =>
           (!emp.subordinates || emp.subordinates.length === 0) &&
-          !emp.isSubordinate,
+          !emp.isSubordinate &&
+          emp.employeeCategory !== "dsp",
       );
     }
 
