@@ -1443,7 +1443,7 @@ export function TimeEntryForm() {
                                       ...((entry as any).loaCount &&
                                       (entry as any).loaCount > 0
                                         ? [
-                                            `LOA: ${(entry as any).loaCount} ($${((entry as any).loaCount * 200).toFixed(2)})`,
+                                            `LOA: ${(entry as any).loaCount} ($${((entry as any).loaCount * ((entry as any).loaAmount || 200)).toFixed(2)})`,
                                           ]
                                         : []),
                                       `Total Cost: $${(
