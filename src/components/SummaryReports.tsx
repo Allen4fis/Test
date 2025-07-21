@@ -645,6 +645,13 @@ export function SummaryReports() {
     return hierarchicalEmployeeSummaries;
   }, [hierarchicalEmployeeSummaries, employeeTypeFilter]);
 
+  // Sort employees alphabetically
+  const sortedHierarchicalSummaries = useMemo(() => {
+    return [...filteredHierarchicalSummaries].sort((a, b) =>
+      a.employeeName.localeCompare(b.employeeName)
+    );
+  }, [filteredHierarchicalSummaries]);
+
   // Calculate summary statistics based on filtered employees
   const filteredSummaryStats = useMemo(() => {
     // Get the names of employees that are currently being displayed
