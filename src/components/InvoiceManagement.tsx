@@ -870,7 +870,7 @@ export function InvoiceManagement() {
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-400">
                     $
-                    {filteredAndSortedJobStats
+                    {jobStats
                       .reduce((sum, stat) => sum + stat.uninvoicedBillable, 0)
                       .toFixed(2)}
                   </div>
