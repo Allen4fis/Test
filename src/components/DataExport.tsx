@@ -120,13 +120,13 @@ export function DataExport() {
   const isDspRelated = (employee: any) => {
     if (!employee) return false;
 
-    // If employee is directly a DSP
-    if (employee.category === "dsp") return true;
+    // If employee is directly a DSP or DSPOT
+    if (employee.category === "dsp" || employee.category === "dspot") return true;
 
-    // If employee has a manager, check if the manager is a DSP
+    // If employee has a manager, check if the manager is a DSP or DSPOT
     if (employee.managerId) {
       const manager = employees.find((emp) => emp.id === employee.managerId);
-      return manager?.category === "dsp";
+      return manager?.category === "dsp" || manager?.category === "dspot";
     }
 
     return false;
