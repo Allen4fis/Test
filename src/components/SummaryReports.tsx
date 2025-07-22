@@ -1080,7 +1080,7 @@ export function SummaryReports() {
                           value="dsps-only"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          DSP's Only
+                          DSP's & DSPOT's Only
                         </SelectItem>
                         <SelectItem
                           value="regular-employees"
