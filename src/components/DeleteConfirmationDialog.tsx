@@ -264,14 +264,14 @@ export function DeleteConfirmationDialog({
                         {content.destructionMessage.toUpperCase()}
                       </p>
                     </div>
-                    <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-4">
-                      <p className="text-yellow-200 font-bold text-lg mb-3 text-center uppercase">
+                    <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-3">
+                      <p className="text-yellow-200 font-bold text-base mb-2 text-center uppercase">
                         🔥 DATA ANNIHILATION LIST 🔥
                       </p>
-                      <ul className="text-yellow-100 space-y-2 font-bold">
+                      <ul className="text-yellow-100 space-y-1 font-bold text-sm">
                         {content.dataLoss.map((loss, index) => (
                           <li key={index} className="flex items-center gap-2">
-                            <span className="text-2xl">💥</span>
+                            <span className="text-lg">💥</span>
                             <span className="uppercase">{loss}</span>
                           </li>
                         ))}
