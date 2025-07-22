@@ -459,6 +459,8 @@ export function TimeEntryForm() {
           } else if (loaCount > 0) {
             setSubmissionProgress("Creating LOA entry...");
 
+            const employee = employees.find(emp => emp.id === formData.employeeId);
+
             const entryData = {
               employeeId: formData.employeeId,
               jobId: formData.jobId,
@@ -471,6 +473,7 @@ export function TimeEntryForm() {
               title: formData.title,
               billableWageUsed: billableWageUsed,
               costWageUsed: costWageUsed,
+              employeeCategory: employee?.category,
               description: formData.description,
             };
 
