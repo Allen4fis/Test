@@ -122,6 +122,11 @@ export function TimeEntryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useState("");
 
+  // Duplicate entry dialog state
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [duplicateEntries, setDuplicateEntries] = useState<any[]>([]);
+  const [pendingSubmission, setPendingSubmission] = useState<any>(null);
+
   // Update title and wages when employee is selected
   useEffect(() => {
     if (formData.employeeId && !editingEntry) {
