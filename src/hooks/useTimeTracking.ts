@@ -695,7 +695,8 @@ export function useTimeTracking() {
       // Calculate billable amount (always uses full multiplier)
       totalBillableAmount = effectiveHours * adjustedBillableWage;
 
-      // Calculate cost - DSPs and their subordinates are always at regular time rates (1x multiplier)
+      // Calculate cost - Only DSPs and their subordinates are always at regular time rates (1x multiplier)
+      // DSPOT employees get normal overtime/double time rates
       const isDspOrSubordinate =
         employee?.category === "dsp" ||
         (employee?.managerId &&
@@ -706,7 +707,7 @@ export function useTimeTracking() {
         // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
         totalCost = entry.hours * adjustedCostWage; // Always 1x for DSP costs and their team
       } else {
-        // For regular employees, use the normal multiplier for cost calculation
+        // For regular employees and DSPOT employees, use the normal multiplier for cost calculation
         totalCost = effectiveHours * adjustedCostWage;
       }
 
