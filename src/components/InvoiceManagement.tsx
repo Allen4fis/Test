@@ -570,8 +570,11 @@ export function InvoiceManagement() {
           bValue = b.job.isBillable !== false ? "Billable" : "Non-Billable";
           break;
         default:
-          aValue = a.job.jobNumber.toLowerCase();
-          bValue = b.job.jobNumber.toLowerCase();
+          // Extract numeric part for proper numerical sorting (default is jobNumber)
+          const aNumMatchDefault = a.job.jobNumber.match(/\d+/);
+          const bNumMatchDefault = b.job.jobNumber.match(/\d+/);
+          aValue = aNumMatchDefault ? parseInt(aNumMatchDefault[0], 10) : 0;
+          bValue = bNumMatchDefault ? parseInt(bNumMatchDefault[0], 10) : 0;
       }
 
       if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
