@@ -338,7 +338,9 @@ export function TimeEntryForm() {
             ? hourEntries[0].hourTypeId
             : formData.hourType1;
 
-        const employee = employees.find(emp => emp.id === formData.employeeId);
+        const employee = employees.find(
+          (emp) => emp.id === formData.employeeId,
+        );
 
         const entryData = {
           employeeId: formData.employeeId,
@@ -371,7 +373,9 @@ export function TimeEntryForm() {
               `Creating ${hourEntries.length} time entries only (rental entry skipped to avoid conflicts)...`,
             );
 
-            const employee = employees.find(emp => emp.id === formData.employeeId);
+            const employee = employees.find(
+              (emp) => emp.id === formData.employeeId,
+            );
 
             const entriesToCreate = hourEntries.map((entry, i) => {
               const hours = parseFloat(entry.hours);
@@ -401,7 +405,9 @@ export function TimeEntryForm() {
               "Creating LOA entry only (rental entry skipped)...",
             );
 
-            const employee = employees.find(emp => emp.id === formData.employeeId);
+            const employee = employees.find(
+              (emp) => emp.id === formData.employeeId,
+            );
 
             const entryData = {
               employeeId: formData.employeeId,
@@ -431,7 +437,9 @@ export function TimeEntryForm() {
               `Creating ${hourEntries.length} time entries...`,
             );
 
-            const employee = employees.find(emp => emp.id === formData.employeeId);
+            const employee = employees.find(
+              (emp) => emp.id === formData.employeeId,
+            );
 
             const entriesToCreate = hourEntries.map((entry, i) => {
               const hours = parseFloat(entry.hours);
@@ -459,7 +467,9 @@ export function TimeEntryForm() {
           } else if (loaCount > 0) {
             setSubmissionProgress("Creating LOA entry...");
 
-            const employee = employees.find(emp => emp.id === formData.employeeId);
+            const employee = employees.find(
+              (emp) => emp.id === formData.employeeId,
+            );
 
             const entryData = {
               employeeId: formData.employeeId,

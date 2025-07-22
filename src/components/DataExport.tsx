@@ -121,7 +121,8 @@ export function DataExport() {
     if (!employee) return false;
 
     // If employee is directly a DSP or DSPOT
-    if (employee.category === "dsp" || employee.category === "dspot") return true;
+    if (employee.category === "dsp" || employee.category === "dspot")
+      return true;
 
     // If employee has a manager, check if the manager is a DSP or DSPOT
     if (employee.managerId) {
@@ -146,8 +147,12 @@ export function DataExport() {
         const entryCategory = entry.employeeCategory || employee?.category;
 
         // Check if this specific entry was DSP/DSPOT related at time of creation
-        const isEntryDspRelated = entryCategory === "dsp" || entryCategory === "dspot" ||
-          (employee?.managerId && entryCategory !== "employee" && !entryCategory);
+        const isEntryDspRelated =
+          entryCategory === "dsp" ||
+          entryCategory === "dspot" ||
+          (employee?.managerId &&
+            entryCategory !== "employee" &&
+            !entryCategory);
 
         if (employeeTypeFilter === "dsp") {
           return isEntryDspRelated;
@@ -204,15 +209,19 @@ export function DataExport() {
 
       // Use stored employee category from the entry for GST calculation
       const entryCategory = entry.employeeCategory || employee?.category;
-      const gstAmount = entryCategory === "dsp" || entryCategory === "dspot" ||
+      const gstAmount =
+        entryCategory === "dsp" ||
+        entryCategory === "dspot" ||
         (employee?.managerId && entryCategory !== "employee" && !entryCategory)
-        ? billableAmount * 0.05 : 0;
+          ? billableAmount * 0.05
+          : 0;
 
       return {
         ...entry,
         employeeName: employee?.name || "Unknown",
         employeeTitle: employee?.title || "Unknown",
-        employeeCategory: entry.employeeCategory || employee?.category || "employee",
+        employeeCategory:
+          entry.employeeCategory || employee?.category || "employee",
         managerId: employee?.managerId,
         jobNumber: job?.jobNumber || "Unknown",
         jobName: job?.name || "Unknown Job",
@@ -1346,7 +1355,9 @@ export function DataExport() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Employees</SelectItem>
-                  <SelectItem value="dsp">DSPs, DSPOTs & Subordinates Only</SelectItem>
+                  <SelectItem value="dsp">
+                    DSPs, DSPOTs & Subordinates Only
+                  </SelectItem>
                   <SelectItem value="employee">
                     Regular Employees Only
                   </SelectItem>

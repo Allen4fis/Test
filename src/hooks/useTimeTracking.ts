@@ -367,7 +367,7 @@ export function useTimeTracking() {
 
   const updateEmployee = (id: string, updates: Partial<Employee>) => {
     setAppData((prev) => {
-      const currentEmployee = prev.employees.find(emp => emp.id === id);
+      const currentEmployee = prev.employees.find((emp) => emp.id === id);
       const oldCategory = currentEmployee?.category;
       const newCategory = updates.category;
 
@@ -722,7 +722,8 @@ export function useTimeTracking() {
       // Calculate cost - Use stored employee category from entry
       // DSPs always get 1x rates, DSPOT and others get normal overtime rates
       // Subordinates of current DSPs also get 1x rates regardless of their stored category
-      const entryEmployeeCategory = entry.employeeCategory || employee?.category;
+      const entryEmployeeCategory =
+        entry.employeeCategory || employee?.category;
       const manager = employee?.managerId
         ? appData.employees.find((emp) => emp.id === employee.managerId)
         : null;
@@ -788,7 +789,8 @@ export function useTimeTracking() {
 
         // DSPs and subordinates of DSPs are always charged at regular time rates for cost calculations
         // Use the employee category stored with the entry, not the current category
-        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        const entryEmployeeCategory =
+          entry.employeeCategory || employee.category;
         const manager = employee?.managerId
           ? appData.employees.find((emp) => emp.id === employee.managerId)
           : null;
@@ -863,7 +865,8 @@ export function useTimeTracking() {
 
         // DSPs and subordinates of DSPs are always charged at regular time rates for cost calculations
         // Use the employee category stored with the entry, not the current category
-        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        const entryEmployeeCategory =
+          entry.employeeCategory || employee.category;
         const manager = employee?.managerId
           ? appData.employees.find((emp) => emp.id === employee.managerId)
           : null;
@@ -945,7 +948,8 @@ export function useTimeTracking() {
 
         // DSPs and subordinates of DSPs are always charged at regular time rates for cost calculations
         // Use the employee category stored with the entry, not the current category
-        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        const entryEmployeeCategory =
+          entry.employeeCategory || employee.category;
         const manager = employee?.managerId
           ? appData.employees.find((emp) => emp.id === employee.managerId)
           : null;
@@ -1027,7 +1031,8 @@ export function useTimeTracking() {
 
         // DSPs and subordinates of DSPs are always charged at regular time rates for cost calculations
         // Use the employee category stored with the entry, not the current category
-        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        const entryEmployeeCategory =
+          entry.employeeCategory || employee.category;
         const manager = employee?.managerId
           ? appData.employees.find((emp) => emp.id === employee.managerId)
           : null;

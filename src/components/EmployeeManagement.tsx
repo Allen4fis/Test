@@ -145,7 +145,9 @@ export function EmployeeManagement() {
       billableWage: billableWage,
       costWage: costWage,
       managerId:
-        formData.managerId === "no-manager" || formData.managerId === "dsp" || formData.managerId === "dspot"
+        formData.managerId === "no-manager" ||
+        formData.managerId === "dsp" ||
+        formData.managerId === "dspot"
           ? undefined
           : formData.managerId,
       category:

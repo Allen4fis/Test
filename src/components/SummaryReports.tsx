@@ -103,20 +103,26 @@ const calculateGST = (employee: any, totalCost: number): number => {
 };
 
 // Helper function to calculate GST based on time entries (uses stored categories)
-const calculateGSTFromEntries = (employeeName: string, timeEntries: any[], employees: any[]): number => {
-  const employee = employees.find(emp => emp.name === employeeName);
+const calculateGSTFromEntries = (
+  employeeName: string,
+  timeEntries: any[],
+  employees: any[],
+): number => {
+  const employee = employees.find((emp) => emp.name === employeeName);
   if (!employee) return 0;
 
   // Get all time entries for this employee within the current filter
-  const employeeEntries = timeEntries.filter(entry => entry.employeeId === employee.id);
+  const employeeEntries = timeEntries.filter(
+    (entry) => entry.employeeId === employee.id,
+  );
 
   let totalGST = 0;
-  employeeEntries.forEach(entry => {
+  employeeEntries.forEach((entry) => {
     // Use stored category from entry, fallback to current employee category
     const entryCategory = entry.employeeCategory || employee.category;
 
     // Calculate the cost for this individual entry
-    const hourType = timeEntries.find(te => te.id === entry.id);
+    const hourType = timeEntries.find((te) => te.id === entry.id);
     if (!hourType) return;
 
     // Apply GST logic per entry based on stored category
@@ -527,20 +533,22 @@ export function SummaryReports() {
 
       // Calculate GST for non-employee categories using entry-specific logic
       // Get time entries for this employee in the filtered date range
-      const employeeTimeEntries = timeEntries.filter(entry => {
-        const entryEmployee = employees.find(e => e.id === entry.employeeId);
-        return entryEmployee?.name === emp.employeeName &&
-               entry.date >= dateFilter.start &&
-               entry.date <= dateFilter.end;
+      const employeeTimeEntries = timeEntries.filter((entry) => {
+        const entryEmployee = employees.find((e) => e.id === entry.employeeId);
+        return (
+          entryEmployee?.name === emp.employeeName &&
+          entry.date >= dateFilter.start &&
+          entry.date <= dateFilter.end
+        );
       });
 
       // Calculate GST based on each individual time entry's stored category
       const gstAmount = employeeTimeEntries.reduce((total, entry) => {
-        const entryEmployee = employees.find(e => e.id === entry.employeeId);
+        const entryEmployee = employees.find((e) => e.id === entry.employeeId);
         const entryCategory = entry.employeeCategory || entryEmployee?.category;
 
         // Calculate the cost contribution of this specific entry
-        const hourType = hourTypes.find(ht => ht.id === entry.hourTypeId);
+        const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
         if (!hourType || !entryEmployee) return total;
 
         const effectiveHours = entry.hours * hourType.multiplier;
@@ -565,13 +573,13 @@ export function SummaryReports() {
 
         // Apply GST based on stored category
         if (entryCategory === "dsp" || entryCategory === "dspot") {
-          return total + (entryCost * 0.05);
+          return total + entryCost * 0.05;
         } else if (
           entryEmployee.managerId &&
           entryCategory !== "employee" &&
           !entryCategory
         ) {
-          return total + (entryCost * 0.05);
+          return total + entryCost * 0.05;
         }
 
         return total;
@@ -745,7 +753,8 @@ export function SummaryReports() {
       // Show only DSPs and DSPOTs who have no subordinates
       return hierarchicalEmployeeSummaries.filter(
         (emp) =>
-          (emp.employeeCategory === "dsp" || emp.employeeCategory === "dspot") &&
+          (emp.employeeCategory === "dsp" ||
+            emp.employeeCategory === "dspot") &&
           (!emp.subordinates || emp.subordinates.length === 0),
       );
     }
@@ -1530,10 +1539,14 @@ export function SummaryReports() {
                             </div>
 
                             {/* DSP/DSPOT Invoice Summary - For matching invoices and bills */}
-                            {(employee.employeeCategory === "dsp" || employee.employeeCategory === "dspot") && (
+                            {(employee.employeeCategory === "dsp" ||
+                              employee.employeeCategory === "dspot") && (
                               <div className="mt-3 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg">
                                 <h4 className="text-sm font-semibold text-purple-300 mb-2">
-                                  {employee.employeeCategory === "dspot" ? "DSPOT" : "DSP"} Invoice Summary
+                                  {employee.employeeCategory === "dspot"
+                                    ? "DSPOT"
+                                    : "DSP"}{" "}
+                                  Invoice Summary
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                   {/* Individual DSP Cost & GST */}

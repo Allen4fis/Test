@@ -462,7 +462,8 @@ export function useOptimizedTimeTracking() {
 
         let cost = 0;
         // Use stored employee category from entry, not current category
-        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        const entryEmployeeCategory =
+          entry.employeeCategory || employee.category;
         const manager = employee?.managerId
           ? employees.find((emp) => emp.id === employee.managerId)
           : null;
