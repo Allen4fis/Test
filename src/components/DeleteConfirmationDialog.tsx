@@ -230,12 +230,12 @@ export function DeleteConfirmationDialog({
       <DialogTrigger asChild onClick={() => resetConfirmation()}>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertCircle className={`h-8 w-8 ${confirmStep === 0 ? 'text-red-600 animate-pulse' : 'text-red-700 animate-bounce'}`} />
             {confirmStep === 0 &&
-              `🚨���⚠️ EXTREME DANGER - PERMANENT DESTRUCTION WARNING ⚠️🔥🚨`}
+              `🚨🔥⚠️ EXTREME DANGER - PERMANENT DESTRUCTION WARNING ⚠️🔥🚨`}
             {confirmStep === 1 && `🔒💀 TYPE TO CONFIRM TOTAL ANNIHILATION 💀🔒`}
           </DialogTitle>
           <DialogDescription className="text-lg font-bold">
