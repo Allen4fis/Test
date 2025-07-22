@@ -880,11 +880,13 @@ export function useTimeTracking() {
         }
 
         // DSPs are always charged at regular time rates for cost calculations
-        if (employee.category === "dsp") {
+        // Use the employee category stored with the entry, not the current category
+        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        if (entryEmployeeCategory === "dsp") {
           // For DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
-          // For regular employees, use the normal multiplier for cost calculation
+          // For regular employees and DSPOT, use the normal multiplier for cost calculation
           cost = effectiveHours * adjustedCostWage;
         }
 
