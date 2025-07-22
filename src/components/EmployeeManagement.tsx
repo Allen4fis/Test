@@ -199,6 +199,7 @@ export function EmployeeManagement() {
   // Get employee's category or manager name
   const getEmployeeCategory = (employee: Employee) => {
     if (employee.category === "dsp") return "DSP";
+    if (employee.category === "dspot") return "DSPOT";
     if (employee.category === "employee") return "Employee";
     if (!employee.managerId) return "Employee";
 
