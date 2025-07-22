@@ -1329,7 +1329,7 @@ export function DataExport() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Employees</SelectItem>
-                  <SelectItem value="dsp">DSPs & Subordinates Only</SelectItem>
+                  <SelectItem value="dsp">DSPs, DSPOTs & Subordinates Only</SelectItem>
                   <SelectItem value="employee">
                     Regular Employees Only
                   </SelectItem>
