@@ -230,8 +230,8 @@ export function DataExport() {
       // Add LOA costs to match Dashboard calculation
       const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
       const laborCost = baseLaborCost + loaCost;
-      // Exclude Billable hour type from billable amount calculations (consistent with timeEntrySummaries)
-      const baseBillableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * adjustedBillableWage;
+      // Include Billable hour type in billable amount calculations (to match Dashboard timeEntrySummaries)
+      const baseBillableAmount = effectiveHours * adjustedBillableWage;
       // Add LOA to billable amount to match Dashboard calculation
       const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
       const billableAmount = baseBillableAmount + loaBillable;
