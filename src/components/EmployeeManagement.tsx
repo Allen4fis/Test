@@ -415,6 +415,7 @@ export function EmployeeManagement() {
                           <SelectContent>
                             <SelectItem value="no-manager">Employee</SelectItem>
                             <SelectItem value="dsp">DSP</SelectItem>
+                            <SelectItem value="dspot">DSPOT</SelectItem>
                             {getAvailableEmployees().map((employee) => (
                               <SelectItem key={employee.id} value={employee.id}>
                                 {employee.name} - {employee.title}
