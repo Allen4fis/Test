@@ -702,15 +702,23 @@ export function useTimeTracking() {
       totalBillableAmount = effectiveHours * adjustedBillableWage;
 
       // Calculate cost - Use stored employee category from entry, not current category
-      // Only DSPs are always at regular time rates (1x multiplier)
-      // DSPOT employees and all others get normal overtime/double time rates
+      // DSPs and subordinates of DSPs always get regular time rates (1x multiplier)
+      // DSPOT employees and regular employees get normal overtime/double time rates
       const entryEmployeeCategory = entry.employeeCategory || employee?.category;
+      const manager = employee?.managerId
+        ? appData.employees.find((emp) => emp.id === employee.managerId)
+        : null;
 
-      if (entryEmployeeCategory === "dsp") {
-        // For entries created when employee was DSP, always use regular time (1x) multiplier
+      // Check if this entry should use 1x rates
+      const shouldUse1xRates =
+        entryEmployeeCategory === "dsp" || // Direct DSP
+        (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
+
+      if (shouldUse1xRates) {
+        // For DSPs and subordinates of DSPs, always use regular time (1x) multiplier
         totalCost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
       } else {
-        // For all other employee types (DSPOT, regular employees), use the normal multiplier for cost calculation
+        // For DSPOT and regular employees, use the normal multiplier for cost calculation
         totalCost = effectiveHours * adjustedCostWage;
       }
 
