@@ -231,7 +231,7 @@ export function DataExport() {
         hourTypeMultiplier: hourType?.multiplier || 1,
         provinceName: province?.name || "Unknown",
         provinceCode: province?.code || "XX",
-        effectiveHours,
+        effectiveHours: hourType?.name === "Billable" ? 0 : effectiveHours, // Exclude Billable from hour counts
         laborCost,
         billableAmount,
         gstAmount,
