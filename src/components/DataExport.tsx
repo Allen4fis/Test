@@ -1076,9 +1076,11 @@ export function DataExport() {
             `$${avgRate.toFixed(2)}`,
             emp.category === "dsp"
               ? "DSP"
-              : emp.category === "employee"
-                ? "Employee"
-                : "Contractor",
+              : emp.category === "dspot"
+                ? "DSPOT"
+                : emp.category === "employee"
+                  ? "Employee"
+                  : "Contractor",
             emp.entryCount.toString(),
           ]);
         });
