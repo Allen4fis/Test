@@ -206,7 +206,6 @@ export function TimeEntryForm() {
 
   // Extract submission logic into a separate function
   const proceedWithSubmission = async (hourEntries: any[], rentalEntries: any[]) => {
-    e.preventDefault();
     setFormError("");
     setIsSubmitting(true);
 
