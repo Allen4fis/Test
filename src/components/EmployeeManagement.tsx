@@ -182,7 +182,7 @@ export function EmployeeManagement() {
             ? "dsp"
             : employee.category === "dspot"
               ? "dspot"
-              : employee.managerId || "no-manager";
+              : employee.managerId || "no-manager",
     });
     setIsDialogOpen(true);
   };
