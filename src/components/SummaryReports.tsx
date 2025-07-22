@@ -85,6 +85,7 @@ const sumByHourType = (
 };
 
 // Helper function to calculate 5% GST for non-employee categories
+// This version uses the employee's current category as a fallback
 const calculateGST = (employee: any, totalCost: number): number => {
   // Apply 5% GST to DSPs, DSPOTs and contractors (anyone not explicitly marked as "employee")
   if (employee?.category === "dsp" || employee?.category === "dspot") {
@@ -99,6 +100,40 @@ const calculateGST = (employee: any, totalCost: number): number => {
     return totalCost * 0.05;
   }
   return 0;
+};
+
+// Helper function to calculate GST based on time entries (uses stored categories)
+const calculateGSTFromEntries = (employeeName: string, timeEntries: any[], employees: any[]): number => {
+  const employee = employees.find(emp => emp.name === employeeName);
+  if (!employee) return 0;
+
+  // Get all time entries for this employee within the current filter
+  const employeeEntries = timeEntries.filter(entry => entry.employeeId === employee.id);
+
+  let totalGST = 0;
+  employeeEntries.forEach(entry => {
+    // Use stored category from entry, fallback to current employee category
+    const entryCategory = entry.employeeCategory || employee.category;
+
+    // Calculate the cost for this individual entry
+    const hourType = timeEntries.find(te => te.id === entry.id);
+    if (!hourType) return;
+
+    // Apply GST logic per entry based on stored category
+    if (entryCategory === "dsp" || entryCategory === "dspot") {
+      // For entries that were created when employee was DSP/DSPOT
+      totalGST += (entry.costWageUsed || 0) * entry.hours * 0.05;
+    } else if (
+      employee.managerId &&
+      entryCategory !== "employee" &&
+      !entryCategory
+    ) {
+      // For subordinate contractor entries
+      totalGST += (entry.costWageUsed || 0) * entry.hours * 0.05;
+    }
+  });
+
+  return totalGST;
 };
 
 const getInitialDateFilter = () => {
