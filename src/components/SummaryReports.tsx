@@ -525,8 +525,57 @@ export function SummaryReports() {
         ? employees.find((e) => e.id === employee.managerId)
         : null;
 
-      // Calculate GST for non-employee categories
-      const gstAmount = calculateGST(employee, emp.totalCost);
+      // Calculate GST for non-employee categories using entry-specific logic
+      // Get time entries for this employee in the filtered date range
+      const employeeTimeEntries = timeEntries.filter(entry => {
+        const entryEmployee = employees.find(e => e.id === entry.employeeId);
+        return entryEmployee?.name === emp.employeeName &&
+               entry.date >= dateFilter.start &&
+               entry.date <= dateFilter.end;
+      });
+
+      // Calculate GST based on each individual time entry's stored category
+      const gstAmount = employeeTimeEntries.reduce((total, entry) => {
+        const entryEmployee = employees.find(e => e.id === entry.employeeId);
+        const entryCategory = entry.employeeCategory || entryEmployee?.category;
+
+        // Calculate the cost contribution of this specific entry
+        const hourType = hourTypes.find(ht => ht.id === entry.hourTypeId);
+        if (!hourType || !entryEmployee) return total;
+
+        const effectiveHours = entry.hours * hourType.multiplier;
+        let adjustedCostWage = entry.costWageUsed || 0;
+        let entryCost = 0;
+
+        // Add $3 for NS hour types
+        if (hourType.name.startsWith("NS ")) {
+          adjustedCostWage += 3;
+        }
+
+        // Use stored category for cost calculation
+        if (entryCategory === "dsp") {
+          entryCost = entry.hours * adjustedCostWage; // 1x for DSP
+        } else {
+          entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
+        }
+
+        // Add LOA cost
+        const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+        entryCost += loaCost;
+
+        // Apply GST based on stored category
+        if (entryCategory === "dsp" || entryCategory === "dspot") {
+          return total + (entryCost * 0.05);
+        } else if (
+          entryEmployee.managerId &&
+          entryCategory !== "employee" &&
+          !entryCategory
+        ) {
+          return total + (entryCost * 0.05);
+        }
+
+        return total;
+      }, 0);
 
       return {
         ...emp,
