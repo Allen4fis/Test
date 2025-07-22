@@ -531,8 +531,11 @@ export function InvoiceManagement() {
 
       switch (sortBy) {
         case "jobNumber":
-          aValue = a.job.jobNumber.toLowerCase();
-          bValue = b.job.jobNumber.toLowerCase();
+          // Extract numeric part for proper numerical sorting
+          const aNumMatch = a.job.jobNumber.match(/\d+/);
+          const bNumMatch = b.job.jobNumber.match(/\d+/);
+          aValue = aNumMatch ? parseInt(aNumMatch[0], 10) : 0;
+          bValue = bNumMatch ? parseInt(bNumMatch[0], 10) : 0;
           break;
         case "jobName":
           aValue = a.job.name.toLowerCase();
