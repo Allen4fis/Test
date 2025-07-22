@@ -951,7 +951,17 @@ export function useTimeTracking() {
         if (hourType.name.startsWith("NS ")) {
           adjustedCostWage += 3;
         }
-        cost = effectiveHours * adjustedCostWage;
+
+        // DSPs are always charged at regular time rates for cost calculations
+        // Use the employee category stored with the entry, not the current category
+        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        if (entryEmployeeCategory === "dsp") {
+          // For DSPs, use regular time (1x) multiplier for cost calculation
+          cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
+        } else {
+          // For regular employees and DSPOT, use the normal multiplier for cost calculation
+          cost = effectiveHours * adjustedCostWage;
+        }
 
         // Add LOA cost separately (fixed $200 per LOA count)
         const loaCost = (entry.loaCount || 0) * 200;
