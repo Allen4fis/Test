@@ -98,6 +98,7 @@ export function JobManagement() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [showActive, setShowActive] = useState(true);
   const [showInactive, setShowInactive] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Calculate profit margins for each job
   const jobProfitData = useMemo(() => {
