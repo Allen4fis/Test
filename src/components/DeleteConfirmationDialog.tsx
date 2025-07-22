@@ -295,7 +295,7 @@ export function DeleteConfirmationDialog({
                   </p>
                   {item.associatedData && (
                     <div className="mt-4 text-center">
-                      <p className="text-red-400 font-black mb-2">💀 COLLATERAL DAMAGE:</p>
+                      <p className="text-red-400 font-black mb-2">���� COLLATERAL DAMAGE:</p>
                       {item.associatedData.timeEntries && (
                         <p className="text-yellow-300">💥 {item.associatedData.timeEntries} TIME ENTRIES WILL BE OBLITERATED</p>
                       )}
@@ -380,126 +380,53 @@ export function DeleteConfirmationDialog({
             </div>
           )}
 
-          {/* Step 1: Second Warning */}
+          {/* Step 1: Type Confirmation with Maximum Scary Design */}
           {confirmStep === 1 && (
-            <div className="space-y-4">
-              <div className="bg-red-100 border-2 border-red-300 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-bold text-red-900 text-lg">
-                      🚨 SECOND WARNING - NO RECOVERY POSSIBLE 🚨
-                    </h4>
-                    <p className="text-red-800 mt-2 font-medium">
-                      Once deleted, there is NO WAY to recover {item.name} or
-                      its data.
-                    </p>
-                    <div className="mt-3 p-3 bg-red-200 rounded border-l-4 border-red-500">
-                      <p className="text-red-900 font-semibold text-sm">
-                        System consequences:
-                      </p>
-                      <ul className="text-red-800 mt-2 space-y-1 text-sm">
-                        {content.consequences.map((consequence, index) => (
-                          <li key={index}>• {consequence}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="warning2"
-                  checked={warningsAccepted.warning2}
-                  onChange={(e) =>
-                    setWarningsAccepted((prev) => ({
-                      ...prev,
-                      warning2: e.target.checked,
-                    }))
-                  }
-                  className="h-4 w-4"
-                />
-                <Label htmlFor="warning2" className="text-sm font-medium">
-                  I acknowledge there is NO RECOVERY possible after deletion
-                </Label>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Final Warning */}
-          {confirmStep === 2 && (
-            <div className="space-y-4">
-              <div className="bg-red-200 border-2 border-red-400 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="h-6 w-6 text-red-700 mt-0.5 flex-shrink-0 animate-pulse" />
-                  <div>
-                    <h4 className="font-bold text-red-900 text-lg">
-                      🔥 FINAL WARNING - LAST CHANCE 🔥
-                    </h4>
-                    <p className="text-red-900 mt-2 font-bold">
-                      This is your FINAL CHANCE to cancel before "{item.name}"
-                      is permanently deleted.
-                    </p>
-                    <div className="mt-3 p-4 bg-yellow-100 border-2 border-yellow-400 rounded">
-                      <p className="text-yellow-900 font-bold text-center">
-                        ⚡ CLICKING NEXT WILL IMMEDIATELY START THE DELETION
-                        PROCESS ⚡
-                      </p>
-                    </div>
-                    <p className="text-red-900 mt-3 font-medium">
-                      Are you absolutely certain you want to permanently delete
-                      "{item.name}" and accept that this CANNOT be undone?
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="warning3"
-                  checked={warningsAccepted.warning3}
-                  onChange={(e) =>
-                    setWarningsAccepted((prev) => ({
-                      ...prev,
-                      warning3: e.target.checked,
-                    }))
-                  }
-                  className="h-4 w-4"
-                />
-                <Label htmlFor="warning3" className="text-sm font-medium">
-                  I am absolutely certain and accept full responsibility for
-                  this destructive action
-                </Label>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Type Confirmation */}
-          {confirmStep === 3 && (
-            <div className="space-y-4">
-              <div className="bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-black via-red-900 to-black border-4 border-red-400 rounded-lg p-6 shadow-2xl">
                 <div className="text-center">
-                  <h4 className="font-bold text-gray-900 text-lg mb-3">
-                    🔒 TYPE "{content.confirmWord}" TO CONFIRM
-                  </h4>
-                  <p className="text-gray-700 mb-4">
-                    To confirm you understand the consequences, type{" "}
-                    <strong>{content.confirmWord}</strong> exactly in the box
-                    below:
-                  </p>
-                  <Input
-                    value={confirmText}
-                    onChange={(e) => setConfirmText(e.target.value)}
-                    placeholder={`Type ${content.confirmWord} here`}
-                    className="text-center font-mono text-lg"
-                    autoFocus
-                  />
-                  <p className="text-xs text-gray-500 mt-2">
-                    Must match exactly: {content.confirmWord}
-                  </p>
+                  <div className="bg-red-600 border-4 border-yellow-400 rounded-lg p-4 mb-6 animate-pulse">
+                    <h4 className="font-black text-yellow-200 text-3xl mb-3 uppercase tracking-widest">
+                      🔒💀 FINAL EXECUTION COMMAND 💀🔒
+                    </h4>
+                    <p className="text-yellow-100 font-bold text-xl mb-4 animate-bounce">
+                      TYPE THE DESTRUCTION CODE TO PROCEED WITH TOTAL ANNIHILATION
+                    </p>
+                  </div>
+
+                  <div className="bg-yellow-300 border-4 border-red-500 rounded-lg p-6 mb-6">
+                    <p className="text-red-900 font-black text-2xl mb-2 uppercase">
+                      ⚡ DESTRUCTION COMMAND ⚡
+                    </p>
+                    <p className="text-black font-black text-4xl bg-red-600 text-yellow-200 p-3 rounded border-4 border-black">
+                      {content.confirmWord}
+                    </p>
+                  </div>
+
+                  <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-4 mb-6">
+                    <p className="text-yellow-200 font-bold text-lg mb-4">
+                      TYPE EXACTLY: <span className="text-white font-black text-2xl bg-black px-3 py-1 rounded">{content.confirmWord}</span>
+                    </p>
+                    <Input
+                      value={confirmText}
+                      onChange={(e) => setConfirmText(e.target.value)}
+                      placeholder={`TYPE: ${content.confirmWord}`}
+                      className="text-center font-mono text-2xl font-black bg-black text-red-400 border-4 border-red-500 h-16 placeholder-red-600"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="bg-gradient-to-r from-red-600 to-orange-600 border-4 border-yellow-400 rounded-lg p-4">
+                    <p className="text-yellow-100 font-bold text-lg">
+                      🔥 MATCH EXACTLY OR DESTRUCTION WILL BE ABORTED 🔥
+                    </p>
+                    <p className="text-white font-black text-xl mt-2">
+                      REQUIRED: <span className="bg-black px-3 py-1 rounded text-red-400">{content.confirmWord}</span>
+                    </p>
+                    <p className="text-yellow-200 font-bold mt-2">
+                      ENTERED: <span className="bg-black px-3 py-1 rounded text-red-400">{confirmText || "NOTHING ENTERED"}</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
