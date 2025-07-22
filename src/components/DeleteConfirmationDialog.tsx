@@ -245,27 +245,35 @@ export function DeleteConfirmationDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Step 0: First Warning */}
+        <div className="space-y-6">
+          {/* Step 0: Triple Confirmation with 3 checkboxes */}
           {confirmStep === 0 && (
-            <div className="space-y-4">
-              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="h-6 w-6 text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-red-600 via-red-700 to-red-800 border-4 border-red-400 rounded-lg p-6 shadow-2xl animate-pulse">
+                <div className="flex items-start gap-4">
+                  <AlertCircle className="h-10 w-10 text-yellow-300 mt-0.5 flex-shrink-0 animate-spin" />
                   <div>
-                    <h4 className="font-bold text-red-800 text-lg">
-                      ⚠️ CRITICAL WARNING ⚠️
+                    <h4 className="font-black text-yellow-100 text-2xl mb-3 uppercase tracking-wide">
+                      🚨🔥💀 EXTREME DANGER ZONE 💀🔥🚨
                     </h4>
-                    <p className="text-red-700 mt-2 font-medium">
-                      {content.destructionMessage}
-                    </p>
-                    <div className="mt-3">
-                      <p className="text-red-700 font-medium mb-2">
-                        Data that will be LOST FOREVER:
+                    <div className="bg-yellow-300 text-red-900 p-4 rounded-lg font-black text-lg border-4 border-yellow-400 mb-4">
+                      <p className="text-center uppercase">
+                        ⚡ PERMANENT DESTRUCTION IMMINENT ⚡
                       </p>
-                      <ul className="text-red-700 space-y-1 text-sm">
+                      <p className="text-center text-xl mt-2">
+                        {content.destructionMessage.toUpperCase()}
+                      </p>
+                    </div>
+                    <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-4">
+                      <p className="text-yellow-200 font-bold text-lg mb-3 text-center uppercase">
+                        🔥 DATA ANNIHILATION LIST 🔥
+                      </p>
+                      <ul className="text-yellow-100 space-y-2 font-bold">
                         {content.dataLoss.map((loss, index) => (
-                          <li key={index}>• {loss}</li>
+                          <li key={index} className="flex items-center gap-2">
+                            <span className="text-2xl">💥</span>
+                            <span className="uppercase">{loss}</span>
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -273,61 +281,101 @@ export function DeleteConfirmationDialog({
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h5 className="font-medium mb-2">
-                  {content.emoji} Item Details:
+              <div className="bg-gradient-to-br from-orange-600 to-red-600 border-4 border-orange-400 rounded-lg p-4 shadow-xl">
+                <h5 className="font-black text-white text-xl mb-3 text-center uppercase">
+                  {content.emoji} TARGET FOR DESTRUCTION
                 </h5>
-                <div className="text-sm text-gray-600">
-                  <p>
-                    <strong>Name:</strong> {item.name}
+                <div className="bg-black text-orange-300 p-4 rounded border-4 border-orange-400 font-bold text-lg">
+                  <p className="text-center">
+                    <span className="text-red-400">🎯 NAME:</span> <span className="text-white font-black text-xl">{item.name.toUpperCase()}</span>
                   </p>
-                  <p>
-                    <strong>Type:</strong>{" "}
-                    {item.type.replace("-", " ").charAt(0).toUpperCase() +
-                      item.type.replace("-", " ").slice(1)}
+                  <p className="text-center mt-2">
+                    <span className="text-red-400">🎯 TYPE:</span>{" "}
+                    <span className="text-white font-black text-xl">{item.type.replace("-", " ").toUpperCase()}</span>
                   </p>
                   {item.associatedData && (
-                    <div className="mt-2">
-                      <strong>Associated Data:</strong>
+                    <div className="mt-4 text-center">
+                      <p className="text-red-400 font-black mb-2">💀 COLLATERAL DAMAGE:</p>
                       {item.associatedData.timeEntries && (
-                        <p>• {item.associatedData.timeEntries} time entries</p>
+                        <p className="text-yellow-300">💥 {item.associatedData.timeEntries} TIME ENTRIES WILL BE OBLITERATED</p>
                       )}
                       {item.associatedData.jobs && (
-                        <p>• {item.associatedData.jobs} jobs</p>
+                        <p className="text-yellow-300">💥 {item.associatedData.jobs} JOBS WILL BE OBLITERATED</p>
                       )}
                       {item.associatedData.employees && (
-                        <p>• {item.associatedData.employees} employees</p>
+                        <p className="text-yellow-300">💥 {item.associatedData.employees} EMPLOYEES WILL BE OBLITERATED</p>
                       )}
                       {item.associatedData.rentalEntries && (
-                        <p>
-                          • {item.associatedData.rentalEntries} rental entries
+                        <p className="text-yellow-300">
+                          💥 {item.associatedData.rentalEntries} RENTAL ENTRIES WILL BE OBLITERATED
                         </p>
                       )}
                       {item.associatedData.additionalInfo?.map(
-                        (info, index) => <p key={index}>• {info}</p>,
+                        (info, index) => <p key={index} className="text-yellow-300">💥 {info.toUpperCase()}</p>,
                       )}
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="warning1"
-                  checked={warningsAccepted.warning1}
-                  onChange={(e) =>
-                    setWarningsAccepted((prev) => ({
-                      ...prev,
-                      warning1: e.target.checked,
-                    }))
-                  }
-                  className="h-4 w-4"
-                />
-                <Label htmlFor="warning1" className="text-sm font-medium">
-                  I understand this will PERMANENTLY DELETE {item.name} and all
-                  associated data
-                </Label>
+              <div className="bg-black border-4 border-red-500 rounded-lg p-6 space-y-4">
+                <h4 className="text-red-400 font-black text-xl text-center uppercase mb-4">
+                  🔥 ACKNOWLEDGE TOTAL DESTRUCTION 🔥
+                </h4>
+
+                <div className="flex items-center space-x-3 bg-red-900 p-4 rounded border-2 border-red-400">
+                  <input
+                    type="checkbox"
+                    id="warning1"
+                    checked={warningsAccepted.warning1}
+                    onChange={(e) =>
+                      setWarningsAccepted((prev) => ({
+                        ...prev,
+                        warning1: e.target.checked,
+                      }))
+                    }
+                    className="h-6 w-6 accent-red-500"
+                  />
+                  <Label htmlFor="warning1" className="text-yellow-200 font-bold text-lg cursor-pointer">
+                    ✅ I ACKNOWLEDGE THIS WILL PERMANENTLY DELETE "{item.name.toUpperCase()}" AND ALL ASSOCIATED DATA FOREVER
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-3 bg-red-900 p-4 rounded border-2 border-red-400">
+                  <input
+                    type="checkbox"
+                    id="warning2"
+                    checked={warningsAccepted.warning2}
+                    onChange={(e) =>
+                      setWarningsAccepted((prev) => ({
+                        ...prev,
+                        warning2: e.target.checked,
+                      }))
+                    }
+                    className="h-6 w-6 accent-red-500"
+                  />
+                  <Label htmlFor="warning2" className="text-yellow-200 font-bold text-lg cursor-pointer">
+                    ✅ I UNDERSTAND THERE IS ABSOLUTELY NO WAY TO RECOVER THIS DATA ONCE DELETED
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-3 bg-red-900 p-4 rounded border-2 border-red-400">
+                  <input
+                    type="checkbox"
+                    id="warning3"
+                    checked={warningsAccepted.warning3}
+                    onChange={(e) =>
+                      setWarningsAccepted((prev) => ({
+                        ...prev,
+                        warning3: e.target.checked,
+                      }))
+                    }
+                    className="h-6 w-6 accent-red-500"
+                  />
+                  <Label htmlFor="warning3" className="text-yellow-200 font-bold text-lg cursor-pointer">
+                    ✅ I ACCEPT FULL RESPONSIBILITY FOR THIS DESTRUCTIVE ACTION AND ALL CONSEQUENCES
+                  </Label>
+                </div>
               </div>
             </div>
           )}
