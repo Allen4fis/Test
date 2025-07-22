@@ -663,9 +663,11 @@ export function TimeEntryForm() {
                       const employeeType =
                         employee.category === "dsp"
                           ? "DSP"
-                          : manager
-                            ? `Employee of ${manager.name}`
-                            : "Direct Employee";
+                          : employee.category === "dspot"
+                            ? "DSPOT"
+                            : manager
+                              ? `Employee of ${manager.name}`
+                              : "Direct Employee";
 
                       return (
                         <SelectItem key={employee.id} value={employee.id}>
