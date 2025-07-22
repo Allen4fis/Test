@@ -371,6 +371,8 @@ export function TimeEntryForm() {
               `Creating ${hourEntries.length} time entries only (rental entry skipped to avoid conflicts)...`,
             );
 
+            const employee = employees.find(emp => emp.id === formData.employeeId);
+
             const entriesToCreate = hourEntries.map((entry, i) => {
               const hours = parseFloat(entry.hours);
               return {
@@ -385,6 +387,7 @@ export function TimeEntryForm() {
                 title: formData.title,
                 billableWageUsed: billableWageUsed,
                 costWageUsed: costWageUsed,
+                employeeCategory: employee?.category,
                 description: formData.description,
               };
             });
@@ -425,6 +428,8 @@ export function TimeEntryForm() {
               `Creating ${hourEntries.length} time entries...`,
             );
 
+            const employee = employees.find(emp => emp.id === formData.employeeId);
+
             const entriesToCreate = hourEntries.map((entry, i) => {
               const hours = parseFloat(entry.hours);
               return {
@@ -439,6 +444,7 @@ export function TimeEntryForm() {
                 title: formData.title,
                 billableWageUsed: billableWageUsed,
                 costWageUsed: costWageUsed,
+                employeeCategory: employee?.category,
                 description: formData.description,
               };
             });
