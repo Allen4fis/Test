@@ -205,7 +205,8 @@ export function DataExport() {
 
       const effectiveHours = entry.hours * (hourType?.multiplier || 1);
       const laborCost = effectiveHours * entry.costWageUsed;
-      const billableAmount = effectiveHours * entry.billableWageUsed;
+      // Exclude Billable hour type from billable amount calculations (consistent with timeEntrySummaries)
+      const billableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * entry.billableWageUsed;
 
       // Use stored employee category from the entry for GST calculation
       const entryCategory = entry.employeeCategory || employee?.category;
