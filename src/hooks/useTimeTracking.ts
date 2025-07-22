@@ -197,9 +197,20 @@ export function useTimeTracking() {
       }
 
       // Add employeeCategory field if missing (for backward compatibility)
-      // For existing entries, use the employee's current category to preserve existing behavior
+      // Only migrate entries that don't have the field AND haven't been migrated before
       if (!("employeeCategory" in migratedEntry)) {
-        migratedEntry.employeeCategory = employee?.category;
+        // Check if this is the first time running this migration
+        const migrationKey = "employeeCategory-migration-completed";
+        const migrationCompleted = localStorage.getItem(migrationKey);
+
+        if (!migrationCompleted) {
+          // First time migration: use employee's current category to preserve existing behavior
+          migratedEntry.employeeCategory = employee?.category;
+        } else {
+          // Migration already completed, don't set category for unmigrated entries
+          // This should only happen for very old entries that somehow missed the initial migration
+          migratedEntry.employeeCategory = undefined;
+        }
       }
 
       // Migrate LOA from hour type to separate field
