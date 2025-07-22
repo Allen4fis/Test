@@ -1526,9 +1526,11 @@ export function DataExport() {
                       >
                         {data.category === "dsp"
                           ? "DSP (Contractor)"
-                          : data.category === "employee"
-                            ? "Employee (T4)"
-                            : "Contractor"}
+                          : data.category === "dspot"
+                            ? "DSPOT (Contractor)"
+                            : data.category === "employee"
+                              ? "Employee (T4)"
+                              : "Contractor"}
                       </Badge>
                     </TableCell>
                     <TableCell>
