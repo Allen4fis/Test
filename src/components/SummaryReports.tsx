@@ -2217,6 +2217,11 @@ export function SummaryReports() {
                                                                 >
                                                                   <span className="text-blue-300">
                                                                     {entry.date}
+                                                                    {entry.jobNumber && (
+                                                                      <span className="ml-1 text-cyan-300">
+                                                                        [{entry.jobNumber}]
+                                                                      </span>
+                                                                    )}
                                                                   </span>
                                                                   <span className="text-blue-200">
                                                                     {entry.hours.toFixed(
