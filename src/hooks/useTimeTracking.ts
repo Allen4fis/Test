@@ -196,11 +196,9 @@ export function useTimeTracking() {
         migratedEntry.costWageUsed = employee?.costWage || 0;
       }
 
-      // Add employeeCategory field if missing (for backward compatibility)
-      // This preserves the employee category at the time the entry was created
-      if (!("employeeCategory" in migratedEntry)) {
-        migratedEntry.employeeCategory = employee?.category;
-      }
+      // Note: We don't migrate employeeCategory for existing entries
+      // because we can't know what the original category was.
+      // New entries will have this field, old entries will use fallback logic.
 
       // Migrate LOA from hour type to separate field
       const hourType = rawAppData.hourTypes?.find(
