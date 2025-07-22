@@ -658,10 +658,10 @@ export function SummaryReports() {
     }
 
     if (employeeTypeFilter === "dsps-only") {
-      // Show only DSPs who have no subordinates
+      // Show only DSPs and DSPOTs who have no subordinates
       return hierarchicalEmployeeSummaries.filter(
         (emp) =>
-          emp.employeeCategory === "dsp" &&
+          (emp.employeeCategory === "dsp" || emp.employeeCategory === "dspot") &&
           (!emp.subordinates || emp.subordinates.length === 0),
       );
     }
