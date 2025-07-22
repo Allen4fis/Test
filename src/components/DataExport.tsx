@@ -80,10 +80,10 @@ const calculateDuration = (
   }
 };
 
-// Calculate GST for DSPs and contractors
+// Calculate GST for DSPs, DSPOTs and contractors
 const calculateGST = (employee: any, amount: number): number => {
-  // Apply 5% GST to DSPs and contractors (anyone not explicitly marked as "employee")
-  if (employee?.category === "dsp") {
+  // Apply 5% GST to DSPs, DSPOTs and contractors (anyone not explicitly marked as "employee")
+  if (employee?.category === "dsp" || employee?.category === "dspot") {
     return amount * 0.05;
   }
   // Also apply GST to employees who have managers but no explicit category (subordinate contractors)
