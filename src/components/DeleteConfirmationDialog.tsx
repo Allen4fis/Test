@@ -233,22 +233,15 @@ export function DeleteConfirmationDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertCircle className="h-6 w-6 text-red-500" />
+            <AlertCircle className={`h-8 w-8 ${confirmStep === 0 ? 'text-red-600 animate-pulse' : 'text-red-700 animate-bounce'}`} />
             {confirmStep === 0 &&
-              `⚠️ CRITICAL WARNING: ${item.type === "import" ? "Import Backup" : `Delete ${item.type === "rental-item" ? "Rental Item" : item.type === "rental-entry" ? "Rental Entry" : item.type.charAt(0).toUpperCase() + item.type.slice(1)}`}`}
-            {confirmStep === 1 && "🚨 SECOND WARNING: Permanent Data Loss"}
-            {confirmStep === 2 &&
-              "🔥 FINAL WARNING: Confirm Destructive Action"}
-            {confirmStep === 3 && `🔒 Type "${content.confirmWord}" to Confirm`}
+              `🚨🔥⚠️ EXTREME DANGER - PERMANENT DESTRUCTION WARNING ⚠️🔥🚨`}
+            {confirmStep === 1 && `🔒💀 TYPE TO CONFIRM TOTAL ANNIHILATION 💀🔒`}
           </DialogTitle>
-          <DialogDescription>
-            {confirmStep === 0 && content.destructionMessage}
+          <DialogDescription className="text-lg font-bold">
+            {confirmStep === 0 && `🔴 CRITICAL SYSTEM WARNING: ${content.destructionMessage.toUpperCase()}`}
             {confirmStep === 1 &&
-              "This action is IRREVERSIBLE and will permanently delete data from your system."}
-            {confirmStep === 2 &&
-              "Last chance to cancel before permanent deletion begins."}
-            {confirmStep === 3 &&
-              `Type '${content.confirmWord}' exactly to confirm you understand the consequences.`}
+              `⚡ FINAL STEP: Type '${content.confirmWord}' to execute PERMANENT DELETION ⚡`}
           </DialogDescription>
         </DialogHeader>
 
