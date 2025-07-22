@@ -246,9 +246,22 @@ export function JobManagement() {
   const filteredAndSortedJobsWithProfit = useMemo(() => {
     let filtered = jobProfitData;
 
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter((jobData) => {
+        const job = jobData.job;
+        return (
+          job.jobNumber.toLowerCase().includes(query) ||
+          job.name.toLowerCase().includes(query) ||
+          (job.description && job.description.toLowerCase().includes(query))
+        );
+      });
+    }
+
     // Apply status filters
     if (!showActive || !showInactive) {
-      filtered = jobProfitData.filter((jobData) => {
+      filtered = filtered.filter((jobData) => {
         if (!showActive && jobData.job.isActive) return false;
         if (!showInactive && !jobData.job.isActive) return false;
         return true;
