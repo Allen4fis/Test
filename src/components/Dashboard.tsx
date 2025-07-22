@@ -257,7 +257,7 @@ export function Dashboard({
   const allTimeTotalBillable =
     billableTimeEntrySummaries.reduce(
       (sum, summary) =>
-        sum + (summary.totalBillableAmount || summary.totalCost),
+        sum + summary.totalBillableAmount,
       0,
     ) + allTimeRentalBillable;
   const allTimeCombinedCost = allTimeTotalCost + allTimeRentalCost;
