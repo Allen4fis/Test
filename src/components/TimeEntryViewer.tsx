@@ -485,7 +485,14 @@ export function TimeEntryViewer() {
   const uniqueEmployees = [...new Set(employees.map((emp) => emp.name))].sort();
   const uniqueJobs = [
     ...new Set(jobs.map((job) => `${job.jobNumber} - ${job.name}`)),
-  ].sort();
+  ].sort((a, b) => {
+    // Extract numeric part for proper numerical sorting
+    const aNumMatch = a.match(/\d+/);
+    const bNumMatch = b.match(/\d+/);
+    const aNum = aNumMatch ? parseInt(aNumMatch[0], 10) : 0;
+    const bNum = bNumMatch ? parseInt(bNumMatch[0], 10) : 0;
+    return aNum - bNum;
+  });
 
   return (
     <div className="space-y-6">
