@@ -752,8 +752,8 @@ export function useTimeTracking() {
         hourTypeName: hourType?.name || "Unknown Hour Type",
         provinceName: province?.name || "Unknown Province",
         date: entry.date,
-        hours: entry.hours,
-        effectiveHours: effectiveHours,
+        hours: hourType?.name === "Billable" ? 0 : entry.hours, // Exclude Billable from hour counts
+        effectiveHours: hourType?.name === "Billable" ? 0 : effectiveHours, // Exclude Billable from effective hour counts
         loaCount: entry.loaCount,
         billableWage: entry.billableWageUsed || 0,
         costWage: adjustedCostWage, // Use the actual wage used in cost calculation
