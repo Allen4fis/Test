@@ -718,6 +718,13 @@ export function EmployeeManagement() {
                           >
                             DSP
                           </Badge>
+                        ) : employee.category === "dspot" ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-indigo-50 text-indigo-700 border-indigo-200"
+                          >
+                            DSPOT
+                          </Badge>
                         ) : employee.category === "employee" ? (
                           <Badge variant="secondary">Employee</Badge>
                         ) : employee.managerId ? (
