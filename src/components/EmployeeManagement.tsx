@@ -145,7 +145,7 @@ export function EmployeeManagement() {
       billableWage: billableWage,
       costWage: costWage,
       managerId:
-        formData.managerId === "no-manager" || formData.managerId === "dsp"
+        formData.managerId === "no-manager" || formData.managerId === "dsp" || formData.managerId === "dspot"
           ? undefined
           : formData.managerId,
       category:
@@ -153,7 +153,9 @@ export function EmployeeManagement() {
           ? "employee"
           : formData.managerId === "dsp"
             ? "dsp"
-            : undefined,
+            : formData.managerId === "dspot"
+              ? "dspot"
+              : undefined,
     };
     if (editingEmployee) {
       updateEmployee(editingEmployee.id, employeeData);
