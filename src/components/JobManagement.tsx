@@ -522,6 +522,7 @@ export function JobManagement() {
                   setSortDirection("asc");
                   setShowActive(true);
                   setShowInactive(true);
+                  setSearchQuery("");
                 }}
                 className="text-gray-500 hover:text-gray-700"
               >
