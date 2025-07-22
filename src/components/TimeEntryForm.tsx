@@ -39,6 +39,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
+import { DuplicateEntryConfirmationDialog } from "@/components/DuplicateEntryConfirmationDialog";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
