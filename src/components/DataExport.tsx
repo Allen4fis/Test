@@ -139,16 +139,20 @@ export function DataExport() {
         entry.date >= dateRange.startDate && entry.date <= dateRange.endDate,
     );
 
-    // Apply employee type filter
+    // Apply employee type filter based on stored employee category
     if (employeeTypeFilter !== "all") {
       filtered = filtered.filter((entry) => {
         const employee = employees.find((emp) => emp.id === entry.employeeId);
-        const isEmployeeDspRelated = isDspRelated(employee);
+        const entryCategory = entry.employeeCategory || employee?.category;
+
+        // Check if this specific entry was DSP/DSPOT related at time of creation
+        const isEntryDspRelated = entryCategory === "dsp" || entryCategory === "dspot" ||
+          (employee?.managerId && entryCategory !== "employee" && !entryCategory);
 
         if (employeeTypeFilter === "dsp") {
-          return isEmployeeDspRelated;
+          return isEntryDspRelated;
         } else if (employeeTypeFilter === "employee") {
-          return !isEmployeeDspRelated;
+          return !isEntryDspRelated;
         }
 
         return true;
