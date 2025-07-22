@@ -196,25 +196,8 @@ export function useTimeTracking() {
         migratedEntry.costWageUsed = employee?.costWage || 0;
       }
 
-      // Add employeeCategory field if missing (for backward compatibility)
-      // Use a more robust migration approach with forced category preservation
-      if (!("employeeCategory" in migratedEntry)) {
-        // For any entry missing employeeCategory, we need to make a decision about what category it should have
-        // Since we can't know the historical category, we'll preserve the current behavior by using current category
-        // This migration will only run ONCE per entry, and subsequent changes won't affect it
-
-        // Create a unique identifier for this specific entry to track if it's been migrated
-        const entryMigrationKey = `entry-migrated-${migratedEntry.id}`;
-        const entryAlreadyMigrated = localStorage.getItem(entryMigrationKey);
-
-        if (!entryAlreadyMigrated) {
-          // This entry hasn't been migrated yet - set it to current employee category
-          migratedEntry.employeeCategory = employee?.category;
-          // Mark this specific entry as migrated
-          localStorage.setItem(entryMigrationKey, "true");
-        }
-        // If already migrated but somehow lost the field, don't set it (should not happen)
-      }
+      // Note: No longer migrating employeeCategory on app load
+      // Instead, we lock entries when employee categories change in updateEmployee()
 
       // Migrate LOA from hour type to separate field
       const hourType = rawAppData.hourTypes?.find(
