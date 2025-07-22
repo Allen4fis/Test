@@ -159,12 +159,32 @@ export function DataExport() {
   }, [timeEntries, dateRange, employeeTypeFilter, employees]);
 
   const filteredRentalEntries = useMemo(() => {
-    return rentalEntries.filter(
+    let filtered = rentalEntries.filter(
       (entry) =>
         entry.startDate >= dateRange.startDate &&
         entry.startDate <= dateRange.endDate,
     );
-  }, [rentalEntries, dateRange]);
+
+    // Apply employee type filter
+    if (employeeTypeFilter !== "all") {
+      filtered = filtered.filter((entry) => {
+        const employee = entry.employeeId
+          ? employees.find((emp) => emp.id === entry.employeeId)
+          : null;
+        const isEmployeeDspRelated = isDspRelated(employee);
+
+        if (employeeTypeFilter === "dsp") {
+          return isEmployeeDspRelated;
+        } else if (employeeTypeFilter === "employee") {
+          return !isEmployeeDspRelated;
+        }
+
+        return true;
+      });
+    }
+
+    return filtered;
+  }, [rentalEntries, dateRange, employeeTypeFilter, employees]);
 
   // Calculate detailed summaries
   const detailedTimeEntries = useMemo(() => {
