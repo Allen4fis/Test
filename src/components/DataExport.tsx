@@ -219,6 +219,7 @@ export function DataExport() {
 
       return {
         ...entry,
+        hours: hourType?.name === "Billable" ? 0 : entry.hours, // Exclude Billable from hour counts
         employeeName: employee?.name || "Unknown",
         employeeTitle: employee?.title || "Unknown",
         employeeCategory:
