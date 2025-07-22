@@ -309,29 +309,12 @@ export function TimeEntryForm() {
           }
         }
 
-        // If duplicates found, show warning and ask for confirmation
+        // If duplicates found, show dialog for confirmation
         if (duplicateEntries.length > 0) {
-          const duplicateList = duplicateEntries
-            .map(
-              (dup) =>
-                `• ${dup.employee} - ${dup.job} - ${dup.hourType}: ${dup.existingHours}h existing, ${dup.newHours}h new`,
-            )
-            .join("\n");
-
-          const shouldContinue = window.confirm(
-            `⚠️ DUPLICATE TIME ENTRIES DETECTED!\n\n` +
-              `The following entries already exist for ${formData.date}:\n\n${duplicateList}\n\n` +
-              `This will create additional entries with the same employee, job, date, and hour type.\n\n` +
-              `Do you want to continue and create these duplicate entries?\n\n` +
-              `Click "Cancel" to review and delete existing entries first.`,
-          );
-
-          if (!shouldContinue) {
-            setFormError(
-              "Entry cancelled due to duplicate detection. Please review existing entries.",
-            );
-            return;
-          }
+          setDuplicateEntries(duplicateEntries);
+          setPendingSubmission({ hourEntries, rentalEntries });
+          setShowDuplicateDialog(true);
+          return;
         }
       }
 
