@@ -1028,7 +1028,6 @@ export function InvoiceManagement() {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                setSelectedJob(jobStat.job);
                                 setSelectedJobForBreakdown(jobStat.job);
                               }}
                               className="flex-1 border-gray-600 text-gray-100 hover:bg-gray-700"
