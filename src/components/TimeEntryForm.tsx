@@ -558,6 +558,53 @@ export function TimeEntryForm() {
     }
   };
 
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
+    setIsSubmitting(true);
+
+    try {
+      // Validation
+      if (
+        !formData.employeeId ||
+        !formData.jobId ||
+        !formData.provinceId ||
+        !formData.date ||
+        !formData.title ||
+        !formData.billableWageUsed ||
+        !formData.costWageUsed
+      ) {
+        setFormError("Please fill in all required fields.");
+        return;
+      }
+
+      // Collect all hour entries
+      const hourEntries = [
+        { hourTypeId: formData.hourType1, hours: formData.hours1 },
+        { hourTypeId: formData.hourType2, hours: formData.hours2 },
+        { hourTypeId: formData.hourType3, hours: formData.hours3 },
+        { hourTypeId: formData.hourType4, hours: formData.hours4 },
+      ].filter(
+        (entry) =>
+          entry.hourTypeId && entry.hours && parseFloat(entry.hours) > 0,
+      );
+
+      // Collect rental entries (empty for now as logic is in proceedWithSubmission)
+      const rentalEntries: any[] = [];
+
+      // Call the submission logic
+      await proceedWithSubmission(hourEntries, rentalEntries);
+    } catch (error) {
+      console.error("Submission error:", error);
+      setFormError("Error saving time entry. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+      setSubmissionProgress("");
+    }
+  };
+
   const handleEdit = (entry: TimeEntry) => {
     setEditingEntry(entry);
     setFormData({
