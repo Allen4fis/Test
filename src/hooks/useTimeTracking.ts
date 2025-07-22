@@ -261,11 +261,7 @@ export function useTimeTracking() {
       migratedData.rentalEntries = [];
     }
 
-    // Mark the employeeCategory migration as completed (one-time flag)
-    const migrationKey = "employeeCategory-migration-completed";
-    if (!localStorage.getItem(migrationKey)) {
-      localStorage.setItem(migrationKey, "true");
-    }
+    // Note: Using per-entry migration flags now instead of global flag
 
     return migratedData;
   }, [rawAppData]);
