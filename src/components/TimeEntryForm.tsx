@@ -539,6 +539,7 @@ export function TimeEntryForm() {
       provinceId: entry.provinceId,
       date: entry.date,
       loaCount: entry.loaCount?.toString() || "",
+      loaAmount: entry.loaAmount?.toString() || "200",
       title: entry.title || "",
       billableWageUsed: entry.billableWageUsed?.toString() || "0",
       costWageUsed: entry.costWageUsed?.toString() || "0",
