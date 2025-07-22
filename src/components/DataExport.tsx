@@ -268,7 +268,8 @@ export function DataExport() {
         entry.endDate,
         entry.billingUnit,
       );
-      const totalCost = duration * entry.quantity * entry.rateUsed;
+      const totalBillable = duration * entry.quantity * entry.rateUsed; // What we charge client
+      const totalCost = entry.dspRate ? duration * entry.quantity * entry.dspRate : 0; // What we pay DSP
 
       return {
         ...entry,
@@ -279,7 +280,8 @@ export function DataExport() {
         jobIsBillable: job?.isBillable ?? true,
         employeeName: employee?.name || "Unassigned",
         duration,
-        totalCost,
+        totalBillable, // Revenue field
+        totalCost, // Actual cost field
         isInvoiced: job?.invoicedDates?.includes(entry.startDate) || false,
       };
     });
@@ -323,6 +325,10 @@ export function DataExport() {
       0,
     );
     const totalBillableRentalRevenue = billableRentalEntries.reduce(
+      (sum, entry) => sum + entry.totalBillable,
+      0,
+    );
+    const totalBillableRentalCost = billableRentalEntries.reduce(
       (sum, entry) => sum + entry.totalCost,
       0,
     );
@@ -358,7 +364,7 @@ export function DataExport() {
     const totalNonBillableCost =
       totalNonBillableLaborCost + totalNonBillableRentalCost;
     const totalCombinedCost = totalLaborCost + totalRentalCost;
-    const totalProfit = totalBillableRevenue - (totalBillableLaborCost + totalBillableRentalRevenue);
+    const totalProfit = totalBillableRevenue - (totalBillableLaborCost + totalBillableRentalCost);
 
     // Tax breakdowns by employee category and province
     const employeeCategoriesByProvince = employees.reduce(
