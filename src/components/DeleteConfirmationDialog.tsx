@@ -249,18 +249,18 @@ export function DeleteConfirmationDialog({
           {/* Step 0: Triple Confirmation with 3 checkboxes */}
           {confirmStep === 0 && (
             <div className="space-y-6">
-              <div className="bg-gradient-to-br from-red-600 via-red-700 to-red-800 border-4 border-red-400 rounded-lg p-6 shadow-2xl animate-pulse">
-                <div className="flex items-start gap-4">
-                  <AlertCircle className="h-10 w-10 text-yellow-300 mt-0.5 flex-shrink-0 animate-spin" />
+              <div className="bg-gradient-to-br from-red-600 via-red-700 to-red-800 border-4 border-red-400 rounded-lg p-4 shadow-2xl animate-pulse">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-8 w-8 text-yellow-300 mt-0.5 flex-shrink-0 animate-spin" />
                   <div>
-                    <h4 className="font-black text-yellow-100 text-2xl mb-3 uppercase tracking-wide">
+                    <h4 className="font-black text-yellow-100 text-xl mb-2 uppercase tracking-wide">
                       🚨🔥💀 EXTREME DANGER ZONE 💀🔥🚨
                     </h4>
-                    <div className="bg-yellow-300 text-red-900 p-4 rounded-lg font-black text-lg border-4 border-yellow-400 mb-4">
+                    <div className="bg-yellow-300 text-red-900 p-3 rounded-lg font-black text-base border-4 border-yellow-400 mb-3">
                       <p className="text-center uppercase">
                         ⚡ PERMANENT DESTRUCTION IMMINENT ⚡
                       </p>
-                      <p className="text-center text-xl mt-2">
+                      <p className="text-center text-lg mt-1">
                         {content.destructionMessage.toUpperCase()}
                       </p>
                     </div>
