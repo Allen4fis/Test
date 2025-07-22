@@ -183,7 +183,29 @@ export function TimeEntryForm() {
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Handle duplicate dialog confirmation
+  const handleDuplicateConfirm = async () => {
+    if (pendingSubmission) {
+      await proceedWithSubmission(pendingSubmission.hourEntries, pendingSubmission.rentalEntries);
+    }
+  };
+
+  // Handle duplicate dialog cancellation
+  const handleDuplicateCancel = () => {
+    setFormError("Entry cancelled due to duplicate detection. Please review existing entries.");
+    setPendingSubmission(null);
+    setDuplicateEntries([]);
+  };
+
+  // Close duplicate dialog
+  const handleDuplicateClose = () => {
+    setShowDuplicateDialog(false);
+    setPendingSubmission(null);
+    setDuplicateEntries([]);
+  };
+
+  // Extract submission logic into a separate function
+  const proceedWithSubmission = async (hourEntries: any[], rentalEntries: any[]) => {
     e.preventDefault();
     setFormError("");
     setIsSubmitting(true);
