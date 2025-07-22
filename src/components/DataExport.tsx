@@ -1295,7 +1295,7 @@ export function DataExport() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div>
               <Label htmlFor="startDate">Start Date</Label>
               <Input
@@ -1317,6 +1317,19 @@ export function DataExport() {
                   setDateRange({ ...dateRange, endDate: e.target.value })
                 }
               />
+            </div>
+            <div>
+              <Label htmlFor="employeeType">Employee Type</Label>
+              <Select value={employeeTypeFilter} onValueChange={setEmployeeTypeFilter}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Employees</SelectItem>
+                  <SelectItem value="dsp">DSPs & Subordinates Only</SelectItem>
+                  <SelectItem value="employee">Regular Employees Only</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="format">Export Detail Level</Label>
