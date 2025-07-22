@@ -1708,6 +1708,16 @@ export function TimeEntryForm() {
           )}
         </CardContent>
       </Card>
+
+      {/* Duplicate Entry Confirmation Dialog */}
+      <DuplicateEntryConfirmationDialog
+        isOpen={showDuplicateDialog}
+        onClose={handleDuplicateClose}
+        onConfirm={handleDuplicateConfirm}
+        onCancel={handleDuplicateCancel}
+        date={formData.date}
+        duplicates={duplicateEntries}
+      />
     </div>
   );
 }
