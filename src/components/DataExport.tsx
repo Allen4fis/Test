@@ -125,7 +125,7 @@ export function DataExport() {
 
     // If employee has a manager, check if the manager is a DSP
     if (employee.managerId) {
-      const manager = employees.find(emp => emp.id === employee.managerId);
+      const manager = employees.find((emp) => emp.id === employee.managerId);
       return manager?.category === "dsp";
     }
 
@@ -1320,14 +1320,19 @@ export function DataExport() {
             </div>
             <div>
               <Label htmlFor="employeeType">Employee Type</Label>
-              <Select value={employeeTypeFilter} onValueChange={setEmployeeTypeFilter}>
+              <Select
+                value={employeeTypeFilter}
+                onValueChange={setEmployeeTypeFilter}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Employees</SelectItem>
                   <SelectItem value="dsp">DSPs & Subordinates Only</SelectItem>
-                  <SelectItem value="employee">Regular Employees Only</SelectItem>
+                  <SelectItem value="employee">
+                    Regular Employees Only
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1373,11 +1378,10 @@ export function DataExport() {
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-orange-600" />
               <span className="text-sm font-medium text-orange-800">
-                Showing data for: {
-                  employeeTypeFilter === "dsp"
-                    ? "DSPs and their Subordinates only"
-                    : "Regular Employees only"
-                }
+                Showing data for:{" "}
+                {employeeTypeFilter === "dsp"
+                  ? "DSPs and their Subordinates only"
+                  : "Regular Employees only"}
               </span>
               <Button
                 variant="ghost"

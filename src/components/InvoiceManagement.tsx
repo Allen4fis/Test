@@ -466,7 +466,7 @@ export function InvoiceManagement() {
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      const isNumericSearch = /^\d+$/.test(query.replace(/\s/g, ''));
+      const isNumericSearch = /^\d+$/.test(query.replace(/\s/g, ""));
 
       filtered = filtered.filter((stat) => {
         if (isNumericSearch) {
@@ -631,8 +631,6 @@ export function InvoiceManagement() {
       addInvoicedDates(job.id, dates);
     }
   };
-
-
 
   return (
     <div className="space-y-6">

@@ -2219,7 +2219,11 @@ export function SummaryReports() {
                                                                     {entry.date}
                                                                     {entry.jobNumber && (
                                                                       <span className="ml-1 text-cyan-300">
-                                                                        [{entry.jobNumber}]
+                                                                        [
+                                                                        {
+                                                                          entry.jobNumber
+                                                                        }
+                                                                        ]
                                                                       </span>
                                                                     )}
                                                                   </span>
