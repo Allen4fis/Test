@@ -420,7 +420,7 @@ export function InvoiceManagement() {
             : jobDates
                 .filter((d) => d.isInvoiced)
                 .reduce((sum, d) => sum + d.totalBillable, 0);
-        const uninvoicedBillable = totalBillable - invoicedBillable;
+        const uninvoicedBillable = job.isBillable === false ? 0 : totalBillable - invoicedBillable;
 
         const paidBillable =
           job.isBillable === false
