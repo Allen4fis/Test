@@ -245,7 +245,7 @@ export function DeleteConfirmationDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 max-h-[60vh] overflow-y-auto px-2">
           {/* Step 0: Triple Confirmation with 3 checkboxes */}
           {confirmStep === 0 && (
             <div className="space-y-6">
