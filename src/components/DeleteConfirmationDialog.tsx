@@ -281,17 +281,17 @@ export function DeleteConfirmationDialog({
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-orange-600 to-red-600 border-4 border-orange-400 rounded-lg p-4 shadow-xl">
-                <h5 className="font-black text-white text-xl mb-3 text-center uppercase">
+              <div className="bg-gradient-to-br from-orange-600 to-red-600 border-4 border-orange-400 rounded-lg p-3 shadow-xl">
+                <h5 className="font-black text-white text-lg mb-2 text-center uppercase">
                   {content.emoji} TARGET FOR DESTRUCTION
                 </h5>
-                <div className="bg-black text-orange-300 p-4 rounded border-4 border-orange-400 font-bold text-lg">
+                <div className="bg-black text-orange-300 p-3 rounded border-4 border-orange-400 font-bold text-base">
                   <p className="text-center">
-                    <span className="text-red-400">🎯 NAME:</span> <span className="text-white font-black text-xl">{item.name.toUpperCase()}</span>
+                    <span className="text-red-400">🎯 NAME:</span> <span className="text-white font-black text-lg">{item.name.toUpperCase()}</span>
                   </p>
-                  <p className="text-center mt-2">
+                  <p className="text-center mt-1">
                     <span className="text-red-400">🎯 TYPE:</span>{" "}
-                    <span className="text-white font-black text-xl">{item.type.replace("-", " ").toUpperCase()}</span>
+                    <span className="text-white font-black text-lg">{item.type.replace("-", " ").toUpperCase()}</span>
                   </p>
                   {item.associatedData && (
                     <div className="mt-4 text-center">
