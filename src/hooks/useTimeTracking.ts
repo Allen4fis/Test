@@ -771,14 +771,23 @@ export function useTimeTracking() {
           adjustedCostWage += 3;
         }
 
-        // DSPs are always charged at regular time rates for cost calculations
+        // DSPs and subordinates of DSPs are always charged at regular time rates for cost calculations
         // Use the employee category stored with the entry, not the current category
         const entryEmployeeCategory = entry.employeeCategory || employee.category;
-        if (entryEmployeeCategory === "dsp") {
-          // For DSPs, use regular time (1x) multiplier for cost calculation
+        const manager = employee?.managerId
+          ? appData.employees.find((emp) => emp.id === employee.managerId)
+          : null;
+
+        // Check if this entry should use 1x rates
+        const shouldUse1xRates =
+          entryEmployeeCategory === "dsp" || // Direct DSP
+          (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
+
+        if (shouldUse1xRates) {
+          // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
-          // For regular employees and DSPOT, use the normal multiplier for cost calculation
+          // For DSPOT and regular employees, use the normal multiplier for cost calculation
           cost = effectiveHours * adjustedCostWage;
         }
 
@@ -1001,14 +1010,23 @@ export function useTimeTracking() {
           adjustedCostWage += 3;
         }
 
-        // DSPs are always charged at regular time rates for cost calculations
+        // DSPs and subordinates of DSPs are always charged at regular time rates for cost calculations
         // Use the employee category stored with the entry, not the current category
         const entryEmployeeCategory = entry.employeeCategory || employee.category;
-        if (entryEmployeeCategory === "dsp") {
-          // For DSPs, use regular time (1x) multiplier for cost calculation
+        const manager = employee?.managerId
+          ? appData.employees.find((emp) => emp.id === employee.managerId)
+          : null;
+
+        // Check if this entry should use 1x rates
+        const shouldUse1xRates =
+          entryEmployeeCategory === "dsp" || // Direct DSP
+          (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
+
+        if (shouldUse1xRates) {
+          // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
-          // For regular employees and DSPOT, use the normal multiplier for cost calculation
+          // For DSPOT and regular employees, use the normal multiplier for cost calculation
           cost = effectiveHours * adjustedCostWage;
         }
 
