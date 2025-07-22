@@ -213,7 +213,19 @@ export function DataExport() {
         adjustedCostWage += 3;
       }
 
-      const laborCost = effectiveHours * adjustedCostWage;
+      // Apply DSP 1x rate logic to match Dashboard calculation
+      const entryEmployeeCategory = entry.employeeCategory || employee?.category;
+      const manager = employee?.managerId
+        ? employees.find((emp) => emp.id === employee.managerId)
+        : null;
+
+      const shouldUse1xRates =
+        entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
+        (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
+
+      const laborCost = shouldUse1xRates
+        ? entry.hours * adjustedCostWage // 1x for DSPs and subordinates
+        : effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
       // Exclude Billable hour type from billable amount calculations (consistent with timeEntrySummaries)
       const baseBillableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * adjustedBillableWage;
       // Add LOA to billable amount to match Dashboard calculation
