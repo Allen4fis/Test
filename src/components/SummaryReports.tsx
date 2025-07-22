@@ -441,6 +441,7 @@ export function SummaryReports() {
 
           group.hourTypeBreakdown[hourTypeName].rateEntries.push({
             date: summary.date,
+            jobNumber: summary.jobNumber,
             hours: summary.hours,
             effectiveHours: summary.effectiveHours,
             hourlyRate: effectiveHourlyRate,
