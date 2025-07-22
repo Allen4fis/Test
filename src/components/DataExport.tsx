@@ -1519,7 +1519,9 @@ export function DataExport() {
                         className={
                           data.category === "dsp"
                             ? "bg-orange-100 text-orange-800"
-                            : ""
+                            : data.category === "dspot"
+                              ? "bg-indigo-100 text-indigo-800"
+                              : ""
                         }
                       >
                         {data.category === "dsp"
