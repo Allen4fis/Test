@@ -447,6 +447,18 @@ export function JobManagement() {
         {/* Sorting and Filtering Controls */}
         <div className="px-6 pb-4">
           <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg border">
+            {/* Search Input */}
+            <div className="flex items-center gap-2 flex-1 min-w-[250px]">
+              <Filter className="h-4 w-4 text-gray-500" />
+              <Input
+                type="text"
+                placeholder="Search jobs by number, name, or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1"
+              />
+            </div>
+
             <div className="flex items-center gap-2">
               <ArrowUpDown className="h-4 w-4 text-gray-500" />
               <Label className="text-sm font-medium">Sort by:</Label>
