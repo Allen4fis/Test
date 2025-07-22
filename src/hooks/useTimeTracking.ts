@@ -699,25 +699,30 @@ export function useTimeTracking() {
       // Calculate billable amount (always uses full multiplier)
       totalBillableAmount = effectiveHours * adjustedBillableWage;
 
-      // Calculate cost - Use stored employee category from entry, not current category
-      // DSPs and subordinates of DSPs always get regular time rates (1x multiplier)
-      // DSPOT employees and regular employees get normal overtime/double time rates
-      const entryEmployeeCategory = entry.employeeCategory || employee?.category;
-      const manager = employee?.managerId
-        ? appData.employees.find((emp) => emp.id === employee.managerId)
-        : null;
-
-      // Check if this entry should use 1x rates
-      const shouldUse1xRates =
-        entryEmployeeCategory === "dsp" || // Direct DSP
-        (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
-
-      if (shouldUse1xRates) {
-        // For DSPs and subordinates of DSPs, always use regular time (1x) multiplier
-        totalCost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
+      // Calculate cost - Use stored employee category from entry when available
+      // For legacy entries without stored category, preserve original behavior
+      if (entry.employeeCategory !== undefined) {
+        // New entries with stored category - use the category from when entry was created
+        if (entry.employeeCategory === "dsp") {
+          totalCost = entry.hours * adjustedCostWage; // Always 1x for historical DSP entries
+        } else {
+          totalCost = effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
+        }
       } else {
-        // For DSPOT and regular employees, use the normal multiplier for cost calculation
-        totalCost = effectiveHours * adjustedCostWage;
+        // Legacy entries without stored category - use current employee/manager category
+        const manager = employee?.managerId
+          ? appData.employees.find((emp) => emp.id === employee.managerId)
+          : null;
+
+        const shouldUse1xRates =
+          employee?.category === "dsp" || // Current DSP
+          (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
+
+        if (shouldUse1xRates) {
+          totalCost = entry.hours * adjustedCostWage; // 1x for DSPs and subordinates
+        } else {
+          totalCost = effectiveHours * adjustedCostWage; // Normal rates for others
+        }
       }
 
       // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
