@@ -48,6 +48,7 @@ export interface TimeEntry {
   title: string; // Employee title at time of entry
   billableWageUsed: number; // Billable wage at time of entry
   costWageUsed: number; // Cost wage at time of entry
+  employeeCategory?: string; // Employee category at time of entry ("dsp", "dspot", etc.)
   description?: string;
   createdAt: string;
 }

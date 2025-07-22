@@ -338,6 +338,8 @@ export function TimeEntryForm() {
             ? hourEntries[0].hourTypeId
             : formData.hourType1;
 
+        const employee = employees.find(emp => emp.id === formData.employeeId);
+
         const entryData = {
           employeeId: formData.employeeId,
           jobId: formData.jobId,
@@ -349,6 +351,7 @@ export function TimeEntryForm() {
           title: formData.title,
           billableWageUsed: billableWageUsed,
           costWageUsed: costWageUsed,
+          employeeCategory: employee?.category,
           description: formData.description,
         };
 
