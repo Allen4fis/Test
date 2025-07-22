@@ -235,7 +235,7 @@ export function DeleteConfirmationDialog({
           <DialogTitle className="flex items-center gap-2">
             <AlertCircle className={`h-8 w-8 ${confirmStep === 0 ? 'text-red-600 animate-pulse' : 'text-red-700 animate-bounce'}`} />
             {confirmStep === 0 &&
-              `🚨🔥⚠️ EXTREME DANGER - PERMANENT DESTRUCTION WARNING ⚠️🔥🚨`}
+              `🚨���⚠️ EXTREME DANGER - PERMANENT DESTRUCTION WARNING ⚠️🔥🚨`}
             {confirmStep === 1 && `🔒💀 TYPE TO CONFIRM TOTAL ANNIHILATION 💀🔒`}
           </DialogTitle>
           <DialogDescription className="text-lg font-bold">
@@ -295,7 +295,7 @@ export function DeleteConfirmationDialog({
                   </p>
                   {item.associatedData && (
                     <div className="mt-4 text-center">
-                      <p className="text-red-400 font-black mb-2">���� COLLATERAL DAMAGE:</p>
+                      <p className="text-red-400 font-black mb-2">💀 COLLATERAL DAMAGE:</p>
                       {item.associatedData.timeEntries && (
                         <p className="text-yellow-300">💥 {item.associatedData.timeEntries} TIME ENTRIES WILL BE OBLITERATED</p>
                       )}
@@ -433,48 +433,53 @@ export function DeleteConfirmationDialog({
           )}
         </div>
 
-        <DialogFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => handleOpenChange(false)}>
-            Cancel (Safe Choice)
+        <DialogFooter className="flex justify-between bg-black border-t-4 border-red-500 p-6">
+          <Button
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold text-lg px-6 py-3 border-4 border-green-400"
+          >
+            🛡️ ABORT MISSION (SAFE)
           </Button>
 
-          <div className="flex gap-2">
+          <div className="flex gap-4">
             {confirmStep > 0 && (
               <Button
                 variant="ghost"
                 onClick={() => setConfirmStep((prev) => prev - 1)}
+                className="bg-yellow-600 hover:bg-yellow-700 text-black font-bold text-lg px-6 py-3 border-4 border-yellow-400"
               >
-                Back
+                ⬅️ GO BACK
               </Button>
             )}
 
-            {confirmStep < 3 ? (
+            {confirmStep < 1 ? (
               <Button
                 onClick={() => setConfirmStep((prev) => prev + 1)}
                 disabled={
-                  (confirmStep === 0 && !warningsAccepted.warning1) ||
-                  (confirmStep === 1 && !warningsAccepted.warning2) ||
-                  (confirmStep === 2 && !warningsAccepted.warning3)
+                  !warningsAccepted.warning1 ||
+                  !warningsAccepted.warning2 ||
+                  !warningsAccepted.warning3
                 }
-                className="bg-orange-500 hover:bg-orange-600"
+                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-black text-lg px-8 py-3 border-4 border-yellow-400 animate-pulse disabled:opacity-50 disabled:animate-none"
               >
-                {confirmStep === 2 ? "Continue to Final Step" : "Next Warning"}
+                🔥 PROCEED TO DESTRUCTION COMMAND 🔥
               </Button>
             ) : (
               <Button
                 onClick={handleConfirm}
                 disabled={isDeleting || confirmText !== content.confirmWord}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-gradient-to-r from-red-700 to-red-900 hover:from-red-800 hover:to-red-950 text-yellow-200 font-black text-xl px-8 py-4 border-4 border-red-400 animate-bounce disabled:opacity-50 disabled:animate-none"
               >
                 {isDeleting ? (
                   <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    DELETING...
+                    <RefreshCw className="h-6 w-6 mr-3 animate-spin" />
+                    💀 EXECUTING DESTRUCTION... 💀
                   </>
                 ) : (
                   <>
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    {content.confirmWord}
+                    <Trash2 className="h-6 w-6 mr-3" />
+                    💥 {content.confirmWord} 💥
                   </>
                 )}
               </Button>
