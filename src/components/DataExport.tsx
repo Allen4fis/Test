@@ -669,9 +669,11 @@ export function DataExport() {
       csvData.push([
         data.category === "dsp"
           ? "DSP (Contractor)"
-          : data.category === "employee"
-            ? "Employee (T4)"
-            : "Contractor",
+          : data.category === "dspot"
+            ? "DSPOT (Contractor)"
+            : data.category === "employee"
+              ? "Employee (T4)"
+              : "Contractor",
         data.province,
         data.count.toString(),
         data.hours.toFixed(2),
