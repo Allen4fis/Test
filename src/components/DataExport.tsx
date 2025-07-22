@@ -114,6 +114,7 @@ export function DataExport() {
   });
 
   const [exportFormat, setExportFormat] = useState("comprehensive");
+  const [employeeTypeFilter, setEmployeeTypeFilter] = useState("all");
 
   // Filter data by date range
   const filteredTimeEntries = useMemo(() => {
