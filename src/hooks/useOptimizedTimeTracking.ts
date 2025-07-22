@@ -461,10 +461,20 @@ export function useOptimizedTimeTracking() {
         }
 
         let cost = 0;
-        if (employee.category === "dsp") {
-          cost = entry.hours * adjustedCostWage;
+        // Use stored employee category from entry, not current category
+        const entryEmployeeCategory = entry.employeeCategory || employee.category;
+        const manager = employee?.managerId
+          ? employees.find((emp) => emp.id === employee.managerId)
+          : null;
+
+        const shouldUse1xRates =
+          entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
+          (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
+
+        if (shouldUse1xRates) {
+          cost = entry.hours * adjustedCostWage; // 1x for DSPs and subordinates
         } else {
-          cost = effectiveHours * adjustedCostWage;
+          cost = effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
         }
 
         const billableAmount = effectiveHours * adjustedBillableWage;
