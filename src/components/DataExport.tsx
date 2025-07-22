@@ -563,7 +563,7 @@ export function DataExport() {
       .reduce((sum, entry) => sum + entry.gstAmount, 0);
     const invoicedRentalAmount = billableRentalEntries
       .filter((entry) => entry.isInvoiced)
-      .reduce((sum, entry) => sum + entry.totalCost, 0);
+      .reduce((sum, entry) => sum + entry.totalBillable, 0);
     const uninvoicedLaborAmount = totalBillableAmount - invoicedLaborAmount;
     const uninvoicedGST = totalBillableGST - invoicedGST;
     const uninvoicedRentalAmount =
