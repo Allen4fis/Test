@@ -618,33 +618,7 @@ export function InvoiceManagement() {
     }
   };
 
-  const handleFileUpload = () => {
-    if (
-      selectedFile &&
-      selectedJob &&
-      dateRange.startDate &&
-      dateRange.endDate
-    ) {
-      const dates = getJobDates(selectedJob)
-        .filter(
-          (d) => d.date >= dateRange.startDate && d.date <= dateRange.endDate,
-        )
-        .map((d) => d.date);
 
-      if (dates.length > 0) {
-        addInvoicedDates(selectedJob.id, dates);
-        toast({
-          title: "Invoice processed",
-          description: `Marked ${dates.length} dates as invoiced for ${selectedJob.jobNumber}`,
-        });
-      }
-
-      setSelectedFile(null);
-      setSelectedJob(null);
-      setDateRange({ startDate: "", endDate: "" });
-      setIsDialogOpen(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
