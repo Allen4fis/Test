@@ -1380,7 +1380,7 @@ export function DataExport() {
               <span className="text-sm font-medium text-orange-800">
                 Showing data for:{" "}
                 {employeeTypeFilter === "dsp"
-                  ? "DSPs and their Subordinates only"
+                  ? "DSPs, DSPOTs and their Subordinates only"
                   : "Regular Employees only"}
               </span>
               <Button
