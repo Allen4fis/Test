@@ -206,7 +206,10 @@ export function DataExport() {
       const effectiveHours = entry.hours * (hourType?.multiplier || 1);
       const laborCost = effectiveHours * entry.costWageUsed;
       // Exclude Billable hour type from billable amount calculations (consistent with timeEntrySummaries)
-      const billableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * entry.billableWageUsed;
+      const baseBillableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * entry.billableWageUsed;
+      // Add LOA to billable amount to match Dashboard calculation
+      const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
+      const billableAmount = baseBillableAmount + loaBillable;
 
       // Use stored employee category from the entry for GST calculation
       const entryCategory = entry.employeeCategory || employee?.category;
