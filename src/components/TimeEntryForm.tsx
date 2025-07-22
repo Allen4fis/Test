@@ -558,8 +558,6 @@ export function TimeEntryForm() {
     }
   };
 
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
