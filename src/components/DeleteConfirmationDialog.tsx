@@ -383,48 +383,48 @@ export function DeleteConfirmationDialog({
           {/* Step 1: Type Confirmation with Maximum Scary Design */}
           {confirmStep === 1 && (
             <div className="space-y-6">
-              <div className="bg-gradient-to-br from-black via-red-900 to-black border-4 border-red-400 rounded-lg p-6 shadow-2xl">
+              <div className="bg-gradient-to-br from-black via-red-900 to-black border-4 border-red-400 rounded-lg p-4 shadow-2xl">
                 <div className="text-center">
-                  <div className="bg-red-600 border-4 border-yellow-400 rounded-lg p-4 mb-6 animate-pulse">
-                    <h4 className="font-black text-yellow-200 text-3xl mb-3 uppercase tracking-widest">
+                  <div className="bg-red-600 border-4 border-yellow-400 rounded-lg p-3 mb-4 animate-pulse">
+                    <h4 className="font-black text-yellow-200 text-2xl mb-2 uppercase tracking-widest">
                       🔒💀 FINAL EXECUTION COMMAND 💀🔒
                     </h4>
-                    <p className="text-yellow-100 font-bold text-xl mb-4 animate-bounce">
+                    <p className="text-yellow-100 font-bold text-lg animate-bounce">
                       TYPE THE DESTRUCTION CODE TO PROCEED WITH TOTAL ANNIHILATION
                     </p>
                   </div>
 
-                  <div className="bg-yellow-300 border-4 border-red-500 rounded-lg p-6 mb-6">
-                    <p className="text-red-900 font-black text-2xl mb-2 uppercase">
+                  <div className="bg-yellow-300 border-4 border-red-500 rounded-lg p-4 mb-4">
+                    <p className="text-red-900 font-black text-xl mb-2 uppercase">
                       ⚡ DESTRUCTION COMMAND ⚡
                     </p>
-                    <p className="text-black font-black text-4xl bg-red-600 text-yellow-200 p-3 rounded border-4 border-black">
+                    <p className="text-black font-black text-3xl bg-red-600 text-yellow-200 p-2 rounded border-4 border-black">
                       {content.confirmWord}
                     </p>
                   </div>
 
-                  <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-4 mb-6">
-                    <p className="text-yellow-200 font-bold text-lg mb-4">
-                      TYPE EXACTLY: <span className="text-white font-black text-2xl bg-black px-3 py-1 rounded">{content.confirmWord}</span>
+                  <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-3 mb-4">
+                    <p className="text-yellow-200 font-bold text-base mb-3">
+                      TYPE EXACTLY: <span className="text-white font-black text-xl bg-black px-2 py-1 rounded">{content.confirmWord}</span>
                     </p>
                     <Input
                       value={confirmText}
                       onChange={(e) => setConfirmText(e.target.value)}
                       placeholder={`TYPE: ${content.confirmWord}`}
-                      className="text-center font-mono text-2xl font-black bg-black text-red-400 border-4 border-red-500 h-16 placeholder-red-600"
+                      className="text-center font-mono text-xl font-black bg-black text-red-400 border-4 border-red-500 h-12 placeholder-red-600"
                       autoFocus
                     />
                   </div>
 
-                  <div className="bg-gradient-to-r from-red-600 to-orange-600 border-4 border-yellow-400 rounded-lg p-4">
-                    <p className="text-yellow-100 font-bold text-lg">
+                  <div className="bg-gradient-to-r from-red-600 to-orange-600 border-4 border-yellow-400 rounded-lg p-3">
+                    <p className="text-yellow-100 font-bold text-base">
                       🔥 MATCH EXACTLY OR DESTRUCTION WILL BE ABORTED 🔥
                     </p>
-                    <p className="text-white font-black text-xl mt-2">
-                      REQUIRED: <span className="bg-black px-3 py-1 rounded text-red-400">{content.confirmWord}</span>
+                    <p className="text-white font-black text-lg mt-2">
+                      REQUIRED: <span className="bg-black px-2 py-1 rounded text-red-400">{content.confirmWord}</span>
                     </p>
                     <p className="text-yellow-200 font-bold mt-2">
-                      ENTERED: <span className="bg-black px-3 py-1 rounded text-red-400">{confirmText || "NOTHING ENTERED"}</span>
+                      ENTERED: <span className="bg-black px-2 py-1 rounded text-red-400">{confirmText || "NOTHING ENTERED"}</span>
                     </p>
                   </div>
                 </div>
