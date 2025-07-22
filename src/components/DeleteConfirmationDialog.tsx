@@ -318,12 +318,12 @@ export function DeleteConfirmationDialog({
                 </div>
               </div>
 
-              <div className="bg-black border-4 border-red-500 rounded-lg p-6 space-y-4">
-                <h4 className="text-red-400 font-black text-xl text-center uppercase mb-4">
+              <div className="bg-black border-4 border-red-500 rounded-lg p-4 space-y-3">
+                <h4 className="text-red-400 font-black text-lg text-center uppercase mb-3">
                   🔥 ACKNOWLEDGE TOTAL DESTRUCTION 🔥
                 </h4>
 
-                <div className="flex items-center space-x-3 bg-red-900 p-4 rounded border-2 border-red-400">
+                <div className="flex items-center space-x-3 bg-red-900 p-3 rounded border-2 border-red-400">
                   <input
                     type="checkbox"
                     id="warning1"
@@ -334,14 +334,14 @@ export function DeleteConfirmationDialog({
                         warning1: e.target.checked,
                       }))
                     }
-                    className="h-6 w-6 accent-red-500"
+                    className="h-5 w-5 accent-red-500 flex-shrink-0"
                   />
-                  <Label htmlFor="warning1" className="text-yellow-200 font-bold text-lg cursor-pointer">
+                  <Label htmlFor="warning1" className="text-yellow-200 font-bold text-base cursor-pointer">
                     ✅ I ACKNOWLEDGE THIS WILL PERMANENTLY DELETE "{item.name.toUpperCase()}" AND ALL ASSOCIATED DATA FOREVER
                   </Label>
                 </div>
 
-                <div className="flex items-center space-x-3 bg-red-900 p-4 rounded border-2 border-red-400">
+                <div className="flex items-center space-x-3 bg-red-900 p-3 rounded border-2 border-red-400">
                   <input
                     type="checkbox"
                     id="warning2"
@@ -352,14 +352,14 @@ export function DeleteConfirmationDialog({
                         warning2: e.target.checked,
                       }))
                     }
-                    className="h-6 w-6 accent-red-500"
+                    className="h-5 w-5 accent-red-500 flex-shrink-0"
                   />
-                  <Label htmlFor="warning2" className="text-yellow-200 font-bold text-lg cursor-pointer">
+                  <Label htmlFor="warning2" className="text-yellow-200 font-bold text-base cursor-pointer">
                     ✅ I UNDERSTAND THERE IS ABSOLUTELY NO WAY TO RECOVER THIS DATA ONCE DELETED
                   </Label>
                 </div>
 
-                <div className="flex items-center space-x-3 bg-red-900 p-4 rounded border-2 border-red-400">
+                <div className="flex items-center space-x-3 bg-red-900 p-3 rounded border-2 border-red-400">
                   <input
                     type="checkbox"
                     id="warning3"
@@ -370,9 +370,9 @@ export function DeleteConfirmationDialog({
                         warning3: e.target.checked,
                       }))
                     }
-                    className="h-6 w-6 accent-red-500"
+                    className="h-5 w-5 accent-red-500 flex-shrink-0"
                   />
-                  <Label htmlFor="warning3" className="text-yellow-200 font-bold text-lg cursor-pointer">
+                  <Label htmlFor="warning3" className="text-yellow-200 font-bold text-base cursor-pointer">
                     ✅ I ACCEPT FULL RESPONSIBILITY FOR THIS DESTRUCTIVE ACTION AND ALL CONSEQUENCES
                   </Label>
                 </div>
