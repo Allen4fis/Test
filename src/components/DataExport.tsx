@@ -204,9 +204,18 @@ export function DataExport() {
       const province = provinces.find((p) => p.id === entry.provinceId);
 
       const effectiveHours = entry.hours * (hourType?.multiplier || 1);
-      const laborCost = effectiveHours * entry.costWageUsed;
+
+      // Add $3 to base wage for NS hour types (to match Dashboard calculation)
+      let adjustedBillableWage = entry.billableWageUsed;
+      let adjustedCostWage = entry.costWageUsed;
+      if (hourType?.name?.startsWith("NS ")) {
+        adjustedBillableWage += 3;
+        adjustedCostWage += 3;
+      }
+
+      const laborCost = effectiveHours * adjustedCostWage;
       // Exclude Billable hour type from billable amount calculations (consistent with timeEntrySummaries)
-      const baseBillableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * entry.billableWageUsed;
+      const baseBillableAmount = hourType?.name === "Billable" ? 0 : effectiveHours * adjustedBillableWage;
       // Add LOA to billable amount to match Dashboard calculation
       const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
       const billableAmount = baseBillableAmount + loaBillable;
