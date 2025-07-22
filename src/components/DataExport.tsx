@@ -1366,6 +1366,32 @@ export function DataExport() {
         </CardContent>
       </Card>
 
+      {/* Filter Status Indicator */}
+      {employeeTypeFilter !== "all" && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-orange-600" />
+              <span className="text-sm font-medium text-orange-800">
+                Showing data for: {
+                  employeeTypeFilter === "dsp"
+                    ? "DSPs and their Subordinates only"
+                    : "Regular Employees only"
+                }
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEmployeeTypeFilter("all")}
+                className="h-6 px-2 text-xs text-orange-600 hover:text-orange-800"
+              >
+                Show All
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Executive Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 print:grid-cols-2">
         <Card>
