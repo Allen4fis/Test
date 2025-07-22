@@ -466,13 +466,21 @@ export function InvoiceManagement() {
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
+      const isNumericSearch = /^\d+$/.test(query.replace(/\s/g, ''));
+
       filtered = filtered.filter((stat) => {
-        return (
-          stat.job.jobNumber.toLowerCase().includes(query) ||
-          stat.job.name.toLowerCase().includes(query) ||
-          (stat.job.description &&
-            stat.job.description.toLowerCase().includes(query))
-        );
+        if (isNumericSearch) {
+          // For numeric searches, only match job numbers exactly or as prefix
+          return stat.job.jobNumber.toLowerCase().includes(query);
+        } else {
+          // For text searches, search in job name and description, but only exact job number matches
+          return (
+            stat.job.jobNumber.toLowerCase() === query ||
+            stat.job.name.toLowerCase().includes(query) ||
+            (stat.job.description &&
+              stat.job.description.toLowerCase().includes(query))
+          );
+        }
       });
     }
 
