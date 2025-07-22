@@ -1449,7 +1449,7 @@ export function SummaryReports() {
                             {(employee.employeeCategory === "dsp" || employee.employeeCategory === "dspot") && (
                               <div className="mt-3 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg">
                                 <h4 className="text-sm font-semibold text-purple-300 mb-2">
-                                  DSP Invoice Summary
+                                  {employee.employeeCategory === "dspot" ? "DSPOT" : "DSP"} Invoice Summary
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                   {/* Individual DSP Cost & GST */}
