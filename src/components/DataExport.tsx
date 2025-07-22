@@ -116,6 +116,22 @@ export function DataExport() {
   const [exportFormat, setExportFormat] = useState("comprehensive");
   const [employeeTypeFilter, setEmployeeTypeFilter] = useState("all");
 
+  // Helper function to determine if an employee is DSP or subordinate of DSP
+  const isDspRelated = (employee: any) => {
+    if (!employee) return false;
+
+    // If employee is directly a DSP
+    if (employee.category === "dsp") return true;
+
+    // If employee has a manager, check if the manager is a DSP
+    if (employee.managerId) {
+      const manager = employees.find(emp => emp.id === employee.managerId);
+      return manager?.category === "dsp";
+    }
+
+    return false;
+  };
+
   // Filter data by date range
   const filteredTimeEntries = useMemo(() => {
     return timeEntries.filter(
