@@ -913,9 +913,11 @@ export function DataExport() {
           employee.title,
           employee.category === "dsp"
             ? "DSP"
-            : employee.category === "employee"
-              ? "Employee"
-              : "Contractor",
+            : employee.category === "dspot"
+              ? "DSPOT"
+              : employee.category === "employee"
+                ? "Employee"
+                : "Contractor",
           hours.toFixed(2),
           effectiveHours.toFixed(2),
           `$${cost.toFixed(2)}`,
