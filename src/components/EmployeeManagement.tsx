@@ -180,7 +180,9 @@ export function EmployeeManagement() {
           ? "no-manager"
           : employee.category === "dsp"
             ? "dsp"
-            : employee.managerId || "no-manager",
+            : employee.category === "dspot"
+              ? "dspot"
+              : employee.managerId || "no-manager";
     });
     setIsDialogOpen(true);
   };
