@@ -158,6 +158,7 @@ export function TimeEntryForm() {
       hourType4: "",
       hours4: "",
       loaCount: "",
+      loaAmount: "200", // Default LOA amount
       title: "",
       billableWageUsed: "",
       costWageUsed: "",
