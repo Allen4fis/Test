@@ -1237,7 +1237,7 @@ export function SummaryReports() {
                               {employeeTypeFilter === "dsps-with-subordinates"
                                 ? "DSPs with Subordinates"
                                 : employeeTypeFilter === "dsps-only"
-                                  ? "DSPs Only"
+                                  ? "DSPs & DSPOTs Only"
                                   : employeeTypeFilter === "regular-employees"
                                     ? "Regular Employees"
                                     : ""}
