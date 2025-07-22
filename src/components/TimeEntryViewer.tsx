@@ -1216,6 +1216,14 @@ export function TimeEntryViewer() {
                 <SelectContent>
                   {jobs
                     .filter((job) => job.isActive)
+                    .sort((a, b) => {
+                      // Extract numeric part for proper numerical sorting
+                      const aNumMatch = a.jobNumber.match(/\d+/);
+                      const bNumMatch = b.jobNumber.match(/\d+/);
+                      const aNum = aNumMatch ? parseInt(aNumMatch[0], 10) : 0;
+                      const bNum = bNumMatch ? parseInt(bNumMatch[0], 10) : 0;
+                      return aNum - bNum;
+                    })
                     .map((job) => (
                       <SelectItem key={job.id} value={job.id}>
                         {job.jobNumber} - {job.name}
