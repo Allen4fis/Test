@@ -383,12 +383,31 @@ export function useTimeTracking() {
   };
 
   const updateEmployee = (id: string, updates: Partial<Employee>) => {
-    setAppData((prev) => ({
-      ...prev,
-      employees: prev.employees.map((emp) =>
-        emp.id === id ? { ...emp, ...updates } : emp,
-      ),
-    }));
+    setAppData((prev) => {
+      const currentEmployee = prev.employees.find(emp => emp.id === id);
+      const oldCategory = currentEmployee?.category;
+      const newCategory = updates.category;
+
+      // If category is changing, lock all existing time entries for this employee
+      let updatedTimeEntries = prev.timeEntries;
+      if (oldCategory !== newCategory && newCategory !== undefined) {
+        updatedTimeEntries = prev.timeEntries.map((entry) => {
+          if (entry.employeeId === id && !entry.employeeCategory) {
+            // Lock this entry to the OLD category to preserve current behavior
+            return { ...entry, employeeCategory: oldCategory };
+          }
+          return entry;
+        });
+      }
+
+      return {
+        ...prev,
+        employees: prev.employees.map((emp) =>
+          emp.id === id ? { ...emp, ...updates } : emp,
+        ),
+        timeEntries: updatedTimeEntries,
+      };
+    });
   };
 
   const deleteEmployee = (id: string) => {
