@@ -1314,8 +1314,31 @@ export function InvoiceManagement() {
                         {/* Employee breakdown */}
                         {employeesWithLOA.length > 0 && (
                           <div className="mt-4">
-                            <div className="text-sm text-purple-300 mb-2">
-                              Employees with Allowances ({employeesWithLOA.length})
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                              <div className="text-sm text-purple-300">
+                                Employees with Allowances ({employeesWithLOA.length})
+                              </div>
+                              <button
+                                onClick={() => {
+                                  const copyText = employeesWithLOA
+                                    .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
+                                    .join('\n');
+                                  navigator.clipboard.writeText(copyText).then(() => {
+                                    // You could add a toast notification here if desired
+                                    console.log('LOA list copied to clipboard');
+                                  }).catch(err => {
+                                    console.error('Failed to copy to clipboard:', err);
+                                  });
+                                }}
+                                className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
+                                title="Copy to clipboard"
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy">
+                                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                  <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                                Copy
+                              </button>
                             </div>
                             <div className="flex flex-wrap gap-2 justify-center">
                               {employeesWithLOA.map((employee, index) => (
