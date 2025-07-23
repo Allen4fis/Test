@@ -1389,7 +1389,7 @@ export function SummaryReports() {
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-lg font-bold text-green-400">
+                                  <div className="text-lg font-bold text-red-400">
                                     ${employee.totalCost.toFixed(2)}
                                   </div>
                                   <div className="text-xs text-gray-400">
