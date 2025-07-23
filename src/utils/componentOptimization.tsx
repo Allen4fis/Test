@@ -3,12 +3,12 @@
  * Provides higher-order components and hooks for maximum React performance
  */
 
-import { 
-  memo, 
-  useMemo, 
-  useCallback, 
-  useRef, 
-  useEffect, 
+import {
+  memo,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
   useState,
   ReactNode,
   ComponentType,
@@ -33,12 +33,12 @@ export const optimizedMemo = <P extends object>(
       return Object.keys(prevProps).length === Object.keys(nextProps).length &&
         Object.keys(prevProps).every(key => prevProps[key] === nextProps[key]);
     }
-    
+
     return JSON.stringify(prevProps) === JSON.stringify(nextProps);
   });
 
   const MemoizedComponent = memo(Component, (prevProps, nextProps) => areEqual(prevProps, nextProps));
-  
+
   if (options.displayName) {
     MemoizedComponent.displayName = options.displayName;
   }
@@ -70,7 +70,7 @@ export const useOptimizedCallback = <T extends (...args: any[]) => any>(
 /**
  * Hook for optimized memoization with size limits
  */
-export const useOptimizedMemo = <T>(
+export const useOptimizedMemo = <T,>(
   factory: () => T,
   deps: React.DependencyList,
   maxCacheSize: number = 10
@@ -150,7 +150,7 @@ export const useVirtualizedList = <T>(
       start + Math.ceil(containerHeight / itemHeight) + overscan,
       items.length
     );
-    
+
     return {
       start: Math.max(0, start - overscan),
       end,
@@ -206,7 +206,7 @@ export const withPerformanceMonitoring = <P extends object>(
 
     useEffect(() => {
       const renderTime = performance.now() - renderStart.current;
-      
+
       setRenderStats(prev => ({
         count: renderCount.current,
         averageTime: (prev.averageTime * (prev.count - 1) + renderTime) / prev.count,
@@ -230,13 +230,13 @@ export const useOptimizedHandlers = <T extends Record<string, (...args: any[]) =
   handlers: T
 ): T => {
   const handlersRef = useRef<T>(handlers);
-  
+
   // Update ref if handlers change (shallow comparison)
   useEffect(() => {
     const hasChanged = Object.keys(handlers).some(
       key => handlers[key] !== handlersRef.current[key]
     );
-    
+
     if (hasChanged) {
       handlersRef.current = handlers;
     }
@@ -244,7 +244,7 @@ export const useOptimizedHandlers = <T extends Record<string, (...args: any[]) =
 
   return useMemo(() => {
     const optimizedHandlers = {} as T;
-    
+
     Object.keys(handlersRef.current).forEach(key => {
       optimizedHandlers[key] = useCallback(
         (...args: any[]) => handlersRef.current[key](...args),
