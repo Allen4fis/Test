@@ -1324,16 +1324,45 @@ export function InvoiceManagement() {
                                     .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
                                     .join('\n');
 
-                                  // Show text in a prompt dialog that's pre-selected for easy copying
-                                  // This works reliably across all browsers and environments
-                                  const userAction = prompt(
-                                    '📋 Copy this text to your clipboard (Ctrl+A, then Ctrl+C):',
-                                    copyText
-                                  );
+                                  // Create a hidden textarea that will automatically select and copy
+                                  const textarea = document.createElement('textarea');
+                                  textarea.value = copyText;
+                                  textarea.style.position = 'fixed';
+                                  textarea.style.left = '-9999px';
+                                  textarea.style.top = '50%';
+                                  textarea.style.width = '1px';
+                                  textarea.style.height = '1px';
+                                  textarea.style.opacity = '0';
 
-                                  // If user didn't cancel, show success message
-                                  if (userAction !== null) {
-                                    alert('✅ Text ready for pasting! You can now use Ctrl+V in other windows.');
+                                  document.body.appendChild(textarea);
+
+                                  // Focus and select all text
+                                  textarea.focus();
+                                  textarea.select();
+                                  textarea.setSelectionRange(0, copyText.length);
+
+                                  // Try to copy automatically
+                                  let copySuccess = false;
+                                  try {
+                                    copySuccess = document.execCommand('copy');
+                                  } catch (err) {
+                                    console.error('Auto-copy failed:', err);
+                                  }
+
+                                  // Clean up
+                                  document.body.removeChild(textarea);
+
+                                  if (copySuccess) {
+                                    // Success - show confirmation
+                                    alert('✅ LOA list copied to clipboard! You can now paste with Ctrl+V in other windows.');
+                                  } else {
+                                    // Fallback to manual copy with auto-selected text
+                                    setTimeout(() => {
+                                      const result = prompt('📋 Auto-copy failed. Text is pre-selected - just press Ctrl+C:', copyText);
+                                      if (result !== null) {
+                                        alert('✅ Now you can paste with Ctrl+V in other windows!');
+                                      }
+                                    }, 100);
                                   }
                                 }}
                                 className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
