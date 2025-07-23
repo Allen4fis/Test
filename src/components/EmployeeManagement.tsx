@@ -439,6 +439,28 @@ export function EmployeeManagement() {
                           employed by
                         </p>
                       </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">
+                          Employment Status
+                        </Label>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id="isActive"
+                            checked={formData.isActive}
+                            onChange={(e) =>
+                              setFormData({ ...formData, isActive: e.target.checked })
+                            }
+                            className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                          />
+                          <Label htmlFor="isActive" className="text-sm">
+                            {formData.isActive ? "Active Employee" : "Inactive Employee"}
+                          </Label>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          Inactive employees will not appear in dropdown selections for new entries
+                        </p>
+                      </div>
                     </div>
                   </div>
 
