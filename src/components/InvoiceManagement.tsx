@@ -1340,9 +1340,35 @@ export function InvoiceManagement() {
                   {/* Time Entries Grouped by Title and Hour Type */}
                   {groupedTimeEntries.length > 0 && (
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-100 mb-4">
-                        Time Entries by Title & Hour Type
-                      </h3>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xl font-semibold text-gray-100">
+                          Time Entries by Title & Hour Type
+                        </h3>
+                      </div>
+
+                      {/* Easy copy text area for time entries */}
+                      <div className="mb-4">
+                        <div className="text-sm text-blue-300 mb-2">
+                          Copy Employee Hours Data
+                        </div>
+                        <textarea
+                          value={groupedTimeEntries
+                            .map(group => {
+                              const employeesList = group.employees
+                                .map(emp => `${emp.name}: ${emp.hours.toFixed(1)}h`)
+                                .join(', ');
+                              return `${group.title} - ${group.hourType}\n${employeesList}`;
+                            })
+                            .join('\n\n')}
+                          readOnly
+                          onClick={(e) => {
+                            e.target.select();
+                          }}
+                          className="w-full h-32 text-xs bg-blue-900/20 border border-blue-500/50 rounded p-2 text-blue-200 resize-none cursor-pointer hover:bg-blue-900/30 transition-colors"
+                          placeholder="Click to select all text, then Ctrl+C to copy"
+                          title="Click to select all, then Ctrl+C to copy"
+                        />
+                      </div>
                       <Table>
                         <TableHeader>
                           <TableRow>
