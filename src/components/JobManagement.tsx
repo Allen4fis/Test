@@ -246,16 +246,24 @@ export function JobManagement() {
   const filteredAndSortedJobsWithProfit = useMemo(() => {
     let filtered = jobProfitData;
 
-    // Apply search filter
+    // Apply search filter (same ruleset as InvoiceManagement)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
+      const isNumericSearch = /^\d+$/.test(query.replace(/\s/g, ""));
+
       filtered = filtered.filter((jobData) => {
         const job = jobData.job;
-        return (
-          job.jobNumber.toLowerCase().includes(query) ||
-          job.name.toLowerCase().includes(query) ||
-          (job.description && job.description.toLowerCase().includes(query))
-        );
+        if (isNumericSearch) {
+          // For numeric searches, only match job numbers exactly or as prefix
+          return job.jobNumber.toLowerCase().includes(query);
+        } else {
+          // For text searches, search in job name and description, but only exact job number matches
+          return (
+            job.jobNumber.toLowerCase() === query ||
+            job.name.toLowerCase().includes(query) ||
+            (job.description && job.description.toLowerCase().includes(query))
+          );
+        }
       });
     }
 
