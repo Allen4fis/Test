@@ -1,4 +1,11 @@
-import { ReactNode, useMemo, useEffect, useRef, memo, useCallback } from "react";
+import {
+  ReactNode,
+  useMemo,
+  useEffect,
+  useRef,
+  memo,
+  useCallback,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +35,10 @@ interface LayoutProps {
   timeTracking: ReturnType<typeof useTimeTracking>;
 }
 
-export const Layout = memo(function Layout({ children, timeTracking }: LayoutProps) {
+export const Layout = memo(function Layout({
+  children,
+  timeTracking,
+}: LayoutProps) {
   const {
     selectedView,
     setSelectedView,
@@ -99,9 +109,12 @@ export const Layout = memo(function Layout({ children, timeTracking }: LayoutPro
   }, [manualSave, toast]);
 
   // Optimized view selection handler
-  const handleViewChange = useCallback((viewId: string) => {
-    setSelectedView(viewId);
-  }, [setSelectedView]);
+  const handleViewChange = useCallback(
+    (viewId: string) => {
+      setSelectedView(viewId);
+    },
+    [setSelectedView],
+  );
 
   // Memoize navigation items to ensure they update when counts change
   const navigationItems = useMemo(() => {

@@ -3,11 +3,20 @@
  * Combines all performance optimizations into a single easy-to-use hook
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { optimizeAllCaches, getAllCacheStats } from '@/utils/enhancedCaching';
-import { clearDebouncedRequests, getDebouncerStats } from '@/utils/requestDebouncing';
-import { initializeCSSOptimizations, measureCSSPerformance } from '@/utils/cssOptimization';
-import { clearPerformanceData, getPerformanceData } from '@/utils/componentOptimization';
+import { useEffect, useRef, useState, useCallback } from "react";
+import { optimizeAllCaches, getAllCacheStats } from "@/utils/enhancedCaching";
+import {
+  clearDebouncedRequests,
+  getDebouncerStats,
+} from "@/utils/requestDebouncing";
+import {
+  initializeCSSOptimizations,
+  measureCSSPerformance,
+} from "@/utils/cssOptimization";
+import {
+  clearPerformanceData,
+  getPerformanceData,
+} from "@/utils/componentOptimization";
 
 interface PerformanceMetrics {
   cacheStats: ReturnType<typeof getAllCacheStats>;
@@ -43,7 +52,7 @@ const defaultConfig: PerformanceOptimizationConfig = {
 };
 
 export const usePerformanceOptimizations = (
-  config: Partial<PerformanceOptimizationConfig> = {}
+  config: Partial<PerformanceOptimizationConfig> = {},
 ) => {
   const finalConfig = { ...defaultConfig, ...config };
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
@@ -63,23 +72,23 @@ export const usePerformanceOptimizations = (
       const monitorFrames = () => {
         const now = performance.now();
         frameStats.current.frames++;
-        
+
         if (now - frameStats.current.lastTime >= 1000) {
           const newFPS = frameStats.current.frames;
-          
+
           // Detect frame drops (FPS significantly below 60)
           if (newFPS < 45 && frameStats.current.fps > 0) {
             frameStats.current.drops++;
           }
-          
+
           frameStats.current.fps = newFPS;
           frameStats.current.frames = 0;
           frameStats.current.lastTime = now;
         }
-        
+
         requestAnimationFrame(monitorFrames);
       };
-      
+
       requestAnimationFrame(monitorFrames);
     }
 
@@ -113,7 +122,7 @@ export const usePerformanceOptimizations = (
 
   // Get current memory usage (approximate)
   const getMemoryUsage = useCallback((): number => {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memInfo = (performance as any).memory;
       return memInfo.usedJSHeapSize / (1024 * 1024); // Convert to MB
     }
@@ -123,24 +132,27 @@ export const usePerformanceOptimizations = (
   // Perform comprehensive optimization
   const performOptimization = useCallback(() => {
     const memoryUsage = getMemoryUsage();
-    
+
     // Cache optimization
     if (finalConfig.enableCaching) {
       optimizeAllCaches();
     }
 
     // Memory management
-    if (finalConfig.enableMemoryManagement && memoryUsage > finalConfig.memoryThreshold) {
+    if (
+      finalConfig.enableMemoryManagement &&
+      memoryUsage > finalConfig.memoryThreshold
+    ) {
       // Clear old performance data
       clearPerformanceData();
-      
+
       // Clear debounced requests
       if (finalConfig.enableDebouncing) {
         clearDebouncedRequests();
       }
 
       // Force garbage collection (if available)
-      if ('gc' in window && typeof (window as any).gc === 'function') {
+      if ("gc" in window && typeof (window as any).gc === "function") {
         (window as any).gc();
       }
     }
@@ -180,22 +192,28 @@ export const usePerformanceOptimizations = (
 
     // Cache recommendations
     if (metrics.cacheStats.calculation.hitRate < 0.8) {
-      recommendations.push('Consider increasing cache size or TTL for better cache hit rates');
+      recommendations.push(
+        "Consider increasing cache size or TTL for better cache hit rates",
+      );
     }
 
     // Memory recommendations
     if (metrics.memoryUsage > finalConfig.memoryThreshold) {
-      recommendations.push('High memory usage detected - consider running optimization');
+      recommendations.push(
+        "High memory usage detected - consider running optimization",
+      );
     }
 
     // FPS recommendations
     if (metrics.renderingStats.averageFPS < 50) {
-      recommendations.push('Low FPS detected - consider reducing component complexity');
+      recommendations.push(
+        "Low FPS detected - consider reducing component complexity",
+      );
     }
 
     // CSS recommendations
     if (metrics.cssStats.renderBlockingResources > 3) {
-      recommendations.push('Too many render-blocking CSS resources detected');
+      recommendations.push("Too many render-blocking CSS resources detected");
     }
 
     return recommendations;
@@ -208,24 +226,35 @@ export const usePerformanceOptimizations = (
     let score = 100;
 
     // Deduct points for poor cache performance
-    const avgCacheHitRate = (
-      metrics.cacheStats.calculation.hitRate +
-      metrics.cacheStats.data.hitRate +
-      metrics.cacheStats.view.hitRate
-    ) / 3;
-    
+    const avgCacheHitRate =
+      (metrics.cacheStats.calculation.hitRate +
+        metrics.cacheStats.data.hitRate +
+        metrics.cacheStats.view.hitRate) /
+      3;
+
     score -= (1 - avgCacheHitRate) * 30; // Up to 30 points for cache performance
 
     // Deduct points for high memory usage
-    const memoryPenalty = Math.max(0, (metrics.memoryUsage - finalConfig.memoryThreshold) / finalConfig.memoryThreshold * 20);
+    const memoryPenalty = Math.max(
+      0,
+      ((metrics.memoryUsage - finalConfig.memoryThreshold) /
+        finalConfig.memoryThreshold) *
+        20,
+    );
     score -= memoryPenalty; // Up to 20 points for memory usage
 
     // Deduct points for low FPS
-    const fpsPenalty = Math.max(0, (60 - metrics.renderingStats.averageFPS) / 60 * 25);
+    const fpsPenalty = Math.max(
+      0,
+      ((60 - metrics.renderingStats.averageFPS) / 60) * 25,
+    );
     score -= fpsPenalty; // Up to 25 points for FPS
 
     // Deduct points for CSS issues
-    const cssPenalty = Math.max(0, (metrics.cssStats.renderBlockingResources - 2) * 5);
+    const cssPenalty = Math.max(
+      0,
+      (metrics.cssStats.renderBlockingResources - 2) * 5,
+    );
     score -= cssPenalty; // Up to 25 points for CSS optimization
 
     return Math.max(0, Math.round(score));

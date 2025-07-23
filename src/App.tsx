@@ -35,8 +35,8 @@ const App = memo(() => {
   });
 
   useEffect(() => {
-    if (isOptimized && process.env.NODE_ENV === 'development') {
-      console.log('🚀 Performance optimizations initialized successfully');
+    if (isOptimized && process.env.NODE_ENV === "development") {
+      console.log("🚀 Performance optimizations initialized successfully");
     }
   }, [isOptimized]);
 

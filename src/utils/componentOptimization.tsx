@@ -3,16 +3,16 @@
  * Provides higher-order components and hooks for maximum React performance
  */
 
-import { 
-  memo, 
-  useMemo, 
-  useCallback, 
-  useRef, 
-  useEffect, 
+import {
+  memo,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
   useState,
   ReactNode,
   ComponentType,
-} from 'react';
+} from "react";
 
 interface OptimizationOptions {
   shouldUpdate?: (prevProps: any, nextProps: any) => boolean;
@@ -25,19 +25,27 @@ interface OptimizationOptions {
  */
 export const optimizedMemo = <P extends object>(
   Component: ComponentType<P>,
-  options: OptimizationOptions = {}
+  options: OptimizationOptions = {},
 ): ComponentType<P> => {
-  const areEqual = options.shouldUpdate || ((prevProps, nextProps) => {
-    if (!options.deepEqual) {
-      return Object.keys(prevProps).length === Object.keys(nextProps).length &&
-        Object.keys(prevProps).every(key => prevProps[key] === nextProps[key]);
-    }
-    
-    return JSON.stringify(prevProps) === JSON.stringify(nextProps);
-  });
+  const areEqual =
+    options.shouldUpdate ||
+    ((prevProps, nextProps) => {
+      if (!options.deepEqual) {
+        return (
+          Object.keys(prevProps).length === Object.keys(nextProps).length &&
+          Object.keys(prevProps).every(
+            (key) => prevProps[key] === nextProps[key],
+          )
+        );
+      }
 
-  const MemoizedComponent = memo(Component, (prevProps, nextProps) => areEqual(prevProps, nextProps));
-  
+      return JSON.stringify(prevProps) === JSON.stringify(nextProps);
+    });
+
+  const MemoizedComponent = memo(Component, (prevProps, nextProps) =>
+    areEqual(prevProps, nextProps),
+  );
+
   if (options.displayName) {
     MemoizedComponent.displayName = options.displayName;
   }
@@ -50,7 +58,7 @@ export const optimizedMemo = <P extends object>(
  */
 export function useOptimizedCallback<T extends (...args: any[]) => any>(
   callback: T,
-  deps: React.DependencyList
+  deps: React.DependencyList,
 ): T {
   const callbackRef = useRef(callback);
   const depsRef = useRef(deps);
@@ -72,10 +80,10 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 export function useOptimizedMemo<T>(
   factory: () => T,
   deps: React.DependencyList,
-  maxCacheSize: number = 10
+  maxCacheSize: number = 10,
 ): T {
   const cache = useRef<Map<string, T>>(new Map());
-  const keyRef = useRef<string>('');
+  const keyRef = useRef<string>("");
 
   const key = useMemo(() => JSON.stringify(deps), deps);
 
@@ -106,7 +114,7 @@ export function useOptimizedMemo<T>(
  */
 export function useOptimizedDebounce<T>(
   value: T,
-  delay: number
+  delay: number,
 ): { debouncedValue: T; isDebouncing: boolean; updateCount: number } {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   const [isDebouncing, setIsDebouncing] = useState(false);
@@ -115,7 +123,7 @@ export function useOptimizedDebounce<T>(
 
   useEffect(() => {
     setIsDebouncing(true);
-    setUpdateCount(prev => prev + 1);
+    setUpdateCount((prev) => prev + 1);
 
     timeoutRef.current = setTimeout(() => {
       setDebouncedValue(value);
@@ -139,7 +147,7 @@ export function useVirtualizedList<T>(
   items: T[],
   itemHeight: number,
   containerHeight: number,
-  overscan: number = 5
+  overscan: number = 5,
 ) {
   const [scrollTop, setScrollTop] = useState(0);
 
@@ -147,9 +155,9 @@ export function useVirtualizedList<T>(
     const start = Math.floor(scrollTop / itemHeight);
     const end = Math.min(
       start + Math.ceil(containerHeight / itemHeight) + overscan,
-      items.length
+      items.length,
     );
-    
+
     return {
       start: Math.max(0, start - overscan),
       end,
@@ -157,16 +165,18 @@ export function useVirtualizedList<T>(
   }, [scrollTop, itemHeight, containerHeight, overscan, items.length]);
 
   const visibleItems = useMemo(() => {
-    return items.slice(visibleRange.start, visibleRange.end).map((item, index) => ({
-      item,
-      index: visibleRange.start + index,
-      style: {
-        position: 'absolute' as const,
-        top: (visibleRange.start + index) * itemHeight,
-        height: itemHeight,
-        width: '100%',
-      },
-    }));
+    return items
+      .slice(visibleRange.start, visibleRange.end)
+      .map((item, index) => ({
+        item,
+        index: visibleRange.start + index,
+        style: {
+          position: "absolute" as const,
+          top: (visibleRange.start + index) * itemHeight,
+          height: itemHeight,
+          width: "100%",
+        },
+      }));
   }, [items, visibleRange, itemHeight]);
 
   const totalHeight = items.length * itemHeight;
@@ -189,7 +199,7 @@ export function useVirtualizedList<T>(
  */
 export function withPerformanceMonitoring<P extends object>(
   Component: ComponentType<P>,
-  componentName?: string
+  componentName?: string,
 ) {
   return memo((props: P) => {
     const renderStart = useRef<number>(0);
@@ -205,16 +215,19 @@ export function withPerformanceMonitoring<P extends object>(
 
     useEffect(() => {
       const renderTime = performance.now() - renderStart.current;
-      
-      setRenderStats(prev => ({
+
+      setRenderStats((prev) => ({
         count: renderCount.current,
-        averageTime: (prev.averageTime * (prev.count - 1) + renderTime) / prev.count,
+        averageTime:
+          (prev.averageTime * (prev.count - 1) + renderTime) / prev.count,
         lastRenderTime: renderTime,
       }));
 
       // Log slow renders in development
-      if (process.env.NODE_ENV === 'development' && renderTime > 16) {
-        console.warn(`Slow render detected in ${componentName || Component.name}: ${renderTime.toFixed(2)}ms`);
+      if (process.env.NODE_ENV === "development" && renderTime > 16) {
+        console.warn(
+          `Slow render detected in ${componentName || Component.name}: ${renderTime.toFixed(2)}ms`,
+        );
       }
     });
 
@@ -225,17 +238,17 @@ export function withPerformanceMonitoring<P extends object>(
 /**
  * Hook for optimized event handlers
  */
-export function useOptimizedHandlers<T extends Record<string, (...args: any[]) => any>>(
-  handlers: T
-): T {
+export function useOptimizedHandlers<
+  T extends Record<string, (...args: any[]) => any>,
+>(handlers: T): T {
   const handlersRef = useRef<T>(handlers);
-  
+
   // Update ref if handlers change (shallow comparison)
   useEffect(() => {
     const hasChanged = Object.keys(handlers).some(
-      key => handlers[key] !== handlersRef.current[key]
+      (key) => handlers[key] !== handlersRef.current[key],
     );
-    
+
     if (hasChanged) {
       handlersRef.current = handlers;
     }
@@ -243,11 +256,11 @@ export function useOptimizedHandlers<T extends Record<string, (...args: any[]) =
 
   return useMemo(() => {
     const optimizedHandlers = {} as T;
-    
-    Object.keys(handlersRef.current).forEach(key => {
+
+    Object.keys(handlersRef.current).forEach((key) => {
       optimizedHandlers[key] = useCallback(
         (...args: any[]) => handlersRef.current[key](...args),
-        []
+        [],
       );
     });
 
@@ -266,13 +279,9 @@ interface LazyComponentProps {
   className?: string;
 }
 
-export const LazyComponent = memo(({
-  children,
-  fallback = <div>Loading...</div>,
-  rootMargin = '50px',
-  threshold = 0.1,
-  className,
-}: LazyComponentProps) => {
+export const LazyComponent = memo(({ children, fallback = <div>
+      Loading...
+    </div>, rootMargin = "50px", threshold = 0.1, className }: LazyComponentProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -286,7 +295,7 @@ export const LazyComponent = memo(({
           observer.disconnect();
         }
       },
-      { rootMargin, threshold }
+      { rootMargin, threshold },
     );
 
     if (elementRef.current) {
@@ -303,7 +312,7 @@ export const LazyComponent = memo(({
   );
 });
 
-LazyComponent.displayName = 'LazyComponent';
+LazyComponent.displayName = "LazyComponent";
 
 /**
  * Performance monitoring context and hook

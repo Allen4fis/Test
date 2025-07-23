@@ -36,7 +36,7 @@ class RequestDebouncer {
   debounce<T>(
     key: string,
     requestFn: (batchedData: any[]) => Promise<T[]>,
-    data: any
+    data: any,
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       const request: DebouncedRequest = {
@@ -79,7 +79,7 @@ class RequestDebouncer {
   private async executeBatch<T>(
     key: string,
     requestFn: (batchedData: any[]) => Promise<T[]>,
-    sampleData: any
+    sampleData: any,
   ): Promise<void> {
     const requests = this.pendingRequests.get(key) || [];
     if (requests.length === 0) return;
@@ -91,7 +91,7 @@ class RequestDebouncer {
     try {
       // Create batch data (for now, just use sample data structure)
       const batchData = requests.map(() => sampleData);
-      
+
       // Execute the batched request
       const results = await requestFn(batchData);
 
@@ -130,8 +130,10 @@ class RequestDebouncer {
    */
   getStats(): { pendingBatches: number; totalPending: number } {
     const pendingBatches = this.pendingRequests.size;
-    const totalPending = Array.from(this.pendingRequests.values())
-      .reduce((sum, requests) => sum + requests.length, 0);
+    const totalPending = Array.from(this.pendingRequests.values()).reduce(
+      (sum, requests) => sum + requests.length,
+      0,
+    );
 
     return { pendingBatches, totalPending };
   }
@@ -146,7 +148,7 @@ const globalDebouncer = new RequestDebouncer();
 export const debouncedCalculation = <T>(
   calculationType: string,
   calculationFn: (data: any[]) => Promise<T[]>,
-  data: any
+  data: any,
 ): Promise<T> => {
   return globalDebouncer.debounce(calculationType, calculationFn, data);
 };
@@ -157,7 +159,7 @@ export const debouncedCalculation = <T>(
 export const debouncedSave = (
   key: string,
   saveFn: (data: any[]) => Promise<boolean[]>,
-  data: any
+  data: any,
 ): Promise<boolean> => {
   return globalDebouncer.debounce(`save_${key}`, saveFn, data);
 };
@@ -168,13 +170,13 @@ export const debouncedSave = (
 export const debouncedSearch = (
   searchTerm: string,
   searchFn: (terms: string[]) => Promise<any[]>,
-  debounceMs: number = 300
+  debounceMs: number = 300,
 ): Promise<any> => {
   const customDebouncer = new RequestDebouncer({
     debounceDelay: debounceMs,
     maxBatchSize: 1, // Search should be individual
   });
-  
+
   return customDebouncer.debounce(`search_${searchTerm}`, searchFn, searchTerm);
 };
 

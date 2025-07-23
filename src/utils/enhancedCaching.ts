@@ -31,7 +31,7 @@ interface CacheStats {
 class EnhancedCache<T = any> {
   private cache: Map<string, CacheEntry<T>> = new Map();
   private dependencyGraph: Map<string, Set<string>> = new Map();
-  private stats: Omit<CacheStats, 'hitRate' | 'memoryUsage'> = {
+  private stats: Omit<CacheStats, "hitRate" | "memoryUsage"> = {
     hits: 0,
     misses: 0,
     size: 0,
@@ -54,7 +54,7 @@ class EnhancedCache<T = any> {
    */
   get(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       this.stats.misses++;
       return null;
@@ -80,7 +80,7 @@ class EnhancedCache<T = any> {
    */
   set(key: string, value: T, ttl?: number, dependencies?: string[]): void {
     const size = this.estimateSize(value);
-    
+
     // Check if we need to evict entries
     this.evictIfNeeded(size);
 
@@ -138,7 +138,7 @@ class EnhancedCache<T = any> {
     key: string,
     computeFn: () => Promise<R> | R,
     ttl?: number,
-    dependencies?: string[]
+    dependencies?: string[],
   ): Promise<R> {
     const cached = this.get(key) as R;
     if (cached !== null) {
@@ -164,7 +164,14 @@ class EnhancedCache<T = any> {
   /**
    * Batch set multiple entries
    */
-  setBatch(entries: Array<{ key: string; value: T; ttl?: number; dependencies?: string[] }>): void {
+  setBatch(
+    entries: Array<{
+      key: string;
+      value: T;
+      ttl?: number;
+      dependencies?: string[];
+    }>,
+  ): void {
     for (const entry of entries) {
       this.set(entry.key, entry.value, entry.ttl, entry.dependencies);
     }
@@ -214,7 +221,7 @@ class EnhancedCache<T = any> {
   optimize(): void {
     const now = Date.now();
     const entries = Array.from(this.cache.entries());
-    
+
     // Sort by priority (least recently used + least accessed)
     entries.sort(([, a], [, b]) => {
       const aScore = a.accessCount / Math.max(1, (now - a.lastAccessed) / 1000);
@@ -233,10 +240,10 @@ class EnhancedCache<T = any> {
    * Private: Estimate size of value
    */
   private estimateSize(value: T): number {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return value.length * 2; // UTF-16
     }
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "object" && value !== null) {
       return JSON.stringify(value).length * 2;
     }
     return 8; // Default for primitives
@@ -248,8 +255,8 @@ class EnhancedCache<T = any> {
   private evictIfNeeded(newEntrySize: number): void {
     // Evict if we would exceed max size or max entries
     while (
-      (this.stats.size + newEntrySize > this.config.maxSize) ||
-      (this.stats.entries >= this.config.maxEntries)
+      this.stats.size + newEntrySize > this.config.maxSize ||
+      this.stats.entries >= this.config.maxEntries
     ) {
       this.evictLeastUsed();
     }
@@ -261,7 +268,7 @@ class EnhancedCache<T = any> {
   private evictLeastUsed(): void {
     if (this.cache.size === 0) return;
 
-    let leastUsedKey = '';
+    let leastUsedKey = "";
     let leastUsedScore = Infinity;
     const now = Date.now();
 
@@ -269,7 +276,7 @@ class EnhancedCache<T = any> {
       // Score based on access frequency and recency
       const timeSinceAccess = now - entry.lastAccessed;
       const score = entry.accessCount / Math.max(1, timeSinceAccess / 1000);
-      
+
       if (score < leastUsedScore) {
         leastUsedScore = score;
         leastUsedKey = key;
@@ -307,11 +314,11 @@ export const viewCache = new EnhancedCache({
 export const withCaching = <T extends (...args: any[]) => any>(
   fn: T,
   cache: EnhancedCache = calculationCache,
-  keyGenerator?: (...args: Parameters<T>) => string
+  keyGenerator?: (...args: Parameters<T>) => string,
 ): T => {
   return ((...args: Parameters<T>) => {
     const key = keyGenerator ? keyGenerator(...args) : JSON.stringify(args);
-    
+
     return cache.getOrCompute(key, () => fn(...args));
   }) as T;
 };

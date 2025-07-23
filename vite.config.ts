@@ -22,7 +22,8 @@ export default defineConfig(({ mode }) => ({
       compress: {
         drop_console: mode === "production",
         drop_debugger: mode === "production",
-        pure_funcs: mode === "production" ? ["console.log", "console.info"] : [],
+        pure_funcs:
+          mode === "production" ? ["console.log", "console.info"] : [],
       },
     },
     rollupOptions: {
@@ -30,7 +31,11 @@ export default defineConfig(({ mode }) => ({
         // Optimize chunk splitting for better caching
         manualChunks: {
           vendor: ["react", "react-dom"],
-          ui: ["@radix-ui/react-dialog", "@radix-ui/react-toast", "@radix-ui/react-select"],
+          ui: [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-toast",
+            "@radix-ui/react-select",
+          ],
           charts: ["recharts"],
           utils: ["date-fns", "clsx", "class-variance-authority"],
           router: ["react-router-dom"],
