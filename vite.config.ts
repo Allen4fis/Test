@@ -8,14 +8,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [
-    react({
-      jsxImportSource: "@emotion/react",
-      plugins: [
-        // Enable automatic JSX runtime for better performance
-      ],
-    }),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
