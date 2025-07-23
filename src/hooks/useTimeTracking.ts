@@ -168,10 +168,15 @@ export function useTimeTracking() {
           email: employee.email,
           billableWage: oldEmployee.hourlyWage || 0,
           costWage: oldEmployee.hourlyWage || 0,
+          isActive: true, // Default to active for migrated employees
           createdAt: employee.createdAt,
         } as Employee;
       }
-      return employee;
+      // Add isActive field to employees that don't have it
+      return {
+        ...employee,
+        isActive: employee.isActive ?? true, // Default to active if not set
+      };
     });
 
     // Add title and wage fields to existing time entries that don't have them
