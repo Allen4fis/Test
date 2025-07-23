@@ -1040,10 +1040,10 @@ export function InvoiceManagement() {
                       </div>
 
                       {/* Financial Summary */}
-                      <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-700 pt-3 mb-3">
+                      <div className="grid grid-cols-4 gap-2 text-center border-t border-gray-700 pt-3 mb-3">
                         {jobStat.job.isBillable === false ? (
                           <>
-                            <div className="col-span-3 text-center">
+                            <div className="col-span-4 text-center">
                               <div className="text-sm text-orange-400 font-medium">
                                 Non-Billable Job - Cost Tracking Only
                               </div>
@@ -1059,6 +1059,14 @@ export function InvoiceManagement() {
                                 ${jobStat.totalBillable.toFixed(2)}
                               </div>
                               <div className="text-xs text-gray-400">Total</div>
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-blue-400">
+                                ${jobStat.invoicedBillable.toFixed(2)}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                Invoiced
+                              </div>
                             </div>
                             <div>
                               <div className="text-sm font-bold text-red-400">
