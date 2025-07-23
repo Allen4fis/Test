@@ -985,7 +985,9 @@ export function SummaryReports() {
                           size="sm"
                           onClick={() =>
                             setSelectedEmployees(
-                              employees.filter((emp) => emp.isActive !== false).map((emp) => emp.name),
+                              employees
+                                .filter((emp) => emp.isActive !== false)
+                                .map((emp) => emp.name),
                             )
                           }
                           className="h-6 px-2 text-xs text-orange-400 hover:text-orange-300"
@@ -1008,44 +1010,46 @@ export function SummaryReports() {
                           No employees available
                         </p>
                       ) : (
-                        employees.filter((employee) => employee.isActive !== false).map((employee) => (
-                          <div
-                            key={employee.id}
-                            className="flex items-center space-x-2"
-                          >
-                            <input
-                              type="checkbox"
-                              id={`employee-${employee.id}`}
-                              checked={selectedEmployees.includes(
-                                employee.name,
-                              )}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedEmployees((prev) => [
-                                    ...prev,
-                                    employee.name,
-                                  ]);
-                                } else {
-                                  setSelectedEmployees((prev) =>
-                                    prev.filter(
-                                      (name) => name !== employee.name,
-                                    ),
-                                  );
-                                }
-                              }}
-                              className="rounded border-gray-600 text-orange-500 bg-gray-700 focus:ring-orange-500 focus:ring-2"
-                            />
-                            <label
-                              htmlFor={`employee-${employee.id}`}
-                              className="text-sm text-gray-100 cursor-pointer flex-1"
+                        employees
+                          .filter((employee) => employee.isActive !== false)
+                          .map((employee) => (
+                            <div
+                              key={employee.id}
+                              className="flex items-center space-x-2"
                             >
-                              {employee.name}
-                              <span className="text-xs text-gray-400 ml-2">
-                                ({employee.title})
-                              </span>
-                            </label>
-                          </div>
-                        ))
+                              <input
+                                type="checkbox"
+                                id={`employee-${employee.id}`}
+                                checked={selectedEmployees.includes(
+                                  employee.name,
+                                )}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedEmployees((prev) => [
+                                      ...prev,
+                                      employee.name,
+                                    ]);
+                                  } else {
+                                    setSelectedEmployees((prev) =>
+                                      prev.filter(
+                                        (name) => name !== employee.name,
+                                      ),
+                                    );
+                                  }
+                                }}
+                                className="rounded border-gray-600 text-orange-500 bg-gray-700 focus:ring-orange-500 focus:ring-2"
+                              />
+                              <label
+                                htmlFor={`employee-${employee.id}`}
+                                className="text-sm text-gray-100 cursor-pointer flex-1"
+                              >
+                                {employee.name}
+                                <span className="text-xs text-gray-400 ml-2">
+                                  ({employee.title})
+                                </span>
+                              </label>
+                            </div>
+                          ))
                       )}
                     </div>
                     <div className="text-xs text-gray-400">

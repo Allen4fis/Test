@@ -482,7 +482,11 @@ export function TimeEntryViewer() {
   };
 
   // Get unique employee and job lists for filter dropdowns
-  const uniqueEmployees = [...new Set(employees.filter((emp) => emp.isActive !== false).map((emp) => emp.name))].sort();
+  const uniqueEmployees = [
+    ...new Set(
+      employees.filter((emp) => emp.isActive !== false).map((emp) => emp.name),
+    ),
+  ].sort();
   const uniqueJobs = [
     ...new Set(jobs.map((job) => `${job.jobNumber} - ${job.name}`)),
   ].sort((a, b) => {
@@ -1181,11 +1185,13 @@ export function TimeEntryViewer() {
                   <SelectValue placeholder="Select employee" />
                 </SelectTrigger>
                 <SelectContent>
-                  {employees.filter((employee) => employee.isActive !== false).map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id}>
-                      {employee.name} - {employee.title}
-                    </SelectItem>
-                  ))}
+                  {employees
+                    .filter((employee) => employee.isActive !== false)
+                    .map((employee) => (
+                      <SelectItem key={employee.id} value={employee.id}>
+                        {employee.name} - {employee.title}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>

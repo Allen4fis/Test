@@ -449,16 +449,22 @@ export function EmployeeManagement() {
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) =>
-                              setFormData({ ...formData, isActive: e.target.checked })
+                              setFormData({
+                                ...formData,
+                                isActive: e.target.checked,
+                              })
                             }
                             className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
                           />
                           <Label htmlFor="isActive" className="text-sm">
-                            {formData.isActive ? "Active Employee" : "Inactive Employee"}
+                            {formData.isActive
+                              ? "Active Employee"
+                              : "Inactive Employee"}
                           </Label>
                         </div>
                         <p className="text-xs text-gray-500">
-                          Inactive employees will not appear in dropdown selections for new entries
+                          Inactive employees will not appear in dropdown
+                          selections for new entries
                         </p>
                       </div>
                     </div>
@@ -768,7 +774,11 @@ export function EmployeeManagement() {
                       <TableCell>
                         <Badge
                           variant={employee.isActive ? "default" : "secondary"}
-                          className={employee.isActive ? "bg-green-100 text-green-800 border-green-300" : "bg-gray-100 text-gray-600 border-gray-300"}
+                          className={
+                            employee.isActive
+                              ? "bg-green-100 text-green-800 border-green-300"
+                              : "bg-gray-100 text-gray-600 border-gray-300"
+                          }
                         >
                           {employee.isActive ? "Active" : "Inactive"}
                         </Badge>

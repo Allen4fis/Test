@@ -728,26 +728,30 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                     <SelectValue placeholder="Select employee" />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees.filter((employee) => employee.isActive !== false).map((employee) => {
-                      const manager = employee.managerId
-                        ? employees.find((emp) => emp.id === employee.managerId)
-                        : null;
+                    {employees
+                      .filter((employee) => employee.isActive !== false)
+                      .map((employee) => {
+                        const manager = employee.managerId
+                          ? employees.find(
+                              (emp) => emp.id === employee.managerId,
+                            )
+                          : null;
 
-                      const employeeType =
-                        employee.category === "dsp"
-                          ? "DSP"
-                          : employee.category === "dspot"
-                            ? "DSPOT"
-                            : manager
-                              ? `Employee of ${manager.name}`
-                              : "Direct Employee";
+                        const employeeType =
+                          employee.category === "dsp"
+                            ? "DSP"
+                            : employee.category === "dspot"
+                              ? "DSPOT"
+                              : manager
+                                ? `Employee of ${manager.name}`
+                                : "Direct Employee";
 
-                      return (
-                        <SelectItem key={employee.id} value={employee.id}>
-                          {employee.name} - {employee.title} • {employeeType}
-                        </SelectItem>
-                      );
-                    })}
+                        return (
+                          <SelectItem key={employee.id} value={employee.id}>
+                            {employee.name} - {employee.title} • {employeeType}
+                          </SelectItem>
+                        );
+                      })}
                   </SelectContent>
                 </Select>
               </div>
