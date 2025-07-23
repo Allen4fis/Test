@@ -599,6 +599,8 @@ export function InvoiceManagement() {
   }, [
     jobStats,
     searchQuery,
+    showActiveJobs,
+    showInactiveJobs,
     showBillableJobs,
     showNonBillableJobs,
     showFullyInvoiced,
