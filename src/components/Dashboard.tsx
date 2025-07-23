@@ -675,4 +675,6 @@ export function Dashboard({
       </Card>
     </div>
   );
-}
+});
+
+export { Dashboard };
