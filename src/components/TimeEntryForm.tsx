@@ -69,7 +69,7 @@ import {
   getTodayString as getLocalDateString,
 } from "@/utils/dateUtils";
 
-export function TimeEntryForm() {
+const TimeEntryForm = memo(function TimeEntryForm() {
   const {
     employees,
     jobs,
@@ -1734,4 +1734,6 @@ export function TimeEntryForm() {
       />
     </div>
   );
-}
+});
+
+export { TimeEntryForm };
