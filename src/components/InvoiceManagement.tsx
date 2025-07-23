@@ -1331,17 +1331,6 @@ export function InvoiceManagement() {
                               placeholder="Click to select all text, then Ctrl+C to copy"
                               title="Click to select all, then Ctrl+C to copy"
                             />
-
-                            <div className="flex flex-wrap gap-2 justify-center mt-2">
-                              {employeesWithLOA.map((employee, index) => (
-                                <div
-                                  key={index}
-                                  className="text-xs bg-purple-800/50 px-2 py-1 rounded border border-purple-500/30"
-                                >
-                                  {employee.name} - {employee.allowances} allowance{employee.allowances > 1 ? 's' : ''}
-                                </div>
-                              ))}
-                            </div>
                           </div>
                         )}
                       </div>
