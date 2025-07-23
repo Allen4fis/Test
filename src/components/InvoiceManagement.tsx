@@ -750,122 +750,135 @@ export function InvoiceManagement() {
               </CardDescription>
             </div>
 
-            {/* Compact Controls */}
-            <div className="flex items-center gap-2 text-sm">
-              <Input
-                placeholder="Search jobs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 h-8 bg-gray-800 border-gray-600 text-gray-100 placeholder:text-gray-400"
-              />
-              <Select
-                value={sortBy}
-                onValueChange={(value) => setSortBy(value as any)}
-              >
-                <SelectTrigger className="w-40 h-8 bg-gray-800 border-gray-600 text-gray-100">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-600">
-                  <SelectItem value="jobNumber" className="text-gray-100">
-                    Job Number
-                  </SelectItem>
-                  <SelectItem value="jobName" className="text-gray-100">
-                    Job Name
-                  </SelectItem>
-                  <SelectItem
-                    value="invoicePercentage"
-                    className="text-gray-100"
-                  >
-                    Invoice %
-                  </SelectItem>
-                  <SelectItem value="paidPercentage" className="text-gray-100">
-                    Paid %
-                  </SelectItem>
-                  <SelectItem
-                    value="uninvoicedBillable"
-                    className="text-gray-100"
-                  >
-                    Uninvoiced $
-                  </SelectItem>
-                  <SelectItem value="unpaidBillable" className="text-gray-100">
-                    Unpaid $
-                  </SelectItem>
-                  <SelectItem value="billableStatus" className="text-gray-100">
-                    Job Type
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Controls - Two Row Layout */}
+            <div className="space-y-3">
+              {/* Top Row: Search and Sort */}
+              <div className="flex items-center gap-2 text-sm">
+                <Input
+                  placeholder="Search jobs..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-48 h-8 bg-gray-800 border-gray-600 text-gray-100 placeholder:text-gray-400"
+                />
+                <Select
+                  value={sortBy}
+                  onValueChange={(value) => setSortBy(value as any)}
+                >
+                  <SelectTrigger className="w-40 h-8 bg-gray-800 border-gray-600 text-gray-100">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-600">
+                    <SelectItem value="jobNumber" className="text-gray-100">
+                      Job Number
+                    </SelectItem>
+                    <SelectItem value="jobName" className="text-gray-100">
+                      Job Name
+                    </SelectItem>
+                    <SelectItem
+                      value="invoicePercentage"
+                      className="text-gray-100"
+                    >
+                      Invoice %
+                    </SelectItem>
+                    <SelectItem value="paidPercentage" className="text-gray-100">
+                      Paid %
+                    </SelectItem>
+                    <SelectItem
+                      value="uninvoicedBillable"
+                      className="text-gray-100"
+                    >
+                      Uninvoiced $
+                    </SelectItem>
+                    <SelectItem value="unpaidBillable" className="text-gray-100">
+                      Unpaid $
+                    </SelectItem>
+                    <SelectItem value="billableStatus" className="text-gray-100">
+                      Job Type
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-                }
-                className="h-8 px-2"
-              >
-                {sortDirection === "asc" ? "↑" : "↓"}
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+                  }
+                  className="h-8 px-2"
+                >
+                  {sortDirection === "asc" ? "↑" : "↓"}
+                </Button>
 
-              <div className="flex gap-1">
-                <Button
-                  variant={showUninvoiced ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowUninvoiced(!showUninvoiced)}
-                  className="h-7 px-2 text-xs"
-                >
-                  Uninvoiced
-                </Button>
-                <Button
-                  variant={showUnpaid ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowUnpaid(!showUnpaid)}
-                  className="h-7 px-2 text-xs"
-                >
-                  Unpaid
-                </Button>
-                <Button
-                  variant={showBillableJobs ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowBillableJobs(!showBillableJobs)}
-                  className="h-7 px-2 text-xs"
-                >
-                  Billable
-                </Button>
-                <Button
-                  variant={showNonBillableJobs ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowNonBillableJobs(!showNonBillableJobs)}
-                  className="h-7 px-2 text-xs"
-                >
-                  Non-Billable
-                </Button>
+                <span className="text-xs text-gray-500 ml-auto">
+                  {filteredAndSortedJobStats.length} jobs
+                </span>
               </div>
 
-              {/* Active/Inactive Job Filters */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">Status:</span>
-                <Button
-                  variant={showActiveJobs ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowActiveJobs(!showActiveJobs)}
-                  className="h-7 px-2 text-xs"
-                >
-                  Active
-                </Button>
-                <Button
-                  variant={showInactiveJobs ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowInactiveJobs(!showInactiveJobs)}
-                  className="h-7 px-2 text-xs"
-                >
-                  Inactive
-                </Button>
-              </div>
+              {/* Bottom Row: Filter Buttons */}
+              <div className="flex items-center gap-4 text-sm flex-wrap">
+                {/* Invoice Status Filters */}
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-400 mr-1">Show:</span>
+                  <Button
+                    variant={showUninvoiced ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowUninvoiced(!showUninvoiced)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    Uninvoiced
+                  </Button>
+                  <Button
+                    variant={showUnpaid ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowUnpaid(!showUnpaid)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    Unpaid
+                  </Button>
+                </div>
 
-              <span className="text-xs text-gray-500">
-                {filteredAndSortedJobStats.length} jobs
-              </span>
+                {/* Job Type Filters */}
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-400 mr-1">Type:</span>
+                  <Button
+                    variant={showBillableJobs ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowBillableJobs(!showBillableJobs)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    Billable
+                  </Button>
+                  <Button
+                    variant={showNonBillableJobs ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowNonBillableJobs(!showNonBillableJobs)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    Non-Billable
+                  </Button>
+                </div>
+
+                {/* Active/Inactive Job Filters */}
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-400 mr-1">Status:</span>
+                  <Button
+                    variant={showActiveJobs ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowActiveJobs(!showActiveJobs)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    Active
+                  </Button>
+                  <Button
+                    variant={showInactiveJobs ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowInactiveJobs(!showInactiveJobs)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    Inactive
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </CardHeader>
