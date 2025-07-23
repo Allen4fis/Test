@@ -62,7 +62,7 @@ interface DashboardProps {
   };
 }
 
-export function Dashboard({
+const Dashboard = memo(function Dashboard({
   autosaveInfo,
   triggerManualSave,
 }: DashboardProps = {}) {
