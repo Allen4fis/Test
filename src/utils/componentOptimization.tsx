@@ -3,16 +3,15 @@
  * Provides higher-order components and hooks for maximum React performance
  */
 
-import {
-  memo,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
+import { 
+  memo, 
+  useMemo, 
+  useCallback, 
+  useRef, 
+  useEffect, 
   useState,
   ReactNode,
   ComponentType,
-  ReactElement,
 } from 'react';
 
 interface OptimizationOptions {
@@ -33,12 +32,12 @@ export const optimizedMemo = <P extends object>(
       return Object.keys(prevProps).length === Object.keys(nextProps).length &&
         Object.keys(prevProps).every(key => prevProps[key] === nextProps[key]);
     }
-
+    
     return JSON.stringify(prevProps) === JSON.stringify(nextProps);
   });
 
   const MemoizedComponent = memo(Component, (prevProps, nextProps) => areEqual(prevProps, nextProps));
-
+  
   if (options.displayName) {
     MemoizedComponent.displayName = options.displayName;
   }
@@ -49,10 +48,10 @@ export const optimizedMemo = <P extends object>(
 /**
  * Hook for optimized callbacks with dependency tracking
  */
-export const useOptimizedCallback = <T extends (...args: any[]) => any>(
+export function useOptimizedCallback<T extends (...args: any[]) => any>(
   callback: T,
   deps: React.DependencyList
-): T => {
+): T {
   const callbackRef = useRef(callback);
   const depsRef = useRef(deps);
 
@@ -65,16 +64,16 @@ export const useOptimizedCallback = <T extends (...args: any[]) => any>(
   }, deps);
 
   return useCallback(callbackRef.current, []) as T;
-};
+}
 
 /**
  * Hook for optimized memoization with size limits
  */
-export const useOptimizedMemo = <T,>(
+export function useOptimizedMemo<T>(
   factory: () => T,
   deps: React.DependencyList,
   maxCacheSize: number = 10
-): T => {
+): T {
   const cache = useRef<Map<string, T>>(new Map());
   const keyRef = useRef<string>('');
 
@@ -100,15 +99,15 @@ export const useOptimizedMemo = <T,>(
     keyRef.current = key;
     return result;
   }, [key]);
-};
+}
 
 /**
  * Hook for debounced values with performance tracking
  */
-export const useOptimizedDebounce = <T>(
+export function useOptimizedDebounce<T>(
   value: T,
   delay: number
-): { debouncedValue: T; isDebouncing: boolean; updateCount: number } => {
+): { debouncedValue: T; isDebouncing: boolean; updateCount: number } {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   const [isDebouncing, setIsDebouncing] = useState(false);
   const [updateCount, setUpdateCount] = useState(0);
@@ -131,17 +130,17 @@ export const useOptimizedDebounce = <T>(
   }, [value, delay]);
 
   return { debouncedValue, isDebouncing, updateCount };
-};
+}
 
 /**
  * Hook for virtualized list rendering
  */
-export const useVirtualizedList = <T>(
+export function useVirtualizedList<T>(
   items: T[],
   itemHeight: number,
   containerHeight: number,
   overscan: number = 5
-) => {
+) {
   const [scrollTop, setScrollTop] = useState(0);
 
   const visibleRange = useMemo(() => {
@@ -150,7 +149,7 @@ export const useVirtualizedList = <T>(
       start + Math.ceil(containerHeight / itemHeight) + overscan,
       items.length
     );
-
+    
     return {
       start: Math.max(0, start - overscan),
       end,
@@ -183,15 +182,15 @@ export const useVirtualizedList = <T>(
       endIndex: visibleRange.end,
     },
   };
-};
+}
 
 /**
  * Higher-order component for performance monitoring
  */
-export const withPerformanceMonitoring = <P extends object>(
+export function withPerformanceMonitoring<P extends object>(
   Component: ComponentType<P>,
   componentName?: string
-) => {
+) {
   return memo((props: P) => {
     const renderStart = useRef<number>(0);
     const renderCount = useRef<number>(0);
@@ -206,7 +205,7 @@ export const withPerformanceMonitoring = <P extends object>(
 
     useEffect(() => {
       const renderTime = performance.now() - renderStart.current;
-
+      
       setRenderStats(prev => ({
         count: renderCount.current,
         averageTime: (prev.averageTime * (prev.count - 1) + renderTime) / prev.count,
@@ -221,22 +220,22 @@ export const withPerformanceMonitoring = <P extends object>(
 
     return <Component {...props} />;
   });
-};
+}
 
 /**
  * Hook for optimized event handlers
  */
-export const useOptimizedHandlers = <T extends Record<string, (...args: any[]) => any>>(
+export function useOptimizedHandlers<T extends Record<string, (...args: any[]) => any>>(
   handlers: T
-): T => {
+): T {
   const handlersRef = useRef<T>(handlers);
-
+  
   // Update ref if handlers change (shallow comparison)
   useEffect(() => {
     const hasChanged = Object.keys(handlers).some(
       key => handlers[key] !== handlersRef.current[key]
     );
-
+    
     if (hasChanged) {
       handlersRef.current = handlers;
     }
@@ -244,7 +243,7 @@ export const useOptimizedHandlers = <T extends Record<string, (...args: any[]) =
 
   return useMemo(() => {
     const optimizedHandlers = {} as T;
-
+    
     Object.keys(handlersRef.current).forEach(key => {
       optimizedHandlers[key] = useCallback(
         (...args: any[]) => handlersRef.current[key](...args),
@@ -254,7 +253,7 @@ export const useOptimizedHandlers = <T extends Record<string, (...args: any[]) =
 
     return optimizedHandlers;
   }, []);
-};
+}
 
 /**
  * Component for lazy loading with intersection observer
