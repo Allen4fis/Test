@@ -324,7 +324,14 @@ export function JobManagement() {
     });
 
     return sorted;
-  }, [jobProfitData, showActive, showInactive, sortBy, sortDirection, searchQuery]);
+  }, [
+    jobProfitData,
+    showActive,
+    showInactive,
+    sortBy,
+    sortDirection,
+    searchQuery,
+  ]);
 
   // Pagination for jobs
   const [itemsPerPage, setItemsPerPage] = useState(20);

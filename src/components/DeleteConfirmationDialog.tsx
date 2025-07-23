@@ -233,13 +233,17 @@ export function DeleteConfirmationDialog({
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertCircle className={`h-8 w-8 ${confirmStep === 0 ? 'text-red-600 animate-pulse' : 'text-red-700 animate-bounce'}`} />
+            <AlertCircle
+              className={`h-8 w-8 ${confirmStep === 0 ? "text-red-600 animate-pulse" : "text-red-700 animate-bounce"}`}
+            />
             {confirmStep === 0 &&
               `🚨🔥⚠️ EXTREME DANGER - PERMANENT DESTRUCTION WARNING ⚠️🔥🚨`}
-            {confirmStep === 1 && `🔒💀 TYPE TO CONFIRM TOTAL ANNIHILATION 💀🔒`}
+            {confirmStep === 1 &&
+              `🔒💀 TYPE TO CONFIRM TOTAL ANNIHILATION 💀🔒`}
           </DialogTitle>
           <DialogDescription className="text-lg font-bold">
-            {confirmStep === 0 && `🔴 CRITICAL SYSTEM WARNING: ${content.destructionMessage.toUpperCase()}`}
+            {confirmStep === 0 &&
+              `🔴 CRITICAL SYSTEM WARNING: ${content.destructionMessage.toUpperCase()}`}
             {confirmStep === 1 &&
               `⚡ FINAL STEP: Type '${content.confirmWord}' to execute PERMANENT DELETION ⚡`}
           </DialogDescription>
@@ -287,31 +291,51 @@ export function DeleteConfirmationDialog({
                 </h5>
                 <div className="bg-black text-orange-300 p-3 rounded border-4 border-orange-400 font-bold text-base">
                   <p className="text-center">
-                    <span className="text-red-400">🎯 NAME:</span> <span className="text-white font-black text-lg">{item.name.toUpperCase()}</span>
+                    <span className="text-red-400">🎯 NAME:</span>{" "}
+                    <span className="text-white font-black text-lg">
+                      {item.name.toUpperCase()}
+                    </span>
                   </p>
                   <p className="text-center mt-1">
                     <span className="text-red-400">🎯 TYPE:</span>{" "}
-                    <span className="text-white font-black text-lg">{item.type.replace("-", " ").toUpperCase()}</span>
+                    <span className="text-white font-black text-lg">
+                      {item.type.replace("-", " ").toUpperCase()}
+                    </span>
                   </p>
                   {item.associatedData && (
                     <div className="mt-4 text-center">
-                      <p className="text-red-400 font-black mb-2">💀 COLLATERAL DAMAGE:</p>
+                      <p className="text-red-400 font-black mb-2">
+                        💀 COLLATERAL DAMAGE:
+                      </p>
                       {item.associatedData.timeEntries && (
-                        <p className="text-yellow-300">💥 {item.associatedData.timeEntries} TIME ENTRIES WILL BE OBLITERATED</p>
+                        <p className="text-yellow-300">
+                          💥 {item.associatedData.timeEntries} TIME ENTRIES WILL
+                          BE OBLITERATED
+                        </p>
                       )}
                       {item.associatedData.jobs && (
-                        <p className="text-yellow-300">💥 {item.associatedData.jobs} JOBS WILL BE OBLITERATED</p>
+                        <p className="text-yellow-300">
+                          💥 {item.associatedData.jobs} JOBS WILL BE OBLITERATED
+                        </p>
                       )}
                       {item.associatedData.employees && (
-                        <p className="text-yellow-300">💥 {item.associatedData.employees} EMPLOYEES WILL BE OBLITERATED</p>
+                        <p className="text-yellow-300">
+                          💥 {item.associatedData.employees} EMPLOYEES WILL BE
+                          OBLITERATED
+                        </p>
                       )}
                       {item.associatedData.rentalEntries && (
                         <p className="text-yellow-300">
-                          💥 {item.associatedData.rentalEntries} RENTAL ENTRIES WILL BE OBLITERATED
+                          💥 {item.associatedData.rentalEntries} RENTAL ENTRIES
+                          WILL BE OBLITERATED
                         </p>
                       )}
                       {item.associatedData.additionalInfo?.map(
-                        (info, index) => <p key={index} className="text-yellow-300">💥 {info.toUpperCase()}</p>,
+                        (info, index) => (
+                          <p key={index} className="text-yellow-300">
+                            💥 {info.toUpperCase()}
+                          </p>
+                        ),
                       )}
                     </div>
                   )}
@@ -336,8 +360,12 @@ export function DeleteConfirmationDialog({
                     }
                     className="h-5 w-5 accent-red-500 flex-shrink-0"
                   />
-                  <Label htmlFor="warning1" className="text-yellow-200 font-bold text-base cursor-pointer">
-                    ✅ I ACKNOWLEDGE THIS WILL PERMANENTLY DELETE "{item.name.toUpperCase()}" AND ALL ASSOCIATED DATA FOREVER
+                  <Label
+                    htmlFor="warning1"
+                    className="text-yellow-200 font-bold text-base cursor-pointer"
+                  >
+                    ✅ I ACKNOWLEDGE THIS WILL PERMANENTLY DELETE "
+                    {item.name.toUpperCase()}" AND ALL ASSOCIATED DATA FOREVER
                   </Label>
                 </div>
 
@@ -354,8 +382,12 @@ export function DeleteConfirmationDialog({
                     }
                     className="h-5 w-5 accent-red-500 flex-shrink-0"
                   />
-                  <Label htmlFor="warning2" className="text-yellow-200 font-bold text-base cursor-pointer">
-                    ✅ I UNDERSTAND THERE IS ABSOLUTELY NO WAY TO RECOVER THIS DATA ONCE DELETED
+                  <Label
+                    htmlFor="warning2"
+                    className="text-yellow-200 font-bold text-base cursor-pointer"
+                  >
+                    ✅ I UNDERSTAND THERE IS ABSOLUTELY NO WAY TO RECOVER THIS
+                    DATA ONCE DELETED
                   </Label>
                 </div>
 
@@ -372,8 +404,12 @@ export function DeleteConfirmationDialog({
                     }
                     className="h-5 w-5 accent-red-500 flex-shrink-0"
                   />
-                  <Label htmlFor="warning3" className="text-yellow-200 font-bold text-base cursor-pointer">
-                    ✅ I ACCEPT FULL RESPONSIBILITY FOR THIS DESTRUCTIVE ACTION AND ALL CONSEQUENCES
+                  <Label
+                    htmlFor="warning3"
+                    className="text-yellow-200 font-bold text-base cursor-pointer"
+                  >
+                    ✅ I ACCEPT FULL RESPONSIBILITY FOR THIS DESTRUCTIVE ACTION
+                    AND ALL CONSEQUENCES
                   </Label>
                 </div>
               </div>
@@ -390,7 +426,8 @@ export function DeleteConfirmationDialog({
                       🔒💀 FINAL EXECUTION COMMAND 💀🔒
                     </h4>
                     <p className="text-yellow-100 font-bold text-lg animate-bounce">
-                      TYPE THE DESTRUCTION CODE TO PROCEED WITH TOTAL ANNIHILATION
+                      TYPE THE DESTRUCTION CODE TO PROCEED WITH TOTAL
+                      ANNIHILATION
                     </p>
                   </div>
 
@@ -405,7 +442,10 @@ export function DeleteConfirmationDialog({
 
                   <div className="bg-red-800 border-4 border-yellow-400 rounded-lg p-3 mb-4">
                     <p className="text-yellow-200 font-bold text-base mb-3">
-                      TYPE EXACTLY: <span className="text-white font-black text-xl bg-black px-2 py-1 rounded">{content.confirmWord}</span>
+                      TYPE EXACTLY:{" "}
+                      <span className="text-white font-black text-xl bg-black px-2 py-1 rounded">
+                        {content.confirmWord}
+                      </span>
                     </p>
                     <Input
                       value={confirmText}
@@ -421,10 +461,16 @@ export function DeleteConfirmationDialog({
                       🔥 MATCH EXACTLY OR DESTRUCTION WILL BE ABORTED 🔥
                     </p>
                     <p className="text-white font-black text-lg mt-2">
-                      REQUIRED: <span className="bg-black px-2 py-1 rounded text-red-400">{content.confirmWord}</span>
+                      REQUIRED:{" "}
+                      <span className="bg-black px-2 py-1 rounded text-red-400">
+                        {content.confirmWord}
+                      </span>
                     </p>
                     <p className="text-yellow-200 font-bold mt-2">
-                      ENTERED: <span className="bg-black px-2 py-1 rounded text-red-400">{confirmText || "NOTHING ENTERED"}</span>
+                      ENTERED:{" "}
+                      <span className="bg-black px-2 py-1 rounded text-red-400">
+                        {confirmText || "NOTHING ENTERED"}
+                      </span>
                     </p>
                   </div>
                 </div>

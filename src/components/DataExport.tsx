@@ -214,7 +214,8 @@ export function DataExport() {
       }
 
       // Apply DSP 1x rate logic to match Dashboard calculation
-      const entryEmployeeCategory = entry.employeeCategory || employee?.category;
+      const entryEmployeeCategory =
+        entry.employeeCategory || employee?.category;
       const manager = employee?.managerId
         ? employees.find((emp) => emp.id === employee.managerId)
         : null;
@@ -285,7 +286,9 @@ export function DataExport() {
         entry.billingUnit,
       );
       const totalBillable = duration * entry.quantity * entry.rateUsed; // What we charge client
-      const totalCost = entry.dspRate ? duration * entry.quantity * entry.dspRate : 0; // What we pay DSP
+      const totalCost = entry.dspRate
+        ? duration * entry.quantity * entry.dspRate
+        : 0; // What we pay DSP
 
       return {
         ...entry,
@@ -380,7 +383,8 @@ export function DataExport() {
     const totalNonBillableCost =
       totalNonBillableLaborCost + totalNonBillableRentalCost;
     const totalCombinedCost = totalLaborCost + totalRentalCost;
-    const totalProfit = totalBillableRevenue - (totalBillableLaborCost + totalBillableRentalCost);
+    const totalProfit =
+      totalBillableRevenue - (totalBillableLaborCost + totalBillableRentalCost);
 
     // Tax breakdowns by employee category and province
     const employeeCategoriesByProvince = employees.reduce(

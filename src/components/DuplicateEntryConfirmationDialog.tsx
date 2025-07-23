@@ -61,7 +61,8 @@ export function DuplicateEntryConfirmationDialog({
             ⚠️ DUPLICATE TIME ENTRIES DETECTED
           </DialogTitle>
           <DialogDescription>
-            Duplicate entries found for {date}. Review the conflicts below and choose how to proceed.
+            Duplicate entries found for {date}. Review the conflicts below and
+            choose how to proceed.
           </DialogDescription>
         </DialogHeader>
 
@@ -74,7 +75,8 @@ export function DuplicateEntryConfirmationDialog({
                   🔍 DUPLICATE ENTRIES FOUND
                 </h4>
                 <p className="text-orange-700 mt-2 font-medium">
-                  The following entries already exist for {date} and will create duplicates:
+                  The following entries already exist for {date} and will create
+                  duplicates:
                 </p>
                 <div className="mt-3 p-3 bg-orange-100 rounded border-l-4 border-orange-400">
                   <p className="text-orange-800 font-semibold text-sm mb-2">
@@ -115,10 +117,12 @@ export function DuplicateEntryConfirmationDialog({
                 <div className="mt-3 space-y-3">
                   <div className="p-3 bg-green-100 rounded border-l-4 border-green-400">
                     <p className="text-green-800 font-medium">
-                      ✅ <strong>Continue:</strong> Create duplicate entries alongside existing ones
+                      ✅ <strong>Continue:</strong> Create duplicate entries
+                      alongside existing ones
                     </p>
                     <p className="text-green-700 text-sm mt-1">
-                      Both old and new entries will exist for the same employee/job/date combination
+                      Both old and new entries will exist for the same
+                      employee/job/date combination
                     </p>
                   </div>
                   <div className="p-3 bg-red-100 rounded border-l-4 border-red-400">
@@ -126,7 +130,8 @@ export function DuplicateEntryConfirmationDialog({
                       ❌ <strong>Cancel:</strong> Review existing entries first
                     </p>
                     <p className="text-red-700 text-sm mt-1">
-                      Go to Time Entry Viewer to edit or delete existing entries before adding new ones
+                      Go to Time Entry Viewer to edit or delete existing entries
+                      before adding new ones
                     </p>
                   </div>
                 </div>
@@ -143,7 +148,10 @@ export function DuplicateEntryConfirmationDialog({
                 onChange={(e) => setConfirmationAccepted(e.target.checked)}
                 className="h-4 w-4"
               />
-              <label htmlFor="duplicate-warning" className="text-sm font-medium">
+              <label
+                htmlFor="duplicate-warning"
+                className="text-sm font-medium"
+              >
                 I understand this will create duplicate time entries for {date}
               </label>
             </div>
@@ -151,8 +159,8 @@ export function DuplicateEntryConfirmationDialog({
         </div>
 
         <DialogFooter className="flex justify-between">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleCancel}
             className="flex items-center gap-2"
           >

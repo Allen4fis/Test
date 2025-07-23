@@ -186,13 +186,18 @@ export function TimeEntryForm() {
   // Handle duplicate dialog confirmation
   const handleDuplicateConfirm = async () => {
     if (pendingSubmission) {
-      await proceedWithSubmission(pendingSubmission.hourEntries, pendingSubmission.rentalEntries);
+      await proceedWithSubmission(
+        pendingSubmission.hourEntries,
+        pendingSubmission.rentalEntries,
+      );
     }
   };
 
   // Handle duplicate dialog cancellation
   const handleDuplicateCancel = () => {
-    setFormError("Entry cancelled due to duplicate detection. Please review existing entries.");
+    setFormError(
+      "Entry cancelled due to duplicate detection. Please review existing entries.",
+    );
     setPendingSubmission(null);
     setDuplicateEntries([]);
   };
@@ -205,7 +210,10 @@ export function TimeEntryForm() {
   };
 
   // Extract submission logic into a separate function
-  const proceedWithSubmission = async (hourEntries: any[], rentalEntries: any[]) => {
+  const proceedWithSubmission = async (
+    hourEntries: any[],
+    rentalEntries: any[],
+  ) => {
     setFormError("");
     setIsSubmitting(true);
 
