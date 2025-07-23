@@ -7,6 +7,7 @@ export interface Employee {
   costWage: number; // Internal cost/what we pay employee
   managerId?: string; // ID of the employee who manages this employee
   category?: string; // "employee", "dsp", "dspot", or undefined for actual employee relationships
+  isActive: boolean; // Whether the employee is active or inactive
   createdAt: string;
 }
 
