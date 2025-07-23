@@ -1289,15 +1289,17 @@ export function InvoiceManagement() {
 
               // Get employees with Live Out Allowances
               const employeesWithLOA = breakdown.timeEntries
-                .filter(entry => (entry.loaCount || 0) > 0)
+                .filter((entry) => (entry.loaCount || 0) > 0)
                 .reduce((acc, entry) => {
-                  const existingEmployee = acc.find(emp => emp.name === entry.employeeName);
+                  const existingEmployee = acc.find(
+                    (emp) => emp.name === entry.employeeName,
+                  );
                   if (existingEmployee) {
                     existingEmployee.allowances += entry.loaCount || 0;
                   } else {
                     acc.push({
                       name: entry.employeeName,
-                      allowances: entry.loaCount || 0
+                      allowances: entry.loaCount || 0,
                     });
                   }
                   return acc;
@@ -1323,14 +1325,18 @@ export function InvoiceManagement() {
                         {employeesWithLOA.length > 0 && (
                           <div className="mt-4">
                             <div className="text-sm text-purple-300 mb-2 text-center">
-                              Employees with Allowances ({employeesWithLOA.length})
+                              Employees with Allowances (
+                              {employeesWithLOA.length})
                             </div>
 
                             {/* Easy copy text area */}
                             <textarea
                               value={employeesWithLOA
-                                .map(emp => `${emp.name} - ${emp.allowances} LoA${emp.allowances > 1 ? 's' : ''}`)
-                                .join('\n')}
+                                .map(
+                                  (emp) =>
+                                    `${emp.name} - ${emp.allowances} LoA${emp.allowances > 1 ? "s" : ""}`,
+                                )
+                                .join("\n")}
                               readOnly
                               onClick={(e) => {
                                 e.target.select();
@@ -1441,22 +1447,27 @@ export function InvoiceManagement() {
                               <TableCell className="text-gray-100">
                                 <div className="space-y-2">
                                   <div className="space-y-1">
-                                    {group.employees.map((employee, empIndex) => (
-                                      <div
-                                        key={empIndex}
-                                        className="text-sm bg-gray-800/50 px-2 py-1 rounded"
-                                      >
-                                        {employee.name} -{" "}
-                                        {employee.hours.toFixed(1)}h
-                                      </div>
-                                    ))}
+                                    {group.employees.map(
+                                      (employee, empIndex) => (
+                                        <div
+                                          key={empIndex}
+                                          className="text-sm bg-gray-800/50 px-2 py-1 rounded"
+                                        >
+                                          {employee.name} -{" "}
+                                          {employee.hours.toFixed(1)}h
+                                        </div>
+                                      ),
+                                    )}
                                   </div>
 
                                   {/* Copy textarea for this group's employees */}
                                   <textarea
                                     value={group.employees
-                                      .map(emp => `${emp.name} - ${emp.hours.toFixed(1)}h`)
-                                      .join('\n')}
+                                      .map(
+                                        (emp) =>
+                                          `${emp.name} - ${emp.hours.toFixed(1)}h`,
+                                      )
+                                      .join("\n")}
                                     readOnly
                                     onClick={(e) => {
                                       e.target.select();
