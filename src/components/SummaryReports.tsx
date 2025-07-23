@@ -985,7 +985,7 @@ export function SummaryReports() {
                           size="sm"
                           onClick={() =>
                             setSelectedEmployees(
-                              employees.map((emp) => emp.name),
+                              employees.filter((emp) => emp.isActive !== false).map((emp) => emp.name),
                             )
                           }
                           className="h-6 px-2 text-xs text-orange-400 hover:text-orange-300"
@@ -1008,7 +1008,7 @@ export function SummaryReports() {
                           No employees available
                         </p>
                       ) : (
-                        employees.map((employee) => (
+                        employees.filter((employee) => employee.isActive !== false).map((employee) => (
                           <div
                             key={employee.id}
                             className="flex items-center space-x-2"
