@@ -780,7 +780,10 @@ export function InvoiceManagement() {
                     >
                       Invoice %
                     </SelectItem>
-                    <SelectItem value="paidPercentage" className="text-gray-100">
+                    <SelectItem
+                      value="paidPercentage"
+                      className="text-gray-100"
+                    >
                       Paid %
                     </SelectItem>
                     <SelectItem
@@ -789,10 +792,16 @@ export function InvoiceManagement() {
                     >
                       Uninvoiced $
                     </SelectItem>
-                    <SelectItem value="unpaidBillable" className="text-gray-100">
+                    <SelectItem
+                      value="unpaidBillable"
+                      className="text-gray-100"
+                    >
                       Unpaid $
                     </SelectItem>
-                    <SelectItem value="billableStatus" className="text-gray-100">
+                    <SelectItem
+                      value="billableStatus"
+                      className="text-gray-100"
+                    >
                       Job Type
                     </SelectItem>
                   </SelectContent>

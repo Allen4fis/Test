@@ -41,7 +41,7 @@ interface OptimizedTimeEntryViewerProps {
 
 export function OptimizedTimeEntryViewer({
   maxVisibleEntries = 1000,
-  enableVirtualization = true
+  enableVirtualization = true,
 }: OptimizedTimeEntryViewerProps) {
   const {
     employees,
@@ -51,20 +51,23 @@ export function OptimizedTimeEntryViewer({
     hourTypes,
     provinces,
     deleteTimeEntry,
-    deleteRentalEntry
+    deleteRentalEntry,
   } = useTimeTracking();
 
-  const { getTimeEntrySummaries, getCacheStats, clearCache } = useOptimizedCalculations();
+  const { getTimeEntrySummaries, getCacheStats, clearCache } =
+    useOptimizedCalculations();
 
   // Filters
   const [employeeFilter, setEmployeeFilter] = useState("all-employees");
   const [jobFilter, setJobFilter] = useState("all-jobs");
   const [dateFilter, setDateFilter] = useState({
     startDate: "",
-    endDate: ""
+    endDate: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"date" | "employee" | "job" | "hours">("date");
+  const [sortBy, setSortBy] = useState<"date" | "employee" | "job" | "hours">(
+    "date",
+  );
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   // Performance tracking
@@ -77,8 +80,11 @@ export function OptimizedTimeEntryViewer({
     setIsFiltering(true);
 
     const combined = [
-      ...timeEntries.map(entry => ({ ...entry, entryType: "time" as const })),
-      ...rentalEntries.map(entry => ({ ...entry, entryType: "rental" as const }))
+      ...timeEntries.map((entry) => ({ ...entry, entryType: "time" as const })),
+      ...rentalEntries.map((entry) => ({
+        ...entry,
+        entryType: "rental" as const,
+      })),
     ];
 
     const processingTime = performance.now() - startTime;
@@ -91,29 +97,32 @@ export function OptimizedTimeEntryViewer({
   // Optimized filtering with debouncing
   const filteredEntries = useMemo(() => {
     const startTime = performance.now();
-    
+
     let filtered = combinedEntries;
 
     // Date range filter
     if (dateFilter.startDate && dateFilter.endDate) {
-      filtered = filtered.filter(entry => {
-        const entryDate = entry.entryType === "time" ? entry.date : entry.startDate;
-        return entryDate >= dateFilter.startDate && entryDate <= dateFilter.endDate;
+      filtered = filtered.filter((entry) => {
+        const entryDate =
+          entry.entryType === "time" ? entry.date : entry.startDate;
+        return (
+          entryDate >= dateFilter.startDate && entryDate <= dateFilter.endDate
+        );
       });
     }
 
     // Employee filter
     if (employeeFilter !== "all-employees") {
-      filtered = filtered.filter(entry => {
-        const employee = employees.find(emp => emp.id === entry.employeeId);
+      filtered = filtered.filter((entry) => {
+        const employee = employees.find((emp) => emp.id === entry.employeeId);
         return employee?.name === employeeFilter;
       });
     }
 
     // Job filter
     if (jobFilter !== "all-jobs") {
-      filtered = filtered.filter(entry => {
-        const job = jobs.find(j => j.id === entry.jobId);
+      filtered = filtered.filter((entry) => {
+        const job = jobs.find((j) => j.id === entry.jobId);
         return job?.jobNumber === jobFilter;
       });
     }
@@ -121,10 +130,10 @@ export function OptimizedTimeEntryViewer({
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(entry => {
-        const employee = employees.find(emp => emp.id === entry.employeeId);
-        const job = jobs.find(j => j.id === entry.jobId);
-        
+      filtered = filtered.filter((entry) => {
+        const employee = employees.find((emp) => emp.id === entry.employeeId);
+        const job = jobs.find((j) => j.id === entry.jobId);
+
         return (
           employee?.name?.toLowerCase().includes(query) ||
           job?.jobNumber?.toLowerCase().includes(query) ||
@@ -137,21 +146,21 @@ export function OptimizedTimeEntryViewer({
     // Sorting
     filtered.sort((a, b) => {
       let aValue: any, bValue: any;
-      
+
       switch (sortBy) {
         case "date":
           aValue = a.entryType === "time" ? a.date : a.startDate;
           bValue = b.entryType === "time" ? b.date : b.startDate;
           break;
         case "employee":
-          const aEmployee = employees.find(emp => emp.id === a.employeeId);
-          const bEmployee = employees.find(emp => emp.id === b.employeeId);
+          const aEmployee = employees.find((emp) => emp.id === a.employeeId);
+          const bEmployee = employees.find((emp) => emp.id === b.employeeId);
           aValue = aEmployee?.name || "";
           bValue = bEmployee?.name || "";
           break;
         case "job":
-          const aJob = jobs.find(j => j.id === a.jobId);
-          const bJob = jobs.find(j => j.id === b.jobId);
+          const aJob = jobs.find((j) => j.id === a.jobId);
+          const bJob = jobs.find((j) => j.id === b.jobId);
           aValue = aJob?.jobNumber || "";
           bValue = bJob?.jobNumber || "";
           break;
@@ -163,7 +172,7 @@ export function OptimizedTimeEntryViewer({
           aValue = 0;
           bValue = 0;
       }
-      
+
       if (typeof aValue === "string") {
         const comparison = aValue.localeCompare(bValue);
         return sortDirection === "asc" ? comparison : -comparison;
@@ -186,29 +195,33 @@ export function OptimizedTimeEntryViewer({
     sortBy,
     sortDirection,
     employees,
-    jobs
+    jobs,
   ]);
 
   // Data virtualization for large datasets
   const virtualizedData = useDataVirtualization(filteredEntries, {
     pageSize: 100,
     bufferSize: 50,
-    maxCachePages: 20
+    maxCachePages: 20,
   });
 
   // Quick stats
   const stats = useMemo(() => {
-    const timeEntriesCount = filteredEntries.filter(e => e.entryType === "time").length;
-    const rentalEntriesCount = filteredEntries.filter(e => e.entryType === "rental").length;
+    const timeEntriesCount = filteredEntries.filter(
+      (e) => e.entryType === "time",
+    ).length;
+    const rentalEntriesCount = filteredEntries.filter(
+      (e) => e.entryType === "rental",
+    ).length;
     const totalHours = filteredEntries
-      .filter(e => e.entryType === "time")
+      .filter((e) => e.entryType === "time")
       .reduce((sum: number, entry: any) => sum + entry.hours, 0);
 
     return {
       timeEntriesCount,
       rentalEntriesCount,
       totalEntries: filteredEntries.length,
-      totalHours
+      totalHours,
     };
   }, [filteredEntries]);
 
@@ -218,13 +231,16 @@ export function OptimizedTimeEntryViewer({
     console.log("Edit entry:", entry);
   }, []);
 
-  const handleDelete = useCallback((entry: any) => {
-    if (entry.entryType === "time") {
-      deleteTimeEntry(entry.id);
-    } else {
-      deleteRentalEntry(entry.id);
-    }
-  }, [deleteTimeEntry, deleteRentalEntry]);
+  const handleDelete = useCallback(
+    (entry: any) => {
+      if (entry.entryType === "time") {
+        deleteTimeEntry(entry.id);
+      } else {
+        deleteRentalEntry(entry.id);
+      }
+    },
+    [deleteTimeEntry, deleteRentalEntry],
+  );
 
   const resetFilters = useCallback(() => {
     setEmployeeFilter("all-employees");
@@ -258,7 +274,9 @@ export function OptimizedTimeEntryViewer({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Total Entries</p>
-                <p className="text-2xl font-bold text-blue-400">{stats.totalEntries}</p>
+                <p className="text-2xl font-bold text-blue-400">
+                  {stats.totalEntries}
+                </p>
               </div>
               <Clock className="h-8 w-8 text-blue-400" />
             </div>
@@ -338,7 +356,12 @@ export function OptimizedTimeEntryViewer({
               <Input
                 type="date"
                 value={dateFilter.startDate}
-                onChange={(e) => setDateFilter(prev => ({ ...prev, startDate: e.target.value }))}
+                onChange={(e) =>
+                  setDateFilter((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -347,14 +370,22 @@ export function OptimizedTimeEntryViewer({
               <Input
                 type="date"
                 value={dateFilter.endDate}
-                onChange={(e) => setDateFilter(prev => ({ ...prev, endDate: e.target.value }))}
+                onChange={(e) =>
+                  setDateFilter((prev) => ({
+                    ...prev,
+                    endDate: e.target.value,
+                  }))
+                }
               />
             </div>
 
             {/* Sort */}
             <div className="space-y-2">
               <Label>Sort By</Label>
-              <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -369,7 +400,10 @@ export function OptimizedTimeEntryViewer({
 
             <div className="space-y-2">
               <Label>Direction</Label>
-              <Select value={sortDirection} onValueChange={(value: any) => setSortDirection(value)}>
+              <Select
+                value={sortDirection}
+                onValueChange={(value: any) => setSortDirection(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -383,9 +417,9 @@ export function OptimizedTimeEntryViewer({
             {/* Reset */}
             <div className="space-y-2">
               <Label>&nbsp;</Label>
-              <Button 
-                onClick={resetFilters} 
-                variant="outline" 
+              <Button
+                onClick={resetFilters}
+                variant="outline"
                 className="w-full"
               >
                 Reset
@@ -408,12 +442,13 @@ export function OptimizedTimeEntryViewer({
                 </div>
               )}
               <Badge variant="outline">
-                {enableVirtualization ? 'Virtualized' : 'Standard'}
+                {enableVirtualization ? "Virtualized" : "Standard"}
               </Badge>
             </div>
           </CardTitle>
           <CardDescription>
-            Showing {filteredEntries.length} entries • Performance optimized for large datasets
+            Showing {filteredEntries.length} entries • Performance optimized for
+            large datasets
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -427,8 +462,12 @@ export function OptimizedTimeEntryViewer({
             />
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-400">Standard list view disabled for performance</p>
-              <p className="text-sm text-gray-500">Use virtualized view for large datasets</p>
+              <p className="text-gray-400">
+                Standard list view disabled for performance
+              </p>
+              <p className="text-sm text-gray-500">
+                Use virtualized view for large datasets
+              </p>
             </div>
           )}
         </CardContent>
@@ -443,7 +482,9 @@ export function OptimizedTimeEntryViewer({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-gray-400">Last Filter:</span>
-              <span className="ml-2 font-mono">{lastFilterTime.toFixed(2)}ms</span>
+              <span className="ml-2 font-mono">
+                {lastFilterTime.toFixed(2)}ms
+              </span>
             </div>
             <div>
               <span className="text-gray-400">Cache Size:</span>
@@ -451,7 +492,9 @@ export function OptimizedTimeEntryViewer({
             </div>
             <div>
               <span className="text-gray-400">Hit Rate:</span>
-              <span className="ml-2 font-mono">{cacheStats.hitRate.toFixed(1)}%</span>
+              <span className="ml-2 font-mono">
+                {cacheStats.hitRate.toFixed(1)}%
+              </span>
             </div>
             <div>
               <span className="text-gray-400">Cache Version:</span>

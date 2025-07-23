@@ -317,7 +317,9 @@ export function SystemHealthCheck() {
                     <p className="text-sm text-gray-400 mb-2">
                       {suggestion.impact}
                     </p>
-                    <p className="text-sm text-blue-300">{suggestion.solution}</p>
+                    <p className="text-sm text-blue-300">
+                      {suggestion.solution}
+                    </p>
                   </div>
                 ))}
               </CollapsibleContent>
@@ -380,9 +382,7 @@ export function SystemHealthCheck() {
                 </div>
               </div>
               <div>
-                <div className="text-lg font-medium text-gray-100">
-                  Status
-                </div>
+                <div className="text-lg font-medium text-gray-100">Status</div>
                 <div className="flex items-center gap-2">
                   {getStatusIcon(optimizationReport.status)}
                   <span className="text-lg font-medium">

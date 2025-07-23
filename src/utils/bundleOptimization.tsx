@@ -3,8 +3,8 @@
  * Reduces initial bundle size and improves loading performance
  */
 
-import { lazy, Suspense, ComponentType, ReactElement } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { lazy, Suspense, ComponentType, ReactElement } from "react";
+import { RefreshCw } from "lucide-react";
 
 interface LazyComponentProps {
   fallback?: ReactElement;
@@ -34,7 +34,7 @@ class BundleOptimizer {
   private analytics: BundleAnalytics = {
     componentLoadTimes: new Map(),
     chunkSizes: new Map(),
-    loadFailures: new Map()
+    loadFailures: new Map(),
   };
 
   private preloadCache = new Set<string>();
@@ -44,23 +44,23 @@ class BundleOptimizer {
   createLazyComponent<T extends ComponentType<any>>(
     importFn: () => Promise<{ default: T }>,
     name: string,
-    options: LazyComponentProps = {}
+    options: LazyComponentProps = {},
   ): ComponentType<any> {
     const LazyComponent = lazy(async () => {
       const startTime = performance.now();
-      
+
       try {
         const module = await importFn();
         const loadTime = performance.now() - startTime;
-        
+
         this.analytics.componentLoadTimes.set(name, loadTime);
         console.log(`Loaded ${name} in ${loadTime.toFixed(2)}ms`);
-        
+
         return module;
       } catch (error) {
         const failures = this.analytics.loadFailures.get(name) || 0;
         this.analytics.loadFailures.set(name, failures + 1);
-        
+
         console.error(`Failed to load component ${name}:`, error);
         throw error;
       }
@@ -68,18 +68,20 @@ class BundleOptimizer {
 
     // Return wrapped component with Suspense
     const WrappedComponent = (props: any) => (
-      <Suspense fallback={options.fallback || <DefaultLoadingFallback name={name} />}>
+      <Suspense
+        fallback={options.fallback || <DefaultLoadingFallback name={name} />}
+      >
         <LazyComponent {...props} />
       </Suspense>
     );
-    
+
     return WrappedComponent;
   }
 
   // Preload component for faster subsequent loads
   async preloadComponent(
     importFn: () => Promise<any>,
-    name: string
+    name: string,
   ): Promise<void> {
     if (this.preloadCache.has(name)) {
       return;
@@ -100,10 +102,10 @@ class BundleOptimizer {
   // Smart preloading based on user behavior
   setupIntelligentPreloading(): void {
     // Preload on hover with delay
-    document.addEventListener('mouseover', (e) => {
+    document.addEventListener("mouseover", (e) => {
       const target = e.target as HTMLElement;
-      const preloadAttr = target.getAttribute('data-preload');
-      
+      const preloadAttr = target.getAttribute("data-preload");
+
       if (preloadAttr && !this.preloadCache.has(preloadAttr)) {
         setTimeout(() => {
           this.preloadOnDemand(preloadAttr);
@@ -112,7 +114,7 @@ class BundleOptimizer {
     });
 
     // Preload on idle
-    if ('requestIdleCallback' in window) {
+    if ("requestIdleCallback" in window) {
       requestIdleCallback(() => {
         this.preloadLowPriorityComponents();
       });
@@ -121,11 +123,12 @@ class BundleOptimizer {
 
   private async preloadOnDemand(componentName: string): Promise<void> {
     const importMap: Record<string, () => Promise<any>> = {
-      'DataExport': () => import('@/components/DataExport'),
-      'SummaryReports': () => import('@/components/SummaryReports'),
-      'SystemHealthCheck': () => import('@/components/SystemHealthCheck'),
-      'OptimizedTimeEntryViewer': () => import('@/components/OptimizedTimeEntryViewer'),
-      'BackupManagement': () => import('@/components/BackupManagement')
+      DataExport: () => import("@/components/DataExport"),
+      SummaryReports: () => import("@/components/SummaryReports"),
+      SystemHealthCheck: () => import("@/components/SystemHealthCheck"),
+      OptimizedTimeEntryViewer: () =>
+        import("@/components/OptimizedTimeEntryViewer"),
+      BackupManagement: () => import("@/components/BackupManagement"),
     };
 
     const importFn = importMap[componentName];
@@ -135,15 +138,12 @@ class BundleOptimizer {
   }
 
   private async preloadLowPriorityComponents(): Promise<void> {
-    const lowPriorityComponents = [
-      'SystemHealthCheck',
-      'BackupManagement'
-    ];
+    const lowPriorityComponents = ["SystemHealthCheck", "BackupManagement"];
 
     for (const component of lowPriorityComponents) {
       await this.preloadOnDemand(component);
       // Small delay between preloads to avoid blocking
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
 
@@ -154,28 +154,33 @@ class BundleOptimizer {
     failureRate: number;
   } {
     const loadTimes = Array.from(this.analytics.componentLoadTimes.values());
-    const averageLoadTime = loadTimes.length > 0 
-      ? loadTimes.reduce((sum, time) => sum + time, 0) / loadTimes.length 
-      : 0;
+    const averageLoadTime =
+      loadTimes.length > 0
+        ? loadTimes.reduce((sum, time) => sum + time, 0) / loadTimes.length
+        : 0;
 
-    const slowestComponent = loadTimes.length > 0
-      ? Array.from(this.analytics.componentLoadTimes.entries())
-          .reduce((slowest, [name, time]) => 
-            time > slowest.time ? { name, time } : slowest, 
-            { name: '', time: 0 }
+    const slowestComponent =
+      loadTimes.length > 0
+        ? Array.from(this.analytics.componentLoadTimes.entries()).reduce(
+            (slowest, [name, time]) =>
+              time > slowest.time ? { name, time } : slowest,
+            { name: "", time: 0 },
           ).name
-      : null;
+        : null;
 
-    const totalFailures = Array.from(this.analytics.loadFailures.values())
-      .reduce((sum, failures) => sum + failures, 0);
-    const totalAttempts = this.analytics.componentLoadTimes.size + totalFailures;
-    const failureRate = totalAttempts > 0 ? (totalFailures / totalAttempts) * 100 : 0;
+    const totalFailures = Array.from(
+      this.analytics.loadFailures.values(),
+    ).reduce((sum, failures) => sum + failures, 0);
+    const totalAttempts =
+      this.analytics.componentLoadTimes.size + totalFailures;
+    const failureRate =
+      totalAttempts > 0 ? (totalFailures / totalAttempts) * 100 : 0;
 
     return {
       ...this.analytics,
       averageLoadTime,
       slowestComponent,
-      failureRate
+      failureRate,
     };
   }
 
@@ -194,56 +199,56 @@ export const bundleOptimizer = new BundleOptimizer();
 export const resourcePreloader = {
   // Preload critical CSS
   preloadCSS(href: string): void {
-    if (typeof document === 'undefined') return;
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'style';
+    if (typeof document === "undefined") return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "style";
     link.href = href;
     document.head.appendChild(link);
   },
 
   // Preload JavaScript modules
   preloadJS(href: string): void {
-    if (typeof document === 'undefined') return;
-    const link = document.createElement('link');
-    link.rel = 'modulepreload';
+    if (typeof document === "undefined") return;
+    const link = document.createElement("link");
+    link.rel = "modulepreload";
     link.href = href;
     document.head.appendChild(link);
   },
 
   // Preload critical fonts
-  preloadFont(href: string, type: string = 'woff2'): void {
-    if (typeof document === 'undefined') return;
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'font';
+  preloadFont(href: string, type: string = "woff2"): void {
+    if (typeof document === "undefined") return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "font";
     link.type = `font/${type}`;
     link.href = href;
-    link.crossOrigin = 'anonymous';
+    link.crossOrigin = "anonymous";
     document.head.appendChild(link);
   },
 
   // Prefetch next likely resources
   prefetchResource(href: string): void {
-    if (typeof document === 'undefined') return;
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
+    if (typeof document === "undefined") return;
+    const link = document.createElement("link");
+    link.rel = "prefetch";
     link.href = href;
     document.head.appendChild(link);
-  }
+  },
 };
 
 // Performance monitoring for bundle optimization
 export const bundlePerformance = {
   // Monitor Core Web Vitals
   measureWebVitals(): Promise<{
-    fcp: number;  // First Contentful Paint
-    lcp: number;  // Largest Contentful Paint
-    fid: number;  // First Input Delay
-    cls: number;  // Cumulative Layout Shift
+    fcp: number; // First Contentful Paint
+    lcp: number; // Largest Contentful Paint
+    fid: number; // First Input Delay
+    cls: number; // Cumulative Layout Shift
   }> {
     return new Promise((resolve) => {
-      if (typeof window === 'undefined') {
+      if (typeof window === "undefined") {
         resolve({ fcp: 0, lcp: 0, fid: 0, cls: 0 });
         return;
       }
@@ -260,13 +265,13 @@ export const bundlePerformance = {
         new PerformanceObserver((list) => {
           const entries = list.getEntries();
           entries.forEach((entry) => {
-            if (entry.name === 'first-contentful-paint') {
+            if (entry.name === "first-contentful-paint") {
               vitals.fcp = entry.startTime;
               measurementCount++;
               checkComplete();
             }
           });
-        }).observe({ entryTypes: ['paint'] });
+        }).observe({ entryTypes: ["paint"] });
 
         // Largest Contentful Paint
         new PerformanceObserver((list) => {
@@ -275,9 +280,9 @@ export const bundlePerformance = {
           vitals.lcp = lastEntry.startTime;
           measurementCount++;
           checkComplete();
-        }).observe({ entryTypes: ['largest-contentful-paint'] });
+        }).observe({ entryTypes: ["largest-contentful-paint"] });
       } catch (error) {
-        console.warn('Performance observers not supported:', error);
+        console.warn("Performance observers not supported:", error);
         resolve(vitals);
       }
 
@@ -289,7 +294,7 @@ export const bundlePerformance = {
   // Monitor bundle loading performance
   measureBundleLoadTime(): Promise<number> {
     return new Promise((resolve) => {
-      if (typeof window === 'undefined') {
+      if (typeof window === "undefined") {
         resolve(0);
         return;
       }
@@ -298,34 +303,34 @@ export const bundlePerformance = {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
           let totalLoadTime = 0;
-          
+
           entries.forEach((entry) => {
-            if (entry.name.includes('.js') || entry.name.includes('.css')) {
+            if (entry.name.includes(".js") || entry.name.includes(".css")) {
               totalLoadTime += entry.duration;
             }
           });
-          
+
           resolve(totalLoadTime);
           observer.disconnect();
         });
 
-        observer.observe({ entryTypes: ['resource'] });
-        
+        observer.observe({ entryTypes: ["resource"] });
+
         // Timeout after 3 seconds
         setTimeout(() => {
           observer.disconnect();
           resolve(0);
         }, 3000);
       } catch (error) {
-        console.warn('Performance observer not supported:', error);
+        console.warn("Performance observer not supported:", error);
         resolve(0);
       }
     });
-  }
+  },
 };
 
 // Initialize intelligent preloading
-if (typeof document !== 'undefined') {
+if (typeof document !== "undefined") {
   // Delay initialization to avoid blocking main thread
   setTimeout(() => {
     bundleOptimizer.setupIntelligentPreloading();

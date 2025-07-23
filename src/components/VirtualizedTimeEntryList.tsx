@@ -34,9 +34,9 @@ export function VirtualizedTimeEntryList({
     const visibleStart = Math.floor(scrollTop / itemHeight);
     const visibleEnd = Math.min(
       visibleStart + Math.ceil(containerHeight / itemHeight) + 2, // +2 for buffer
-      entries.length
+      entries.length,
     );
-    
+
     return {
       start: Math.max(0, visibleStart - 1), // -1 for buffer
       end: visibleEnd,
@@ -58,17 +58,17 @@ export function VirtualizedTimeEntryList({
   const offsetY = visibleRange.start * itemHeight;
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-CA', {
-      style: 'currency',
-      currency: 'CAD',
+    return new Intl.NumberFormat("en-CA", {
+      style: "currency",
+      currency: "CAD",
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-CA', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -79,11 +79,11 @@ export function VirtualizedTimeEntryList({
       style={{ height: containerHeight }}
       onScroll={handleScroll}
     >
-      <div style={{ height: totalHeight, position: 'relative' }}>
+      <div style={{ height: totalHeight, position: "relative" }}>
         <div
           style={{
             transform: `translateY(${offsetY}px)`,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -105,10 +105,10 @@ export function VirtualizedTimeEntryList({
             <TableBody>
               {visibleEntries.map((entry, index) => {
                 const actualIndex = visibleRange.start + index;
-                const isTimeEntry = entry.entryType === 'time';
-                
+                const isTimeEntry = entry.entryType === "time";
+
                 return (
-                  <TableRow 
+                  <TableRow
                     key={`${entry.entryType}-${entry.id}`}
                     className="hover:bg-gray-800/50"
                     style={{ height: itemHeight }}
@@ -119,7 +119,9 @@ export function VirtualizedTimeEntryList({
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">
-                          {isTimeEntry ? entry.employeeName : entry.employeeName || 'Unassigned'}
+                          {isTimeEntry
+                            ? entry.employeeName
+                            : entry.employeeName || "Unassigned"}
                         </span>
                         {isTimeEntry && entry.employeeTitle && (
                           <span className="text-xs text-gray-400">
@@ -154,17 +156,16 @@ export function VirtualizedTimeEntryList({
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
-                        {isTimeEntry ? entry.hourTypeName : 'Rental'}
+                        {isTimeEntry ? entry.hourTypeName : "Rental"}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-mono">
                       {formatCurrency(entry.totalCost)}
                     </TableCell>
                     <TableCell className="font-mono">
-                      {isTimeEntry ? 
-                        formatCurrency(entry.totalBillableAmount) : 
-                        formatCurrency(entry.totalBillable || 0)
-                      }
+                      {isTimeEntry
+                        ? formatCurrency(entry.totalBillableAmount)
+                        : formatCurrency(entry.totalBillable || 0)}
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
@@ -193,7 +194,7 @@ export function VirtualizedTimeEntryList({
           </Table>
         </div>
       </div>
-      
+
       {/* Performance indicator */}
       <div className="absolute bottom-2 right-2 text-xs text-gray-500 bg-black/50 px-2 py-1 rounded">
         Showing {visibleRange.start + 1}-{visibleRange.end} of {entries.length}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface WorkerCalculationHook {
   calculateSummaries: (data: any) => Promise<any>;
@@ -17,7 +17,9 @@ export function useWorkerCalculations(): WorkerCalculationHook {
   const workerRef = useRef<Worker | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [lastCalculationTime, setLastCalculationTime] = useState(0);
-  const pendingPromises = useRef<Map<string, { resolve: Function; reject: Function }>>(new Map());
+  const pendingPromises = useRef<
+    Map<string, { resolve: Function; reject: Function }>
+  >(new Map());
 
   // Initialize worker
   useEffect(() => {
@@ -26,40 +28,40 @@ export function useWorkerCalculations(): WorkerCalculationHook {
       // Inline worker code for calculations
       ${getWorkerCode()}
     `;
-    
-    const blob = new Blob([workerCode], { type: 'application/javascript' });
+
+    const blob = new Blob([workerCode], { type: "application/javascript" });
     const workerUrl = URL.createObjectURL(blob);
-    
+
     try {
       workerRef.current = new Worker(workerUrl);
-      
+
       workerRef.current.onmessage = (e) => {
         const { type, result, id, processingTime } = e.data;
         const promise = pendingPromises.current.get(id);
-        
+
         if (promise) {
           pendingPromises.current.delete(id);
           setLastCalculationTime(processingTime);
           setIsCalculating(pendingPromises.current.size > 0);
-          
-          if (type === 'ERROR') {
+
+          if (type === "ERROR") {
             promise.reject(new Error(result));
           } else {
             promise.resolve(result);
           }
         }
       };
-      
+
       workerRef.current.onerror = (error) => {
-        console.error('Worker error:', error);
+        console.error("Worker error:", error);
         pendingPromises.current.forEach(({ reject }) => {
-          reject(new Error('Worker error'));
+          reject(new Error("Worker error"));
         });
         pendingPromises.current.clear();
         setIsCalculating(false);
       };
     } catch (error) {
-      console.error('Failed to create worker:', error);
+      console.error("Failed to create worker:", error);
     }
 
     return () => {
@@ -71,45 +73,57 @@ export function useWorkerCalculations(): WorkerCalculationHook {
   }, []);
 
   // Generic calculation function
-  const calculate = useCallback(async (type: string, payload: any): Promise<any> => {
-    if (!workerRef.current) {
-      throw new Error('Worker not available');
-    }
+  const calculate = useCallback(
+    async (type: string, payload: any): Promise<any> => {
+      if (!workerRef.current) {
+        throw new Error("Worker not available");
+      }
 
-    const id = Math.random().toString(36).substr(2, 9);
-    setIsCalculating(true);
+      const id = Math.random().toString(36).substr(2, 9);
+      setIsCalculating(true);
 
-    return new Promise((resolve, reject) => {
-      pendingPromises.current.set(id, { resolve, reject });
-      
-      workerRef.current!.postMessage({
-        type,
-        payload,
-        id
+      return new Promise((resolve, reject) => {
+        pendingPromises.current.set(id, { resolve, reject });
+
+        workerRef.current!.postMessage({
+          type,
+          payload,
+          id,
+        });
+
+        // Timeout after 30 seconds
+        setTimeout(() => {
+          if (pendingPromises.current.has(id)) {
+            pendingPromises.current.delete(id);
+            setIsCalculating(pendingPromises.current.size > 0);
+            reject(new Error("Calculation timeout"));
+          }
+        }, 30000);
       });
+    },
+    [],
+  );
 
-      // Timeout after 30 seconds
-      setTimeout(() => {
-        if (pendingPromises.current.has(id)) {
-          pendingPromises.current.delete(id);
-          setIsCalculating(pendingPromises.current.size > 0);
-          reject(new Error('Calculation timeout'));
-        }
-      }, 30000);
-    });
-  }, []);
+  const calculateSummaries = useCallback(
+    (data: any) => {
+      return calculate("CALCULATE_SUMMARIES", data);
+    },
+    [calculate],
+  );
 
-  const calculateSummaries = useCallback((data: any) => {
-    return calculate('CALCULATE_SUMMARIES', data);
-  }, [calculate]);
+  const calculateProfitData = useCallback(
+    (data: any) => {
+      return calculate("CALCULATE_PROFIT", data);
+    },
+    [calculate],
+  );
 
-  const calculateProfitData = useCallback((data: any) => {
-    return calculate('CALCULATE_PROFIT', data);
-  }, [calculate]);
-
-  const calculateAggregates = useCallback((data: any) => {
-    return calculate('CALCULATE_AGGREGATES', data);
-  }, [calculate]);
+  const calculateAggregates = useCallback(
+    (data: any) => {
+      return calculate("CALCULATE_AGGREGATES", data);
+    },
+    [calculate],
+  );
 
   const terminateWorker = useCallback(() => {
     if (workerRef.current) {
@@ -126,7 +140,7 @@ export function useWorkerCalculations(): WorkerCalculationHook {
     calculateAggregates,
     isCalculating,
     lastCalculationTime,
-    terminateWorker
+    terminateWorker,
   };
 }
 
@@ -138,57 +152,59 @@ export function useFallbackCalculations(): WorkerCalculationHook {
   const calculateSummaries = useCallback(async (data: any) => {
     setIsCalculating(true);
     const startTime = performance.now();
-    
+
     // Simulate async calculation
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
     // Perform calculation on main thread (simplified)
     const result = data.timeEntries.map((entry: any) => ({
       ...entry,
       totalBillableAmount: entry.hours * (entry.billableWageUsed || 0),
-      totalCost: entry.hours * (entry.costWageUsed || 0)
+      totalCost: entry.hours * (entry.costWageUsed || 0),
     }));
-    
+
     const processingTime = performance.now() - startTime;
     setLastCalculationTime(processingTime);
     setIsCalculating(false);
-    
+
     return result;
   }, []);
 
   const calculateProfitData = useCallback(async (data: any) => {
     setIsCalculating(true);
     const startTime = performance.now();
-    
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
     const result = data.jobs.map((job: any) => ({
       job,
       totalBillable: 1000,
       totalCost: 800,
       profitAmount: 200,
-      profitPercentage: 20
+      profitPercentage: 20,
     }));
-    
+
     const processingTime = performance.now() - startTime;
     setLastCalculationTime(processingTime);
     setIsCalculating(false);
-    
+
     return result;
   }, []);
 
   const calculateAggregates = useCallback(async (data: any) => {
     setIsCalculating(true);
     const startTime = performance.now();
-    
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
-    const result = [{ key: 'total', totalHours: 100, totalCost: 2000, totalBillable: 2500 }];
-    
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const result = [
+      { key: "total", totalHours: 100, totalCost: 2000, totalBillable: 2500 },
+    ];
+
     const processingTime = performance.now() - startTime;
     setLastCalculationTime(processingTime);
     setIsCalculating(false);
-    
+
     return result;
   }, []);
 
@@ -198,7 +214,7 @@ export function useFallbackCalculations(): WorkerCalculationHook {
     calculateAggregates,
     isCalculating,
     lastCalculationTime,
-    terminateWorker: () => {}
+    terminateWorker: () => {},
   };
 }
 

@@ -3,7 +3,7 @@
  * Collection of utilities to improve application performance
  */
 
-import { useMemo, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useCallback, useRef, useEffect } from "react";
 
 // Debounce hook for expensive operations
 export function useDebounce<T>(value: T, delay: number): T {
@@ -25,35 +25,38 @@ export function useDebounce<T>(value: T, delay: number): T {
 // Throttle hook for scroll/resize events
 export function useThrottle<T extends (...args: any[]) => any>(
   callback: T,
-  delay: number
+  delay: number,
 ): T {
   const lastCall = useRef<number>(0);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
-  return useCallback((...args: Parameters<T>) => {
-    const now = Date.now();
-    const timeSinceLastCall = now - lastCall.current;
+  return useCallback(
+    (...args: Parameters<T>) => {
+      const now = Date.now();
+      const timeSinceLastCall = now - lastCall.current;
 
-    if (timeSinceLastCall >= delay) {
-      lastCall.current = now;
-      return callback(...args);
-    } else {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (timeSinceLastCall >= delay) {
+        lastCall.current = now;
+        return callback(...args);
+      } else {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+          lastCall.current = Date.now();
+          callback(...args);
+        }, delay - timeSinceLastCall);
       }
-      timeoutRef.current = setTimeout(() => {
-        lastCall.current = Date.now();
-        callback(...args);
-      }, delay - timeSinceLastCall);
-    }
-  }, [callback, delay]) as T;
+    },
+    [callback, delay],
+  ) as T;
 }
 
 // Memoization with stable references
 export function useStableMemo<T>(
   factory: () => T,
   deps: React.DependencyList,
-  isEqual?: (a: T, b: T) => boolean
+  isEqual?: (a: T, b: T) => boolean,
 ): T {
   const valueRef = useRef<T>();
   const depsRef = useRef<React.DependencyList>();
@@ -84,7 +87,7 @@ export const arrayUtils = {
   processInChunks<T, R>(
     array: T[],
     processor: (chunk: T[]) => R[],
-    chunkSize: number = 1000
+    chunkSize: number = 1000,
   ): R[] {
     const results: R[] = [];
     for (let i = 0; i < array.length; i += chunkSize) {
@@ -98,7 +101,7 @@ export const arrayUtils = {
   filterMap<T, R>(
     array: T[],
     predicate: (item: T) => boolean,
-    mapper: (item: T) => R
+    mapper: (item: T) => R,
   ): R[] {
     const result: R[] = [];
     for (const item of array) {
@@ -112,7 +115,7 @@ export const arrayUtils = {
   // Efficient groupBy
   groupBy<T, K extends string | number>(
     array: T[],
-    keyExtractor: (item: T) => K
+    keyExtractor: (item: T) => K,
   ): Record<K, T[]> {
     const groups = {} as Record<K, T[]>;
     for (const item of array) {
@@ -134,15 +137,15 @@ export const arrayUtils = {
         return result !== 0 ? result : a.index - b.index;
       })
       .map(({ item }) => item);
-  }
+  },
 };
 
 // Memory management utilities
 export const memoryUtils = {
   // Clear large objects from memory
   cleanup<T extends object>(obj: T): void {
-    if (obj && typeof obj === 'object') {
-      Object.keys(obj).forEach(key => {
+    if (obj && typeof obj === "object") {
+      Object.keys(obj).forEach((key) => {
         delete (obj as any)[key];
       });
     }
@@ -157,7 +160,7 @@ export const memoryUtils = {
       return {
         used: used / 1024 / 1024, // MB
         total: total / 1024 / 1024, // MB
-        percentage: (used / total) * 100
+        percentage: (used / total) * 100,
       };
     }
     return { used: 0, total: 0, percentage: 0 };
@@ -168,7 +171,7 @@ export const memoryUtils = {
     if (window.gc) {
       window.gc();
     }
-  }
+  },
 };
 
 // Performance monitoring
@@ -205,15 +208,21 @@ export class PerformanceTracker {
     return times.reduce((sum, time) => sum + time, 0) / times.length;
   }
 
-  getMetrics(): Record<string, { average: number; count: number; total: number }> {
-    const metrics: Record<string, { average: number; count: number; total: number }> = {};
-    
+  getMetrics(): Record<
+    string,
+    { average: number; count: number; total: number }
+  > {
+    const metrics: Record<
+      string,
+      { average: number; count: number; total: number }
+    > = {};
+
     for (const [label, times] of this.measurements.entries()) {
       const total = times.reduce((sum, time) => sum + time, 0);
       metrics[label] = {
         average: total / times.length,
         count: times.length,
-        total
+        total,
       };
     }
 
@@ -231,7 +240,7 @@ export const componentUtils = {
   // Create stable callback references
   createStableCallback<T extends (...args: any[]) => any>(
     callback: T,
-    deps: React.DependencyList
+    deps: React.DependencyList,
   ): T {
     return useCallback(callback, deps);
   },
@@ -240,10 +249,10 @@ export const componentUtils = {
   shouldComponentUpdate<T extends Record<string, any>>(
     prevProps: T,
     nextProps: T,
-    keys?: (keyof T)[]
+    keys?: (keyof T)[],
   ): boolean {
-    const keysToCheck = keys || Object.keys(nextProps) as (keyof T)[];
-    return keysToCheck.some(key => prevProps[key] !== nextProps[key]);
+    const keysToCheck = keys || (Object.keys(nextProps) as (keyof T)[]);
+    return keysToCheck.some((key) => prevProps[key] !== nextProps[key]);
   },
 
   // Optimize large list rendering
@@ -251,30 +260,32 @@ export const componentUtils = {
     scrollTop: number,
     itemHeight: number,
     containerHeight: number,
-    totalItems: number
+    totalItems: number,
   ): { start: number; end: number } {
     const start = Math.floor(scrollTop / itemHeight);
     const visibleCount = Math.ceil(containerHeight / itemHeight);
     const end = Math.min(start + visibleCount + 2, totalItems); // +2 for buffer
-    
+
     return {
       start: Math.max(0, start - 1), // -1 for buffer
-      end
+      end,
     };
-  }
+  },
 };
 
 // Bundle optimization helpers
 export const bundleUtils = {
   // Lazy load components
-  lazyImport<T = any>(importFunction: () => Promise<{ default: T }>): React.LazyExoticComponent<T> {
+  lazyImport<T = any>(
+    importFunction: () => Promise<{ default: T }>,
+  ): React.LazyExoticComponent<T> {
     return React.lazy(importFunction);
   },
 
   // Preload critical resources
-  preloadResource(href: string, as: string = 'script'): void {
-    const link = document.createElement('link');
-    link.rel = 'preload';
+  preloadResource(href: string, as: string = "script"): void {
+    const link = document.createElement("link");
+    link.rel = "preload";
     link.href = href;
     link.as = as;
     document.head.appendChild(link);
@@ -284,11 +295,11 @@ export const bundleUtils = {
   shouldCodeSplit(componentSize: number, usageFrequency: number): boolean {
     // Split if component is large (>100KB) and used infrequently (<20%)
     return componentSize > 100 * 1024 && usageFrequency < 0.2;
-  }
+  },
 };
 
 // Export performance tracker instance
 export const performanceTracker = new PerformanceTracker();
 
 // React import for hooks
-import React from 'react';
+import React from "react";
