@@ -1319,51 +1319,83 @@ export function InvoiceManagement() {
                                 Employees with Allowances ({employeesWithLOA.length})
                               </div>
                               <button
-                                onClick={() => {
+                                onClick={async () => {
                                   const copyText = employeesWithLOA
                                     .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
                                     .join('\n');
 
-                                  // Create a hidden textarea that will automatically select and copy
-                                  const textarea = document.createElement('textarea');
-                                  textarea.value = copyText;
-                                  textarea.style.position = 'fixed';
-                                  textarea.style.left = '-9999px';
-                                  textarea.style.top = '50%';
-                                  textarea.style.width = '1px';
-                                  textarea.style.height = '1px';
-                                  textarea.style.opacity = '0';
-
-                                  document.body.appendChild(textarea);
-
-                                  // Focus and select all text
-                                  textarea.focus();
-                                  textarea.select();
-                                  textarea.setSelectionRange(0, copyText.length);
-
-                                  // Try to copy automatically
-                                  let copySuccess = false;
-                                  try {
-                                    copySuccess = document.execCommand('copy');
-                                  } catch (err) {
-                                    console.error('Auto-copy failed:', err);
-                                  }
-
-                                  // Clean up
-                                  document.body.removeChild(textarea);
-
-                                  if (copySuccess) {
-                                    // Success - show confirmation
-                                    alert('✅ LOA list copied to clipboard! You can now paste with Ctrl+V in other windows.');
-                                  } else {
-                                    // Fallback to manual copy with auto-selected text
-                                    setTimeout(() => {
-                                      const result = prompt('📋 Auto-copy failed. Text is pre-selected - just press Ctrl+C:', copyText);
-                                      if (result !== null) {
-                                        alert('✅ Now you can paste with Ctrl+V in other windows!');
+                                  // Silent copy function - no alerts or prompts
+                                  const silentCopy = async (text) => {
+                                    // Method 1: Modern Clipboard API
+                                    try {
+                                      if (navigator.clipboard && window.isSecureContext) {
+                                        await navigator.clipboard.writeText(text);
+                                        return true;
                                       }
-                                    }, 100);
-                                  }
+                                    } catch (e) {
+                                      // Silent fail
+                                    }
+
+                                    // Method 2: execCommand with textarea
+                                    try {
+                                      const textarea = document.createElement('textarea');
+                                      textarea.value = text;
+                                      textarea.style.position = 'absolute';
+                                      textarea.style.left = '-9999px';
+                                      textarea.style.top = '0';
+                                      textarea.style.opacity = '0';
+                                      textarea.style.pointerEvents = 'none';
+                                      textarea.setAttribute('readonly', '');
+
+                                      document.body.appendChild(textarea);
+
+                                      // Focus and select
+                                      textarea.focus();
+                                      textarea.select();
+                                      textarea.setSelectionRange(0, text.length);
+
+                                      const success = document.execCommand('copy');
+                                      document.body.removeChild(textarea);
+
+                                      return success;
+                                    } catch (e) {
+                                      // Silent fail
+                                    }
+
+                                    // Method 3: Range selection
+                                    try {
+                                      const span = document.createElement('span');
+                                      span.textContent = text;
+                                      span.style.position = 'absolute';
+                                      span.style.left = '-9999px';
+                                      span.style.top = '0';
+                                      span.style.opacity = '0';
+
+                                      document.body.appendChild(span);
+
+                                      const selection = window.getSelection();
+                                      const range = document.createRange();
+                                      range.selectNodeContents(span);
+                                      selection.removeAllRanges();
+                                      selection.addRange(range);
+
+                                      const success = document.execCommand('copy');
+
+                                      selection.removeAllRanges();
+                                      document.body.removeChild(span);
+
+                                      return success;
+                                    } catch (e) {
+                                      // Silent fail
+                                    }
+
+                                    return false;
+                                  };
+
+                                  // Attempt silent copy
+                                  await silentCopy(copyText);
+
+                                  // No notifications - completely silent operation
                                 }}
                                 className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
                                 title="Copy to clipboard"
