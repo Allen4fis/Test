@@ -1323,12 +1323,47 @@ export function InvoiceManagement() {
                                   const copyText = employeesWithLOA
                                     .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
                                     .join('\n');
-                                  navigator.clipboard.writeText(copyText).then(() => {
-                                    // You could add a toast notification here if desired
-                                    console.log('LOA list copied to clipboard');
-                                  }).catch(err => {
-                                    console.error('Failed to copy to clipboard:', err);
-                                  });
+
+                                  // Robust copy function with fallbacks
+                                  const copyToClipboard = async (text) => {
+                                    // Try modern Clipboard API first
+                                    if (navigator.clipboard && window.isSecureContext) {
+                                      try {
+                                        await navigator.clipboard.writeText(text);
+                                        console.log('LOA list copied to clipboard');
+                                        return;
+                                      } catch (err) {
+                                        console.warn('Clipboard API failed, trying fallback:', err);
+                                      }
+                                    }
+
+                                    // Fallback: Create temporary textarea
+                                    const textArea = document.createElement('textarea');
+                                    textArea.value = text;
+                                    textArea.style.position = 'fixed';
+                                    textArea.style.left = '-999999px';
+                                    textArea.style.top = '-999999px';
+                                    document.body.appendChild(textArea);
+                                    textArea.focus();
+                                    textArea.select();
+
+                                    try {
+                                      const successful = document.execCommand('copy');
+                                      if (successful) {
+                                        console.log('LOA list copied to clipboard (fallback)');
+                                      } else {
+                                        throw new Error('execCommand failed');
+                                      }
+                                    } catch (err) {
+                                      console.error('All copy methods failed:', err);
+                                      // Final fallback: show text for manual copy
+                                      prompt('Copy this text manually:', text);
+                                    } finally {
+                                      document.body.removeChild(textArea);
+                                    }
+                                  };
+
+                                  copyToClipboard(copyText);
                                 }}
                                 className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
                                 title="Copy to clipboard"
