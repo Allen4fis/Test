@@ -67,6 +67,7 @@ export function EmployeeManagement() {
     billableWage: "",
     costWage: "",
     managerId: "no-manager", // New field for manager selection
+    isActive: true,
   });
 
   // Concise sorting state
@@ -83,6 +84,7 @@ export function EmployeeManagement() {
       billableWage: "",
       costWage: "",
       managerId: "no-manager",
+      isActive: true,
     });
     setEditingEmployee(null);
   };
@@ -158,6 +160,7 @@ export function EmployeeManagement() {
             : formData.managerId === "dspot"
               ? "dspot"
               : undefined,
+      isActive: formData.isActive,
     };
     if (editingEmployee) {
       updateEmployee(editingEmployee.id, employeeData);
@@ -185,6 +188,7 @@ export function EmployeeManagement() {
             : employee.category === "dspot"
               ? "dspot"
               : employee.managerId || "no-manager",
+      isActive: employee.isActive ?? true,
     });
     setIsDialogOpen(true);
   };
