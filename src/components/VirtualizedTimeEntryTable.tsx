@@ -405,7 +405,7 @@ export function VirtualizedTimeEntryTable({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">All Employees</SelectItem>
-                  {employees.map((employee) => (
+                  {employees.filter((employee) => employee.isActive !== false).map((employee) => (
                     <SelectItem key={employee.id} value={employee.id}>
                       {employee.name}
                     </SelectItem>
