@@ -207,6 +207,9 @@ const Index = () => {
       case "backup":
         component = <BackupManagement />;
         break;
+      case "health-check":
+        component = <SystemHealthCheck />;
+        break;
       default:
         component = <Dashboard />;
     }
