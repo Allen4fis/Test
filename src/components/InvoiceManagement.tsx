@@ -1040,7 +1040,7 @@ export function InvoiceManagement() {
                       </div>
 
                       {/* Financial Summary */}
-                      <div className="grid grid-cols-4 gap-2 text-center border-t border-gray-700 pt-3 mb-3">
+                      <div className="grid grid-cols-4 gap-3 text-center border-t border-gray-700 pt-3 mb-3" style={{ gridTemplateColumns: 'minmax(60px, 1fr) minmax(70px, 1fr) minmax(70px, 1fr) minmax(60px, 1fr)' }}>
                         {jobStat.job.isBillable === false ? (
                           <>
                             <div className="col-span-4 text-center">
