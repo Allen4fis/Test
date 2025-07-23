@@ -646,6 +646,7 @@ export function EmployeeManagement() {
                     </div>
                   </TableHead>
                   <TableHead>Employee Of</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-gray-50 select-none"
@@ -763,6 +764,14 @@ export function EmployeeManagement() {
                         ) : (
                           <Badge variant="secondary">Employee</Badge>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={employee.isActive ? "default" : "secondary"}
+                          className={employee.isActive ? "bg-green-100 text-green-800 border-green-300" : "bg-gray-100 text-gray-600 border-gray-300"}
+                        >
+                          {employee.isActive ? "Active" : "Inactive"}
+                        </Badge>
                       </TableCell>
                       <TableCell>{employee.email || "—"}</TableCell>
                       <TableCell className="font-medium text-green-600">
