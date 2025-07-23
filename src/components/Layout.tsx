@@ -16,6 +16,7 @@ import {
   Database,
   Save,
   Activity,
+  Shield,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
