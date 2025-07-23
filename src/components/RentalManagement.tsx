@@ -1058,7 +1058,7 @@ export function RentalManagement() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="none">No Employee</SelectItem>
-                              {employees.map((employee) => (
+                              {employees.filter((employee) => employee.isActive !== false).map((employee) => (
                                 <SelectItem
                                   key={employee.id}
                                   value={employee.id}
@@ -1522,7 +1522,7 @@ export function RentalManagement() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="none">No Employee</SelectItem>
-                        {employees.map((employee) => (
+                        {employees.filter((employee) => employee.isActive !== false).map((employee) => (
                           <SelectItem key={employee.id} value={employee.id}>
                             {employee.name} - {employee.title}
                           </SelectItem>
