@@ -133,6 +133,8 @@ export function InvoiceManagement() {
   const [showUnpaid, setShowUnpaid] = useState(true);
   const [showBillableJobs, setShowBillableJobs] = useState(true);
   const [showNonBillableJobs, setShowNonBillableJobs] = useState(true);
+  const [showActiveJobs, setShowActiveJobs] = useState(true);
+  const [showInactiveJobs, setShowInactiveJobs] = useState(false);
 
   // Day breakdown table sorting state
   const [breakdownSortBy, setBreakdownSortBy] = useState<
