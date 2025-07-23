@@ -842,6 +842,27 @@ export function InvoiceManagement() {
                 </Button>
               </div>
 
+              {/* Active/Inactive Job Filters */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">Status:</span>
+                <Button
+                  variant={showActiveJobs ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowActiveJobs(!showActiveJobs)}
+                  className="h-7 px-2 text-xs"
+                >
+                  Active
+                </Button>
+                <Button
+                  variant={showInactiveJobs ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowInactiveJobs(!showInactiveJobs)}
+                  className="h-7 px-2 text-xs"
+                >
+                  Inactive
+                </Button>
+              </div>
+
               <span className="text-xs text-gray-500">
                 {filteredAndSortedJobStats.length} jobs
               </span>
