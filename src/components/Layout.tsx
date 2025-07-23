@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useEffect, useRef } from "react";
+import { ReactNode, useMemo, useEffect, useRef, memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ interface LayoutProps {
   timeTracking: ReturnType<typeof useTimeTracking>;
 }
 
-export function Layout({ children, timeTracking }: LayoutProps) {
+export const Layout = memo(function Layout({ children, timeTracking }: LayoutProps) {
   const {
     selectedView,
     setSelectedView,
@@ -71,7 +71,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
     prevCounts.current = currentCounts;
   }, [employees.length, jobs.length, timeEntries.length, rentalItems.length]);
 
-  // Calculate derived counts with memoization
+  // Calculate derived counts with enhanced memoization
   const activeJobsCount = useMemo(() => {
     return jobs.filter((job) => job.isActive).length;
   }, [jobs]);
@@ -79,6 +79,30 @@ export function Layout({ children, timeTracking }: LayoutProps) {
   const activeRentalItemsCount = useMemo(() => {
     return rentalItems.filter((item) => item.isActive).length;
   }, [rentalItems]);
+
+  // Optimized save handler with useCallback
+  const handleSave = useCallback(() => {
+    const result = manualSave();
+    if (result.success) {
+      toast({
+        title: "💾 Data Saved Successfully!",
+        description: `All your data has been safely saved at ${new Date(result.timestamp).toLocaleTimeString()}`,
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "❌ Save Failed",
+        description: "There was an issue saving your data. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  }, [manualSave, toast]);
+
+  // Optimized view selection handler
+  const handleViewChange = useCallback((viewId: string) => {
+    setSelectedView(viewId);
+  }, [setSelectedView]);
 
   // Memoize navigation items to ensure they update when counts change
   const navigationItems = useMemo(() => {
@@ -222,24 +246,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
             {/* Enhanced Save Button */}
             <div className="flex items-center">
               <Button
-                onClick={() => {
-                  const result = manualSave();
-                  if (result.success) {
-                    toast({
-                      title: "💾 Data Saved Successfully!",
-                      description: `All your data has been safely saved at ${new Date(result.timestamp).toLocaleTimeString()}`,
-                      duration: 3000,
-                    });
-                  } else {
-                    toast({
-                      title: "❌ Save Failed",
-                      description:
-                        "There was an issue saving your data. Please try again.",
-                      variant: "destructive",
-                      duration: 5000,
-                    });
-                  }
-                }}
+                onClick={handleSave}
                 className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold px-8 py-3 rounded-2xl shadow-2xl hover:shadow-pink-500/25 transform hover:scale-105 transition-all duration-300 border border-pink-400/30"
                 size="lg"
               >
@@ -267,7 +274,7 @@ export function Layout({ children, timeTracking }: LayoutProps) {
                     return (
                       <button
                         key={item.id}
-                        onClick={() => setSelectedView(item.id)}
+                        onClick={() => handleViewChange(item.id)}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-left group relative overflow-hidden ${
                           isActive
                             ? "bg-gradient-to-r from-orange-500/20 to-orange-400/10 text-orange-300 shadow-lg border border-orange-500/30"
@@ -364,4 +371,4 @@ export function Layout({ children, timeTracking }: LayoutProps) {
       </div>
     </div>
   );
-}
+});
