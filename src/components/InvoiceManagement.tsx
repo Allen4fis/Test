@@ -1279,6 +1279,22 @@ export function InvoiceManagement() {
                 0,
               );
 
+              // Get employees with Live Out Allowances
+              const employeesWithLOA = breakdown.timeEntries
+                .filter(entry => (entry.loaCount || 0) > 0)
+                .reduce((acc, entry) => {
+                  const existingEmployee = acc.find(emp => emp.name === entry.employeeName);
+                  if (existingEmployee) {
+                    existingEmployee.allowances += entry.loaCount || 0;
+                  } else {
+                    acc.push({
+                      name: entry.employeeName,
+                      allowances: entry.loaCount || 0
+                    });
+                  }
+                  return acc;
+                }, []);
+
               return (
                 <div className="space-y-6">
                   {/* Overall LOA Count */}
@@ -1291,9 +1307,28 @@ export function InvoiceManagement() {
                         <div className="text-lg text-purple-300">
                           Total Live Out Allowances for the Day
                         </div>
-                        <div className="text-sm text-purple-200">
+                        <div className="text-sm text-purple-200 mb-3">
                           ${(totalLOA * 200).toFixed(2)} billable
                         </div>
+
+                        {/* Employee breakdown */}
+                        {employeesWithLOA.length > 0 && (
+                          <div className="mt-4">
+                            <div className="text-sm text-purple-300 mb-2">
+                              Employees with Allowances ({employeesWithLOA.length})
+                            </div>
+                            <div className="flex flex-wrap gap-2 justify-center">
+                              {employeesWithLOA.map((employee, index) => (
+                                <div
+                                  key={index}
+                                  className="text-xs bg-purple-800/50 px-2 py-1 rounded border border-purple-500/30"
+                                >
+                                  {employee.name} - {employee.allowances} allowance{employee.allowances > 1 ? 's' : ''}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
