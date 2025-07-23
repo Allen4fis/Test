@@ -728,7 +728,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                     <SelectValue placeholder="Select employee" />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees.map((employee) => {
+                    {employees.filter((employee) => employee.isActive !== false).map((employee) => {
                       const manager = employee.managerId
                         ? employees.find((emp) => emp.id === employee.managerId)
                         : null;
