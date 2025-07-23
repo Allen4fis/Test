@@ -36,32 +36,34 @@ class BundleOptimizer {
   ): ComponentType<any> {
     const LazyComponent = lazy(async () => {
       const startTime = performance.now();
-      
+
       try {
         const module = await importFn();
         const loadTime = performance.now() - startTime;
-        
+
         this.analytics.componentLoadTimes.set(name, loadTime);
         console.log(`Loaded ${name} in ${loadTime.toFixed(2)}ms`);
-        
+
         return module;
       } catch (error) {
         const failures = this.analytics.loadFailures.get(name) || 0;
         this.analytics.loadFailures.set(name, failures + 1);
-        
+
         console.error(`Failed to load component ${name}:`, error);
         throw error;
       }
     });
 
     // Return wrapped component with Suspense
-    return (props: any) => (
-      <Suspense 
+    const WrappedComponent = (props: any) => (
+      <Suspense
         fallback={options.fallback || <DefaultLoadingFallback name={name} />}
       >
         <LazyComponent {...props} />
       </Suspense>
     );
+
+    return WrappedComponent;
   }
 
   // Preload component for faster subsequent loads
@@ -91,7 +93,7 @@ class BundleOptimizer {
     document.addEventListener('mouseover', (e) => {
       const target = e.target as HTMLElement;
       const preloadAttr = target.getAttribute('data-preload');
-      
+
       if (preloadAttr && !this.preloadCache.has(preloadAttr)) {
         setTimeout(() => {
           this.preloadOnDemand(preloadAttr);
@@ -142,14 +144,14 @@ class BundleOptimizer {
     failureRate: number;
   } {
     const loadTimes = Array.from(this.analytics.componentLoadTimes.values());
-    const averageLoadTime = loadTimes.length > 0 
-      ? loadTimes.reduce((sum, time) => sum + time, 0) / loadTimes.length 
+    const averageLoadTime = loadTimes.length > 0
+      ? loadTimes.reduce((sum, time) => sum + time, 0) / loadTimes.length
       : 0;
 
     const slowestComponent = loadTimes.length > 0
       ? Array.from(this.analytics.componentLoadTimes.entries())
-          .reduce((slowest, [name, time]) => 
-            time > slowest.time ? { name, time } : slowest, 
+          .reduce((slowest, [name, time]) =>
+            time > slowest.time ? { name, time } : slowest,
             { name: '', time: 0 }
           ).name
       : null;
@@ -349,19 +351,19 @@ export const bundlePerformance = {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         let totalLoadTime = 0;
-        
+
         entries.forEach((entry) => {
           if (entry.name.includes('.js') || entry.name.includes('.css')) {
             totalLoadTime += entry.duration;
           }
         });
-        
+
         resolve(totalLoadTime);
         observer.disconnect();
       });
 
       observer.observe({ entryTypes: ['resource'] });
-      
+
       // Timeout after 5 seconds
       setTimeout(() => {
         observer.disconnect();
