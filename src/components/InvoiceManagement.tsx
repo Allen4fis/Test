@@ -1324,46 +1324,34 @@ export function InvoiceManagement() {
                                     .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
                                     .join('\n');
 
-                                  // Robust copy function with fallbacks
-                                  const copyToClipboard = async (text) => {
-                                    // Try modern Clipboard API first
-                                    if (navigator.clipboard && window.isSecureContext) {
-                                      try {
-                                        await navigator.clipboard.writeText(text);
-                                        console.log('LOA list copied to clipboard');
-                                        return;
-                                      } catch (err) {
-                                        console.warn('Clipboard API failed, trying fallback:', err);
-                                      }
-                                    }
+                                  // Simple, reliable copy function
+                                  const textarea = document.createElement('textarea');
+                                  textarea.value = copyText;
+                                  textarea.style.position = 'absolute';
+                                  textarea.style.left = '-9999px';
+                                  textarea.style.opacity = '0';
+                                  document.body.appendChild(textarea);
 
-                                    // Fallback: Create temporary textarea
-                                    const textArea = document.createElement('textarea');
-                                    textArea.value = text;
-                                    textArea.style.position = 'fixed';
-                                    textArea.style.left = '-999999px';
-                                    textArea.style.top = '-999999px';
-                                    document.body.appendChild(textArea);
-                                    textArea.focus();
-                                    textArea.select();
+                                  // Select and copy
+                                  textarea.select();
+                                  textarea.setSelectionRange(0, 99999); // For mobile devices
 
-                                    try {
-                                      const successful = document.execCommand('copy');
-                                      if (successful) {
-                                        console.log('LOA list copied to clipboard (fallback)');
-                                      } else {
-                                        throw new Error('execCommand failed');
-                                      }
-                                    } catch (err) {
-                                      console.error('All copy methods failed:', err);
-                                      // Final fallback: show text for manual copy
-                                      prompt('Copy this text manually:', text);
-                                    } finally {
-                                      document.body.removeChild(textArea);
-                                    }
-                                  };
+                                  let success = false;
+                                  try {
+                                    success = document.execCommand('copy');
+                                  } catch (err) {
+                                    console.error('Copy failed:', err);
+                                  }
 
-                                  copyToClipboard(copyText);
+                                  document.body.removeChild(textarea);
+
+                                  // Show alert to user
+                                  if (success) {
+                                    alert('LOA list copied to clipboard!');
+                                  } else {
+                                    // Show the text for manual copy
+                                    const result = prompt('Auto-copy failed. Please copy this text manually:', copyText);
+                                  }
                                 }}
                                 className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
                                 title="Copy to clipboard"
