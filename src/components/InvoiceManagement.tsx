@@ -487,6 +487,16 @@ export function InvoiceManagement() {
       });
     }
 
+    // Apply active/inactive job filters
+    if (!showActiveJobs || !showInactiveJobs) {
+      filtered = filtered.filter((stat) => {
+        const isActive = stat.job.isActive !== false;
+        if (!showActiveJobs && isActive) return false;
+        if (!showInactiveJobs && !isActive) return false;
+        return true;
+      });
+    }
+
     // Apply billable status filters
     if (!showBillableJobs || !showNonBillableJobs) {
       filtered = filtered.filter((stat) => {
