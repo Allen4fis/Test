@@ -2068,7 +2068,7 @@ export function SummaryReports() {
                                           </div>
                                         </div>
                                       </div>
-                                      <div className="grid grid-cols-7 gap-2 text-center">
+                                      <div className="grid grid-cols-7 gap-4 text-center" style={{ gridTemplateColumns: 'minmax(60px, 1fr) minmax(80px, 1fr) minmax(80px, 1fr) minmax(90px, 1fr) minmax(90px, 1fr) minmax(80px, 1fr) minmax(70px, 1fr)' }}>
                                         <div className="text-center">
                                           <div className="font-semibold text-blue-300">
                                             {subordinate.totalHours.toFixed(2)}h
