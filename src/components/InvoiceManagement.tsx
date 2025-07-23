@@ -1314,100 +1314,25 @@ export function InvoiceManagement() {
                         {/* Employee breakdown */}
                         {employeesWithLOA.length > 0 && (
                           <div className="mt-4">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                              <div className="text-sm text-purple-300">
-                                Employees with Allowances ({employeesWithLOA.length})
-                              </div>
-                              <button
-                                onClick={async () => {
-                                  const copyText = employeesWithLOA
-                                    .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
-                                    .join('\n');
-
-                                  // Silent copy function - no alerts or prompts
-                                  const silentCopy = async (text) => {
-                                    // Method 1: Modern Clipboard API
-                                    try {
-                                      if (navigator.clipboard && window.isSecureContext) {
-                                        await navigator.clipboard.writeText(text);
-                                        return true;
-                                      }
-                                    } catch (e) {
-                                      // Silent fail
-                                    }
-
-                                    // Method 2: execCommand with textarea
-                                    try {
-                                      const textarea = document.createElement('textarea');
-                                      textarea.value = text;
-                                      textarea.style.position = 'absolute';
-                                      textarea.style.left = '-9999px';
-                                      textarea.style.top = '0';
-                                      textarea.style.opacity = '0';
-                                      textarea.style.pointerEvents = 'none';
-                                      textarea.setAttribute('readonly', '');
-
-                                      document.body.appendChild(textarea);
-
-                                      // Focus and select
-                                      textarea.focus();
-                                      textarea.select();
-                                      textarea.setSelectionRange(0, text.length);
-
-                                      const success = document.execCommand('copy');
-                                      document.body.removeChild(textarea);
-
-                                      return success;
-                                    } catch (e) {
-                                      // Silent fail
-                                    }
-
-                                    // Method 3: Range selection
-                                    try {
-                                      const span = document.createElement('span');
-                                      span.textContent = text;
-                                      span.style.position = 'absolute';
-                                      span.style.left = '-9999px';
-                                      span.style.top = '0';
-                                      span.style.opacity = '0';
-
-                                      document.body.appendChild(span);
-
-                                      const selection = window.getSelection();
-                                      const range = document.createRange();
-                                      range.selectNodeContents(span);
-                                      selection.removeAllRanges();
-                                      selection.addRange(range);
-
-                                      const success = document.execCommand('copy');
-
-                                      selection.removeAllRanges();
-                                      document.body.removeChild(span);
-
-                                      return success;
-                                    } catch (e) {
-                                      // Silent fail
-                                    }
-
-                                    return false;
-                                  };
-
-                                  // Attempt silent copy
-                                  await silentCopy(copyText);
-
-                                  // No notifications - completely silent operation
-                                }}
-                                className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
-                                title="Copy to clipboard"
-                              >
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy">
-                                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                                  <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                                </svg>
-                                Copy
-                              </button>
+                            <div className="text-sm text-purple-300 mb-2 text-center">
+                              Employees with Allowances ({employeesWithLOA.length})
                             </div>
-                            <div className="flex flex-wrap gap-2 justify-center">
+
+                            {/* Easy copy text area */}
+                            <textarea
+                              value={employeesWithLOA
+                                .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
+                                .join('\n')}
+                              readOnly
+                              onClick={(e) => {
+                                e.target.select();
+                              }}
+                              className="w-full h-20 text-xs bg-purple-900/30 border border-purple-500/50 rounded p-2 text-purple-200 resize-none cursor-pointer hover:bg-purple-900/40 transition-colors"
+                              placeholder="Click to select all text, then Ctrl+C to copy"
+                              title="Click to select all, then Ctrl+C to copy"
+                            />
+
+                            <div className="flex flex-wrap gap-2 justify-center mt-2">
                               {employeesWithLOA.map((employee, index) => (
                                 <div
                                   key={index}
