@@ -1319,65 +1319,21 @@ export function InvoiceManagement() {
                                 Employees with Allowances ({employeesWithLOA.length})
                               </div>
                               <button
-                                onClick={async () => {
+                                onClick={() => {
                                   const copyText = employeesWithLOA
                                     .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
                                     .join('\n');
 
-                                  let success = false;
+                                  // Show text in a prompt dialog that's pre-selected for easy copying
+                                  // This works reliably across all browsers and environments
+                                  const userAction = prompt(
+                                    '📋 Copy this text to your clipboard (Ctrl+A, then Ctrl+C):',
+                                    copyText
+                                  );
 
-                                  // Try modern Clipboard API first (most reliable)
-                                  if (navigator.clipboard && window.isSecureContext) {
-                                    try {
-                                      await navigator.clipboard.writeText(copyText);
-                                      success = true;
-                                    } catch (err) {
-                                      console.log('Modern clipboard failed, trying fallback...');
-                                    }
-                                  }
-
-                                  // Fallback method if modern API fails
-                                  if (!success) {
-                                    try {
-                                      // Create textarea element
-                                      const textarea = document.createElement('textarea');
-                                      textarea.value = copyText;
-
-                                      // Make it invisible but ensure it's in the document
-                                      textarea.style.position = 'fixed';
-                                      textarea.style.top = '0';
-                                      textarea.style.left = '0';
-                                      textarea.style.width = '2em';
-                                      textarea.style.height = '2em';
-                                      textarea.style.padding = '0';
-                                      textarea.style.border = 'none';
-                                      textarea.style.outline = 'none';
-                                      textarea.style.boxShadow = 'none';
-                                      textarea.style.background = 'transparent';
-
-                                      document.body.appendChild(textarea);
-
-                                      // Focus and select
-                                      textarea.focus();
-                                      textarea.select();
-                                      textarea.setSelectionRange(0, copyText.length);
-
-                                      // Try to copy
-                                      success = document.execCommand('copy');
-
-                                      // Clean up
-                                      document.body.removeChild(textarea);
-                                    } catch (err) {
-                                      console.error('Fallback copy failed:', err);
-                                    }
-                                  }
-
-                                  // Show result to user
-                                  if (success) {
-                                    alert('✅ LOA list copied to clipboard! You can now paste it with Ctrl+V');
-                                  } else {
-                                    // Final fallback - show text for manual copy
-                                    prompt('❌ Auto-copy failed. Please manually copy this text:', copyText);
+                                  // If user didn't cancel, show success message
+                                  if (userAction !== null) {
+                                    alert('✅ Text ready for pasting! You can now use Ctrl+V in other windows.');
                                   }
                                 }}
                                 className="text-xs bg-purple-700/50 hover:bg-purple-600/50 px-2 py-1 rounded border border-purple-400/50 hover:border-purple-400 transition-colors flex items-center gap-1"
