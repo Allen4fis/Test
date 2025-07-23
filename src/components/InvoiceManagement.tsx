@@ -1040,7 +1040,7 @@ export function InvoiceManagement() {
                       </div>
 
                       {/* Financial Summary */}
-                      <div className="grid grid-cols-4 gap-3 text-center border-t border-gray-700 pt-3 mb-3" style={{ gridTemplateColumns: 'minmax(60px, 1fr) minmax(70px, 1fr) minmax(70px, 1fr) minmax(60px, 1fr)' }}>
+                      <div className="grid grid-cols-4 gap-3 text-center border-t border-gray-700 pt-3 mb-3">
                         {jobStat.job.isBillable === false ? (
                           <>
                             <div className="col-span-4 text-center">
@@ -1055,13 +1055,13 @@ export function InvoiceManagement() {
                         ) : (
                           <>
                             <div>
-                              <div className="text-sm font-bold text-green-400">
+                              <div className="text-xs font-bold text-green-400">
                                 ${jobStat.totalBillable.toFixed(2)}
                               </div>
                               <div className="text-xs text-gray-400">Total</div>
                             </div>
                             <div>
-                              <div className="text-sm font-bold text-blue-400">
+                              <div className="text-xs font-bold text-blue-400">
                                 ${jobStat.invoicedBillable.toFixed(2)}
                               </div>
                               <div className="text-xs text-gray-400">
@@ -1069,7 +1069,7 @@ export function InvoiceManagement() {
                               </div>
                             </div>
                             <div>
-                              <div className="text-sm font-bold text-red-400">
+                              <div className="text-xs font-bold text-red-400">
                                 ${jobStat.uninvoicedBillable.toFixed(2)}
                               </div>
                               <div className="text-xs text-gray-400">
@@ -1077,7 +1077,7 @@ export function InvoiceManagement() {
                               </div>
                             </div>
                             <div>
-                              <div className="text-sm font-bold text-purple-400">
+                              <div className="text-xs font-bold text-purple-400">
                                 ${jobStat.unpaidBillable.toFixed(2)}
                               </div>
                               <div className="text-xs text-gray-400">
