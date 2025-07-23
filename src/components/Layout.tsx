@@ -181,13 +181,6 @@ export const Layout = memo(function Layout({ children, timeTracking }: LayoutPro
         description: "Manage data backups",
         color: "text-amber-400",
       },
-      {
-        id: "health-check" as const,
-        label: "System Health",
-        icon: Shield,
-        description: "Bug tests & optimization",
-        color: "text-red-400",
-      },
     ];
   }, [
     employees.length,
