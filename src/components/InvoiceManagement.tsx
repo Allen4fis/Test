@@ -1321,7 +1321,7 @@ export function InvoiceManagement() {
                             {/* Easy copy text area */}
                             <textarea
                               value={employeesWithLOA
-                                .map(emp => `${emp.name} - ${emp.allowances} allowance${emp.allowances > 1 ? 's' : ''}`)
+                                .map(emp => `${emp.name} - ${emp.allowances} LoA${emp.allowances > 1 ? 's' : ''}`)
                                 .join('\n')}
                               readOnly
                               onClick={(e) => {
