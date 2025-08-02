@@ -185,11 +185,7 @@ const Index = () => {
         component = <InvoiceManagement />;
         break;
       case "employees":
-        component = useOptimized ? (
-          <OptimizedEmployeeManagement key={retryKey} />
-        ) : (
-          <EmployeeManagement />
-        );
+        component = <EmployeeManagement />;
         break;
       case "jobs":
         component = useOptimized ? (
