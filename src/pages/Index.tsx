@@ -92,9 +92,7 @@ const Index = () => {
   }, [regularMetrics, optimizedMetrics]);
 
   const useOptimized = shouldUseOptimizedComponents(dataMetrics);
-  const timeTracking = useOptimized
-    ? optimizedTimeTracking
-    : regularTimeTracking;
+  const timeTracking = regularTimeTracking; // Always use regular timeTracking to ensure all functions are available
 
   // Early return if timeTracking is not ready
   if (
