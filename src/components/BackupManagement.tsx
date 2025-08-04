@@ -120,7 +120,7 @@ const getStorageStats = () => {
     available,
     usagePercent,
     isNearLimit: usagePercent > 80,
-    isFull: usagePercent > 95
+    isFull: usagePercent > 95,
   };
 };
 
@@ -263,7 +263,7 @@ export function BackupManagement() {
       try {
         localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
       } catch (error) {
-        if (error.name === 'QuotaExceededError') {
+        if (error.name === "QuotaExceededError") {
           // Try with fewer backups
           let maxBackups = 10;
           let saveSuccessful = false;
@@ -279,20 +279,26 @@ export function BackupManagement() {
                 variant: "default",
               });
             } catch (retryError) {
-              if (retryError.name === 'QuotaExceededError') {
+              if (retryError.name === "QuotaExceededError") {
                 maxBackups = Math.floor(maxBackups / 2);
                 if (maxBackups === 0) {
                   // Last resort - save only the new backup
                   try {
-                    localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify([backup]));
+                    localStorage.setItem(
+                      BACKUP_STORAGE_KEY,
+                      JSON.stringify([backup]),
+                    );
                     saveSuccessful = true;
                     toast({
                       title: "Storage Full",
-                      description: "Cleared old backups due to storage constraints.",
+                      description:
+                        "Cleared old backups due to storage constraints.",
                       variant: "default",
                     });
                   } catch (finalError) {
-                    throw new Error("Storage quota exceeded. Please clear browser data.");
+                    throw new Error(
+                      "Storage quota exceeded. Please clear browser data.",
+                    );
                   }
                 }
               } else {
@@ -518,20 +524,26 @@ export function BackupManagement() {
             });
           }
         } catch (error) {
-          if (error.name === 'QuotaExceededError') {
+          if (error.name === "QuotaExceededError") {
             maxBackups = Math.floor(maxBackups / 2);
             if (maxBackups === 0) {
               // Try with just the new backup
               try {
-                localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify([importConfirmationData]));
+                localStorage.setItem(
+                  BACKUP_STORAGE_KEY,
+                  JSON.stringify([importConfirmationData]),
+                );
                 saveSuccessful = true;
                 toast({
                   title: "Storage Full",
-                  description: "Cleared old backups due to storage constraints. Only the new backup was saved.",
+                  description:
+                    "Cleared old backups due to storage constraints. Only the new backup was saved.",
                   variant: "default",
                 });
               } catch (finalError) {
-                throw new Error("Storage quota exceeded. Please clear browser data or use a smaller backup file.");
+                throw new Error(
+                  "Storage quota exceeded. Please clear browser data or use a smaller backup file.",
+                );
               }
             }
           } else {
