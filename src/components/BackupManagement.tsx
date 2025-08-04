@@ -423,9 +423,47 @@ export function BackupManagement() {
       // Add to stored backups
       const existing = storedBackups;
       const updated = [importConfirmationData, ...existing];
-      const trimmed = updated.slice(0, 20);
+      let trimmed = updated.slice(0, 20);
 
-      localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+      // Try to save with progressively fewer backups if quota exceeded
+      let maxBackups = 20;
+      let saveSuccessful = false;
+
+      while (maxBackups > 0 && !saveSuccessful) {
+        try {
+          trimmed = updated.slice(0, maxBackups);
+          localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+          saveSuccessful = true;
+
+          if (maxBackups < 20) {
+            toast({
+              title: "Storage Optimized",
+              description: `Limited to ${maxBackups} backups due to storage constraints. Older backups were removed.`,
+              variant: "default",
+            });
+          }
+        } catch (error) {
+          if (error.name === 'QuotaExceededError') {
+            maxBackups = Math.floor(maxBackups / 2);
+            if (maxBackups === 0) {
+              // Try with just the new backup
+              try {
+                localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify([importConfirmationData]));
+                saveSuccessful = true;
+                toast({
+                  title: "Storage Full",
+                  description: "Cleared old backups due to storage constraints. Only the new backup was saved.",
+                  variant: "default",
+                });
+              } catch (finalError) {
+                throw new Error("Storage quota exceeded. Please clear browser data or use a smaller backup file.");
+              }
+            }
+          } else {
+            throw error;
+          }
+        }
+      }
 
       toast({
         title: "Backup Imported",
