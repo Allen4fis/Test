@@ -92,6 +92,38 @@ interface StoredBackup extends BackupMetadata {
 
 const BACKUP_STORAGE_KEY = "trackity-doo-backups";
 
+// Utility functions for localStorage management
+const getLocalStorageUsage = () => {
+  let used = 0;
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      used += localStorage[key].length + key.length;
+    }
+  }
+  return used;
+};
+
+const getLocalStorageQuota = () => {
+  // Most browsers have a 5-10MB limit, we'll estimate 5MB as conservative
+  return 5 * 1024 * 1024; // 5MB in bytes
+};
+
+const getStorageStats = () => {
+  const used = getLocalStorageUsage();
+  const quota = getLocalStorageQuota();
+  const available = quota - used;
+  const usagePercent = (used / quota) * 100;
+
+  return {
+    used,
+    quota,
+    available,
+    usagePercent,
+    isNearLimit: usagePercent > 80,
+    isFull: usagePercent > 95
+  };
+};
+
 export function BackupManagement() {
   const timeTracking = useTimeTracking();
   const {
