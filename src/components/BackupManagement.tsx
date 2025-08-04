@@ -225,10 +225,53 @@ export function BackupManagement() {
       const updated = [backup, ...existing];
 
       // Keep only the most recent 20 backups to prevent storage overflow
-      const trimmed = updated.slice(0, 20);
+      let trimmed = updated.slice(0, 20);
 
-      // Save to localStorage
-      localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+      // Save to localStorage with quota handling
+      try {
+        localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+      } catch (error) {
+        if (error.name === 'QuotaExceededError') {
+          // Try with fewer backups
+          let maxBackups = 10;
+          let saveSuccessful = false;
+
+          while (maxBackups > 0 && !saveSuccessful) {
+            try {
+              trimmed = updated.slice(0, maxBackups);
+              localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify(trimmed));
+              saveSuccessful = true;
+              toast({
+                title: "Storage Optimized",
+                description: `Limited to ${maxBackups} backups due to storage constraints.`,
+                variant: "default",
+              });
+            } catch (retryError) {
+              if (retryError.name === 'QuotaExceededError') {
+                maxBackups = Math.floor(maxBackups / 2);
+                if (maxBackups === 0) {
+                  // Last resort - save only the new backup
+                  try {
+                    localStorage.setItem(BACKUP_STORAGE_KEY, JSON.stringify([backup]));
+                    saveSuccessful = true;
+                    toast({
+                      title: "Storage Full",
+                      description: "Cleared old backups due to storage constraints.",
+                      variant: "default",
+                    });
+                  } catch (finalError) {
+                    throw new Error("Storage quota exceeded. Please clear browser data.");
+                  }
+                }
+              } else {
+                throw retryError;
+              }
+            }
+          }
+        } else {
+          throw error;
+        }
+      }
 
       toast({
         title: "Backup Created Successfully",
