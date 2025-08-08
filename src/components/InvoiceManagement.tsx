@@ -248,6 +248,12 @@ export function InvoiceManagement() {
         };
       }
 
+      // Calculate hour-based costs (excluding LoA)
+      const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+      const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
+      const hourBasedCost = entry.totalCost - loaCost;
+      const hourBasedBillable = entry.totalBillableAmount - loaBillable;
+
       // Find existing employee or add new one
       const existingEmployee = acc[key].employees.find(
         (emp: any) => emp.name === entry.employeeName,
@@ -255,8 +261,8 @@ export function InvoiceManagement() {
       if (existingEmployee) {
         existingEmployee.hours += entry.hours;
         existingEmployee.effectiveHours += entry.effectiveHours;
-        existingEmployee.individualCost += entry.totalCost;
-        existingEmployee.individualBillable += entry.totalBillableAmount;
+        existingEmployee.individualCost += hourBasedCost; // Only hour-based cost
+        existingEmployee.individualBillable += hourBasedBillable; // Only hour-based billable
         // Update cost wage to reflect the most recent entry's wage (in case it changed)
         existingEmployee.costWage = entry.costWage;
         existingEmployee.billableWage = entry.billableWage;
@@ -267,8 +273,8 @@ export function InvoiceManagement() {
           effectiveHours: entry.effectiveHours,
           costWage: entry.costWage,
           billableWage: entry.billableWage,
-          individualCost: entry.totalCost,
-          individualBillable: entry.totalBillableAmount,
+          individualCost: hourBasedCost, // Only hour-based cost
+          individualBillable: hourBasedBillable, // Only hour-based billable
         });
       }
 
