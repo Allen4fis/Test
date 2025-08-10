@@ -946,7 +946,6 @@ export function TimeEntryViewer() {
                     <TableHead>Hours</TableHead>
                     <TableHead>LOA</TableHead>
                     <TableHead>Billable Rate</TableHead>
-                    <TableHead>Total Billable</TableHead>
                     <TableHead>Cost Rate</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Actions</TableHead>
@@ -1048,31 +1047,25 @@ export function TimeEntryViewer() {
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <span className="text-green-600 font-medium">
-                              ${entry.billableWageUsed?.toFixed(2) || "0.00"}
+                              ${(() => {
+                                let adjustedBillableWage = entry.billableWageUsed || 0;
+
+                                // Add $3 for NS hour types
+                                if (hourType?.name.startsWith("NS ")) {
+                                  adjustedBillableWage += 3;
+                                }
+
+                                // Apply hour type multiplier to show effective rate
+                                const effectiveRate = adjustedBillableWage * (hourType?.multiplier || 1);
+
+                                return effectiveRate.toFixed(2);
+                              })()}
                             </span>
                             {billableWageChanged && (
                               <Badge variant="outline" className="text-xs">
                                 Modified
                               </Badge>
                             )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-green-600 font-medium">
-                            ${(() => {
-                              const effectiveHours = entry.hours * (hourType?.multiplier || 1);
-                              let adjustedBillableWage = entry.billableWageUsed || 0;
-
-                              // Add $3 for NS hour types
-                              if (hourType?.name.startsWith("NS ")) {
-                                adjustedBillableWage += 3;
-                              }
-
-                              const hourlyBillable = effectiveHours * adjustedBillableWage;
-                              const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
-
-                              return (hourlyBillable + loaBillable).toFixed(2);
-                            })()}
                           </div>
                         </TableCell>
                         <TableCell>
