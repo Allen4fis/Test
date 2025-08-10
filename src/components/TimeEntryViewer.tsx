@@ -347,6 +347,7 @@ export function TimeEntryViewer() {
 
   const totalCost = filteredAndSortedEntries.reduce((sum, entry) => {
     const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
+    const employee = employees.find((emp) => emp.id === entry.employeeId);
     const effectiveHours = entry.hours * (hourType?.multiplier || 1);
     let adjustedCostWage = entry.costWageUsed || 0;
 
@@ -355,8 +356,15 @@ export function TimeEntryViewer() {
       adjustedCostWage += 3;
     }
 
-    // Calculate hourly cost
-    const hourlyCost = effectiveHours * adjustedCostWage;
+    // Check if this entry should use 1x rates for cost calculation
+    const entryEmployeeCategory = entry.employeeCategory || employee?.category;
+    const manager = employee?.managerId ? employees.find((emp) => emp.id === employee.managerId) : null;
+    const shouldUse1xRates = entryEmployeeCategory === "dsp" || (employee?.managerId && manager?.category === "dsp");
+
+    // Calculate hourly cost - DSPs and subordinates of DSPs get 1x rates
+    const hourlyCost = shouldUse1xRates
+      ? entry.hours * adjustedCostWage
+      : effectiveHours * adjustedCostWage;
 
     // Add Live Out Allowance cost separately (fixed $200 per Live Out Allowance count)
     const loaCost = (entry.loaCount || 0) * 200;
