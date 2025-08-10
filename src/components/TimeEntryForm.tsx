@@ -1507,16 +1507,32 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                             <div className="text-red-600 font-medium">
                               $
                               {(() => {
-                                const employee = employees.find(emp => emp.id === (entry as any).employeeId);
-                                const entryEmployeeCategory = (entry as any).employeeCategory || employee?.category;
-                                const manager = employee?.managerId ? employees.find(emp => emp.id === employee.managerId) : null;
-                                const shouldUse1xRates = entryEmployeeCategory === "dsp" || (employee?.managerId && manager?.category === "dsp");
+                                const employee = employees.find(
+                                  (emp) => emp.id === (entry as any).employeeId,
+                                );
+                                const entryEmployeeCategory =
+                                  (entry as any).employeeCategory ||
+                                  employee?.category;
+                                const manager = employee?.managerId
+                                  ? employees.find(
+                                      (emp) => emp.id === employee.managerId,
+                                    )
+                                  : null;
+                                const shouldUse1xRates =
+                                  entryEmployeeCategory === "dsp" ||
+                                  (employee?.managerId &&
+                                    manager?.category === "dsp");
 
                                 const hourlyBaseCost = shouldUse1xRates
-                                  ? (entry as any).hours * (entry as any).costWageUsed
-                                  : (entry as any).hours * (entry as any).costWageUsed * (hourType?.multiplier || 1);
+                                  ? (entry as any).hours *
+                                    (entry as any).costWageUsed
+                                  : (entry as any).hours *
+                                    (entry as any).costWageUsed *
+                                    (hourType?.multiplier || 1);
 
-                                const loaCost = ((entry as any).loaCount || 0) * ((entry as any).loaAmount || 200);
+                                const loaCost =
+                                  ((entry as any).loaCount || 0) *
+                                  ((entry as any).loaAmount || 200);
 
                                 return (hourlyBaseCost + loaCost).toFixed(2);
                               })()}
@@ -1526,9 +1542,16 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                             <div className="text-green-600 font-medium">
                               $
                               {(() => {
-                                const hourlyBillable = (entry as any).hours * (entry as any).billableWageUsed * (hourType?.multiplier || 1);
-                                const loaBillable = ((entry as any).loaCount || 0) * ((entry as any).loaAmount || 200);
-                                return (hourlyBillable + loaBillable).toFixed(2);
+                                const hourlyBillable =
+                                  (entry as any).hours *
+                                  (entry as any).billableWageUsed *
+                                  (hourType?.multiplier || 1);
+                                const loaBillable =
+                                  ((entry as any).loaCount || 0) *
+                                  ((entry as any).loaAmount || 200);
+                                return (hourlyBillable + loaBillable).toFixed(
+                                  2,
+                                );
                               })()}
                             </div>
                           </TableCell>
@@ -1561,18 +1584,38 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           ]
                                         : []),
                                       `Total Cost: $${(() => {
-                                        const employee = employees.find(emp => emp.id === (entry as any).employeeId);
-                                        const entryEmployeeCategory = (entry as any).employeeCategory || employee?.category;
-                                        const manager = employee?.managerId ? employees.find(emp => emp.id === employee.managerId) : null;
-                                        const shouldUse1xRates = entryEmployeeCategory === "dsp" || (employee?.managerId && manager?.category === "dsp");
+                                        const employee = employees.find(
+                                          (emp) =>
+                                            emp.id ===
+                                            (entry as any).employeeId,
+                                        );
+                                        const entryEmployeeCategory =
+                                          (entry as any).employeeCategory ||
+                                          employee?.category;
+                                        const manager = employee?.managerId
+                                          ? employees.find(
+                                              (emp) =>
+                                                emp.id === employee.managerId,
+                                            )
+                                          : null;
+                                        const shouldUse1xRates =
+                                          entryEmployeeCategory === "dsp" ||
+                                          (employee?.managerId &&
+                                            manager?.category === "dsp");
 
                                         const hourlyBaseCost = shouldUse1xRates
-                                          ? (entry as any).hours * (entry as any).costWageUsed
-                                          : (entry as any).hours * (entry as any).costWageUsed * (hourType?.multiplier || 1);
+                                          ? (entry as any).hours *
+                                            (entry as any).costWageUsed
+                                          : (entry as any).hours *
+                                            (entry as any).costWageUsed *
+                                            (hourType?.multiplier || 1);
 
-                                        const loaCost = ((entry as any).loaCount || 0) * 200;
+                                        const loaCost =
+                                          ((entry as any).loaCount || 0) * 200;
 
-                                        return (hourlyBaseCost + loaCost).toFixed(2);
+                                        return (
+                                          hourlyBaseCost + loaCost
+                                        ).toFixed(2);
                                       })()}`,
                                       `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
                                     ],

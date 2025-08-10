@@ -358,8 +358,12 @@ export function TimeEntryViewer() {
 
     // Check if this entry should use 1x rates for cost calculation
     const entryEmployeeCategory = entry.employeeCategory || employee?.category;
-    const manager = employee?.managerId ? employees.find((emp) => emp.id === employee.managerId) : null;
-    const shouldUse1xRates = entryEmployeeCategory === "dsp" || (employee?.managerId && manager?.category === "dsp");
+    const manager = employee?.managerId
+      ? employees.find((emp) => emp.id === employee.managerId)
+      : null;
+    const shouldUse1xRates =
+      entryEmployeeCategory === "dsp" ||
+      (employee?.managerId && manager?.category === "dsp");
 
     // Calculate hourly cost - DSPs and subordinates of DSPs get 1x rates
     const hourlyCost = shouldUse1xRates
@@ -1047,8 +1051,10 @@ export function TimeEntryViewer() {
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <span className="text-green-600 font-medium">
-                              ${(() => {
-                                let adjustedBillableWage = entry.billableWageUsed || 0;
+                              $
+                              {(() => {
+                                let adjustedBillableWage =
+                                  entry.billableWageUsed || 0;
 
                                 // Add $3 for NS hour types
                                 if (hourType?.name.startsWith("NS ")) {
@@ -1056,7 +1062,9 @@ export function TimeEntryViewer() {
                                 }
 
                                 // Apply hour type multiplier to show effective rate
-                                const effectiveRate = adjustedBillableWage * (hourType?.multiplier || 1);
+                                const effectiveRate =
+                                  adjustedBillableWage *
+                                  (hourType?.multiplier || 1);
 
                                 return effectiveRate.toFixed(2);
                               })()}
