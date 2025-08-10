@@ -946,6 +946,7 @@ export function TimeEntryViewer() {
                     <TableHead>Hours</TableHead>
                     <TableHead>LOA</TableHead>
                     <TableHead>Billable Rate</TableHead>
+                    <TableHead>Total Billable</TableHead>
                     <TableHead>Cost Rate</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Actions</TableHead>
@@ -1054,6 +1055,24 @@ export function TimeEntryViewer() {
                                 Modified
                               </Badge>
                             )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-green-600 font-medium">
+                            ${(() => {
+                              const effectiveHours = entry.hours * (hourType?.multiplier || 1);
+                              let adjustedBillableWage = entry.billableWageUsed || 0;
+
+                              // Add $3 for NS hour types
+                              if (hourType?.name.startsWith("NS ")) {
+                                adjustedBillableWage += 3;
+                              }
+
+                              const hourlyBillable = effectiveHours * adjustedBillableWage;
+                              const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
+
+                              return (hourlyBillable + loaBillable).toFixed(2);
+                            })()}
                           </div>
                         </TableCell>
                         <TableCell>
