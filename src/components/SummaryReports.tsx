@@ -542,12 +542,6 @@ export function SummaryReports() {
         );
       });
 
-      // Calculate GST based on the employee's total cost from filtered summaries
-      // This ensures consistency with the displayed totalCost
-      const employeeFilteredSummaries = filteredSummaries.filter(
-        summary => summary.employeeName === emp.employeeName
-      );
-
       // Calculate GST based on individual entry categories from filtered summaries
       // Only apply GST to entries where the employee was DSP/DSPOT at time of entry
       const employeeFilteredSummaries = filteredSummaries.filter(
