@@ -542,26 +542,27 @@ export function SummaryReports() {
         );
       });
 
-      // Calculate GST based on employee category and exact emp.totalCost shown in UI
-      // Use the same totalCost value that's displayed to ensure consistency
-      let gstAmount = 0;
+      // Calculate GST by recalculating the total cost the same way it's displayed
+      // Sum up the filtered summaries to get the actual displayed total cost
+      const employeeFilteredSummaries = filteredSummaries.filter(
+        summary => summary.employeeName === emp.employeeName
+      );
 
-      // Check if employee should have GST applied based on their category
+      const actualDisplayedTotalCost = employeeFilteredSummaries.reduce(
+        (sum, summary) => sum + (summary.totalCost || 0), 0
+      );
+
+      // Calculate GST based on employee category and the actual displayed total cost
+      let gstAmount = 0;
       if (employee?.category === "dsp" || employee?.category === "dspot") {
-        gstAmount = (emp.totalCost || 0) * 0.05;
+        gstAmount = actualDisplayedTotalCost * 0.05;
       } else if (
         employee?.managerId &&
         employee?.category !== "employee" &&
         !employee?.category
       ) {
         // Subordinate contractors without explicit category
-        gstAmount = (emp.totalCost || 0) * 0.05;
-      }
-
-      // Debug: For Riley, show the exact values being used
-      if (emp.employeeName === "Riley Larue") {
-        // Set GST to show the total cost value being used (multiply by 100 to make it visible)
-        gstAmount = (emp.totalCost || 0) / 10; // This will show the cost divided by 10 in the GST field
+        gstAmount = actualDisplayedTotalCost * 0.05;
       }
 
       return {
