@@ -374,19 +374,29 @@ export const Paystubs = () => {
           </tr>
         </thead>
         <tbody>
-          ${paystub.entries
-            .sort((a, b) => a.date.localeCompare(b.date))
-            .map(entry => `
-              <tr>
-                <td>${formatLocalDate(entry.date)}</td>
-                <td>${entry.jobNumber}</td>
-                <td>${entry.hourTypeName}</td>
-                <td class="text-right">${entry.hours.toFixed(2)}h</td>
-                <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
-                <td class="text-right">$${entry.costWage.toFixed(2)}/h</td>
-                <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
-              </tr>
-            `).join('')}
+              ${paystub.entries
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .map(entry => {
+                  // Calculate effective rate with multiplier
+                  const hourType = hourTypes.find(ht => ht.id === entry.hourTypeId);
+                  const multiplier = hourType?.multiplier || 1;
+                  const effectiveRate = entry.costWage * multiplier;
+                  const rateDisplay = multiplier === 1
+                    ? `$${entry.costWage.toFixed(2)}/h`
+                    : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+
+                  return `
+                    <tr>
+                      <td>${formatLocalDate(entry.date)}</td>
+                      <td>${entry.jobNumber}</td>
+                      <td>${entry.hourTypeName}</td>
+                      <td class="text-right">${entry.hours.toFixed(2)}h</td>
+                      <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
+                      <td class="text-right">${rateDisplay}</td>
+                      <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
+                    </tr>
+                  `;
+                }).join('')}
         </tbody>
       </table>
     </div>
