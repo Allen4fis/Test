@@ -38,7 +38,7 @@ import {
   FileText,
   Send,
 } from "lucide-react";
-import html2pdf from 'html2pdf.js';
+import html2pdf from "html2pdf.js";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
   parseLocalDate,
@@ -75,7 +75,8 @@ export const Paystubs = () => {
   // State for filters
   const [dateFilter, setDateFilter] = useState(getInitialDateFilter);
   const [selectedEmployee, setSelectedEmployee] = useState<string>("all");
-  const [selectedEmployeeType, setSelectedEmployeeType] = useState<string>("all");
+  const [selectedEmployeeType, setSelectedEmployeeType] =
+    useState<string>("all");
 
   // State for PDF generation
   const [isGeneratingPDF, setIsGeneratingPDF] = useState<string | null>(null);
@@ -85,17 +86,17 @@ export const Paystubs = () => {
     // Group employees and determine their relationships
     const employeeMap = new Map();
 
-    employees.forEach(emp => {
+    employees.forEach((emp) => {
       employeeMap.set(emp.id, {
         ...emp,
         subordinates: [],
         isSubordinate: false,
-        employeeCategory: emp.category || "employee"
+        employeeCategory: emp.category || "employee",
       });
     });
 
     // Mark subordinates and build hierarchy
-    employees.forEach(emp => {
+    employees.forEach((emp) => {
       if (emp.managerId) {
         const manager = employeeMap.get(emp.managerId);
         const subordinate = employeeMap.get(emp.id);
@@ -113,35 +114,43 @@ export const Paystubs = () => {
   const filteredSummaries = useMemo(() => {
     return timeEntrySummaries.filter((summary) => {
       // Date filter
-      if (
-        summary.date < dateFilter.start ||
-        summary.date > dateFilter.end
-      ) {
+      if (summary.date < dateFilter.start || summary.date > dateFilter.end) {
         return false;
       }
 
       // Employee filter
-      if (selectedEmployee !== "all" && summary.employeeName !== selectedEmployee) {
+      if (
+        selectedEmployee !== "all" &&
+        summary.employeeName !== selectedEmployee
+      ) {
         return false;
       }
 
       // Employee type filter
       if (selectedEmployeeType !== "all") {
-        const employee = employees.find(emp => emp.name === summary.employeeName);
+        const employee = employees.find(
+          (emp) => emp.name === summary.employeeName,
+        );
         if (!employee) return false;
 
-        const hierarchicalEmployee = hierarchicalEmployeeSummaries.find(emp => emp.id === employee.id);
+        const hierarchicalEmployee = hierarchicalEmployeeSummaries.find(
+          (emp) => emp.id === employee.id,
+        );
         if (!hierarchicalEmployee) return false;
 
         if (selectedEmployeeType === "dsps-with-subordinates") {
           // Show only DSPs (employees who have subordinates)
-          if (!hierarchicalEmployee.subordinates || hierarchicalEmployee.subordinates.length === 0) {
+          if (
+            !hierarchicalEmployee.subordinates ||
+            hierarchicalEmployee.subordinates.length === 0
+          ) {
             return false;
           }
         } else if (selectedEmployeeType === "regular-employees") {
           // Show only regular employees (no subordinates, not subordinates themselves, and not DSPs/DSPOTs)
           if (
-            (hierarchicalEmployee.subordinates && hierarchicalEmployee.subordinates.length > 0) ||
+            (hierarchicalEmployee.subordinates &&
+              hierarchicalEmployee.subordinates.length > 0) ||
             hierarchicalEmployee.isSubordinate ||
             hierarchicalEmployee.employeeCategory === "dsp" ||
             hierarchicalEmployee.employeeCategory === "dspot"
@@ -151,8 +160,12 @@ export const Paystubs = () => {
         } else if (selectedEmployeeType === "dsps-only") {
           // Show only DSPs and DSPOTs who have no subordinates
           if (
-            !(hierarchicalEmployee.employeeCategory === "dsp" || hierarchicalEmployee.employeeCategory === "dspot") ||
-            (hierarchicalEmployee.subordinates && hierarchicalEmployee.subordinates.length > 0)
+            !(
+              hierarchicalEmployee.employeeCategory === "dsp" ||
+              hierarchicalEmployee.employeeCategory === "dspot"
+            ) ||
+            (hierarchicalEmployee.subordinates &&
+              hierarchicalEmployee.subordinates.length > 0)
           ) {
             return false;
           }
@@ -161,48 +174,64 @@ export const Paystubs = () => {
 
       return true;
     });
-  }, [timeEntrySummaries, dateFilter, selectedEmployee, selectedEmployeeType, hierarchicalEmployeeSummaries]);
+  }, [
+    timeEntrySummaries,
+    dateFilter,
+    selectedEmployee,
+    selectedEmployeeType,
+    hierarchicalEmployeeSummaries,
+  ]);
 
   // Group summaries by employee for paystub display
   const employeePaystubs = useMemo(() => {
-    const grouped = filteredSummaries.reduce((acc, summary) => {
-      const key = summary.employeeName;
+    const grouped = filteredSummaries.reduce(
+      (acc, summary) => {
+        const key = summary.employeeName;
 
-      if (!acc[key]) {
-        acc[key] = {
-          employeeName: summary.employeeName,
-          employeeTitle: summary.employeeTitle,
-          totalHours: 0,
-          totalCost: 0,
-          totalLoaCount: 0,
-          totalLoaAmount: 0,
-          entries: [],
-        };
-      }
+        if (!acc[key]) {
+          acc[key] = {
+            employeeName: summary.employeeName,
+            employeeTitle: summary.employeeTitle,
+            totalHours: 0,
+            totalCost: 0,
+            totalLoaCount: 0,
+            totalLoaAmount: 0,
+            entries: [],
+          };
+        }
 
-      acc[key].totalHours += summary.hours || 0;
-      acc[key].totalCost += summary.totalCost || 0;
-      acc[key].totalLoaCount += summary.loaCount || 0;
-      acc[key].totalLoaAmount += (summary.loaCount || 0) * 200; // Default LOA amount
-      acc[key].entries.push(summary);
+        acc[key].totalHours += summary.hours || 0;
+        acc[key].totalCost += summary.totalCost || 0;
+        acc[key].totalLoaCount += summary.loaCount || 0;
+        acc[key].totalLoaAmount += (summary.loaCount || 0) * 200; // Default LOA amount
+        acc[key].entries.push(summary);
 
-      return acc;
-    }, {} as Record<string, {
-      employeeName: string;
-      employeeTitle: string;
-      totalHours: number;
-      totalCost: number;
-      totalLoaCount: number;
-      totalLoaAmount: number;
-      entries: typeof summary[];
-    }>);
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          employeeName: string;
+          employeeTitle: string;
+          totalHours: number;
+          totalCost: number;
+          totalLoaCount: number;
+          totalLoaAmount: number;
+          entries: (typeof summary)[];
+        }
+      >,
+    );
 
-    return Object.values(grouped).sort((a, b) => a.employeeName.localeCompare(b.employeeName));
+    return Object.values(grouped).sort((a, b) =>
+      a.employeeName.localeCompare(b.employeeName),
+    );
   }, [filteredSummaries]);
 
   // Get unique employee names for dropdown
   const employeeNames = useMemo(() => {
-    const names = new Set(timeEntrySummaries.map(summary => summary.employeeName));
+    const names = new Set(
+      timeEntrySummaries.map((summary) => summary.employeeName),
+    );
     return Array.from(names).sort();
   }, [timeEntrySummaries]);
 
@@ -213,7 +242,10 @@ export const Paystubs = () => {
   };
 
   // Function to generate PDF for a specific paystub using browser print
-  const generatePDF = async (paystub: typeof employeePaystubs[0], download = true) => {
+  const generatePDF = async (
+    paystub: (typeof employeePaystubs)[0],
+    download = true,
+  ) => {
     const employeeName = paystub.employeeName;
     setIsGeneratingPDF(employeeName);
 
@@ -221,9 +253,9 @@ export const Paystubs = () => {
       const periodText = `${formatLocalDate(dateFilter.start)} to ${formatLocalDate(dateFilter.end)}`;
 
       // Create a new window for the paystub
-      const printWindow = window.open('', '_blank', 'width=800,height=1000');
+      const printWindow = window.open("", "_blank", "width=800,height=1000");
       if (!printWindow) {
-        alert('Please allow popups for this site to generate PDFs');
+        alert("Please allow popups for this site to generate PDFs");
         return null;
       }
 
@@ -598,7 +630,7 @@ export const Paystubs = () => {
         <strong>🕐 Total Hours Worked:</strong>
         <span style="color: #374151; font-weight: 600;">${paystub.totalHours.toFixed(1)} hours</span>
       </div>
-      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>🏠 Live Out Allowances:</strong> <span style="color: #374151; font-weight: 600;">${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</span></div>` : ''}
+      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>🏠 Live Out Allowances:</strong> <span style="color: #374151; font-weight: 600;">${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</span></div>` : ""}
     </div>
 
     <div class="table-section">
@@ -653,14 +685,17 @@ export const Paystubs = () => {
         <tbody>
               ${paystub.entries
                 .sort((a, b) => a.date.localeCompare(b.date))
-                .map(entry => {
+                .map((entry) => {
                   // Calculate effective rate with multiplier
-                  const hourType = hourTypes.find(ht => ht.name === entry.hourTypeName);
+                  const hourType = hourTypes.find(
+                    (ht) => ht.name === entry.hourTypeName,
+                  );
                   const multiplier = hourType?.multiplier || 1;
                   const effectiveRate = entry.costWage * multiplier;
-                  const rateDisplay = multiplier === 1
-                    ? `$${entry.costWage.toFixed(2)}/h`
-                    : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+                  const rateDisplay =
+                    multiplier === 1
+                      ? `$${entry.costWage.toFixed(2)}/h`
+                      : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
 
                   return `
                     <tr>
@@ -668,12 +703,13 @@ export const Paystubs = () => {
                       <td>${entry.jobNumber}</td>
                       <td>${entry.hourTypeName}</td>
                       <td class="text-right">${entry.hours.toFixed(2)}h</td>
-                      <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
+                      <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : "—"}</td>
                       <td class="text-right">${rateDisplay}</td>
                       <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
                     </tr>
                   `;
-                }).join('')}
+                })
+                .join("")}
         </tbody>
       </table>
     </div>
@@ -710,8 +746,8 @@ export const Paystubs = () => {
 
       return true;
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Error opening print window. Please try again.');
+      console.error("Error generating PDF:", error);
+      alert("Error opening print window. Please try again.");
       return null;
     } finally {
       setIsGeneratingPDF(null);
@@ -719,7 +755,7 @@ export const Paystubs = () => {
   };
 
   // Function to generate PDF and open email
-  const generatePDFAndEmail = async (paystub: typeof employeePaystubs[0]) => {
+  const generatePDFAndEmail = async (paystub: (typeof employeePaystubs)[0]) => {
     try {
       const periodText = `${formatLocalDate(dateFilter.start)} to ${formatLocalDate(dateFilter.end)}`;
       const subject = `Pay Preview - ${paystub.employeeName} (${periodText})`;
@@ -733,8 +769,12 @@ IMPORTANT: This is a pay preview only and is NOT an official paystub. Official p
 
 Summary:
 - Total Labor Cost: $${paystub.totalCost.toFixed(2)} (excludes taxes/remittances)
-- Total Hours: ${paystub.totalHours.toFixed(1)}${paystub.totalLoaCount > 0 ? `
-- Live Out Allowances: ${paystub.totalLoaCount} × $200 = $${paystub.totalLoaAmount.toFixed(2)}` : ''}
+- Total Hours: ${paystub.totalHours.toFixed(1)}${
+        paystub.totalLoaCount > 0
+          ? `
+- Live Out Allowances: ${paystub.totalLoaCount} × $200 = $${paystub.totalLoaAmount.toFixed(2)}`
+          : ""
+      }
 
 If you have any questions regarding this pay preview, please don't hesitate to contact us.
 
@@ -749,9 +789,9 @@ XOXO,
       setTimeout(() => {
         const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
 
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = mailtoLink;
-        link.style.display = 'none';
+        link.style.display = "none";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -761,17 +801,14 @@ XOXO,
 
 Note: Due to browser security limitations, PDF files cannot be automatically attached to emails. You'll need to manually attach the downloaded PDF file.`);
       }, 2000);
-
     } catch (error) {
-      console.error('Error in PDF and email workflow:', error);
-      alert('Error generating PDF and email. Please try again.');
+      console.error("Error in PDF and email workflow:", error);
+      alert("Error generating PDF and email. Please try again.");
     }
   };
 
-
-
   // Function to generate paystub content for email
-  const generatePaystubEmail = (paystub: typeof employeePaystubs[0]) => {
+  const generatePaystubEmail = (paystub: (typeof employeePaystubs)[0]) => {
     const periodText = `${formatLocalDate(dateFilter.start)} to ${formatLocalDate(dateFilter.end)}`;
 
     // Create concise paystub content (keep it shorter due to mailto length limits)
@@ -781,16 +818,24 @@ Period: ${periodText}
 
 SUMMARY:
 Total Labor Cost: $${paystub.totalCost.toFixed(2)} (excludes taxes/remittances)
-Total Hours: ${paystub.totalHours.toFixed(1)}${paystub.totalLoaCount > 0 ? `
-Live Out Allowances: ${paystub.totalLoaCount} × $200 = $${paystub.totalLoaAmount.toFixed(2)}` : ''}
+Total Hours: ${paystub.totalHours.toFixed(1)}${
+      paystub.totalLoaCount > 0
+        ? `
+Live Out Allowances: ${paystub.totalLoaCount} × $200 = $${paystub.totalLoaAmount.toFixed(2)}`
+        : ""
+    }
 
 DETAILS:
 ${paystub.entries
   .sort((a, b) => a.date.localeCompare(b.date))
   .slice(0, 15) // Limit to first 15 entries to avoid mailto length limits
-  .map(entry =>
-    `${formatLocalDate(entry.date)} | ${entry.jobNumber} | ${entry.hourTypeName} | ${entry.hours.toFixed(2)}h @ $${entry.costWage.toFixed(2)}/h${(entry.loaCount || 0) > 0 ? ` + ${entry.loaCount} LOA` : ''} = $${entry.totalCost.toFixed(2)}`
-  ).join('\n')}${paystub.entries.length > 15 ? '\n... (additional entries truncated)' : ''}
+  .map(
+    (entry) =>
+      `${formatLocalDate(entry.date)} | ${entry.jobNumber} | ${entry.hourTypeName} | ${entry.hours.toFixed(2)}h @ $${entry.costWage.toFixed(2)}/h${(entry.loaCount || 0) > 0 ? ` + ${entry.loaCount} LOA` : ""} = $${entry.totalCost.toFixed(2)}`,
+  )
+  .join(
+    "\n",
+  )}${paystub.entries.length > 15 ? "\n... (additional entries truncated)" : ""}
 
 TOTAL: $${paystub.totalCost.toFixed(2)}
 
@@ -806,9 +851,9 @@ Generated by 4Front Trackity-doo`;
       const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
       // Create a temporary link element
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = mailtoLink;
-      link.style.display = 'none';
+      link.style.display = "none";
       document.body.appendChild(link);
 
       // Click the link to trigger email client
@@ -817,17 +862,21 @@ Generated by 4Front Trackity-doo`;
       // Clean up
       document.body.removeChild(link);
 
-      console.log('Email client should now open with paystub content');
+      console.log("Email client should now open with paystub content");
     } catch (error) {
-      console.error('Error opening email client:', error);
+      console.error("Error opening email client:", error);
 
       // Fallback: Copy content to clipboard and show instructions
       try {
         navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`);
-        alert('Email client could not be opened automatically. The paystub content has been copied to your clipboard. Please paste it into your email client.');
+        alert(
+          "Email client could not be opened automatically. The paystub content has been copied to your clipboard. Please paste it into your email client.",
+        );
       } catch (clipboardError) {
-        console.error('Clipboard access failed:', clipboardError);
-        alert('Unable to open email client automatically. Please manually create an email with the paystub information.');
+        console.error("Clipboard access failed:", clipboardError);
+        alert(
+          "Unable to open email client automatically. Please manually create an email with the paystub information.",
+        );
       }
     }
   };
@@ -845,11 +894,7 @@ Generated by 4Front Trackity-doo`;
             Employee pay preview including LOAs, excluding taxes and remittances
           </p>
         </div>
-
-
       </div>
-
-
 
       {/* Filters */}
       <Card className="bg-gray-800/50 border-gray-700">
@@ -863,14 +908,19 @@ Generated by 4Front Trackity-doo`;
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {/* Date Range */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-200">Start Date</Label>
+              <Label className="text-sm font-medium text-gray-200">
+                Start Date
+              </Label>
               <div className="relative">
                 <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="date"
                   value={dateFilter.start}
                   onChange={(e) =>
-                    setDateFilter((prev) => ({ ...prev, start: e.target.value }))
+                    setDateFilter((prev) => ({
+                      ...prev,
+                      start: e.target.value,
+                    }))
                   }
                   className="pl-10"
                 />
@@ -878,7 +928,9 @@ Generated by 4Front Trackity-doo`;
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-200">End Date</Label>
+              <Label className="text-sm font-medium text-gray-200">
+                End Date
+              </Label>
               <div className="relative">
                 <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -894,24 +946,40 @@ Generated by 4Front Trackity-doo`;
 
             {/* Employee Type Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-200">Employee Type</Label>
-              <Select value={selectedEmployeeType} onValueChange={setSelectedEmployeeType}>
+              <Label className="text-sm font-medium text-gray-200">
+                Employee Type
+              </Label>
+              <Select
+                value={selectedEmployeeType}
+                onValueChange={setSelectedEmployeeType}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Employees</SelectItem>
-                  <SelectItem value="dsps-with-subordinates">DSPs with Subordinates</SelectItem>
-                  <SelectItem value="dsps-only">DSP's & DSPOT's Only</SelectItem>
-                  <SelectItem value="regular-employees">Regular Employees Only</SelectItem>
+                  <SelectItem value="dsps-with-subordinates">
+                    DSPs with Subordinates
+                  </SelectItem>
+                  <SelectItem value="dsps-only">
+                    DSP's & DSPOT's Only
+                  </SelectItem>
+                  <SelectItem value="regular-employees">
+                    Regular Employees Only
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Employee Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-200">Employee</Label>
-              <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+              <Label className="text-sm font-medium text-gray-200">
+                Employee
+              </Label>
+              <Select
+                value={selectedEmployee}
+                onValueChange={setSelectedEmployee}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select employee" />
                 </SelectTrigger>
@@ -928,7 +996,11 @@ Generated by 4Front Trackity-doo`;
 
             {/* Reset Button */}
             <div className="flex items-end">
-              <Button onClick={resetFilters} variant="outline" className="w-full">
+              <Button
+                onClick={resetFilters}
+                variant="outline"
+                className="w-full"
+              >
                 Reset Filters
               </Button>
             </div>
@@ -965,7 +1037,11 @@ Generated by 4Front Trackity-doo`;
               size="sm"
               onClick={() => {
                 const today = new Date();
-                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const startOfMonth = new Date(
+                  today.getFullYear(),
+                  today.getMonth(),
+                  1,
+                );
                 setDateFilter({
                   start: startOfMonth.toISOString().split("T")[0],
                   end: getTodayString(),
@@ -984,7 +1060,9 @@ Generated by 4Front Trackity-doo`;
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">Total Employees</p>
+                <p className="text-sm font-medium text-gray-300">
+                  Total Employees
+                </p>
                 <p className="text-2xl font-bold text-gray-100">
                   {employeePaystubs.length}
                 </p>
@@ -1000,7 +1078,10 @@ Generated by 4Front Trackity-doo`;
               <div>
                 <p className="text-sm font-medium text-gray-300">Total Hours</p>
                 <p className="text-2xl font-bold text-gray-100">
-                  {employeePaystubs.reduce((sum, emp) => sum + emp.totalHours, 0).toFixed(1)}h
+                  {employeePaystubs
+                    .reduce((sum, emp) => sum + emp.totalHours, 0)
+                    .toFixed(1)}
+                  h
                 </p>
               </div>
               <Clock className="h-8 w-8 text-emerald-400" />
@@ -1014,10 +1095,16 @@ Generated by 4Front Trackity-doo`;
               <div>
                 <p className="text-sm font-medium text-gray-300">Total LOAs</p>
                 <p className="text-2xl font-bold text-gray-100">
-                  {employeePaystubs.reduce((sum, emp) => sum + emp.totalLoaCount, 0)}
+                  {employeePaystubs.reduce(
+                    (sum, emp) => sum + emp.totalLoaCount,
+                    0,
+                  )}
                 </p>
                 <p className="text-sm text-amber-400">
-                  ${employeePaystubs.reduce((sum, emp) => sum + emp.totalLoaAmount, 0).toFixed(2)}
+                  $
+                  {employeePaystubs
+                    .reduce((sum, emp) => sum + emp.totalLoaAmount, 0)
+                    .toFixed(2)}
                 </p>
               </div>
               <Receipt className="h-8 w-8 text-amber-400" />
@@ -1031,7 +1118,10 @@ Generated by 4Front Trackity-doo`;
               <div>
                 <p className="text-sm font-medium text-gray-300">Total Cost</p>
                 <p className="text-2xl font-bold text-gray-100">
-                  ${employeePaystubs.reduce((sum, emp) => sum + emp.totalCost, 0).toFixed(2)}
+                  $
+                  {employeePaystubs
+                    .reduce((sum, emp) => sum + emp.totalCost, 0)
+                    .toFixed(2)}
                 </p>
               </div>
               <DollarSign className="h-8 w-8 text-rose-400" />
@@ -1046,7 +1136,9 @@ Generated by 4Front Trackity-doo`;
           <Card className="bg-gray-800/50 border-gray-700">
             <CardContent className="p-12 text-center">
               <Receipt className="h-12 w-12 mx-auto mb-4 text-gray-500" />
-              <p className="text-lg font-medium text-gray-200">No pay preview data found</p>
+              <p className="text-lg font-medium text-gray-200">
+                No pay preview data found
+              </p>
               <p className="text-sm text-gray-400 mt-1">
                 No entries match your current filters and date range.
               </p>
@@ -1054,7 +1146,10 @@ Generated by 4Front Trackity-doo`;
           </Card>
         ) : (
           employeePaystubs.map((paystub) => (
-            <Card key={paystub.employeeName} className="border-l-4 border-l-orange-400 shadow-lg bg-gray-800/50 border-gray-700">
+            <Card
+              key={paystub.employeeName}
+              className="border-l-4 border-l-orange-400 shadow-lg bg-gray-800/50 border-gray-700"
+            >
               <CardHeader className="bg-gray-700/30">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -1063,11 +1158,14 @@ Generated by 4Front Trackity-doo`;
                       {paystub.employeeName}
                     </CardTitle>
                     <CardDescription className="text-gray-300">
-                      {paystub.employeeTitle} • {formatLocalDate(dateFilter.start)} to {formatLocalDate(dateFilter.end)}
+                      {paystub.employeeTitle} •{" "}
+                      {formatLocalDate(dateFilter.start)} to{" "}
+                      {formatLocalDate(dateFilter.end)}
                     </CardDescription>
                     <div className="mt-2 p-2 bg-amber-900/20 border border-amber-500/30 rounded-lg">
                       <p className="text-xs text-amber-200 font-medium">
-                        ⚠️ PAY PREVIEW ONLY - Not an official paystub. Costs exclude taxes and remittances. LOAs shown separately.
+                        ⚠️ PAY PREVIEW ONLY - Not an official paystub. Costs
+                        exclude taxes and remittances. LOAs shown separately.
                       </p>
                     </div>
                   </div>
@@ -1085,7 +1183,8 @@ Generated by 4Front Trackity-doo`;
                         <span>{paystub.totalHours.toFixed(1)} hours</span>
                         {paystub.totalLoaCount > 0 && (
                           <span className="text-amber-400">
-                            {paystub.totalLoaCount} LOA${paystub.totalLoaCount > 1 ? 's' : ''}
+                            {paystub.totalLoaCount} LOA$
+                            {paystub.totalLoaCount > 1 ? "s" : ""}
                           </span>
                         )}
                       </div>
@@ -1130,39 +1229,66 @@ Generated by 4Front Trackity-doo`;
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-700/50 border-b-2 border-gray-600">
-                      <TableHead className="font-semibold text-gray-200">Date</TableHead>
-                      <TableHead className="font-semibold text-gray-200">Job</TableHead>
-                      <TableHead className="font-semibold text-gray-200">Hour Type</TableHead>
-                      <TableHead className="font-semibold text-gray-200">Province</TableHead>
-                      <TableHead className="text-right font-semibold text-gray-200">Hours</TableHead>
-                      <TableHead className="text-right font-semibold text-gray-200">LOA</TableHead>
-                      <TableHead className="text-right font-semibold text-gray-200">Rate</TableHead>
-                      <TableHead className="text-right font-semibold text-gray-200">Cost</TableHead>
+                      <TableHead className="font-semibold text-gray-200">
+                        Date
+                      </TableHead>
+                      <TableHead className="font-semibold text-gray-200">
+                        Job
+                      </TableHead>
+                      <TableHead className="font-semibold text-gray-200">
+                        Hour Type
+                      </TableHead>
+                      <TableHead className="font-semibold text-gray-200">
+                        Province
+                      </TableHead>
+                      <TableHead className="text-right font-semibold text-gray-200">
+                        Hours
+                      </TableHead>
+                      <TableHead className="text-right font-semibold text-gray-200">
+                        LOA
+                      </TableHead>
+                      <TableHead className="text-right font-semibold text-gray-200">
+                        Rate
+                      </TableHead>
+                      <TableHead className="text-right font-semibold text-gray-200">
+                        Cost
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paystub.entries
                       .sort((a, b) => a.date.localeCompare(b.date))
                       .map((entry, index) => (
-                        <TableRow key={`${entry.date}-${entry.jobNumber}-${entry.hourTypeName}-${index}`} className="hover:bg-gray-700/30 border-gray-700">
+                        <TableRow
+                          key={`${entry.date}-${entry.jobNumber}-${entry.hourTypeName}-${index}`}
+                          className="hover:bg-gray-700/30 border-gray-700"
+                        >
                           <TableCell className="font-medium text-gray-200">
                             {formatLocalDate(entry.date)}
                           </TableCell>
                           <TableCell>
                             <div>
-                              <div className="font-medium text-gray-100">{entry.jobNumber}</div>
+                              <div className="font-medium text-gray-100">
+                                {entry.jobNumber}
+                              </div>
                               <div className="text-sm text-gray-400 truncate max-w-32">
                                 {entry.jobName}
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border-blue-500/50">
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-blue-900/30 text-blue-300 border-blue-500/50"
+                            >
                               {entry.hourTypeName}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary" className="text-xs bg-purple-900/30 text-purple-300 border-purple-500/50">
+                            <Badge
+                              variant="secondary"
+                              className="text-xs bg-purple-900/30 text-purple-300 border-purple-500/50"
+                            >
                               {entry.provinceName}
                             </Badge>
                           </TableCell>
@@ -1181,7 +1307,9 @@ Generated by 4Front Trackity-doo`;
                           <TableCell className="text-right text-gray-300">
                             {(() => {
                               // Find the hour type to get the multiplier
-                              const hourType = hourTypes.find(ht => ht.name === entry.hourTypeName);
+                              const hourType = hourTypes.find(
+                                (ht) => ht.name === entry.hourTypeName,
+                              );
                               const multiplier = hourType?.multiplier || 1;
                               const effectiveRate = entry.costWage * multiplier;
 
