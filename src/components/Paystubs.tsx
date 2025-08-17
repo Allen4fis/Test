@@ -77,6 +77,14 @@ export const Paystubs = () => {
   const [dateFilter, setDateFilter] = useState(getInitialDateFilter);
   const [selectedEmployee, setSelectedEmployee] = useState<string>("all");
 
+  // State for PDF generation
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState<string | null>(null);
+  const [isBatchGenerating, setIsBatchGenerating] = useState(false);
+  const [batchProgress, setBatchProgress] = useState(0);
+
+  // Ref for PDF content
+  const paystubRef = useRef<HTMLDivElement>(null);
+
   // Filter summaries based on date range and employee selection
   const filteredSummaries = useMemo(() => {
     return timeEntrySummaries.filter((summary) => {
