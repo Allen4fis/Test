@@ -161,101 +161,211 @@ export const Paystubs = () => {
     try {
       const periodText = `${formatLocalDate(dateFilter.start)} to ${formatLocalDate(dateFilter.end)}`;
 
-      // Create PDF content
-      const pdfContent = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; background: white; color: black;">
-          <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px;">
-            <h1 style="margin: 0; color: #333;">PAYSTUB</h1>
-            <h2 style="margin: 10px 0; color: #666;">${paystub.employeeName}</h2>
-            <p style="margin: 5px 0;">${paystub.employeeTitle}</p>
-            <p style="margin: 5px 0; font-weight: bold;">Period: ${periodText}</p>
-          </div>
+      // Create a temporary container for the paystub
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '0';
+      tempContainer.style.width = '8.5in';
+      tempContainer.style.background = 'white';
+      tempContainer.style.fontFamily = 'Arial, sans-serif';
+      tempContainer.style.fontSize = '12px';
+      tempContainer.style.lineHeight = '1.4';
+      tempContainer.style.color = 'black';
+      tempContainer.style.padding = '40px';
 
-          <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px;">SUMMARY</h3>
-              <p><strong>Total Labor Cost:</strong> $${paystub.totalCost.toFixed(2)}</p>
-              <p><strong>Total Hours:</strong> ${paystub.totalHours.toFixed(1)}</p>
-              ${paystub.totalLoaCount > 0 ? `<p><strong>LOAs:</strong> ${paystub.totalLoaCount} × $200 = $${paystub.totalLoaAmount.toFixed(2)}</p>` : ''}
-            </div>
-          </div>
+      tempContainer.innerHTML = `
+        <style>
+          * { box-sizing: border-box; }
+          .paystub-header {
+            text-align: center;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+          }
+          .paystub-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 0 15px 0;
+            color: #333;
+            letter-spacing: 2px;
+          }
+          .employee-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #444;
+          }
+          .employee-title {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #666;
+          }
+          .period-text {
+            font-size: 14px;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #333;
+          }
+          .summary-section {
+            margin-bottom: 30px;
+            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+          }
+          .summary-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+          }
+          .summary-item {
+            margin: 8px 0;
+            font-size: 13px;
+          }
+          .summary-item strong {
+            color: #333;
+          }
+          .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+          }
+          .details-table th {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+          }
+          .details-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            color: #333;
+          }
+          .details-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+          }
+          .text-right {
+            text-align: right;
+          }
+          .footer {
+            border-top: 3px solid #333;
+            padding-top: 20px;
+            text-align: center;
+            margin-top: 30px;
+          }
+          .total-cost {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+          }
+          .disclaimer {
+            font-size: 11px;
+            color: #666;
+            font-style: italic;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+          }
+          .generated-by {
+            font-size: 10px;
+            color: #999;
+            margin: 10px 0;
+          }
+        </style>
 
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px;">WORK DETAILS</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-              <thead>
-                <tr style="background-color: #f5f5f5;">
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Date</th>
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Job</th>
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Hour Type</th>
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Hours</th>
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">LOA</th>
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Rate</th>
-                  <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${paystub.entries
-                  .sort((a, b) => a.date.localeCompare(b.date))
-                  .map(entry => `
-                    <tr>
-                      <td style="border: 1px solid #ddd; padding: 8px;">${formatLocalDate(entry.date)}</td>
-                      <td style="border: 1px solid #ddd; padding: 8px;">${entry.jobNumber}</td>
-                      <td style="border: 1px solid #ddd; padding: 8px;">${entry.hourTypeName}</td>
-                      <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${entry.hours.toFixed(2)}h</td>
-                      <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
-                      <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">$${entry.costWage.toFixed(2)}/h</td>
-                      <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">$${entry.totalCost.toFixed(2)}</td>
-                    </tr>
-                  `).join('')}
-              </tbody>
-            </table>
-          </div>
+        <div class="paystub-header">
+          <div class="paystub-title">PAYSTUB</div>
+          <div class="employee-name">${paystub.employeeName}</div>
+          <div class="employee-title">${paystub.employeeTitle}</div>
+          <div class="period-text">Pay Period: ${periodText}</div>
+        </div>
 
-          <div style="border-top: 2px solid #333; padding-top: 20px; text-align: center;">
-            <p style="margin: 5px 0;"><strong>TOTAL LABOR COST: $${paystub.totalCost.toFixed(2)}</strong></p>
-            <p style="margin: 15px 0; font-size: 12px; color: #666; font-style: italic;">
-              ⚠️ This paystub shows labor costs only and excludes taxes, remittances, and other deductions.
-              LOAs (Live Out Allowances) are displayed separately when applicable.
-            </p>
-            <p style="margin: 5px 0; font-size: 10px; color: #999;">Generated by 4Front Trackity-doo</p>
+        <div class="summary-section">
+          <div class="summary-title">PAYROLL SUMMARY</div>
+          <div class="summary-item"><strong>Total Labor Cost:</strong> $${paystub.totalCost.toFixed(2)}</div>
+          <div class="summary-item"><strong>Total Hours Worked:</strong> ${paystub.totalHours.toFixed(1)} hours</div>
+          ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>Live Out Allowances:</strong> ${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</div>` : ''}
+        </div>
+
+        <div>
+          <div class="summary-title">DETAILED WORK BREAKDOWN</div>
+          <table class="details-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Job Number</th>
+                <th>Hour Type</th>
+                <th class="text-right">Hours</th>
+                <th class="text-right">LOA</th>
+                <th class="text-right">Rate</th>
+                <th class="text-right">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${paystub.entries
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .map(entry => `
+                  <tr>
+                    <td>${formatLocalDate(entry.date)}</td>
+                    <td>${entry.jobNumber}</td>
+                    <td>${entry.hourTypeName}</td>
+                    <td class="text-right">${entry.hours.toFixed(2)}h</td>
+                    <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
+                    <td class="text-right">$${entry.costWage.toFixed(2)}/h</td>
+                    <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="footer">
+          <div class="total-cost">TOTAL LABOR COST: $${paystub.totalCost.toFixed(2)}</div>
+          <div class="disclaimer">
+            ⚠️ This paystub shows labor costs only and excludes taxes, remittances, and other deductions.
+            Live Out Allowances (LOAs) are displayed separately when applicable.
           </div>
+          <div class="generated-by">Generated by 4Front Trackity-doo Payroll System</div>
         </div>
       `;
 
+      document.body.appendChild(tempContainer);
+
       // PDF options
       const options = {
-        margin: 0.5,
+        margin: [0.5, 0.5, 0.5, 0.5],
         filename: `Paystub_${paystub.employeeName.replace(/\s+/g, '_')}_${dateFilter.start}_to_${dateFilter.end}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff'
+        },
+        jsPDF: {
+          unit: 'in',
+          format: 'letter',
+          orientation: 'portrait'
+        }
       };
 
-      // Create a temporary div for PDF generation
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = pdfContent;
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      document.body.appendChild(tempDiv);
-
       // Generate PDF
-      const pdf = await html2pdf().from(tempDiv).set(options).outputPdf('blob');
+      const pdf = await html2pdf().set(options).from(tempContainer).save();
 
       // Clean up
-      document.body.removeChild(tempDiv);
+      document.body.removeChild(tempContainer);
 
       if (download) {
-        // Create download link
-        const blob = new Blob([pdf], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = options.filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // The save() method already downloads the file
+        return true;
       }
 
       return pdf;
