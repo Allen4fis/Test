@@ -260,17 +260,24 @@ export const Paystubs = () => {
       }
 
       // Pre-calculate data to avoid runtime processing
-      const sortedEntries = paystub.entries.sort((a, b) => a.date.localeCompare(b.date));
-      const tableRows = sortedEntries.map(entry => {
-        const hourType = hourTypes.find(ht => ht.name === entry.hourTypeName);
-        const multiplier = hourType?.multiplier || 1;
-        const effectiveRate = entry.costWage * multiplier;
-        const rateDisplay = multiplier === 1
-          ? `$${entry.costWage.toFixed(2)}/h`
-          : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+      const sortedEntries = paystub.entries.sort((a, b) =>
+        a.date.localeCompare(b.date),
+      );
+      const tableRows = sortedEntries
+        .map((entry) => {
+          const hourType = hourTypes.find(
+            (ht) => ht.name === entry.hourTypeName,
+          );
+          const multiplier = hourType?.multiplier || 1;
+          const effectiveRate = entry.costWage * multiplier;
+          const rateDisplay =
+            multiplier === 1
+              ? `$${entry.costWage.toFixed(2)}/h`
+              : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
 
-        return `<tr><td>${formatLocalDate(entry.date)}</td><td>${entry.jobNumber}</td><td>${entry.hourTypeName}</td><td>${entry.hours.toFixed(2)}h</td><td>${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td><td>${rateDisplay}</td><td>$${entry.totalCost.toFixed(2)}</td></tr>`;
-      }).join('');
+          return `<tr><td>${formatLocalDate(entry.date)}</td><td>${entry.jobNumber}</td><td>${entry.hourTypeName}</td><td>${entry.hours.toFixed(2)}h</td><td>${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : "—"}</td><td>${rateDisplay}</td><td>$${entry.totalCost.toFixed(2)}</td></tr>`;
+        })
+        .join("");
 
       // Simplified, optimized HTML structure
       const paystubHTML = `
@@ -461,8 +468,6 @@ XOXO,
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-
-
       }, 2000);
     } catch (error) {
       console.error("Error in PDF and email workflow:", error);
