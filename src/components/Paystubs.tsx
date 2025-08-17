@@ -320,7 +320,7 @@ export const Paystubs = () => {
     <div class="summary-section">
       <div class="summary-title">PAYROLL SUMMARY</div>
       <div class="summary-item">
-        <strong>���� Total Labor Cost:</strong>
+        <strong>Total Labor Cost:</strong>
         <span style="color: #374151; font-weight: 600;">$${paystub.totalCost.toFixed(2)}</span>
       </div>
       <div class="summary-item">
