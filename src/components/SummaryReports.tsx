@@ -558,17 +558,10 @@ export function SummaryReports() {
         gstAmount = (emp.totalCost || 0) * 0.05;
       }
 
-      // Debug: Show debug info in UI for Riley
+      // Debug: For Riley, show the exact values being used
       if (emp.employeeName === "Riley Larue") {
-        const debugInfo = {
-          category: employee?.category,
-          managerId: employee?.managerId,
-          empTotalCost: emp.totalCost,
-          calculatedGST: gstAmount,
-          expectedGST: 1912.50 * 0.05
-        };
-        // Override GST amount to show debug info
-        gstAmount = parseFloat(JSON.stringify(debugInfo).slice(0, 10)); // This will show as a number in UI
+        // Set GST to show the total cost value being used (multiply by 100 to make it visible)
+        gstAmount = (emp.totalCost || 0) / 10; // This will show the cost divided by 10 in the GST field
       }
 
       return {
