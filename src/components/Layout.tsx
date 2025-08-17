@@ -150,9 +150,9 @@ export const Layout = memo(function Layout({
       },
       {
         id: "paystubs" as const,
-        label: "Paystubs",
+        label: "Pay Preview",
         icon: Receipt,
-        description: "Employee paystubs",
+        description: "Employee pay preview",
         color: "text-green-400",
       },
       {
