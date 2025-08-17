@@ -558,14 +558,17 @@ export function SummaryReports() {
         gstAmount = (emp.totalCost || 0) * 0.05;
       }
 
-      // Debug: Add console log to see what values we're using
+      // Debug: Add detailed console log for Riley
       if (emp.employeeName === "Riley Larue") {
-        console.log("Riley Debug:", {
-          employeeName: emp.employeeName,
-          category: employee?.category,
-          totalCost: emp.totalCost,
-          calculatedGST: gstAmount
-        });
+        console.log("=== RILEY GST DEBUG ===");
+        console.log("Employee object:", employee);
+        console.log("Employee summary data:", emp);
+        console.log("Employee category:", employee?.category);
+        console.log("Employee managerId:", employee?.managerId);
+        console.log("Total cost from summary:", emp.totalCost);
+        console.log("Calculated GST:", gstAmount);
+        console.log("Expected GST (5% of 1912.50):", 1912.50 * 0.05);
+        console.log("======================");
       }
 
       return {
