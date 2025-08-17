@@ -542,44 +542,31 @@ export function SummaryReports() {
         );
       });
 
-      // Calculate GST based on each individual time entry's stored category
-      const gstAmount = employeeTimeEntries.reduce((total, entry) => {
-        const entryEmployee = employees.find((e) => e.id === entry.employeeId);
-        const entryCategory = entry.employeeCategory || entryEmployee?.category;
+      // Calculate GST based on the employee's total cost from filtered summaries
+      // This ensures consistency with the displayed totalCost
+      const employeeFilteredSummaries = filteredSummaries.filter(
+        summary => summary.employeeName === emp.employeeName
+      );
 
-        // Calculate the cost contribution of this specific entry
-        const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
-        if (!hourType || !entryEmployee) return total;
+      const gstAmount = employeeFilteredSummaries.reduce((total, summary) => {
+        // Find the time entry to get the employee category
+        const timeEntry = timeEntries.find(entry =>
+          entry.employeeId === employee?.id &&
+          entry.date === summary.date &&
+          entry.hourTypeId === hourTypes.find(ht => ht.name === summary.hourTypeName)?.id
+        );
 
-        const effectiveHours = entry.hours * hourType.multiplier;
-        let adjustedCostWage = entry.costWageUsed || 0;
-        let entryCost = 0;
+        const entryCategory = timeEntry?.employeeCategory || employee?.category;
 
-        // Add $3 for NS hour types
-        if (hourType.name.startsWith("NS ")) {
-          adjustedCostWage += 3;
-        }
-
-        // Use stored category for cost calculation
-        if (entryCategory === "dsp") {
-          entryCost = entry.hours * adjustedCostWage; // 1x for DSP
-        } else {
-          entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
-        }
-
-        // Add LOA cost
-        const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-        entryCost += loaCost;
-
-        // Apply GST based on stored category
+        // Apply GST based on stored category and use the summary's totalCost
         if (entryCategory === "dsp" || entryCategory === "dspot") {
-          return total + entryCost * 0.05;
+          return total + (summary.totalCost || 0) * 0.05;
         } else if (
-          entryEmployee.managerId &&
+          employee?.managerId &&
           entryCategory !== "employee" &&
           !entryCategory
         ) {
-          return total + entryCost * 0.05;
+          return total + (summary.totalCost || 0) * 0.05;
         }
 
         return total;
