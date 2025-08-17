@@ -351,10 +351,18 @@ export const Paystubs = () => {
                     <CardDescription className="text-gray-300">
                       {paystub.employeeTitle} • {formatLocalDate(dateFilter.start)} to {formatLocalDate(dateFilter.end)}
                     </CardDescription>
+                    <div className="mt-2 p-2 bg-amber-900/20 border border-amber-500/30 rounded-lg">
+                      <p className="text-xs text-amber-200 font-medium">
+                        ⚠️ Cost shown excludes taxes and remittances. LOAs are displayed separately when applicable.
+                      </p>
+                    </div>
                   </div>
                   <div className="text-right space-y-1">
                     <div className="text-2xl font-bold text-emerald-400">
                       ${paystub.totalCost.toFixed(2)}
+                    </div>
+                    <div className="text-xs text-gray-400 uppercase tracking-wide font-medium">
+                      Labor Cost Only
                     </div>
                     <div className="text-sm text-gray-300 flex items-center gap-4">
                       <span>{paystub.totalHours.toFixed(1)} hours</span>
