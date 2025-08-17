@@ -791,15 +791,9 @@ export function SummaryReports() {
             return total;
           }, 0);
 
-          // TEMPORARY FIX: Force Riley's GST to be exactly 5% of 1912.50 in subordinate calculations
-          let finalGstAmount = updatedGstAmount;
-          if (sub.employeeName === "Riley Larue") {
-            finalGstAmount = 1912.50 * 0.05; // Force correct GST calculation
-          }
-
           return {
             ...sub,
-            gstAmount: finalGstAmount
+            gstAmount: updatedGstAmount
           };
         });
 
