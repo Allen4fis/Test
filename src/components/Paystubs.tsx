@@ -241,7 +241,7 @@ export const Paystubs = () => {
     setSelectedEmployeeType("all");
   };
 
-  // Function to generate PDF for a specific paystub using browser print
+  // Function to generate PDF for a specific paystub using optimized browser print
   const generatePDF = async (
     paystub: (typeof employeePaystubs)[0],
     download = true,
@@ -252,360 +252,57 @@ export const Paystubs = () => {
     try {
       const periodText = `${formatLocalDate(dateFilter.start)} to ${formatLocalDate(dateFilter.end)}`;
 
-      // Create a new window for the paystub
-      const printWindow = window.open("", "_blank", "width=800,height=1000");
+      // Create print window with minimal size for faster loading
+      const printWindow = window.open("", "_blank", "width=600,height=800");
       if (!printWindow) {
         alert("Please allow popups for this site to generate PDFs");
         return null;
       }
 
-      // Build the paystub HTML content
+      // Pre-calculate data to avoid runtime processing
+      const sortedEntries = paystub.entries.sort((a, b) => a.date.localeCompare(b.date));
+      const tableRows = sortedEntries.map(entry => {
+        const hourType = hourTypes.find(ht => ht.name === entry.hourTypeName);
+        const multiplier = hourType?.multiplier || 1;
+        const effectiveRate = entry.costWage * multiplier;
+        const rateDisplay = multiplier === 1
+          ? `$${entry.costWage.toFixed(2)}/h`
+          : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+
+        return `<tr><td>${formatLocalDate(entry.date)}</td><td>${entry.jobNumber}</td><td>${entry.hourTypeName}</td><td>${entry.hours.toFixed(2)}h</td><td>${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td><td>${rateDisplay}</td><td>$${entry.totalCost.toFixed(2)}</td></tr>`;
+      }).join('');
+
+      // Simplified, optimized HTML structure
       const paystubHTML = `
 <!DOCTYPE html>
 <html>
 <head>
   <title>Pay Preview - ${paystub.employeeName} - ${periodText}</title>
   <style>
-    @media print {
-      * {
-        -webkit-print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      color: #1f2937;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .paystub-container {
-      max-width: 8.5in;
-      margin: 0 auto;
-      background: white;
-      padding: 40px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      border: 1px solid #e5e7eb;
-    }
-
-    .paystub-header {
-      text-align: center;
-      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-      color: white;
-      padding: 30px 20px;
-      margin: -40px -40px 40px -40px;
-      position: relative;
-      overflow: hidden;
-      border: 3px solid #374151;
-      border-radius: 12px 12px 0 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .paystub-header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(45deg, rgba(249,115,22,0.1) 25%, transparent 25%, transparent 75%, rgba(249,115,22,0.1) 75%),
-                  linear-gradient(45deg, rgba(249,115,22,0.1) 25%, transparent 25%, transparent 75%, rgba(249,115,22,0.1) 75%);
-      background-size: 20px 20px;
-      background-position: 0 0, 10px 10px;
-    }
-
-    .company-logo {
-      font-size: 24px;
-      font-weight: 900;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      letter-spacing: 1px;
-      position: relative;
-      z-index: 1;
-      color: #f97316;
-    }
-
-    .paystub-title {
-      font-size: 32px;
-      font-weight: 800;
-      margin: 15px 0;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      letter-spacing: 3px;
-      position: relative;
-      z-index: 1;
-      color: #f97316;
-    }
-
-    .employee-name {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 15px 0;
-      position: relative;
-      z-index: 1;
-      color: #e5e7eb;
-    }
-
-    .employee-title {
-      font-size: 16px;
-      margin: 8px 0;
-      opacity: 0.9;
-      position: relative;
-      z-index: 1;
-      color: #d1d5db;
-    }
-
-    .period-text {
-      font-size: 16px;
-      margin: 15px 0;
-      font-weight: 600;
-      position: relative;
-      z-index: 1;
-      color: #e5e7eb;
-    }
-
-    .summary-section {
-      margin-bottom: 35px;
-      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-      padding: 25px;
-      border-radius: 12px;
-      border: 2px solid #374151;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .summary-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #374151;
-      border-bottom: 3px solid #374151;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .summary-item {
-      margin: 12px 0;
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-      padding: 12px;
-      background: rgba(249, 115, 22, 0.1);
-      border-radius: 4px;
-      border-left: 3px solid #f97316;
-    }
-
-    .summary-item strong {
-      color: #f97316;
-      font-weight: 600;
-    }
-
-    .table-section {
-      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-      padding: 25px;
-      border-radius: 12px;
-      border: 2px solid #374151;
-      margin: 25px 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .table-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #374151;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-bottom: 3px solid #374151;
-      padding-bottom: 10px;
-    }
-
-    .column-descriptors {
-      background: #374151;
-      color: #e5e7eb;
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      font-size: 10px;
-      line-height: 1.6;
-    }
-
-    .column-descriptors h4 {
-      color: #f97316;
-      font-size: 11px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .descriptor-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-    }
-
-    .descriptor-item {
-      display: flex;
-      flex-direction: column;
-      padding: 8px;
-      background: rgba(249, 115, 22, 0.1);
-      border-radius: 4px;
-      border-left: 3px solid #f97316;
-    }
-
-    .descriptor-label {
-      font-weight: 600;
-      color: #f97316;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .descriptor-text {
-      color: #d1d5db;
-      font-size: 8px;
-      margin-top: 2px;
-    }
-
-    .details-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      border: 2px solid #374151;
-    }
-
-    .details-table th {
-      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-      color: #f97316;
-      border: none;
-      padding: 15px 10px;
-      text-align: left;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-size: 10px;
-      border-bottom: 2px solid #f97316;
-    }
-
-    .details-table td {
-      border: 1px solid #d1d5db;
-      padding: 12px 10px;
-      color: #374151;
-    }
-
-    .details-table tr:nth-child(even) {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    }
-
-    .details-table tr:nth-child(odd) {
-      background: white;
-    }
-
-    .details-table tr:hover {
-      background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
-      transform: scale(1.01);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .details-table tbody tr {
-      border-left: 3px solid transparent;
-      transition: all 0.2s ease;
-    }
-
-    .details-table tbody tr:hover {
-      border-left: 3px solid #f97316;
-    }
-
-    .text-right {
-      text-align: right;
-      font-weight: 500;
-    }
-
-    .footer {
-      border-top: 4px solid #f97316;
-      border-bottom: 4px solid #374151;
-      padding-top: 30px;
-      text-align: center;
-      margin-top: 40px;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      padding: 30px 20px;
-      border-radius: 12px;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .total-cost {
-      font-size: 24px;
-      font-weight: 800;
-      margin: 15px 0;
-      color: #ea580c;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-
-    .disclaimer {
-      font-size: 11px;
-      color: #7c2d12;
-      font-style: italic;
-      margin: 20px 0;
-      padding: 15px;
-      background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
-      border: 2px solid #f97316;
-      border-radius: 8px;
-      line-height: 1.6;
-    }
-
-    .adp-notice {
-      font-size: 12px;
-      color: #1f2937;
-      margin: 20px 0;
-      padding: 20px;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-      border: 2px solid #0ea5e9;
-      border-radius: 8px;
-      font-weight: 600;
-      line-height: 1.6;
-    }
-
-    .generated-by {
-      font-size: 10px;
-      color: #9ca3af;
-      margin: 15px 0;
-      font-weight: 500;
-    }
-
-    .print-button {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 14px;
-      cursor: pointer;
-      border-radius: 8px;
-      margin: 20px 0;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-
-    .print-button:hover {
-      background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-
-    @media print {
-      .print-button { display: none; }
-      .paystub-container { margin: 0; padding: 20px; box-shadow: none; }
-      body { margin: 0; padding: 0; }
-    }
+    @media print { * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; } }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: white; color: #1f2937; font-size: 11px; line-height: 1.4; }
+    .container { max-width: 8in; margin: 0 auto; background: white; padding: 20px; }
+    .header { text-align: center; background: #374151; color: white; padding: 20px; margin: -20px -20px 20px -20px; }
+    .logo { font-size: 18px; font-weight: bold; color: #f97316; margin-bottom: 8px; }
+    .title { font-size: 24px; font-weight: bold; color: #f97316; margin: 8px 0; }
+    .employee { font-size: 18px; font-weight: bold; margin: 8px 0; }
+    .period { font-size: 14px; margin: 8px 0; }
+    .summary { background: #f3f4f6; border: 2px solid #374151; padding: 15px; margin: 15px 0; border-radius: 6px; }
+    .summary-title { font-size: 14px; font-weight: bold; color: #374151; border-bottom: 2px solid #374151; padding-bottom: 8px; margin-bottom: 12px; }
+    .summary-item { margin: 8px 0; display: flex; justify-content: space-between; padding: 8px; background: rgba(249,115,22,0.1); border-left: 3px solid #f97316; }
+    .table-section { background: #f3f4f6; border: 2px solid #374151; padding: 15px; margin: 15px 0; border-radius: 6px; }
+    .table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    .table th { background: #374151; color: #f97316; padding: 8px 6px; text-align: left; font-weight: bold; font-size: 9px; border-bottom: 2px solid #f97316; }
+    .table td { border: 1px solid #d1d5db; padding: 6px; font-size: 10px; }
+    .table tr:nth-child(even) { background: #f8fafc; }
+    .text-right { text-align: right; }
+    .footer { border-top: 3px solid #f97316; border-bottom: 3px solid #374151; padding: 15px; text-align: center; margin: 20px 0; background: #f8fafc; }
+    .total { font-size: 18px; font-weight: bold; color: #ea580c; margin: 10px 0; }
+    .disclaimer { font-size: 10px; color: #7c2d12; margin: 15px 0; padding: 10px; background: #fef3e2; border: 1px solid #f97316; border-radius: 4px; }
+    .adp { font-size: 11px; color: #1f2937; margin: 15px 0; padding: 10px; background: #e0f2fe; border: 1px solid #0ea5e9; border-radius: 4px; }
+    .generated { font-size: 9px; color: #9ca3af; margin: 10px 0; }
+    .btn { background: #f97316; color: white; border: none; padding: 8px 16px; font-size: 12px; cursor: pointer; border-radius: 4px; margin: 10px 0; }
+    @media print { .btn { display: none; } .container { margin: 0; padding: 10px; } body { margin: 0; padding: 0; } }
   </style>
 </head>
 <body>
@@ -732,17 +429,18 @@ export const Paystubs = () => {
 </body>
 </html>`;
 
-      // Write the content to the new window
+      // Write content and immediately trigger print for speed
       printWindow.document.write(paystubHTML);
       printWindow.document.close();
 
-      // Focus the window and trigger print
+      // Immediate print trigger with faster response
       printWindow.focus();
+      printWindow.print();
 
-      // Auto-trigger print dialog after a short delay
+      // Auto-close window after print for cleanup
       setTimeout(() => {
-        printWindow.print();
-      }, 500);
+        printWindow.close();
+      }, 1000);
 
       return true;
     } catch (error) {
