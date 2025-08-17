@@ -548,19 +548,36 @@ export function SummaryReports() {
         summary => summary.employeeName === emp.employeeName
       );
 
-      // Calculate GST based on employee category and the exact totalCost from employee summary
-      // For DSPs and contractors, apply 5% GST to their total cost
-      let gstAmount = 0;
-      if (employee?.category === "dsp" || employee?.category === "dspot") {
-        gstAmount = (emp.totalCost || 0) * 0.05;
-      } else if (
-        employee?.managerId &&
-        employee?.category !== "employee" &&
-        !employee?.category
-      ) {
-        // Subordinate contractors
-        gstAmount = (emp.totalCost || 0) * 0.05;
-      }
+      // Calculate GST based on individual entry categories from filtered summaries
+      // Only apply GST to entries where the employee was DSP/DSPOT at time of entry
+      const employeeFilteredSummaries = filteredSummaries.filter(
+        summary => summary.employeeName === emp.employeeName
+      );
+
+      const gstAmount = employeeFilteredSummaries.reduce((total, summary) => {
+        // Find the time entry to get the employee category at time of entry
+        const timeEntry = timeEntries.find(entry =>
+          entry.employeeId === employee?.id &&
+          entry.date === summary.date &&
+          entry.hourTypeId === hourTypes.find(ht => ht.name === summary.hourTypeName)?.id
+        );
+
+        const entryEmployeeCategory = timeEntry?.employeeCategory || employee?.category;
+
+        // Only apply GST if this specific entry was done when employee was DSP/DSPOT
+        if (entryEmployeeCategory === "dsp" || entryEmployeeCategory === "dspot") {
+          return total + (summary.totalCost || 0) * 0.05;
+        } else if (
+          employee?.managerId &&
+          entryEmployeeCategory !== "employee" &&
+          !entryEmployeeCategory
+        ) {
+          // Subordinate contractors
+          return total + (summary.totalCost || 0) * 0.05;
+        }
+
+        return total;
+      }, 0);
 
       return {
         ...emp,
@@ -2349,7 +2366,7 @@ export function SummaryReports() {
                                       <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                           <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-                                            ���
+                                            ↳
                                           </span>
                                           <div>
                                             <div className="font-medium text-blue-300">
