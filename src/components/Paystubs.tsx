@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CalendarIcon,
   Clock,
@@ -33,7 +34,12 @@ import {
   Receipt,
   User,
   Mail,
+  Download,
+  FileText,
+  Send,
+  Loader2,
 } from "lucide-react";
+import html2pdf from 'html2pdf.js';
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
   parseLocalDate,
