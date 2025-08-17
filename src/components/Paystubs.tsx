@@ -206,35 +206,6 @@ export const Paystubs = () => {
     return Array.from(names).sort();
   }, [timeEntrySummaries]);
 
-  // Get hierarchical employee summaries for filtering logic similar to Payroll Information
-  const hierarchicalEmployeeSummaries = useMemo(() => {
-    // Group employees and determine their relationships
-    const employeeMap = new Map();
-
-    employees.forEach(emp => {
-      employeeMap.set(emp.id, {
-        ...emp,
-        subordinates: [],
-        isSubordinate: false,
-        employeeCategory: emp.category || "employee"
-      });
-    });
-
-    // Mark subordinates and build hierarchy
-    employees.forEach(emp => {
-      if (emp.managerId) {
-        const manager = employeeMap.get(emp.managerId);
-        const subordinate = employeeMap.get(emp.id);
-        if (manager && subordinate) {
-          manager.subordinates.push(subordinate);
-          subordinate.isSubordinate = true;
-        }
-      }
-    });
-
-    return Array.from(employeeMap.values());
-  }, [employees]);
-
   const resetFilters = () => {
     setDateFilter(getInitialDateFilter());
     setSelectedEmployee("all");
