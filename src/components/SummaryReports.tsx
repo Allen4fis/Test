@@ -774,15 +774,16 @@ export function SummaryReports() {
             if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
 
             // Apply job filtering if active
-            if (selectedJobFilter && selectedJobFilter !== "all") {
-              if (entry.jobId !== selectedJobFilter) return false;
+            if (jobFilter && jobFilter !== "all-jobs") {
+              const job = jobs.find(j => j.id === entry.jobId);
+              if (job?.jobNumber !== jobFilter) return false;
             }
 
             // Apply billable filtering if active
-            if (selectedBillableFilter !== "all") {
+            if (billableFilter !== "all") {
               const job = jobs.find(j => j.id === entry.jobId);
-              if (selectedBillableFilter === "billable" && !job?.isBillable) return false;
-              if (selectedBillableFilter === "non-billable" && job?.isBillable !== false) return false;
+              if (billableFilter === "billable" && !job?.isBillable) return false;
+              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
             }
 
             return true;
