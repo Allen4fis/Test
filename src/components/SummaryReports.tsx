@@ -796,6 +796,16 @@ export function SummaryReports() {
               if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
             }
 
+            // Apply invoice and payment status filters
+            const job = jobs.find(j => j.id === entry.jobId);
+            const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
+            const isPaid = job?.paidDates.includes(entry.date) || false;
+
+            if (!includeInvoiced && isInvoiced) return false;
+            if (!includeUninvoiced && !isInvoiced) return false;
+            if (!includePaid && isPaid) return false;
+            if (!includeUnpaid && !isPaid) return false;
+
             return true;
           });
 
