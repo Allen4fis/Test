@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   CalendarIcon,
   Clock,
@@ -39,6 +41,7 @@ import {
   Send,
 } from "lucide-react";
 import html2pdf from "html2pdf.js";
+import { format } from "date-fns";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import {
   parseLocalDate,
