@@ -137,6 +137,7 @@ export function useTimeTracking() {
     | "employees"
     | "jobs"
     | "reports"
+    | "paystubs"
     | "costs"
     | "invoices"
     | "rentals"
