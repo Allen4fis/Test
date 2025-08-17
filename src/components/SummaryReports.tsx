@@ -542,36 +542,31 @@ export function SummaryReports() {
         );
       });
 
-      // Calculate GST based on individual entry categories from filtered summaries
-      // Only apply GST to entries where the employee was DSP/DSPOT at time of entry
-      const employeeFilteredSummaries = filteredSummaries.filter(
-        summary => summary.employeeName === emp.employeeName
-      );
+      // Calculate GST based on employee category and exact emp.totalCost shown in UI
+      // Use the same totalCost value that's displayed to ensure consistency
+      let gstAmount = 0;
 
-      const gstAmount = employeeFilteredSummaries.reduce((total, summary) => {
-        // Find the time entry to get the employee category at time of entry
-        const timeEntry = timeEntries.find(entry =>
-          entry.employeeId === employee?.id &&
-          entry.date === summary.date &&
-          entry.hourTypeId === hourTypes.find(ht => ht.name === summary.hourTypeName)?.id
-        );
+      // Check if employee should have GST applied based on their category
+      if (employee?.category === "dsp" || employee?.category === "dspot") {
+        gstAmount = (emp.totalCost || 0) * 0.05;
+      } else if (
+        employee?.managerId &&
+        employee?.category !== "employee" &&
+        !employee?.category
+      ) {
+        // Subordinate contractors without explicit category
+        gstAmount = (emp.totalCost || 0) * 0.05;
+      }
 
-        const entryEmployeeCategory = timeEntry?.employeeCategory || employee?.category;
-
-        // Only apply GST if this specific entry was done when employee was DSP/DSPOT
-        if (entryEmployeeCategory === "dsp" || entryEmployeeCategory === "dspot") {
-          return total + (summary.totalCost || 0) * 0.05;
-        } else if (
-          employee?.managerId &&
-          entryEmployeeCategory !== "employee" &&
-          !entryEmployeeCategory
-        ) {
-          // Subordinate contractors
-          return total + (summary.totalCost || 0) * 0.05;
-        }
-
-        return total;
-      }, 0);
+      // Debug: Add console log to see what values we're using
+      if (emp.employeeName === "Riley Larue") {
+        console.log("Riley Debug:", {
+          employeeName: emp.employeeName,
+          category: employee?.category,
+          totalCost: emp.totalCost,
+          calculatedGST: gstAmount
+        });
+      }
 
       return {
         ...emp,
