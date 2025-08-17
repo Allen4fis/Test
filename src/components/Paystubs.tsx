@@ -75,11 +75,12 @@ export const Paystubs = () => {
   // State for filters
   const [dateFilter, setDateFilter] = useState(getInitialDateFilter);
   const [selectedEmployee, setSelectedEmployee] = useState<string>("all");
+  const [selectedEmployeeType, setSelectedEmployeeType] = useState<string>("all");
 
   // State for PDF generation
   const [isGeneratingPDF, setIsGeneratingPDF] = useState<string | null>(null);
 
-  // Filter summaries based on date range and employee selection
+  // Filter summaries based on date range, employee selection, and employee type
   const filteredSummaries = useMemo(() => {
     return timeEntrySummaries.filter((summary) => {
       // Date filter
@@ -95,9 +96,23 @@ export const Paystubs = () => {
         return false;
       }
 
+      // Employee type filter
+      if (selectedEmployeeType !== "all") {
+        // Find the employee from the time entry to get their category
+        const timeEntry = timeEntries.find(entry =>
+          entry.date === summary.date &&
+          entry.employeeId === employees.find(emp => emp.name === summary.employeeName)?.id
+        );
+        const employeeCategory = timeEntry?.employeeCategory || "employee";
+
+        if (employeeCategory !== selectedEmployeeType) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [timeEntrySummaries, dateFilter, selectedEmployee]);
+  }, [timeEntrySummaries, dateFilter, selectedEmployee, selectedEmployeeType, timeEntries, employees]);
 
   // Group summaries by employee for paystub display
   const employeePaystubs = useMemo(() => {
@@ -142,9 +157,16 @@ export const Paystubs = () => {
     return Array.from(names).sort();
   }, [timeEntrySummaries]);
 
+  // Get unique employee types for dropdown
+  const employeeTypes = useMemo(() => {
+    const types = new Set(timeEntries.map(entry => entry.employeeCategory || "employee"));
+    return Array.from(types).sort();
+  }, [timeEntries]);
+
   const resetFilters = () => {
     setDateFilter(getInitialDateFilter());
     setSelectedEmployee("all");
+    setSelectedEmployeeType("all");
   };
 
   // Function to generate PDF for a specific paystub using browser print
@@ -177,160 +199,239 @@ export const Paystubs = () => {
     }
 
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       margin: 0;
       padding: 20px;
       background: white;
-      color: black;
+      color: #1f2937;
       font-size: 12px;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .paystub-container {
       max-width: 8.5in;
       margin: 0 auto;
       background: white;
-      padding: 30px;
+      padding: 40px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .paystub-header {
       text-align: center;
-      border-bottom: 3px solid #333;
-      padding-bottom: 20px;
-      margin-bottom: 30px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      padding: 30px 20px;
+      margin: -40px -40px 40px -40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .paystub-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%),
+                  linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+
+    .company-logo {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
     }
 
     .paystub-title {
-      font-size: 28px;
-      font-weight: bold;
-      margin: 0 0 15px 0;
-      color: #333;
-      letter-spacing: 2px;
+      font-size: 32px;
+      font-weight: 800;
+      margin: 15px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      letter-spacing: 3px;
+      position: relative;
+      z-index: 1;
     }
 
     .employee-name {
-      font-size: 22px;
-      font-weight: bold;
-      margin: 10px 0;
-      color: #444;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 15px 0;
+      position: relative;
+      z-index: 1;
     }
 
     .employee-title {
-      font-size: 14px;
-      margin: 5px 0;
-      color: #666;
+      font-size: 16px;
+      margin: 8px 0;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
     }
 
     .period-text {
-      font-size: 14px;
-      margin: 10px 0;
-      font-weight: bold;
-      color: #333;
+      font-size: 16px;
+      margin: 15px 0;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
     }
 
     .summary-section {
-      margin-bottom: 30px;
-      background: #f9f9f9;
-      padding: 20px;
-      border: 1px solid #ddd;
+      margin-bottom: 35px;
+      background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
+      padding: 25px;
+      border-radius: 12px;
+      border-left: 6px solid #f97316;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .summary-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-      border-bottom: 2px solid #333;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ea580c;
+      border-bottom: 3px solid #f97316;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .summary-item {
-      margin: 8px 0;
-      font-size: 13px;
+      margin: 12px 0;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(249, 115, 22, 0.2);
     }
 
     .summary-item strong {
-      color: #333;
+      color: #ea580c;
+      font-weight: 600;
     }
 
     .details-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
+      margin: 25px 0;
       font-size: 11px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .details-table th {
-      background-color: #f0f0f0;
-      border: 1px solid #ccc;
-      padding: 10px 8px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      border: none;
+      padding: 15px 10px;
       text-align: left;
-      font-weight: bold;
-      color: #333;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 10px;
     }
 
     .details-table td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      color: #333;
+      border: 1px solid #e5e7eb;
+      padding: 12px 10px;
+      color: #374151;
     }
 
     .details-table tr:nth-child(even) {
-      background-color: #f9f9f9;
+      background-color: #f9fafb;
+    }
+
+    .details-table tr:hover {
+      background-color: #fef3e2;
     }
 
     .text-right {
       text-align: right;
+      font-weight: 500;
     }
 
     .footer {
-      border-top: 3px solid #333;
-      padding-top: 20px;
+      border-top: 4px solid #f97316;
+      padding-top: 30px;
       text-align: center;
-      margin-top: 30px;
+      margin-top: 40px;
+      background: linear-gradient(135deg, #fefefe 0%, #f9fafb 100%);
+      padding: 30px 20px;
+      border-radius: 12px;
     }
 
     .total-cost {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 10px 0;
-      color: #333;
+      font-size: 24px;
+      font-weight: 800;
+      margin: 15px 0;
+      color: #ea580c;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
 
     .disclaimer {
       font-size: 11px;
-      color: #666;
+      color: #7c2d12;
       font-style: italic;
-      margin: 15px 0;
-      padding: 10px;
-      background: #fff3cd;
-      border: 1px solid #ffeaa7;
+      margin: 20px 0;
+      padding: 15px;
+      background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
+      border: 2px solid #f97316;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .adp-notice {
+      font-size: 12px;
+      color: #1f2937;
+      margin: 20px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      border: 2px solid #0ea5e9;
+      border-radius: 8px;
+      font-weight: 600;
+      line-height: 1.6;
     }
 
     .generated-by {
       font-size: 10px;
-      color: #999;
-      margin: 10px 0;
+      color: #9ca3af;
+      margin: 15px 0;
+      font-weight: 500;
     }
 
     .print-button {
-      background: #007cba;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 14px;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 8px;
       margin: 20px 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
     }
 
     .print-button:hover {
-      background: #005a87;
+      background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
     @media print {
       .print-button { display: none; }
-      .paystub-container { margin: 0; padding: 0; }
+      .paystub-container { margin: 0; padding: 20px; box-shadow: none; }
       body { margin: 0; padding: 0; }
     }
   </style>
@@ -340,6 +441,7 @@ export const Paystubs = () => {
     <button class="print-button" onclick="window.print()">🖨️ Print Pay Preview to PDF (Ctrl+P)</button>
 
     <div class="paystub-header">
+      <div class="company-logo">4Front Trackity-doo</div>
       <div class="paystub-title">PAY PREVIEW</div>
       <div class="employee-name">${paystub.employeeName}</div>
       <div class="employee-title">${paystub.employeeTitle}</div>
@@ -397,11 +499,17 @@ export const Paystubs = () => {
 
     <div class="footer">
       <div class="total-cost">TOTAL LABOR COST: $${paystub.totalCost.toFixed(2)}</div>
+
       <div class="disclaimer">
-        ⚠️ This is a PAY PREVIEW only and is NOT an official paystub. Labor costs shown exclude taxes, remittances, and other deductions.
-        Live Out Allowances (LOAs) are displayed separately when applicable. Official paystubs with proper tax calculations will be provided separately.
+        ⚠️ <strong>PAY PREVIEW ONLY</strong> - This is NOT an official paystub. Labor costs shown exclude taxes, remittances, and other deductions.
+        Live Out Allowances (LOAs) are displayed separately when applicable.
       </div>
-      <div class="generated-by">Generated by 4Front Trackity-doo Payroll System</div>
+
+      <div class="adp-notice">
+        📧 <strong>OFFICIAL PAYSTUBS:</strong> Your official paystubs with complete tax calculations can be accessed through your ADP Payroll login on the Friday of each pay period. Your ADP login credentials have already been emailed to you.
+      </div>
+
+      <div class="generated-by">Generated by 4Front Trackity-doo Payroll System • ${new Date().toLocaleDateString()}</div>
     </div>
   </div>
 </body>
@@ -571,7 +679,7 @@ Generated by 4Front Trackity-doo`;
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {/* Date Range */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-200">Start Date</Label>
@@ -601,6 +709,24 @@ Generated by 4Front Trackity-doo`;
                   className="pl-10"
                 />
               </div>
+            </div>
+
+            {/* Employee Type Filter */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-200">Employee Type</Label>
+              <Select value={selectedEmployeeType} onValueChange={setSelectedEmployeeType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  {employeeTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type === "dsp" ? "DSP" : type === "dspot" ? "DSPOT" : "Employee"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Employee Filter */}
