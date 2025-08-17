@@ -542,11 +542,10 @@ export function SummaryReports() {
         );
       });
 
-      // The totalCost that will be displayed is emp.totalCost, so use that for GST calculation
-      // Calculate GST as exactly 5% of the labor cost that will be shown
+      // Calculate GST using exactly 5% of the totalCost that will be displayed
+      // For DSP/DSPOT employees, GST = 5% of their total labor cost
       let gstAmount = 0;
       if (employee?.category === "dsp" || employee?.category === "dspot") {
-        // For Riley's case: if totalCost displays as 1912.50, GST should be 95.63
         gstAmount = (emp.totalCost || 0) * 0.05;
       } else if (
         employee?.managerId &&
@@ -555,11 +554,6 @@ export function SummaryReports() {
       ) {
         // Subordinate contractors without explicit category
         gstAmount = (emp.totalCost || 0) * 0.05;
-      }
-
-      // TEMPORARY FIX: Force Riley's GST to be exactly 5% of 1912.50
-      if (emp.employeeName === "Riley Larue" && employee?.category === "dsp") {
-        gstAmount = 1912.50 * 0.05; // Force correct GST calculation
       }
 
       return {
