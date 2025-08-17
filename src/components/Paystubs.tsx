@@ -307,7 +307,7 @@ export const Paystubs = () => {
 </head>
 <body>
   <div class="paystub-container">
-    <button class="print-button" onclick="window.print()">🖨️ Print Pay Preview to PDF (Ctrl+P)</button>
+
 
     <div class="paystub-header">
       <div class="company-logo">4Front Trackity-doo</div>
