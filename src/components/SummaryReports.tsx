@@ -549,22 +549,29 @@ export function SummaryReports() {
       );
 
       const gstAmount = employeeFilteredSummaries.reduce((total, summary) => {
-        // Find the time entry to get the employee category
+        // Find the time entry to get the employee category and manager info
         const timeEntry = timeEntries.find(entry =>
           entry.employeeId === employee?.id &&
           entry.date === summary.date &&
           entry.hourTypeId === hourTypes.find(ht => ht.name === summary.hourTypeName)?.id
         );
 
-        const entryCategory = timeEntry?.employeeCategory || employee?.category;
+        const entryEmployeeCategory = timeEntry?.employeeCategory || employee?.category;
+        const manager = employee?.managerId
+          ? employees.find((emp) => emp.id === employee.managerId)
+          : null;
 
-        // Apply GST based on stored category and use the summary's totalCost
-        if (entryCategory === "dsp" || entryCategory === "dspot") {
+        const shouldUse1xRates =
+          entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
+          (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
+
+        // Apply GST based on category - use same logic as cost calculation
+        if (entryEmployeeCategory === "dsp" || entryEmployeeCategory === "dspot") {
           return total + (summary.totalCost || 0) * 0.05;
         } else if (
           employee?.managerId &&
-          entryCategory !== "employee" &&
-          !entryCategory
+          entryEmployeeCategory !== "employee" &&
+          !entryEmployeeCategory
         ) {
           return total + (summary.totalCost || 0) * 0.05;
         }
