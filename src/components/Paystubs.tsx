@@ -153,7 +153,7 @@ export const Paystubs = () => {
     setSelectedEmployee("all");
   };
 
-  // Function to generate PDF for a specific paystub
+  // Function to generate PDF for a specific paystub using browser print
   const generatePDF = async (paystub: typeof employeePaystubs[0], download = true) => {
     const employeeName = paystub.employeeName;
     setIsGeneratingPDF(employeeName);
@@ -161,217 +161,264 @@ export const Paystubs = () => {
     try {
       const periodText = `${formatLocalDate(dateFilter.start)} to ${formatLocalDate(dateFilter.end)}`;
 
-      // Create a temporary container for the paystub
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.left = '-9999px';
-      tempContainer.style.top = '0';
-      tempContainer.style.width = '8.5in';
-      tempContainer.style.background = 'white';
-      tempContainer.style.fontFamily = 'Arial, sans-serif';
-      tempContainer.style.fontSize = '12px';
-      tempContainer.style.lineHeight = '1.4';
-      tempContainer.style.color = 'black';
-      tempContainer.style.padding = '40px';
-
-      tempContainer.innerHTML = `
-        <style>
-          * { box-sizing: border-box; }
-          .paystub-header {
-            text-align: center;
-            border-bottom: 3px solid #333;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-          }
-          .paystub-title {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 0 0 15px 0;
-            color: #333;
-            letter-spacing: 2px;
-          }
-          .employee-name {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #444;
-          }
-          .employee-title {
-            font-size: 14px;
-            margin: 5px 0;
-            color: #666;
-          }
-          .period-text {
-            font-size: 14px;
-            margin: 10px 0;
-            font-weight: bold;
-            color: #333;
-          }
-          .summary-section {
-            margin-bottom: 30px;
-            background: #f9f9f9;
-            padding: 20px;
-            border: 1px solid #ddd;
-          }
-          .summary-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            border-bottom: 2px solid #333;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-          }
-          .summary-item {
-            margin: 8px 0;
-            font-size: 13px;
-          }
-          .summary-item strong {
-            color: #333;
-          }
-          .details-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 11px;
-          }
-          .details-table th {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 10px 8px;
-            text-align: left;
-            font-weight: bold;
-            color: #333;
-          }
-          .details-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            color: #333;
-          }
-          .details-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-          }
-          .text-right {
-            text-align: right;
-          }
-          .footer {
-            border-top: 3px solid #333;
-            padding-top: 20px;
-            text-align: center;
-            margin-top: 30px;
-          }
-          .total-cost {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #333;
-          }
-          .disclaimer {
-            font-size: 11px;
-            color: #666;
-            font-style: italic;
-            margin: 15px 0;
-            padding: 10px;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-          }
-          .generated-by {
-            font-size: 10px;
-            color: #999;
-            margin: 10px 0;
-          }
-        </style>
-
-        <div class="paystub-header">
-          <div class="paystub-title">PAYSTUB</div>
-          <div class="employee-name">${paystub.employeeName}</div>
-          <div class="employee-title">${paystub.employeeTitle}</div>
-          <div class="period-text">Pay Period: ${periodText}</div>
-        </div>
-
-        <div class="summary-section">
-          <div class="summary-title">PAYROLL SUMMARY</div>
-          <div class="summary-item"><strong>Total Labor Cost:</strong> $${paystub.totalCost.toFixed(2)}</div>
-          <div class="summary-item"><strong>Total Hours Worked:</strong> ${paystub.totalHours.toFixed(1)} hours</div>
-          ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>Live Out Allowances:</strong> ${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</div>` : ''}
-        </div>
-
-        <div>
-          <div class="summary-title">DETAILED WORK BREAKDOWN</div>
-          <table class="details-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Job Number</th>
-                <th>Hour Type</th>
-                <th class="text-right">Hours</th>
-                <th class="text-right">LOA</th>
-                <th class="text-right">Rate</th>
-                <th class="text-right">Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${paystub.entries
-                .sort((a, b) => a.date.localeCompare(b.date))
-                .map(entry => `
-                  <tr>
-                    <td>${formatLocalDate(entry.date)}</td>
-                    <td>${entry.jobNumber}</td>
-                    <td>${entry.hourTypeName}</td>
-                    <td class="text-right">${entry.hours.toFixed(2)}h</td>
-                    <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
-                    <td class="text-right">$${entry.costWage.toFixed(2)}/h</td>
-                    <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
-                  </tr>
-                `).join('')}
-            </tbody>
-          </table>
-        </div>
-
-        <div class="footer">
-          <div class="total-cost">TOTAL LABOR COST: $${paystub.totalCost.toFixed(2)}</div>
-          <div class="disclaimer">
-            ⚠️ This paystub shows labor costs only and excludes taxes, remittances, and other deductions.
-            Live Out Allowances (LOAs) are displayed separately when applicable.
-          </div>
-          <div class="generated-by">Generated by 4Front Trackity-doo Payroll System</div>
-        </div>
-      `;
-
-      document.body.appendChild(tempContainer);
-
-      // PDF options
-      const options = {
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `Paystub_${paystub.employeeName.replace(/\s+/g, '_')}_${dateFilter.start}_to_${dateFilter.end}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff'
-        },
-        jsPDF: {
-          unit: 'in',
-          format: 'letter',
-          orientation: 'portrait'
-        }
-      };
-
-      // Generate PDF
-      const pdf = await html2pdf().set(options).from(tempContainer).save();
-
-      // Clean up
-      document.body.removeChild(tempContainer);
-
-      if (download) {
-        // The save() method already downloads the file
-        return true;
+      // Create a new window for the paystub
+      const printWindow = window.open('', '_blank', 'width=800,height=1000');
+      if (!printWindow) {
+        alert('Please allow popups for this site to generate PDFs');
+        return null;
       }
 
-      return pdf;
+      // Build the paystub HTML content
+      const paystubHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Paystub - ${paystub.employeeName}</title>
+  <style>
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: white;
+      color: black;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .paystub-container {
+      max-width: 8.5in;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+    }
+
+    .paystub-header {
+      text-align: center;
+      border-bottom: 3px solid #333;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .paystub-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0 0 15px 0;
+      color: #333;
+      letter-spacing: 2px;
+    }
+
+    .employee-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #444;
+    }
+
+    .employee-title {
+      font-size: 14px;
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .period-text {
+      font-size: 14px;
+      margin: 10px 0;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .summary-section {
+      margin-bottom: 30px;
+      background: #f9f9f9;
+      padding: 20px;
+      border: 1px solid #ddd;
+    }
+
+    .summary-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+
+    .summary-item {
+      margin: 8px 0;
+      font-size: 13px;
+    }
+
+    .summary-item strong {
+      color: #333;
+    }
+
+    .details-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 11px;
+    }
+
+    .details-table th {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .details-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      color: #333;
+    }
+
+    .details-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .footer {
+      border-top: 3px solid #333;
+      padding-top: 20px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .total-cost {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #333;
+    }
+
+    .disclaimer {
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+      margin: 15px 0;
+      padding: 10px;
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+    }
+
+    .generated-by {
+      font-size: 10px;
+      color: #999;
+      margin: 10px 0;
+    }
+
+    .print-button {
+      background: #007cba;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+
+    .print-button:hover {
+      background: #005a87;
+    }
+
+    @media print {
+      .print-button { display: none; }
+      .paystub-container { margin: 0; padding: 0; }
+      body { margin: 0; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="paystub-container">
+    <button class="print-button" onclick="window.print()">🖨️ Print to PDF (Ctrl+P)</button>
+
+    <div class="paystub-header">
+      <div class="paystub-title">PAYSTUB</div>
+      <div class="employee-name">${paystub.employeeName}</div>
+      <div class="employee-title">${paystub.employeeTitle}</div>
+      <div class="period-text">Pay Period: ${periodText}</div>
+    </div>
+
+    <div class="summary-section">
+      <div class="summary-title">PAYROLL SUMMARY</div>
+      <div class="summary-item"><strong>Total Labor Cost:</strong> $${paystub.totalCost.toFixed(2)}</div>
+      <div class="summary-item"><strong>Total Hours Worked:</strong> ${paystub.totalHours.toFixed(1)} hours</div>
+      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>Live Out Allowances:</strong> ${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</div>` : ''}
+    </div>
+
+    <div>
+      <div class="summary-title">DETAILED WORK BREAKDOWN</div>
+      <table class="details-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Job Number</th>
+            <th>Hour Type</th>
+            <th class="text-right">Hours</th>
+            <th class="text-right">LOA</th>
+            <th class="text-right">Rate</th>
+            <th class="text-right">Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${paystub.entries
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .map(entry => `
+              <tr>
+                <td>${formatLocalDate(entry.date)}</td>
+                <td>${entry.jobNumber}</td>
+                <td>${entry.hourTypeName}</td>
+                <td class="text-right">${entry.hours.toFixed(2)}h</td>
+                <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : '—'}</td>
+                <td class="text-right">$${entry.costWage.toFixed(2)}/h</td>
+                <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
+              </tr>
+            `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <div class="total-cost">TOTAL LABOR COST: $${paystub.totalCost.toFixed(2)}</div>
+      <div class="disclaimer">
+        ⚠️ This paystub shows labor costs only and excludes taxes, remittances, and other deductions.
+        Live Out Allowances (LOAs) are displayed separately when applicable.
+      </div>
+      <div class="generated-by">Generated by 4Front Trackity-doo Payroll System</div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+      // Write the content to the new window
+      printWindow.document.write(paystubHTML);
+      printWindow.document.close();
+
+      // Focus the window and trigger print
+      printWindow.focus();
+
+      // Auto-trigger print dialog after a short delay
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+
+      return true;
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Error generating PDF. Please try again.');
+      alert('Error opening print window. Please try again.');
       return null;
     } finally {
       setIsGeneratingPDF(null);
@@ -875,7 +922,7 @@ Generated by 4Front Trackity-doo`;
                                 {entry.loaCount} × $200
                               </div>
                             ) : (
-                              <span className="text-gray-500">���</span>
+                              <span className="text-gray-500">—</span>
                             )}
                           </TableCell>
                           <TableCell className="text-right text-gray-300">
