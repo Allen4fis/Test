@@ -202,7 +202,7 @@ export const Paystubs = () => {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background: white;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       color: #1f2937;
       font-size: 12px;
       line-height: 1.5;
@@ -213,7 +213,8 @@ export const Paystubs = () => {
       margin: 0 auto;
       background: white;
       padding: 40px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e5e7eb;
     }
 
     .paystub-header {
@@ -289,7 +290,8 @@ export const Paystubs = () => {
       padding: 25px;
       border-radius: 12px;
       border-left: 6px solid #f97316;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border-right: 3px solid #374151;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
     }
 
     .summary-title {
@@ -317,19 +319,87 @@ export const Paystubs = () => {
       font-weight: 600;
     }
 
+    .table-section {
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid #374151;
+      margin: 25px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .table-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 3px solid #374151;
+      padding-bottom: 10px;
+    }
+
+    .column-descriptors {
+      background: #374151;
+      color: #e5e7eb;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .column-descriptors h4 {
+      color: #f97316;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .descriptor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .descriptor-item {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 4px;
+      border-left: 3px solid #f97316;
+    }
+
+    .descriptor-label {
+      font-weight: 600;
+      color: #f97316;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .descriptor-text {
+      color: #d1d5db;
+      font-size: 8px;
+      margin-top: 2px;
+    }
+
     .details-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 25px 0;
       font-size: 11px;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border: 2px solid #374151;
     }
 
     .details-table th {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: white;
+      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+      color: #f97316;
       border: none;
       padding: 15px 10px;
       text-align: left;
@@ -337,20 +407,36 @@ export const Paystubs = () => {
       text-transform: uppercase;
       letter-spacing: 0.5px;
       font-size: 10px;
+      border-bottom: 2px solid #f97316;
     }
 
     .details-table td {
-      border: 1px solid #e5e7eb;
+      border: 1px solid #d1d5db;
       padding: 12px 10px;
       color: #374151;
     }
 
     .details-table tr:nth-child(even) {
-      background-color: #f9fafb;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .details-table tr:nth-child(odd) {
+      background: white;
     }
 
     .details-table tr:hover {
-      background-color: #fef3e2;
+      background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
+      transform: scale(1.01);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .details-table tbody tr {
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .details-table tbody tr:hover {
+      border-left: 3px solid #f97316;
     }
 
     .text-right {
@@ -360,12 +446,14 @@ export const Paystubs = () => {
 
     .footer {
       border-top: 4px solid #f97316;
+      border-bottom: 4px solid #374151;
       padding-top: 30px;
       text-align: center;
       margin-top: 40px;
-      background: linear-gradient(135deg, #fefefe 0%, #f9fafb 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       padding: 30px 20px;
       border-radius: 12px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .total-cost {
@@ -455,18 +543,53 @@ export const Paystubs = () => {
       ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>Live Out Allowances:</strong> ${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</div>` : ''}
     </div>
 
-    <div>
-      <div class="summary-title">DETAILED WORK BREAKDOWN</div>
+    <div class="table-section">
+      <div class="table-title">DETAILED WORK BREAKDOWN</div>
+
+      <div class="column-descriptors">
+        <h4>📋 Column Reference Guide</h4>
+        <div class="descriptor-grid">
+          <div class="descriptor-item">
+            <span class="descriptor-label">Date</span>
+            <span class="descriptor-text">Work day (YYYY-MM-DD format)</span>
+          </div>
+          <div class="descriptor-item">
+            <span class="descriptor-label">Job Number</span>
+            <span class="descriptor-text">Project/client identifier</span>
+          </div>
+          <div class="descriptor-item">
+            <span class="descriptor-label">Hour Type</span>
+            <span class="descriptor-text">Regular, Overtime, Double Time, etc.</span>
+          </div>
+          <div class="descriptor-item">
+            <span class="descriptor-label">Hours</span>
+            <span class="descriptor-text">Time worked (decimal format)</span>
+          </div>
+          <div class="descriptor-item">
+            <span class="descriptor-label">LOA</span>
+            <span class="descriptor-text">Live Out Allowance ($200 each)</span>
+          </div>
+          <div class="descriptor-item">
+            <span class="descriptor-label">Rate</span>
+            <span class="descriptor-text">Hourly rate (includes multipliers)</span>
+          </div>
+          <div class="descriptor-item">
+            <span class="descriptor-label">Cost</span>
+            <span class="descriptor-text">Total labor cost for entry</span>
+          </div>
+        </div>
+      </div>
+
       <table class="details-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Job Number</th>
-            <th>Hour Type</th>
-            <th class="text-right">Hours</th>
-            <th class="text-right">LOA</th>
-            <th class="text-right">Rate</th>
-            <th class="text-right">Cost</th>
+            <th>📅 Date</th>
+            <th>🏗️ Job Number</th>
+            <th>⏰ Hour Type</th>
+            <th class="text-right">🕐 Hours</th>
+            <th class="text-right">🏠 LOA</th>
+            <th class="text-right">💰 Rate</th>
+            <th class="text-right">💵 Cost</th>
           </tr>
         </thead>
         <tbody>
