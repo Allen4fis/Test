@@ -378,7 +378,7 @@ export const Paystubs = () => {
                 .sort((a, b) => a.date.localeCompare(b.date))
                 .map(entry => {
                   // Calculate effective rate with multiplier
-                  const hourType = hourTypes.find(ht => ht.id === entry.hourTypeId);
+                  const hourType = hourTypes.find(ht => ht.name === entry.hourTypeName);
                   const multiplier = hourType?.multiplier || 1;
                   const effectiveRate = entry.costWage * multiplier;
                   const rateDisplay = multiplier === 1
