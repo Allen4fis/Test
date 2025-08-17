@@ -643,29 +643,37 @@ export function SummaryReports() {
         // Recalculate subordinate GST with current filters applied
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
           // Find the actual employee record for this subordinate
-          const subordinateEmployee = employees.find((e) => e.name === sub.employeeName);
+          const subordinateEmployee = employees.find(
+            (e) => e.name === sub.employeeName,
+          );
           if (!subordinateEmployee) return sum;
 
           // Get filtered time entries for this subordinate
           const subordinateEntries = timeEntries.filter((entry) => {
             if (entry.employeeId !== subordinateEmployee.id) return false;
-            if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
+            if (entry.date < dateFilter.start || entry.date > dateFilter.end)
+              return false;
 
             // Apply job filtering if active
             if (jobFilter && jobFilter !== "all-jobs") {
-              const job = jobs.find(j => j.id === entry.jobId);
+              const job = jobs.find((j) => j.id === entry.jobId);
               if (job?.jobNumber !== jobFilter) return false;
             }
 
             // Apply billable filtering if active
             if (billableFilter !== "all") {
-              const job = jobs.find(j => j.id === entry.jobId);
-              if (billableFilter === "billable" && !job?.isBillable) return false;
-              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
+              const job = jobs.find((j) => j.id === entry.jobId);
+              if (billableFilter === "billable" && !job?.isBillable)
+                return false;
+              if (
+                billableFilter === "non-billable" &&
+                job?.isBillable !== false
+              )
+                return false;
             }
 
             // Apply invoice and payment status filters
-            const job = jobs.find(j => j.id === entry.jobId);
+            const job = jobs.find((j) => j.id === entry.jobId);
             const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
             const isPaid = job?.paidDates.includes(entry.date) || false;
 
@@ -678,72 +686,86 @@ export function SummaryReports() {
           });
 
           // Calculate GST for filtered entries
-          const gstForSubordinate = subordinateEntries.reduce((total, entry) => {
-            const entryCategory = entry.employeeCategory || subordinateEmployee?.category;
+          const gstForSubordinate = subordinateEntries.reduce(
+            (total, entry) => {
+              const entryCategory =
+                entry.employeeCategory || subordinateEmployee?.category;
 
-            // Calculate the cost contribution of this specific entry
-            const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
-            if (!hourType) return total;
+              // Calculate the cost contribution of this specific entry
+              const hourType = hourTypes.find(
+                (ht) => ht.id === entry.hourTypeId,
+              );
+              if (!hourType) return total;
 
-            const effectiveHours = entry.hours * hourType.multiplier;
-            let adjustedCostWage = entry.costWageUsed || 0;
-            let entryCost = 0;
+              const effectiveHours = entry.hours * hourType.multiplier;
+              let adjustedCostWage = entry.costWageUsed || 0;
+              let entryCost = 0;
 
-            // Add $3 for NS hour types
-            if (hourType.name.startsWith("NS ")) {
-              adjustedCostWage += 3;
-            }
+              // Add $3 for NS hour types
+              if (hourType.name.startsWith("NS ")) {
+                adjustedCostWage += 3;
+              }
 
-            // Use stored category for cost calculation
-            if (entryCategory === "dsp") {
-              entryCost = entry.hours * adjustedCostWage; // 1x for DSP
-            } else {
-              entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
-            }
+              // Use stored category for cost calculation
+              if (entryCategory === "dsp") {
+                entryCost = entry.hours * adjustedCostWage; // 1x for DSP
+              } else {
+                entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
+              }
 
-            // Add LOA cost
-            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-            entryCost += loaCost;
+              // Add LOA cost
+              const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+              entryCost += loaCost;
 
-            // Apply GST based on stored category
-            if (entryCategory === "dsp" || entryCategory === "dspot") {
-              return total + entryCost * 0.05;
-            } else if (
-              subordinateEmployee.managerId &&
-              entryCategory !== "employee" &&
-              !entryCategory
-            ) {
-              return total + entryCost * 0.05;
-            }
+              // Apply GST based on stored category
+              if (entryCategory === "dsp" || entryCategory === "dspot") {
+                return total + entryCost * 0.05;
+              } else if (
+                subordinateEmployee.managerId &&
+                entryCategory !== "employee" &&
+                !entryCategory
+              ) {
+                return total + entryCost * 0.05;
+              }
 
-            return total;
-          }, 0);
+              return total;
+            },
+            0,
+          );
 
           return sum + gstForSubordinate;
         }, 0);
 
         // Update subordinate objects with recalculated GST amounts
-        const updatedSubordinates = subordinates.map(sub => {
-          const subordinateEmployee = employees.find((e) => e.name === sub.employeeName);
+        const updatedSubordinates = subordinates.map((sub) => {
+          const subordinateEmployee = employees.find(
+            (e) => e.name === sub.employeeName,
+          );
           if (!subordinateEmployee) return sub;
 
           // Get filtered time entries for this subordinate (same logic as above)
           const subordinateEntries = timeEntries.filter((entry) => {
             if (entry.employeeId !== subordinateEmployee.id) return false;
-            if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
+            if (entry.date < dateFilter.start || entry.date > dateFilter.end)
+              return false;
 
             if (jobFilter && jobFilter !== "all-jobs") {
-              const job = jobs.find(j => j.id === entry.jobId);
+              const job = jobs.find((j) => j.id === entry.jobId);
               if (job?.jobNumber !== jobFilter) return false;
             }
 
             if (billableFilter !== "all") {
-              const job = jobs.find(j => j.id === entry.jobId);
-              if (billableFilter === "billable" && !job?.isBillable) return false;
-              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
+              const job = jobs.find((j) => j.id === entry.jobId);
+              if (billableFilter === "billable" && !job?.isBillable)
+                return false;
+              if (
+                billableFilter === "non-billable" &&
+                job?.isBillable !== false
+              )
+                return false;
             }
 
-            const job = jobs.find(j => j.id === entry.jobId);
+            const job = jobs.find((j) => j.id === entry.jobId);
             const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
             const isPaid = job?.paidDates.includes(entry.date) || false;
 
@@ -757,7 +779,8 @@ export function SummaryReports() {
 
           // Calculate updated GST for this subordinate
           const updatedGstAmount = subordinateEntries.reduce((total, entry) => {
-            const entryCategory = entry.employeeCategory || subordinateEmployee?.category;
+            const entryCategory =
+              entry.employeeCategory || subordinateEmployee?.category;
             const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
             if (!hourType) return total;
 
@@ -793,7 +816,7 @@ export function SummaryReports() {
 
           return {
             ...sub,
-            gstAmount: updatedGstAmount
+            gstAmount: updatedGstAmount,
           };
         });
 
@@ -821,29 +844,37 @@ export function SummaryReports() {
         // Recalculate subordinate GST with current filters applied
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
           // Find the actual employee record for this subordinate
-          const subordinateEmployee = employees.find((e) => e.name === sub.employeeName);
+          const subordinateEmployee = employees.find(
+            (e) => e.name === sub.employeeName,
+          );
           if (!subordinateEmployee) return sum;
 
           // Get filtered time entries for this subordinate
           const subordinateEntries = timeEntries.filter((entry) => {
             if (entry.employeeId !== subordinateEmployee.id) return false;
-            if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
+            if (entry.date < dateFilter.start || entry.date > dateFilter.end)
+              return false;
 
             // Apply job filtering if active
             if (jobFilter && jobFilter !== "all-jobs") {
-              const job = jobs.find(j => j.id === entry.jobId);
+              const job = jobs.find((j) => j.id === entry.jobId);
               if (job?.jobNumber !== jobFilter) return false;
             }
 
             // Apply billable filtering if active
             if (billableFilter !== "all") {
-              const job = jobs.find(j => j.id === entry.jobId);
-              if (billableFilter === "billable" && !job?.isBillable) return false;
-              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
+              const job = jobs.find((j) => j.id === entry.jobId);
+              if (billableFilter === "billable" && !job?.isBillable)
+                return false;
+              if (
+                billableFilter === "non-billable" &&
+                job?.isBillable !== false
+              )
+                return false;
             }
 
             // Apply invoice and payment status filters
-            const job = jobs.find(j => j.id === entry.jobId);
+            const job = jobs.find((j) => j.id === entry.jobId);
             const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
             const isPaid = job?.paidDates.includes(entry.date) || false;
 
@@ -856,72 +887,86 @@ export function SummaryReports() {
           });
 
           // Calculate GST for filtered entries
-          const gstForSubordinate = subordinateEntries.reduce((total, entry) => {
-            const entryCategory = entry.employeeCategory || subordinateEmployee?.category;
+          const gstForSubordinate = subordinateEntries.reduce(
+            (total, entry) => {
+              const entryCategory =
+                entry.employeeCategory || subordinateEmployee?.category;
 
-            // Calculate the cost contribution of this specific entry
-            const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
-            if (!hourType) return total;
+              // Calculate the cost contribution of this specific entry
+              const hourType = hourTypes.find(
+                (ht) => ht.id === entry.hourTypeId,
+              );
+              if (!hourType) return total;
 
-            const effectiveHours = entry.hours * hourType.multiplier;
-            let adjustedCostWage = entry.costWageUsed || 0;
-            let entryCost = 0;
+              const effectiveHours = entry.hours * hourType.multiplier;
+              let adjustedCostWage = entry.costWageUsed || 0;
+              let entryCost = 0;
 
-            // Add $3 for NS hour types
-            if (hourType.name.startsWith("NS ")) {
-              adjustedCostWage += 3;
-            }
+              // Add $3 for NS hour types
+              if (hourType.name.startsWith("NS ")) {
+                adjustedCostWage += 3;
+              }
 
-            // Use stored category for cost calculation
-            if (entryCategory === "dsp") {
-              entryCost = entry.hours * adjustedCostWage; // 1x for DSP
-            } else {
-              entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
-            }
+              // Use stored category for cost calculation
+              if (entryCategory === "dsp") {
+                entryCost = entry.hours * adjustedCostWage; // 1x for DSP
+              } else {
+                entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
+              }
 
-            // Add LOA cost
-            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-            entryCost += loaCost;
+              // Add LOA cost
+              const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+              entryCost += loaCost;
 
-            // Apply GST based on stored category
-            if (entryCategory === "dsp" || entryCategory === "dspot") {
-              return total + entryCost * 0.05;
-            } else if (
-              subordinateEmployee.managerId &&
-              entryCategory !== "employee" &&
-              !entryCategory
-            ) {
-              return total + entryCost * 0.05;
-            }
+              // Apply GST based on stored category
+              if (entryCategory === "dsp" || entryCategory === "dspot") {
+                return total + entryCost * 0.05;
+              } else if (
+                subordinateEmployee.managerId &&
+                entryCategory !== "employee" &&
+                !entryCategory
+              ) {
+                return total + entryCost * 0.05;
+              }
 
-            return total;
-          }, 0);
+              return total;
+            },
+            0,
+          );
 
           return sum + gstForSubordinate;
         }, 0);
 
         // Update subordinate objects with recalculated GST amounts
-        const updatedSubordinates = subordinates.map(sub => {
-          const subordinateEmployee = employees.find((e) => e.name === sub.employeeName);
+        const updatedSubordinates = subordinates.map((sub) => {
+          const subordinateEmployee = employees.find(
+            (e) => e.name === sub.employeeName,
+          );
           if (!subordinateEmployee) return sub;
 
           // Get filtered time entries for this subordinate (same logic as above)
           const subordinateEntries = timeEntries.filter((entry) => {
             if (entry.employeeId !== subordinateEmployee.id) return false;
-            if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
+            if (entry.date < dateFilter.start || entry.date > dateFilter.end)
+              return false;
 
             if (jobFilter && jobFilter !== "all-jobs") {
-              const job = jobs.find(j => j.id === entry.jobId);
+              const job = jobs.find((j) => j.id === entry.jobId);
               if (job?.jobNumber !== jobFilter) return false;
             }
 
             if (billableFilter !== "all") {
-              const job = jobs.find(j => j.id === entry.jobId);
-              if (billableFilter === "billable" && !job?.isBillable) return false;
-              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
+              const job = jobs.find((j) => j.id === entry.jobId);
+              if (billableFilter === "billable" && !job?.isBillable)
+                return false;
+              if (
+                billableFilter === "non-billable" &&
+                job?.isBillable !== false
+              )
+                return false;
             }
 
-            const job = jobs.find(j => j.id === entry.jobId);
+            const job = jobs.find((j) => j.id === entry.jobId);
             const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
             const isPaid = job?.paidDates.includes(entry.date) || false;
 
@@ -935,7 +980,8 @@ export function SummaryReports() {
 
           // Calculate updated GST for this subordinate
           const updatedGstAmount = subordinateEntries.reduce((total, entry) => {
-            const entryCategory = entry.employeeCategory || subordinateEmployee?.category;
+            const entryCategory =
+              entry.employeeCategory || subordinateEmployee?.category;
             const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
             if (!hourType) return total;
 
@@ -971,7 +1017,7 @@ export function SummaryReports() {
 
           return {
             ...sub,
-            gstAmount: updatedGstAmount
+            gstAmount: updatedGstAmount,
           };
         });
 
