@@ -94,19 +94,23 @@ export const Paystubs = () => {
   const employeePaystubs = useMemo(() => {
     const grouped = filteredSummaries.reduce((acc, summary) => {
       const key = summary.employeeName;
-      
+
       if (!acc[key]) {
         acc[key] = {
           employeeName: summary.employeeName,
           employeeTitle: summary.employeeTitle,
           totalHours: 0,
           totalCost: 0,
+          totalLoaCount: 0,
+          totalLoaAmount: 0,
           entries: [],
         };
       }
 
       acc[key].totalHours += summary.hours || 0;
       acc[key].totalCost += summary.totalCost || 0;
+      acc[key].totalLoaCount += summary.loaCount || 0;
+      acc[key].totalLoaAmount += (summary.loaCount || 0) * 200; // Default LOA amount
       acc[key].entries.push(summary);
 
       return acc;
@@ -115,6 +119,8 @@ export const Paystubs = () => {
       employeeTitle: string;
       totalHours: number;
       totalCost: number;
+      totalLoaCount: number;
+      totalLoaAmount: number;
       entries: typeof summary[];
     }>);
 
@@ -137,12 +143,12 @@ export const Paystubs = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Receipt className="h-8 w-8 text-green-600" />
+          <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
+            <Receipt className="h-8 w-8 text-indigo-600" />
             Paystubs
           </h1>
-          <p className="text-gray-600 mt-1">
-            Employee paystub information excluding taxes and remittances
+          <p className="text-slate-600 mt-1">
+            Employee paystub information including LOAs, excluding taxes and remittances
           </p>
         </div>
       </div>
@@ -259,45 +265,62 @@ export const Paystubs = () => {
       </Card>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-l-4 border-l-blue-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Employees</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-slate-600">Total Employees</p>
+                <p className="text-2xl font-bold text-slate-800">
                   {employeePaystubs.length}
                 </p>
               </div>
-              <User className="h-8 w-8 text-blue-600" />
+              <User className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-emerald-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Hours</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-slate-600">Total Hours</p>
+                <p className="text-2xl font-bold text-slate-800">
                   {employeePaystubs.reduce((sum, emp) => sum + emp.totalHours, 0).toFixed(1)}h
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-green-600" />
+              <Clock className="h-8 w-8 text-emerald-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-amber-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Cost</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-slate-600">Total LOAs</p>
+                <p className="text-2xl font-bold text-slate-800">
+                  {employeePaystubs.reduce((sum, emp) => sum + emp.totalLoaCount, 0)}
+                </p>
+                <p className="text-sm text-amber-600">
+                  ${employeePaystubs.reduce((sum, emp) => sum + emp.totalLoaAmount, 0).toFixed(2)}
+                </p>
+              </div>
+              <Receipt className="h-8 w-8 text-amber-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-rose-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Total Cost</p>
+                <p className="text-2xl font-bold text-slate-800">
                   ${employeePaystubs.reduce((sum, emp) => sum + emp.totalCost, 0).toFixed(2)}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-red-600" />
+              <DollarSign className="h-8 w-8 text-rose-500" />
             </div>
           </CardContent>
         </Card>
@@ -308,33 +331,38 @@ export const Paystubs = () => {
         {employeePaystubs.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <Receipt className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">No paystub data found</p>
-              <p className="text-sm text-gray-500 mt-1">
+              <Receipt className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+              <p className="text-lg font-medium text-slate-700">No paystub data found</p>
+              <p className="text-sm text-slate-500 mt-1">
                 No entries match your current filters and date range.
               </p>
             </CardContent>
           </Card>
         ) : (
           employeePaystubs.map((paystub) => (
-            <Card key={paystub.employeeName} className="border-l-4 border-l-blue-500">
-              <CardHeader className="bg-gray-50">
+            <Card key={paystub.employeeName} className="border-l-4 border-l-indigo-500 shadow-lg">
+              <CardHeader className="bg-slate-50">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-xl text-gray-900 flex items-center gap-2">
-                      <User className="h-5 w-5 text-blue-600" />
+                    <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
+                      <User className="h-5 w-5 text-indigo-600" />
                       {paystub.employeeName}
                     </CardTitle>
-                    <CardDescription className="text-gray-600">
+                    <CardDescription className="text-slate-600">
                       {paystub.employeeTitle} • {formatLocalDate(dateFilter.start)} to {formatLocalDate(dateFilter.end)}
                     </CardDescription>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-green-600">
+                  <div className="text-right space-y-1">
+                    <div className="text-2xl font-bold text-emerald-600">
                       ${paystub.totalCost.toFixed(2)}
                     </div>
-                    <div className="text-sm text-gray-500">
-                      {paystub.totalHours.toFixed(1)} hours
+                    <div className="text-sm text-slate-600 flex items-center gap-4">
+                      <span>{paystub.totalHours.toFixed(1)} hours</span>
+                      {paystub.totalLoaCount > 0 && (
+                        <span className="text-amber-600">
+                          {paystub.totalLoaCount} LOA${paystub.totalLoaCount > 1 ? 's' : ''}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -342,49 +370,59 @@ export const Paystubs = () => {
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Job</TableHead>
-                      <TableHead>Hour Type</TableHead>
-                      <TableHead>Province</TableHead>
-                      <TableHead className="text-right">Hours</TableHead>
-                      <TableHead className="text-right">Rate</TableHead>
-                      <TableHead className="text-right">Cost</TableHead>
+                    <TableRow className="bg-slate-100 border-b-2 border-slate-200">
+                      <TableHead className="font-semibold text-slate-700">Date</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Job</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Hour Type</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Province</TableHead>
+                      <TableHead className="text-right font-semibold text-slate-700">Hours</TableHead>
+                      <TableHead className="text-right font-semibold text-slate-700">LOA</TableHead>
+                      <TableHead className="text-right font-semibold text-slate-700">Rate</TableHead>
+                      <TableHead className="text-right font-semibold text-slate-700">Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paystub.entries
                       .sort((a, b) => a.date.localeCompare(b.date))
                       .map((entry, index) => (
-                        <TableRow key={`${entry.date}-${entry.jobNumber}-${entry.hourTypeName}-${index}`}>
-                          <TableCell className="font-medium">
+                        <TableRow key={`${entry.date}-${entry.jobNumber}-${entry.hourTypeName}-${index}`} className="hover:bg-slate-50">
+                          <TableCell className="font-medium text-slate-700">
                             {formatLocalDate(entry.date)}
                           </TableCell>
                           <TableCell>
                             <div>
-                              <div className="font-medium">{entry.jobNumber}</div>
-                              <div className="text-sm text-gray-500 truncate max-w-32">
+                              <div className="font-medium text-slate-800">{entry.jobNumber}</div>
+                              <div className="text-sm text-slate-500 truncate max-w-32">
                                 {entry.jobName}
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
                               {entry.hourTypeName}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="secondary" className="text-xs bg-purple-50 text-purple-700">
                               {entry.provinceName}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-right font-medium">
+                          <TableCell className="text-right font-medium text-slate-700">
                             {entry.hours.toFixed(2)}h
                           </TableCell>
                           <TableCell className="text-right">
+                            {(entry.loaCount || 0) > 0 ? (
+                              <div className="text-amber-600 font-medium">
+                                {entry.loaCount} × $200
+                              </div>
+                            ) : (
+                              <span className="text-slate-400">—</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right text-slate-600">
                             ${entry.costWage.toFixed(2)}/h
                           </TableCell>
-                          <TableCell className="text-right font-medium text-green-600">
+                          <TableCell className="text-right font-medium text-emerald-600">
                             ${entry.totalCost.toFixed(2)}
                           </TableCell>
                         </TableRow>
