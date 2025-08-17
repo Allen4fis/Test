@@ -695,8 +695,8 @@ Summary:
 
 If you have any questions regarding this pay preview, please don't hesitate to contact us.
 
-Best regards,
-4Front Trackity-doo Payroll`;
+XOXO,
+4Front Trackity-doo`;
 
       // Generate PDF (this will auto-download)
       const result = await generatePDF(paystub, true);
