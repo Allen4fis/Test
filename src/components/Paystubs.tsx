@@ -320,7 +320,7 @@ export const Paystubs = () => {
     <div class="summary-section">
       <div class="summary-title">💰 PAYROLL SUMMARY</div>
       <div class="summary-item">
-        <strong>💵 Total Labor Cost:</strong>
+        <strong>���� Total Labor Cost:</strong>
         <span style="color: #374151; font-weight: 600;">$${paystub.totalCost.toFixed(2)}</span>
       </div>
       <div class="summary-item">
@@ -494,10 +494,7 @@ XOXO,
         link.click();
         document.body.removeChild(link);
 
-        // Show instructions
-        alert(`PDF downloaded successfully! Please attach the downloaded PDF file to your email.
 
-Note: Due to browser security limitations, PDF files cannot be automatically attached to emails. You'll need to manually attach the downloaded PDF file.`);
       }, 2000);
     } catch (error) {
       console.error("Error in PDF and email workflow:", error);
