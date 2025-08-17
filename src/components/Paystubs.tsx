@@ -280,29 +280,29 @@ export const Paystubs = () => {
   <title>Pay Preview - ${paystub.employeeName} - ${periodText}</title>
   <style>
     @media print { * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; } }
-    body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: white; color: #1f2937; font-size: 11px; line-height: 1.4; }
-    .container { max-width: 8in; margin: 0 auto; background: white; padding: 20px; }
-    .header { text-align: center; background: #374151; color: white; padding: 20px; margin: -20px -20px 20px -20px; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f8fafc; color: #1f2937; font-size: 11px; line-height: 1.4; }
+    .container { max-width: 8in; margin: 0 auto; background: white; padding: 20px; border: 2px solid #e5e7eb; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .header { text-align: center; background: linear-gradient(135deg, #374151 0%, #4b5563 100%); color: white; padding: 20px; margin: -20px -20px 20px -20px; border-radius: 6px 6px 0 0; }
     .logo { font-size: 18px; font-weight: bold; color: #f97316; margin-bottom: 8px; }
     .title { font-size: 24px; font-weight: bold; color: #f97316; margin: 8px 0; }
-    .employee { font-size: 18px; font-weight: bold; margin: 8px 0; }
-    .period { font-size: 14px; margin: 8px 0; }
-    .summary { background: #f3f4f6; border: 2px solid #374151; padding: 15px; margin: 15px 0; border-radius: 6px; }
+    .employee { font-size: 18px; font-weight: bold; margin: 8px 0; color: #e5e7eb; }
+    .period { font-size: 14px; margin: 8px 0; color: #d1d5db; }
+    .summary { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border: 2px solid #374151; padding: 15px; margin: 15px 0; border-radius: 6px; }
     .summary-title { font-size: 14px; font-weight: bold; color: #374151; border-bottom: 2px solid #374151; padding-bottom: 8px; margin-bottom: 12px; }
-    .summary-item { margin: 8px 0; display: flex; justify-content: space-between; padding: 8px; background: rgba(249,115,22,0.1); border-left: 3px solid #f97316; }
-    .table-section { background: #f3f4f6; border: 2px solid #374151; padding: 15px; margin: 15px 0; border-radius: 6px; }
-    .table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-    .table th { background: #374151; color: #f97316; padding: 8px 6px; text-align: left; font-weight: bold; font-size: 9px; border-bottom: 2px solid #f97316; }
+    .summary-item { margin: 8px 0; display: flex; justify-content: space-between; padding: 8px; background: #f8fafc; border: 1px solid #d1d5db; border-left: 3px solid #f97316; border-radius: 3px; }
+    .table-section { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border: 2px solid #374151; padding: 15px; margin: 15px 0; border-radius: 6px; }
+    .table { width: 100%; border-collapse: collapse; margin: 10px 0; border: 1px solid #9ca3af; }
+    .table th { background: linear-gradient(135deg, #374151 0%, #4b5563 100%); color: #f97316; padding: 8px 6px; text-align: left; font-weight: bold; font-size: 9px; border-bottom: 2px solid #f97316; }
     .table td { border: 1px solid #d1d5db; padding: 6px; font-size: 10px; }
     .table tr:nth-child(even) { background: #f8fafc; }
+    .table tr:nth-child(odd) { background: #f1f5f9; }
     .text-right { text-align: right; }
-    .footer { border-top: 3px solid #f97316; border-bottom: 3px solid #374151; padding: 15px; text-align: center; margin: 20px 0; background: #f8fafc; }
+    .footer { border-top: 3px solid #f97316; border-bottom: 3px solid #374151; padding: 15px; text-align: center; margin: 20px 0; background: linear-gradient(135deg, #f8fafc 0%, #e5e7eb 100%); border-radius: 6px; }
     .total { font-size: 18px; font-weight: bold; color: #ea580c; margin: 10px 0; }
     .disclaimer { font-size: 10px; color: #7c2d12; margin: 15px 0; padding: 10px; background: #fef3e2; border: 1px solid #f97316; border-radius: 4px; }
     .adp { font-size: 11px; color: #1f2937; margin: 15px 0; padding: 10px; background: #e0f2fe; border: 1px solid #0ea5e9; border-radius: 4px; }
     .generated { font-size: 9px; color: #9ca3af; margin: 10px 0; }
-    .btn { background: #f97316; color: white; border: none; padding: 8px 16px; font-size: 12px; cursor: pointer; border-radius: 4px; margin: 10px 0; }
-    @media print { .btn { display: none; } .container { margin: 0; padding: 10px; } body { margin: 0; padding: 0; } }
+    @media print { .container { margin: 0; padding: 10px; border: none; box-shadow: none; } body { margin: 0; padding: 0; background: white; } }
   </style>
 </head>
 <body>
