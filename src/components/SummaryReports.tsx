@@ -542,27 +542,18 @@ export function SummaryReports() {
         );
       });
 
-      // Calculate GST by recalculating the total cost the same way it's displayed
-      // Sum up the filtered summaries to get the actual displayed total cost
-      const employeeFilteredSummaries = filteredSummaries.filter(
-        summary => summary.employeeName === emp.employeeName
-      );
-
-      const actualDisplayedTotalCost = employeeFilteredSummaries.reduce(
-        (sum, summary) => sum + (summary.totalCost || 0), 0
-      );
-
-      // Calculate GST based on employee category and the actual displayed total cost
+      // Calculate GST using the exact same totalCost value that's displayed as "Labor Cost"
+      // This uses the same emp.totalCost that will be shown in the UI
       let gstAmount = 0;
       if (employee?.category === "dsp" || employee?.category === "dspot") {
-        gstAmount = actualDisplayedTotalCost * 0.05;
+        gstAmount = (emp.totalCost || 0) * 0.05;
       } else if (
         employee?.managerId &&
         employee?.category !== "employee" &&
         !employee?.category
       ) {
         // Subordinate contractors without explicit category
-        gstAmount = actualDisplayedTotalCost * 0.05;
+        gstAmount = (emp.totalCost || 0) * 0.05;
       }
 
       return {
