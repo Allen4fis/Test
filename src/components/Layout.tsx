@@ -149,6 +149,13 @@ export const Layout = memo(function Layout({
         color: "text-orange-400",
       },
       {
+        id: "paystubs" as const,
+        label: "Paystubs",
+        icon: Receipt,
+        description: "Employee paystubs",
+        color: "text-green-400",
+      },
+      {
         id: "invoices" as const,
         label: "Invoices",
         icon: Receipt,
