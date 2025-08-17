@@ -929,6 +929,81 @@ export function SummaryReports() {
           return sum + gstForSubordinate;
         }, 0);
 
+        // Update subordinate objects with recalculated GST amounts
+        const updatedSubordinates = subordinates.map(sub => {
+          const subordinateEmployee = employees.find((e) => e.name === sub.employeeName);
+          if (!subordinateEmployee) return sub;
+
+          // Get filtered time entries for this subordinate (same logic as above)
+          const subordinateEntries = timeEntries.filter((entry) => {
+            if (entry.employeeId !== subordinateEmployee.id) return false;
+            if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
+
+            if (jobFilter && jobFilter !== "all-jobs") {
+              const job = jobs.find(j => j.id === entry.jobId);
+              if (job?.jobNumber !== jobFilter) return false;
+            }
+
+            if (billableFilter !== "all") {
+              const job = jobs.find(j => j.id === entry.jobId);
+              if (billableFilter === "billable" && !job?.isBillable) return false;
+              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
+            }
+
+            const job = jobs.find(j => j.id === entry.jobId);
+            const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
+            const isPaid = job?.paidDates.includes(entry.date) || false;
+
+            if (!includeInvoiced && isInvoiced) return false;
+            if (!includeUninvoiced && !isInvoiced) return false;
+            if (!includePaid && isPaid) return false;
+            if (!includeUnpaid && !isPaid) return false;
+
+            return true;
+          });
+
+          // Calculate updated GST for this subordinate
+          const updatedGstAmount = subordinateEntries.reduce((total, entry) => {
+            const entryCategory = entry.employeeCategory || subordinateEmployee?.category;
+            const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
+            if (!hourType) return total;
+
+            const effectiveHours = entry.hours * hourType.multiplier;
+            let adjustedCostWage = entry.costWageUsed || 0;
+            let entryCost = 0;
+
+            if (hourType.name.startsWith("NS ")) {
+              adjustedCostWage += 3;
+            }
+
+            if (entryCategory === "dsp") {
+              entryCost = entry.hours * adjustedCostWage;
+            } else {
+              entryCost = effectiveHours * adjustedCostWage;
+            }
+
+            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+            entryCost += loaCost;
+
+            if (entryCategory === "dsp" || entryCategory === "dspot") {
+              return total + entryCost * 0.05;
+            } else if (
+              subordinateEmployee.managerId &&
+              entryCategory !== "employee" &&
+              !entryCategory
+            ) {
+              return total + entryCost * 0.05;
+            }
+
+            return total;
+          }, 0);
+
+          return {
+            ...sub,
+            gstAmount: updatedGstAmount
+          };
+        });
+
         const gstAmount = 0; // Manager has no direct entries
         return {
           employeeName: manager.name,
@@ -947,7 +1022,7 @@ export function SummaryReports() {
           managerId: null,
           gstAmount,
           baseCostWage: manager.costWage || 0,
-          subordinates,
+          subordinates: updatedSubordinates,
           subordinateGstTotal,
         };
       })
