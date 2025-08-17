@@ -80,6 +80,35 @@ export const Paystubs = () => {
   // State for PDF generation
   const [isGeneratingPDF, setIsGeneratingPDF] = useState<string | null>(null);
 
+  // Get hierarchical employee summaries for filtering logic similar to Payroll Information
+  const hierarchicalEmployeeSummaries = useMemo(() => {
+    // Group employees and determine their relationships
+    const employeeMap = new Map();
+
+    employees.forEach(emp => {
+      employeeMap.set(emp.id, {
+        ...emp,
+        subordinates: [],
+        isSubordinate: false,
+        employeeCategory: emp.category || "employee"
+      });
+    });
+
+    // Mark subordinates and build hierarchy
+    employees.forEach(emp => {
+      if (emp.managerId) {
+        const manager = employeeMap.get(emp.managerId);
+        const subordinate = employeeMap.get(emp.id);
+        if (manager && subordinate) {
+          manager.subordinates.push(subordinate);
+          subordinate.isSubordinate = true;
+        }
+      }
+    });
+
+    return Array.from(employeeMap.values());
+  }, [employees]);
+
   // Filter summaries based on date range, employee selection, and employee type
   const filteredSummaries = useMemo(() => {
     return timeEntrySummaries.filter((summary) => {
@@ -132,7 +161,7 @@ export const Paystubs = () => {
 
       return true;
     });
-  }, [timeEntrySummaries, dateFilter, selectedEmployee, selectedEmployeeType, timeEntries, employees, hierarchicalEmployeeSummaries]);
+  }, [timeEntrySummaries, dateFilter, selectedEmployee, selectedEmployeeType, hierarchicalEmployeeSummaries]);
 
   // Group summaries by employee for paystub display
   const employeePaystubs = useMemo(() => {
