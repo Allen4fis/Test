@@ -318,16 +318,16 @@ export const Paystubs = () => {
     </div>
 
     <div class="summary-section">
-      <div class="summary-title">💰 PAYROLL SUMMARY</div>
+      <div class="summary-title">PAYROLL SUMMARY</div>
       <div class="summary-item">
         <strong>���� Total Labor Cost:</strong>
         <span style="color: #374151; font-weight: 600;">$${paystub.totalCost.toFixed(2)}</span>
       </div>
       <div class="summary-item">
-        <strong>🕐 Total Hours Worked:</strong>
+        <strong>Total Hours Worked:</strong>
         <span style="color: #374151; font-weight: 600;">${paystub.totalHours.toFixed(1)} hours</span>
       </div>
-      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>🏠 Live Out Allowances:</strong> <span style="color: #374151; font-weight: 600;">${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</span></div>` : ""}
+      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>Live Out Allowances:</strong> <span style="color: #374151; font-weight: 600;">${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</span></div>` : ""}
     </div>
 
     <div class="table-section">
