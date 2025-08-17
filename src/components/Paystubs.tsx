@@ -189,7 +189,7 @@ export const Paystubs = () => {
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pay Preview - ${paystub.employeeName}</title>
+  <title>Pay Preview - ${paystub.employeeName} - ${periodText}</title>
   <style>
     @media print {
       * {
@@ -219,12 +219,15 @@ export const Paystubs = () => {
 
     .paystub-header {
       text-align: center;
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
       color: white;
       padding: 30px 20px;
       margin: -40px -40px 40px -40px;
       position: relative;
       overflow: hidden;
+      border: 3px solid #374151;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .paystub-header::before {
@@ -234,8 +237,8 @@ export const Paystubs = () => {
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%),
-                  linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+      background: linear-gradient(45deg, rgba(249,115,22,0.1) 25%, transparent 25%, transparent 75%, rgba(249,115,22,0.1) 75%),
+                  linear-gradient(45deg, rgba(249,115,22,0.1) 25%, transparent 25%, transparent 75%, rgba(249,115,22,0.1) 75%);
       background-size: 20px 20px;
       background-position: 0 0, 10px 10px;
     }
@@ -248,6 +251,7 @@ export const Paystubs = () => {
       letter-spacing: 1px;
       position: relative;
       z-index: 1;
+      color: #f97316;
     }
 
     .paystub-title {
@@ -258,6 +262,7 @@ export const Paystubs = () => {
       letter-spacing: 3px;
       position: relative;
       z-index: 1;
+      color: #f97316;
     }
 
     .employee-name {
@@ -266,6 +271,7 @@ export const Paystubs = () => {
       margin: 15px 0;
       position: relative;
       z-index: 1;
+      color: #e5e7eb;
     }
 
     .employee-title {
@@ -274,6 +280,7 @@ export const Paystubs = () => {
       opacity: 0.9;
       position: relative;
       z-index: 1;
+      color: #d1d5db;
     }
 
     .period-text {
@@ -282,23 +289,23 @@ export const Paystubs = () => {
       font-weight: 600;
       position: relative;
       z-index: 1;
+      color: #e5e7eb;
     }
 
     .summary-section {
       margin-bottom: 35px;
-      background: linear-gradient(135deg, #fef3e2 0%, #fed7aa 100%);
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
       padding: 25px;
       border-radius: 12px;
-      border-left: 6px solid #f97316;
-      border-right: 3px solid #374151;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+      border: 2px solid #374151;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .summary-title {
       font-size: 18px;
       font-weight: 700;
-      color: #ea580c;
-      border-bottom: 3px solid #f97316;
+      color: #374151;
+      border-bottom: 3px solid #374151;
       padding-bottom: 10px;
       margin-bottom: 20px;
       text-transform: uppercase;
@@ -310,12 +317,14 @@ export const Paystubs = () => {
       font-size: 14px;
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(249, 115, 22, 0.2);
+      padding: 12px;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 4px;
+      border-left: 3px solid #f97316;
     }
 
     .summary-item strong {
-      color: #ea580c;
+      color: #f97316;
       font-weight: 600;
     }
 
@@ -537,10 +546,16 @@ export const Paystubs = () => {
     </div>
 
     <div class="summary-section">
-      <div class="summary-title">PAYROLL SUMMARY</div>
-      <div class="summary-item"><strong>Total Labor Cost:</strong> $${paystub.totalCost.toFixed(2)}</div>
-      <div class="summary-item"><strong>Total Hours Worked:</strong> ${paystub.totalHours.toFixed(1)} hours</div>
-      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>Live Out Allowances:</strong> ${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</div>` : ''}
+      <div class="summary-title">💰 PAYROLL SUMMARY</div>
+      <div class="summary-item">
+        <strong>💵 Total Labor Cost:</strong>
+        <span style="color: #374151; font-weight: 600;">$${paystub.totalCost.toFixed(2)}</span>
+      </div>
+      <div class="summary-item">
+        <strong>🕐 Total Hours Worked:</strong>
+        <span style="color: #374151; font-weight: 600;">${paystub.totalHours.toFixed(1)} hours</span>
+      </div>
+      ${paystub.totalLoaCount > 0 ? `<div class="summary-item"><strong>🏠 Live Out Allowances:</strong> <span style="color: #374151; font-weight: 600;">${paystub.totalLoaCount} × $200.00 = $${paystub.totalLoaAmount.toFixed(2)}</span></div>` : ''}
     </div>
 
     <div class="table-section">
