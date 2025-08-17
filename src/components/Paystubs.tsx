@@ -693,7 +693,7 @@ Summary:
 - Total Hours: ${paystub.totalHours.toFixed(1)}${paystub.totalLoaCount > 0 ? `
 - Live Out Allowances: ${paystub.totalLoaCount} × $200 = $${paystub.totalLoaAmount.toFixed(2)}` : ''}
 
-If you have any questions regarding this paystub, please don't hesitate to contact us.
+If you have any questions regarding this pay preview, please don't hesitate to contact us.
 
 Best regards,
 4Front Trackity-doo Payroll`;
