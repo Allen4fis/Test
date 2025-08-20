@@ -1546,11 +1546,16 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   (ht) => ht.id === (entry as any).hourTypeId,
                                 );
 
+                                // Apply nightshift premium to cost wage
+                                let adjustedCostWage = (entry as any).costWageUsed || 0;
+                                if (entryHourType?.name.startsWith("NS ")) {
+                                  adjustedCostWage += 3;
+                                }
+
                                 const hourlyBaseCost = shouldUse1xRates
-                                  ? (entry as any).hours *
-                                    (entry as any).costWageUsed
+                                  ? (entry as any).hours * adjustedCostWage
                                   : (entry as any).hours *
-                                    (entry as any).costWageUsed *
+                                    adjustedCostWage *
                                     (entryHourType?.multiplier || 1);
 
                                 const loaCost =
@@ -1642,11 +1647,16 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           (ht) => ht.id === (entry as any).hourTypeId,
                                         );
 
+                                        // Apply nightshift premium to cost wage
+                                        let adjustedCostWage = (entry as any).costWageUsed || 0;
+                                        if (entryHourType?.name.startsWith("NS ")) {
+                                          adjustedCostWage += 3;
+                                        }
+
                                         const hourlyBaseCost = shouldUse1xRates
-                                          ? (entry as any).hours *
-                                            (entry as any).costWageUsed
+                                          ? (entry as any).hours * adjustedCostWage
                                           : (entry as any).hours *
-                                            (entry as any).costWageUsed *
+                                            adjustedCostWage *
                                             (entryHourType?.multiplier || 1);
 
                                         const loaCost =
