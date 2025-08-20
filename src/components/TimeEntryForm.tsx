@@ -1504,15 +1504,17 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                               <div className="text-xs text-gray-400 mt-1">
                                 {(() => {
                                   let adjustedBillableWage = (entry as any).billableWageUsed || 0;
+                                  let adjustedCostWage = (entry as any).costWageUsed || 0;
 
-                                  // Add $3 for NS hour types (nightshift premium)
+                                  // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
                                   if (hourType?.name.startsWith("NS ")) {
                                     adjustedBillableWage += 3;
+                                    adjustedCostWage += 3;
                                   }
 
                                   // Calculate effective rates
                                   const effectiveBillableRate = adjustedBillableWage * (hourType?.multiplier || 1);
-                                  const effectiveCostRate = (entry as any).costWageUsed || 0; // Cost rates don't get multipliers
+                                  const effectiveCostRate = adjustedCostWage * (hourType?.multiplier || 1);
 
                                   return `$${effectiveCostRate.toFixed(2)}/$${effectiveBillableRate.toFixed(2)}/h`;
                                 })()}
