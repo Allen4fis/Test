@@ -1523,12 +1523,17 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   (employee?.managerId &&
                                     manager?.category === "dsp");
 
+                                // Find hourType within the calculation scope
+                                const entryHourType = hourTypes.find(
+                                  (ht) => ht.id === (entry as any).hourTypeId,
+                                );
+
                                 const hourlyBaseCost = shouldUse1xRates
                                   ? (entry as any).hours *
                                     (entry as any).costWageUsed
                                   : (entry as any).hours *
                                     (entry as any).costWageUsed *
-                                    (hourType?.multiplier || 1);
+                                    (entryHourType?.multiplier || 1);
 
                                 const loaCost =
                                   ((entry as any).loaCount || 0) *
