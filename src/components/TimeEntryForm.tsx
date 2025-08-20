@@ -1570,9 +1570,15 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   (ht) => ht.id === (entry as any).hourTypeId,
                                 );
 
+                                // Apply nightshift premium to billable wage
+                                let adjustedBillableWage = (entry as any).billableWageUsed || 0;
+                                if (entryHourType?.name.startsWith("NS ")) {
+                                  adjustedBillableWage += 3;
+                                }
+
                                 const hourlyBillable =
                                   (entry as any).hours *
-                                  (entry as any).billableWageUsed *
+                                  adjustedBillableWage *
                                   (entryHourType?.multiplier || 1);
                                 const loaBillable =
                                   ((entry as any).loaCount || 0) *
