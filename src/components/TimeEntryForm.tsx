@@ -1547,10 +1547,15 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                             <div className="text-green-600 font-medium">
                               $
                               {(() => {
+                                // Find hourType within the calculation scope
+                                const entryHourType = hourTypes.find(
+                                  (ht) => ht.id === (entry as any).hourTypeId,
+                                );
+
                                 const hourlyBillable =
                                   (entry as any).hours *
                                   (entry as any).billableWageUsed *
-                                  (hourType?.multiplier || 1);
+                                  (entryHourType?.multiplier || 1);
                                 const loaBillable =
                                   ((entry as any).loaCount || 0) *
                                   ((entry as any).loaAmount || 200);
