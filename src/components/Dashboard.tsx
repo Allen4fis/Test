@@ -132,8 +132,7 @@ const Dashboard = memo(function Dashboard({
             const laborBillable = safeArrayReduce(
               jobTimeEntries,
               (sum, entry) =>
-                sum +
-                safeNumber(entry?.totalBillableAmount || entry?.totalCost, 0),
+                sum + safeNumber(entry?.totalBillableAmount, 0),
               0,
             );
 
