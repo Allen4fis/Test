@@ -131,8 +131,7 @@ const Dashboard = memo(function Dashboard({
             // Calculate total billable (labor + rentals) with safe operations
             const laborBillable = safeArrayReduce(
               jobTimeEntries,
-              (sum, entry) =>
-                sum + safeNumber(entry?.totalBillableAmount, 0),
+              (sum, entry) => sum + safeNumber(entry?.totalBillableAmount, 0),
               0,
             );
 

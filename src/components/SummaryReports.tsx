@@ -2217,151 +2217,168 @@ export function SummaryReports() {
                                         ];
                                         const ai = order.indexOf(a);
                                         const bi = order.indexOf(b);
-                                        const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
-                                        const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                                        const aIndex =
+                                          ai === -1
+                                            ? 100 + a.localeCompare(b)
+                                            : ai;
+                                        const bIndex =
+                                          bi === -1
+                                            ? 100 + b.localeCompare(a)
+                                            : bi;
                                         return aIndex - bIndex;
                                       })
-                                      .map(([hourType, data]: [string, any]) => (
-                                      <div
-                                        key={hourType}
-                                        className="bg-gray-700/30 rounded p-2"
-                                      >
-                                        <div className="flex items-center justify-between mb-1">
-                                          <span className="text-sm font-medium text-gray-200">
-                                            {hourType}
-                                          </span>
-                                          <div className="text-sm text-gray-300">
-                                            {data.hours.toFixed(2)}h (
-                                            {data.effectiveHours.toFixed(2)}{" "}
-                                            effective) - $
-                                            {data.hourlyCost.toFixed(2)}
-                                            {data.loaCount > 0 && (
-                                              <span className="text-yellow-400">
-                                                {" "}
-                                                + {data.loaCount} LOA ($
-                                                {data.loaCost.toFixed(2)})
+                                      .map(
+                                        ([hourType, data]: [string, any]) => (
+                                          <div
+                                            key={hourType}
+                                            className="bg-gray-700/30 rounded p-2"
+                                          >
+                                            <div className="flex items-center justify-between mb-1">
+                                              <span className="text-sm font-medium text-gray-200">
+                                                {hourType}
                                               </span>
-                                            )}
-                                            {data.loaCount > 0 && (
-                                              <span className="text-gray-300">
-                                                {" "}
-                                                = ${data.cost.toFixed(2)}
-                                              </span>
-                                            )}
-                                          </div>
-                                        </div>
-
-                                        {/* Detailed entries breakdown for this hour type */}
-                                        {data.rateEntries &&
-                                          data.rateEntries.length > 0 && (
-                                            <div className="mt-2">
-                                              <div className="text-xs text-gray-400 mb-1">
-                                                Daily Breakdown (
-                                                {data.rateEntries.length}{" "}
-                                                entries):
-                                              </div>
-                                              <div className="space-y-1 max-h-32 overflow-y-auto">
-                                                {data.rateEntries.map(
-                                                  (
-                                                    entry: any,
-                                                    index: number,
-                                                  ) => (
-                                                    <div
-                                                      key={`${entry.date}-${index}`}
-                                                      className="text-xs bg-gray-600/30 px-2 py-1 rounded flex justify-between items-center"
-                                                    >
-                                                      <span className="text-gray-300">
-                                                        {entry.date}
-                                                        {entry.jobNumber && (
-                                                          <span className="ml-1 text-blue-300">
-                                                            [{entry.jobNumber}]
-                                                          </span>
-                                                        )}
-                                                      </span>
-                                                      <span className="text-gray-200">
-                                                        {entry.hours.toFixed(2)}
-                                                        h
-                                                        {entry.effectiveHours !==
-                                                          entry.hours && (
-                                                          <span className="text-gray-400">
-                                                            {" "}
-                                                            (
-                                                            {entry.effectiveHours.toFixed(
-                                                              2,
-                                                            )}{" "}
-                                                            eff)
-                                                          </span>
-                                                        )}{" "}
-                                                        @ $
-                                                        {entry.hourlyRate.toFixed(
-                                                          2,
-                                                        )}
-                                                        /h = $
-                                                        {entry.hourlyCost.toFixed(
-                                                          2,
-                                                        )}
-                                                        {entry.loaCount > 0 && (
-                                                          <span className="text-yellow-400">
-                                                            {" "}
-                                                            + {
-                                                              entry.loaCount
-                                                            }{" "}
-                                                            LOA ($
-                                                            {entry.loaCost.toFixed(
-                                                              2,
-                                                            )}
-                                                            )
-                                                          </span>
-                                                        )}
-                                                        {entry.loaCount > 0 && (
-                                                          <span className="text-gray-300">
-                                                            {" "}
-                                                            = $
-                                                            {entry.totalCost.toFixed(
-                                                              2,
-                                                            )}
-                                                          </span>
-                                                        )}
-                                                      </span>
-                                                    </div>
-                                                  ),
+                                              <div className="text-sm text-gray-300">
+                                                {data.hours.toFixed(2)}h (
+                                                {data.effectiveHours.toFixed(2)}{" "}
+                                                effective) - $
+                                                {data.hourlyCost.toFixed(2)}
+                                                {data.loaCount > 0 && (
+                                                  <span className="text-yellow-400">
+                                                    {" "}
+                                                    + {data.loaCount} LOA ($
+                                                    {data.loaCost.toFixed(2)})
+                                                  </span>
+                                                )}
+                                                {data.loaCount > 0 && (
+                                                  <span className="text-gray-300">
+                                                    {" "}
+                                                    = ${data.cost.toFixed(2)}
+                                                  </span>
                                                 )}
                                               </div>
                                             </div>
-                                          )}
 
-                                        {/* Province breakdown for this hour type */}
-                                        {Object.keys(data.provinces).length >
-                                          0 && (
-                                          <div className="mt-2">
-                                            <div className="text-xs text-gray-400 mb-1">
-                                              Provinces:
-                                            </div>
-                                            <div className="flex flex-wrap gap-1">
-                                              {Object.entries(
-                                                data.provinces,
-                                              ).map(
-                                                ([provinceName, provinceData]: [
-                                                  string,
-                                                  any,
-                                                ]) => (
-                                                  <div
-                                                    key={provinceName}
-                                                    className="text-xs bg-gray-600/50 px-2 py-1 rounded"
-                                                  >
-                                                    {provinceName}:{" "}
-                                                    {provinceData.hours.toFixed(
-                                                      2,
-                                                    )}
-                                                    h
+                                            {/* Detailed entries breakdown for this hour type */}
+                                            {data.rateEntries &&
+                                              data.rateEntries.length > 0 && (
+                                                <div className="mt-2">
+                                                  <div className="text-xs text-gray-400 mb-1">
+                                                    Daily Breakdown (
+                                                    {data.rateEntries.length}{" "}
+                                                    entries):
                                                   </div>
-                                                ),
+                                                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                                                    {data.rateEntries.map(
+                                                      (
+                                                        entry: any,
+                                                        index: number,
+                                                      ) => (
+                                                        <div
+                                                          key={`${entry.date}-${index}`}
+                                                          className="text-xs bg-gray-600/30 px-2 py-1 rounded flex justify-between items-center"
+                                                        >
+                                                          <span className="text-gray-300">
+                                                            {entry.date}
+                                                            {entry.jobNumber && (
+                                                              <span className="ml-1 text-blue-300">
+                                                                [
+                                                                {
+                                                                  entry.jobNumber
+                                                                }
+                                                                ]
+                                                              </span>
+                                                            )}
+                                                          </span>
+                                                          <span className="text-gray-200">
+                                                            {entry.hours.toFixed(
+                                                              2,
+                                                            )}
+                                                            h
+                                                            {entry.effectiveHours !==
+                                                              entry.hours && (
+                                                              <span className="text-gray-400">
+                                                                {" "}
+                                                                (
+                                                                {entry.effectiveHours.toFixed(
+                                                                  2,
+                                                                )}{" "}
+                                                                eff)
+                                                              </span>
+                                                            )}{" "}
+                                                            @ $
+                                                            {entry.hourlyRate.toFixed(
+                                                              2,
+                                                            )}
+                                                            /h = $
+                                                            {entry.hourlyCost.toFixed(
+                                                              2,
+                                                            )}
+                                                            {entry.loaCount >
+                                                              0 && (
+                                                              <span className="text-yellow-400">
+                                                                {" "}
+                                                                +{" "}
+                                                                {
+                                                                  entry.loaCount
+                                                                }{" "}
+                                                                LOA ($
+                                                                {entry.loaCost.toFixed(
+                                                                  2,
+                                                                )}
+                                                                )
+                                                              </span>
+                                                            )}
+                                                            {entry.loaCount >
+                                                              0 && (
+                                                              <span className="text-gray-300">
+                                                                {" "}
+                                                                = $
+                                                                {entry.totalCost.toFixed(
+                                                                  2,
+                                                                )}
+                                                              </span>
+                                                            )}
+                                                          </span>
+                                                        </div>
+                                                      ),
+                                                    )}
+                                                  </div>
+                                                </div>
                                               )}
-                                            </div>
+
+                                            {/* Province breakdown for this hour type */}
+                                            {Object.keys(data.provinces)
+                                              .length > 0 && (
+                                              <div className="mt-2">
+                                                <div className="text-xs text-gray-400 mb-1">
+                                                  Provinces:
+                                                </div>
+                                                <div className="flex flex-wrap gap-1">
+                                                  {Object.entries(
+                                                    data.provinces,
+                                                  ).map(
+                                                    ([
+                                                      provinceName,
+                                                      provinceData,
+                                                    ]: [string, any]) => (
+                                                      <div
+                                                        key={provinceName}
+                                                        className="text-xs bg-gray-600/50 px-2 py-1 rounded"
+                                                      >
+                                                        {provinceName}:{" "}
+                                                        {provinceData.hours.toFixed(
+                                                          2,
+                                                        )}
+                                                        h
+                                                      </div>
+                                                    ),
+                                                  )}
+                                                </div>
+                                              </div>
+                                            )}
                                           </div>
-                                        )}
-                                      </div>
-                                    ))}
+                                        ),
+                                      )}
                                   </div>
                                   {Object.keys(employee.hourTypeBreakdown)
                                     .length > 0 && (
@@ -2599,203 +2616,218 @@ export function SummaryReports() {
                                                   ];
                                                   const ai = order.indexOf(a);
                                                   const bi = order.indexOf(b);
-                                                  const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
-                                                  const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                                                  const aIndex =
+                                                    ai === -1
+                                                      ? 100 + a.localeCompare(b)
+                                                      : ai;
+                                                  const bIndex =
+                                                    bi === -1
+                                                      ? 100 + b.localeCompare(a)
+                                                      : bi;
                                                   return aIndex - bIndex;
                                                 })
                                                 .map(
-                                                ([hourType, data]: [
-                                                  string,
-                                                  any,
-                                                ]) => (
-                                                  <div
-                                                    key={hourType}
-                                                    className="bg-blue-800/20 rounded p-2"
-                                                  >
-                                                    <div className="flex items-center justify-between text-xs">
-                                                      <span className="text-blue-200 font-medium">
-                                                        {hourType}
-                                                      </span>
-                                                      <div className="text-blue-300">
-                                                        {data.hours.toFixed(2)}h
-                                                        {data.effectiveHours !==
-                                                          data.hours && (
-                                                          <span className="text-blue-400">
-                                                            {" "}
-                                                            (
-                                                            {data.effectiveHours.toFixed(
-                                                              2,
-                                                            )}{" "}
-                                                            eff)
-                                                          </span>
-                                                        )}{" "}
-                                                        - $
-                                                        {data.hourlyCost.toFixed(
-                                                          2,
-                                                        )}
-                                                        {data.loaCount > 0 && (
-                                                          <span className="text-yellow-400">
-                                                            {" "}
-                                                            + {
-                                                              data.loaCount
-                                                            }{" "}
-                                                            LOA ($
-                                                            {data.loaCost.toFixed(
-                                                              2,
-                                                            )}
-                                                            )
-                                                          </span>
-                                                        )}
-                                                        {data.loaCount > 0 && (
-                                                          <span className="text-blue-300">
-                                                            {" "}
-                                                            = $
-                                                            {data.cost.toFixed(
-                                                              2,
-                                                            )}
-                                                          </span>
-                                                        )}
-                                                        {subordinate.baseCostWage >
-                                                          0 && (
-                                                          <span className="text-yellow-300">
-                                                            {" "}
-                                                            ($
-                                                            {subordinate.baseCostWage.toFixed(
-                                                              2,
-                                                            )}
-                                                            /h)
-                                                          </span>
-                                                        )}
-                                                      </div>
-                                                    </div>
-
-                                                    {/* Detailed entries breakdown for subordinate hour type */}
-                                                    {data.rateEntries &&
-                                                      data.rateEntries.length >
-                                                        0 && (
-                                                        <div className="mt-1">
-                                                          <div className="text-xs text-blue-400 mb-1">
-                                                            Daily Breakdown (
-                                                            {
-                                                              data.rateEntries
-                                                                .length
-                                                            }{" "}
-                                                            entries):
-                                                          </div>
-                                                          <div className="space-y-1 max-h-24 overflow-y-auto">
-                                                            {data.rateEntries.map(
+                                                  ([hourType, data]: [
+                                                    string,
+                                                    any,
+                                                  ]) => (
+                                                    <div
+                                                      key={hourType}
+                                                      className="bg-blue-800/20 rounded p-2"
+                                                    >
+                                                      <div className="flex items-center justify-between text-xs">
+                                                        <span className="text-blue-200 font-medium">
+                                                          {hourType}
+                                                        </span>
+                                                        <div className="text-blue-300">
+                                                          {data.hours.toFixed(
+                                                            2,
+                                                          )}
+                                                          h
+                                                          {data.effectiveHours !==
+                                                            data.hours && (
+                                                            <span className="text-blue-400">
+                                                              {" "}
                                                               (
-                                                                entry: any,
-                                                                index: number,
-                                                              ) => (
+                                                              {data.effectiveHours.toFixed(
+                                                                2,
+                                                              )}{" "}
+                                                              eff)
+                                                            </span>
+                                                          )}{" "}
+                                                          - $
+                                                          {data.hourlyCost.toFixed(
+                                                            2,
+                                                          )}
+                                                          {data.loaCount >
+                                                            0 && (
+                                                            <span className="text-yellow-400">
+                                                              {" "}
+                                                              + {
+                                                                data.loaCount
+                                                              }{" "}
+                                                              LOA ($
+                                                              {data.loaCost.toFixed(
+                                                                2,
+                                                              )}
+                                                              )
+                                                            </span>
+                                                          )}
+                                                          {data.loaCount >
+                                                            0 && (
+                                                            <span className="text-blue-300">
+                                                              {" "}
+                                                              = $
+                                                              {data.cost.toFixed(
+                                                                2,
+                                                              )}
+                                                            </span>
+                                                          )}
+                                                          {subordinate.baseCostWage >
+                                                            0 && (
+                                                            <span className="text-yellow-300">
+                                                              {" "}
+                                                              ($
+                                                              {subordinate.baseCostWage.toFixed(
+                                                                2,
+                                                              )}
+                                                              /h)
+                                                            </span>
+                                                          )}
+                                                        </div>
+                                                      </div>
+
+                                                      {/* Detailed entries breakdown for subordinate hour type */}
+                                                      {data.rateEntries &&
+                                                        data.rateEntries
+                                                          .length > 0 && (
+                                                          <div className="mt-1">
+                                                            <div className="text-xs text-blue-400 mb-1">
+                                                              Daily Breakdown (
+                                                              {
+                                                                data.rateEntries
+                                                                  .length
+                                                              }{" "}
+                                                              entries):
+                                                            </div>
+                                                            <div className="space-y-1 max-h-24 overflow-y-auto">
+                                                              {data.rateEntries.map(
+                                                                (
+                                                                  entry: any,
+                                                                  index: number,
+                                                                ) => (
+                                                                  <div
+                                                                    key={`${entry.date}-${index}`}
+                                                                    className="text-xs bg-blue-700/20 px-2 py-1 rounded flex justify-between items-center"
+                                                                  >
+                                                                    <span className="text-blue-300">
+                                                                      {
+                                                                        entry.date
+                                                                      }
+                                                                      {entry.jobNumber && (
+                                                                        <span className="ml-1 text-cyan-300">
+                                                                          [
+                                                                          {
+                                                                            entry.jobNumber
+                                                                          }
+                                                                          ]
+                                                                        </span>
+                                                                      )}
+                                                                    </span>
+                                                                    <span className="text-blue-200">
+                                                                      {entry.hours.toFixed(
+                                                                        2,
+                                                                      )}
+                                                                      h
+                                                                      {entry.effectiveHours !==
+                                                                        entry.hours && (
+                                                                        <span className="text-blue-400">
+                                                                          {" "}
+                                                                          (
+                                                                          {entry.effectiveHours.toFixed(
+                                                                            2,
+                                                                          )}{" "}
+                                                                          eff)
+                                                                        </span>
+                                                                      )}{" "}
+                                                                      @ $
+                                                                      {entry.hourlyRate.toFixed(
+                                                                        2,
+                                                                      )}
+                                                                      /h = $
+                                                                      {entry.hourlyCost.toFixed(
+                                                                        2,
+                                                                      )}
+                                                                      {entry.loaCount >
+                                                                        0 && (
+                                                                        <span className="text-yellow-400">
+                                                                          {" "}
+                                                                          +{" "}
+                                                                          {
+                                                                            entry.loaCount
+                                                                          }{" "}
+                                                                          LOA ($
+                                                                          {entry.loaCost.toFixed(
+                                                                            2,
+                                                                          )}
+                                                                          )
+                                                                        </span>
+                                                                      )}
+                                                                      {entry.loaCount >
+                                                                        0 && (
+                                                                        <span className="text-blue-200">
+                                                                          {" "}
+                                                                          = $
+                                                                          {entry.totalCost.toFixed(
+                                                                            2,
+                                                                          )}
+                                                                        </span>
+                                                                      )}
+                                                                    </span>
+                                                                  </div>
+                                                                ),
+                                                              )}
+                                                            </div>
+                                                          </div>
+                                                        )}
+
+                                                      {/* Province breakdown for subordinate hour types */}
+                                                      {Object.keys(
+                                                        data.provinces,
+                                                      ).length > 0 && (
+                                                        <div className="mt-1">
+                                                          <div className="flex flex-wrap gap-1">
+                                                            {Object.entries(
+                                                              data.provinces,
+                                                            ).map(
+                                                              ([
+                                                                provinceName,
+                                                                provinceData,
+                                                              ]: [
+                                                                string,
+                                                                any,
+                                                              ]) => (
                                                                 <div
-                                                                  key={`${entry.date}-${index}`}
-                                                                  className="text-xs bg-blue-700/20 px-2 py-1 rounded flex justify-between items-center"
+                                                                  key={
+                                                                    provinceName
+                                                                  }
+                                                                  className="text-xs bg-blue-700/30 px-1 py-0.5 rounded"
                                                                 >
-                                                                  <span className="text-blue-300">
-                                                                    {entry.date}
-                                                                    {entry.jobNumber && (
-                                                                      <span className="ml-1 text-cyan-300">
-                                                                        [
-                                                                        {
-                                                                          entry.jobNumber
-                                                                        }
-                                                                        ]
-                                                                      </span>
-                                                                    )}
-                                                                  </span>
-                                                                  <span className="text-blue-200">
-                                                                    {entry.hours.toFixed(
-                                                                      2,
-                                                                    )}
-                                                                    h
-                                                                    {entry.effectiveHours !==
-                                                                      entry.hours && (
-                                                                      <span className="text-blue-400">
-                                                                        {" "}
-                                                                        (
-                                                                        {entry.effectiveHours.toFixed(
-                                                                          2,
-                                                                        )}{" "}
-                                                                        eff)
-                                                                      </span>
-                                                                    )}{" "}
-                                                                    @ $
-                                                                    {entry.hourlyRate.toFixed(
-                                                                      2,
-                                                                    )}
-                                                                    /h = $
-                                                                    {entry.hourlyCost.toFixed(
-                                                                      2,
-                                                                    )}
-                                                                    {entry.loaCount >
-                                                                      0 && (
-                                                                      <span className="text-yellow-400">
-                                                                        {" "}
-                                                                        +{" "}
-                                                                        {
-                                                                          entry.loaCount
-                                                                        }{" "}
-                                                                        LOA ($
-                                                                        {entry.loaCost.toFixed(
-                                                                          2,
-                                                                        )}
-                                                                        )
-                                                                      </span>
-                                                                    )}
-                                                                    {entry.loaCount >
-                                                                      0 && (
-                                                                      <span className="text-blue-200">
-                                                                        {" "}
-                                                                        = $
-                                                                        {entry.totalCost.toFixed(
-                                                                          2,
-                                                                        )}
-                                                                      </span>
-                                                                    )}
-                                                                  </span>
+                                                                  {provinceName}
+                                                                  :{" "}
+                                                                  {provinceData.hours.toFixed(
+                                                                    1,
+                                                                  )}
+                                                                  h
                                                                 </div>
                                                               ),
                                                             )}
                                                           </div>
                                                         </div>
                                                       )}
-
-                                                    {/* Province breakdown for subordinate hour types */}
-                                                    {Object.keys(data.provinces)
-                                                      .length > 0 && (
-                                                      <div className="mt-1">
-                                                        <div className="flex flex-wrap gap-1">
-                                                          {Object.entries(
-                                                            data.provinces,
-                                                          ).map(
-                                                            ([
-                                                              provinceName,
-                                                              provinceData,
-                                                            ]: [
-                                                              string,
-                                                              any,
-                                                            ]) => (
-                                                              <div
-                                                                key={
-                                                                  provinceName
-                                                                }
-                                                                className="text-xs bg-blue-700/30 px-1 py-0.5 rounded"
-                                                              >
-                                                                {provinceName}:{" "}
-                                                                {provinceData.hours.toFixed(
-                                                                  1,
-                                                                )}
-                                                                h
-                                                              </div>
-                                                            ),
-                                                          )}
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                  </div>
-                                                ),
-                                              )}
+                                                    </div>
+                                                  ),
+                                                )}
                                             </div>
                                           </div>
                                         )}

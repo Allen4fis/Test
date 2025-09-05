@@ -303,8 +303,7 @@ const HourTypeBreakdown = memo(
                     </div>
                   )}
                 </div>
-              ),
-            )}
+              ))}
           </div>
         </div>
       ),
