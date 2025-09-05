@@ -190,8 +190,28 @@ const HourTypeBreakdown = memo(
             Hour Type Breakdown
           </h4>
           <div className="grid gap-2">
-            {Object.entries(hourTypeBreakdown).map(
-              ([hourType, data]: [string, any]) => (
+            {Object.entries(hourTypeBreakdown)
+              .sort(([a], [b]) => {
+                const order = [
+                  "Regular Time",
+                  "NS Regular Time",
+                  "Overtime",
+                  "NS Overtime",
+                  "Double Time",
+                  "NS Double Time",
+                  "Travel Hours",
+                  "Holiday",
+                  "Stat Holiday",
+                  "NS Stat Holiday",
+                  "Stat Holiday OT",
+                ];
+                const ai = order.indexOf(a);
+                const bi = order.indexOf(b);
+                const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
+                const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                return aIndex - bIndex;
+              })
+              .map(([hourType, data]: [string, any]) => (
                 <div key={hourType} className="bg-gray-700/30 rounded p-2">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium text-gray-200">
