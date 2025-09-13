@@ -189,6 +189,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       await proceedWithSubmission(
         pendingSubmission.hourEntries,
         pendingSubmission.rentalEntries,
+        true,
       );
     }
   };
@@ -213,6 +214,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
   const proceedWithSubmission = async (
     hourEntries: any[],
     rentalEntries: any[],
+    allowDuplicates: boolean = false,
   ) => {
     setFormError("");
     setIsSubmitting(true);
@@ -233,7 +235,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       }
 
       // Collect all hour entries
-      const hourEntries = [
+      const computedHourEntries = [
         { hourTypeId: formData.hourType1, hours: formData.hours1 },
         { hourTypeId: formData.hourType2, hours: formData.hours2 },
         { hourTypeId: formData.hourType3, hours: formData.hours3 },
@@ -251,7 +253,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       const costWageUsed = parseFloat(formData.costWageUsed);
 
       // Check for both time and rental entries
-      const hasTimeEntries = hourEntries.length > 0 || loaCount > 0;
+      const hasTimeEntries = computedHourEntries.length > 0 || loaCount > 0;
       const hasRentalEntry =
         rentalFormData.rentalItemId && parseFloat(rentalFormData.quantity) > 0;
 
@@ -309,9 +311,9 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       }
 
       // Check for duplicate time entries (only for new entries, not when editing)
-      if (!editingEntry) {
+      if (!editingEntry && !allowDuplicates) {
         const duplicateEntries = [];
-        for (const entry of hourEntries) {
+        for (const entry of computedHourEntries) {
           const existingEntry = timeEntries.find(
             (timeEntry) =>
               timeEntry.employeeId === formData.employeeId &&
@@ -341,7 +343,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
         // If duplicates found, show dialog for confirmation
         if (duplicateEntries.length > 0) {
           setDuplicateEntries(duplicateEntries);
-          setPendingSubmission({ hourEntries, rentalEntries });
+          setPendingSubmission({ hourEntries: computedHourEntries, rentalEntries });
           setShowDuplicateDialog(true);
           return;
         }
@@ -350,10 +352,10 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       if (editingEntry) {
         // For editing, we still use the single entry approach
         const hours =
-          hourEntries.length > 0 ? parseFloat(hourEntries[0].hours) : 0;
+          computedHourEntries.length > 0 ? parseFloat(computedHourEntries[0].hours) : 0;
         const hourTypeId =
-          hourEntries.length > 0
-            ? hourEntries[0].hourTypeId
+          computedHourEntries.length > 0
+            ? computedHourEntries[0].hourTypeId
             : formData.hourType1;
 
         const employee = employees.find(
@@ -379,14 +381,14 @@ const TimeEntryForm = memo(function TimeEntryForm() {
         resetForm();
       } else {
         // Determine what needs to be created
-        const hasTimeEntries = hourEntries.length > 0 || loaCount > 0;
+        const hasTimeEntries = computedHourEntries.length > 0 || loaCount > 0;
         const hasRentalEntry =
           rentalFormData.rentalItemId &&
           parseFloat(rentalFormData.quantity) > 0;
 
         // For now, only create time entries if both are present to avoid conflicts
         if (hasTimeEntries && hasRentalEntry) {
-          if (hourEntries.length > 0) {
+          if (computedHourEntries.length > 0) {
             setSubmissionProgress(
               `Creating ${hourEntries.length} time entries only (rental entry skipped to avoid conflicts)...`,
             );
@@ -450,7 +452,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
           }
         } else if (hasTimeEntries) {
           // Only time entries
-          if (hourEntries.length > 0) {
+          if (computedHourEntries.length > 0) {
             setSubmissionProgress(
               `Creating ${hourEntries.length} time entries...`,
             );
