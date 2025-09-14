@@ -1613,6 +1613,88 @@ export function SummaryReports() {
                   </div>
                 ) : (
                   <div className="mt-6">
+                    {/* Weekly OT warning banner */}
+                    {(() => {
+                      try {
+                        // Build a quick filtered list of raw entries respecting date range and selected employees
+                        const startDate = dateFilter.start;
+                        const endDate = dateFilter.end;
+                        const selectedIds = new Set(
+                          selectedEmployees.length > 0
+                            ? employees
+                                .filter((e) => selectedEmployees.includes(e.name))
+                                .map((e) => e.id)
+                            : employees.map((e) => e.id),
+                        );
+                        const regularIds = new Set(
+                          hourTypes
+                            .filter(
+                              (ht) =>
+                                ht.name === "Regular Time" || ht.name === "NS Regular Time",
+                            )
+                            .map((ht) => ht.id),
+                        );
+                        const getWeekStartSunday = (dateStr: string) => {
+                          const d = parseLocalDate(dateStr);
+                          const day = d.getDay();
+                          const sunday = new Date(d);
+                          sunday.setDate(d.getDate() - day);
+                          return sunday.toISOString().split("T")[0];
+                        };
+                        const totals: Record<string, Record<string, number>> = {};
+                        timeEntries.forEach((entry) => {
+                          if (entry.date < startDate || entry.date > endDate) return;
+                          if (!selectedIds.has(entry.employeeId)) return;
+                          if (!regularIds.has(entry.hourTypeId)) return;
+                          const wk = getWeekStartSunday(entry.date);
+                          if (!totals[entry.employeeId]) totals[entry.employeeId] = {};
+                          totals[entry.employeeId][wk] =
+                            (totals[entry.employeeId][wk] || 0) + (entry.hours || 0);
+                        });
+                        const details: { employeeId: string; employeeName: string; weekStart: string; totalHours: number }[] = [];
+                        Object.entries(totals).forEach(([empId, weeks]) => {
+                          Object.entries(weeks).forEach(([wk, total]) => {
+                            if (total > 40) {
+                              const emp = employees.find((e) => e.id === empId);
+                              details.push({
+                                employeeId: empId,
+                                employeeName: emp?.name || empId,
+                                weekStart: wk,
+                                totalHours: total,
+                              });
+                            }
+                          });
+                        });
+                        return (
+                          details.length > 0 && (
+                            <div className="p-4 mb-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
+                              <div className="flex items-start gap-3">
+                                <AlertCircle className="h-5 w-5 text-yellow-400 mt-0.5" />
+                                <div>
+                                  <div className="text-yellow-300 font-semibold">
+                                    Weekly overtime threshold exceeded (&gt;40 regular hours) in selected range
+                                  </div>
+                                  <div className="text-xs text-yellow-200 mt-1 space-y-1">
+                                    {details.slice(0, 5).map((d) => (
+                                      <div key={`${d.employeeId}-${d.weekStart}`}>
+                                        {d.employeeName}: {d.totalHours.toFixed(2)}h (week starting {d.weekStart})
+                                      </div>
+                                    ))}
+                                    {details.length > 5 && (
+                                      <div>+ {details.length - 5} more…</div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        );
+                      } catch (e) {
+                        console.error("weekly OT banner error", e);
+                        return null;
+                      }
+                    })()}
+
                     {/* Summary Statistics */}
                     <div className="grid grid-cols-4 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
                       <div className="text-center">
