@@ -884,15 +884,12 @@ export default function SummaryReportsOptimized() {
                           <div className="text-yellow-300 font-semibold">
                             Weekly overtime threshold exceeded (&gt;40 regular hours) in selected range
                           </div>
-                          <div className="text-xs text-yellow-200 mt-1 space-y-1">
-                            {weeklyRegularOver40.details.slice(0, 5).map((d) => (
+                          <div className="text-xs text-yellow-200 mt-1 space-y-1 max-h-48 overflow-y-auto pr-1">
+                            {weeklyRegularOver40.details.map((d) => (
                               <div key={`${d.employeeId}-${d.weekStart}`}>
                                 {d.employeeName}: {d.totalHours.toFixed(2)}h (week starting {d.weekStart})
                               </div>
                             ))}
-                            {weeklyRegularOver40.details.length > 5 && (
-                              <div>+ {weeklyRegularOver40.details.length - 5} more…</div>
-                            )}
                           </div>
                         </div>
                       </div>
