@@ -381,7 +381,9 @@ export default function SummaryReportsOptimized() {
   const weeklyRegularOver40 = useMemo(() => {
     try {
       const regularHourTypeIds = hourTypes
-        .filter((ht) => ht.name === "Regular Time" || ht.name === "NS Regular Time")
+        .filter(
+          (ht) => ht.name === "Regular Time" || ht.name === "NS Regular Time",
+        )
         .map((ht) => ht.id);
 
       const getWeekStartSunday = (dateStr: string) => {
@@ -399,10 +401,16 @@ export default function SummaryReportsOptimized() {
         const weekStart = getWeekStartSunday(entry.date);
         const empId = entry.employeeId;
         if (!totals[empId]) totals[empId] = {};
-        totals[empId][weekStart] = (totals[empId][weekStart] || 0) + (entry.hours || 0);
+        totals[empId][weekStart] =
+          (totals[empId][weekStart] || 0) + (entry.hours || 0);
       });
 
-      const details: { employeeId: string; employeeName: string; weekStart: string; totalHours: number }[] = [];
+      const details: {
+        employeeId: string;
+        employeeName: string;
+        weekStart: string;
+        totalHours: number;
+      }[] = [];
       Object.entries(totals).forEach(([empId, weeks]) => {
         Object.entries(weeks).forEach(([weekStart, total]) => {
           if (total > 40) {
@@ -882,12 +890,14 @@ export default function SummaryReportsOptimized() {
                         <AlertCircle className="h-5 w-5 text-yellow-400 mt-0.5" />
                         <div>
                           <div className="text-yellow-300 font-semibold">
-                            Weekly overtime threshold exceeded (&gt;40 regular hours) in selected range
+                            Weekly overtime threshold exceeded (&gt;40 regular
+                            hours) in selected range
                           </div>
                           <div className="text-xs text-yellow-200 mt-1 space-y-1 max-h-48 overflow-y-auto pr-1">
                             {weeklyRegularOver40.details.map((d) => (
                               <div key={`${d.employeeId}-${d.weekStart}`}>
-                                {d.employeeName}: {d.totalHours.toFixed(2)}h (week starting {d.weekStart})
+                                {d.employeeName}: {d.totalHours.toFixed(2)}h
+                                (week starting {d.weekStart})
                               </div>
                             ))}
                           </div>

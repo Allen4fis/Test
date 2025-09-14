@@ -1642,7 +1642,8 @@ export function SummaryReports() {
                           hourTypes
                             .filter(
                               (ht) =>
-                                ht.name === "Regular Time" || ht.name === "NS Regular Time",
+                                ht.name === "Regular Time" ||
+                                ht.name === "NS Regular Time",
                             )
                             .map((ht) => ht.id),
                         );
@@ -1653,17 +1654,28 @@ export function SummaryReports() {
                           sunday.setDate(d.getDate() - day);
                           return sunday.toISOString().split("T")[0];
                         };
-                        const totals: Record<string, Record<string, number>> = {};
+                        const totals: Record<
+                          string,
+                          Record<string, number>
+                        > = {};
                         timeEntries.forEach((entry) => {
-                          if (entry.date < startDate || entry.date > endDate) return;
+                          if (entry.date < startDate || entry.date > endDate)
+                            return;
                           if (!allowedIds.has(entry.employeeId)) return;
                           if (!regularIds.has(entry.hourTypeId)) return;
                           const wk = getWeekStartSunday(entry.date);
-                          if (!totals[entry.employeeId]) totals[entry.employeeId] = {};
+                          if (!totals[entry.employeeId])
+                            totals[entry.employeeId] = {};
                           totals[entry.employeeId][wk] =
-                            (totals[entry.employeeId][wk] || 0) + (entry.hours || 0);
+                            (totals[entry.employeeId][wk] || 0) +
+                            (entry.hours || 0);
                         });
-                        const details: { employeeId: string; employeeName: string; weekStart: string; totalHours: number }[] = [];
+                        const details: {
+                          employeeId: string;
+                          employeeName: string;
+                          weekStart: string;
+                          totalHours: number;
+                        }[] = [];
                         Object.entries(totals).forEach(([empId, weeks]) => {
                           Object.entries(weeks).forEach(([wk, total]) => {
                             if (total > 40) {
@@ -1684,12 +1696,17 @@ export function SummaryReports() {
                                 <AlertCircle className="h-5 w-5 text-yellow-400 mt-0.5" />
                                 <div>
                                   <div className="text-yellow-300 font-semibold">
-                                    Weekly overtime threshold exceeded (&gt;40 regular hours) in selected range
+                                    Weekly overtime threshold exceeded (&gt;40
+                                    regular hours) in selected range
                                   </div>
                                   <div className="text-xs text-yellow-200 mt-1 space-y-1 max-h-48 overflow-y-auto pr-1">
                                     {details.map((d) => (
-                                      <div key={`${d.employeeId}-${d.weekStart}`}>
-                                        {d.employeeName}: {d.totalHours.toFixed(2)}h (week starting {d.weekStart})
+                                      <div
+                                        key={`${d.employeeId}-${d.weekStart}`}
+                                      >
+                                        {d.employeeName}:{" "}
+                                        {d.totalHours.toFixed(2)}h (week
+                                        starting {d.weekStart})
                                       </div>
                                     ))}
                                   </div>
