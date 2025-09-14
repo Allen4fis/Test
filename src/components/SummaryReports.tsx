@@ -1616,16 +1616,28 @@ export function SummaryReports() {
                     {/* Weekly OT warning banner */}
                     {(() => {
                       try {
-                        // Build a quick filtered list of raw entries respecting date range and selected employees
+                        // Build a quick filtered list of raw entries respecting date range and displayed employees (after employee type filter)
                         const startDate = dateFilter.start;
                         const endDate = dateFilter.end;
-                        const selectedIds = new Set(
-                          selectedEmployees.length > 0
-                            ? employees
-                                .filter((e) => selectedEmployees.includes(e.name))
-                                .map((e) => e.id)
-                            : employees.map((e) => e.id),
+
+                        // Determine currently displayed employees by name (includes subordinates when visible)
+                        const displayedEmployeeNames = new Set<string>();
+                        sortedHierarchicalSummaries.forEach((emp) => {
+                          displayedEmployeeNames.add(emp.employeeName);
+                          if (emp.subordinates && emp.subordinates.length > 0) {
+                            emp.subordinates.forEach((sub) => {
+                              displayedEmployeeNames.add(sub.employeeName);
+                            });
+                          }
+                        });
+
+                        // Convert displayed names to IDs
+                        const allowedIds = new Set(
+                          employees
+                            .filter((e) => displayedEmployeeNames.has(e.name))
+                            .map((e) => e.id),
                         );
+
                         const regularIds = new Set(
                           hourTypes
                             .filter(
@@ -1644,7 +1656,7 @@ export function SummaryReports() {
                         const totals: Record<string, Record<string, number>> = {};
                         timeEntries.forEach((entry) => {
                           if (entry.date < startDate || entry.date > endDate) return;
-                          if (!selectedIds.has(entry.employeeId)) return;
+                          if (!allowedIds.has(entry.employeeId)) return;
                           if (!regularIds.has(entry.hourTypeId)) return;
                           const wk = getWeekStartSunday(entry.date);
                           if (!totals[entry.employeeId]) totals[entry.employeeId] = {};
@@ -1674,15 +1686,12 @@ export function SummaryReports() {
                                   <div className="text-yellow-300 font-semibold">
                                     Weekly overtime threshold exceeded (&gt;40 regular hours) in selected range
                                   </div>
-                                  <div className="text-xs text-yellow-200 mt-1 space-y-1">
-                                    {details.slice(0, 5).map((d) => (
+                                  <div className="text-xs text-yellow-200 mt-1 space-y-1 max-h-48 overflow-y-auto pr-1">
+                                    {details.map((d) => (
                                       <div key={`${d.employeeId}-${d.weekStart}`}>
                                         {d.employeeName}: {d.totalHours.toFixed(2)}h (week starting {d.weekStart})
                                       </div>
                                     ))}
-                                    {details.length > 5 && (
-                                      <div>+ {details.length - 5} more…</div>
-                                    )}
                                   </div>
                                 </div>
                               </div>
