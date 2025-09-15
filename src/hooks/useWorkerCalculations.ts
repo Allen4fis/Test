@@ -275,7 +275,7 @@ function getWorkerCode(): string {
         let adjustedBillableWage = entry.billableWageUsed || 0;
         let adjustedCostWage = entry.costWageUsed || 0;
 
-        if (hourType?.name?.startsWith("NS ")) {
+        if (hourType?.name?.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
           adjustedBillableWage += 3;
           adjustedCostWage += 3;
         }
