@@ -385,7 +385,9 @@ export default function SummaryReportsOptimized() {
           (ht) => ht.name === "Regular Time" || ht.name === "NS Regular Time",
         )
         .map((ht) => ht.id);
-      const emprigId = hourTypes.find((ht) => ht.name === "Employee Rig")?.id;
+      const rigIds = hourTypes
+        .filter((ht) => ht.name === "Employee Rig" || ht.name === "Employee Rig NS")
+        .map((ht) => ht.id);
 
       const getWeekStartSunday = (dateStr: string) => {
         const d = parseLocalDate(dateStr);
@@ -402,7 +404,7 @@ export default function SummaryReportsOptimized() {
         const empId = entry.employeeId;
         if (!totals[empId]) totals[empId] = {};
 
-        if (entry.hourTypeId === emprigId) {
+        if (rigIds.includes(entry.hourTypeId)) {
           const add = Math.min(8, entry.hours || 0);
           totals[empId][weekStart] = (totals[empId][weekStart] || 0) + add;
         } else if (regularHourTypeIds.includes(entry.hourTypeId)) {
@@ -488,12 +490,18 @@ export default function SummaryReportsOptimized() {
           }
 
           acc[key].hours += entry.hours;
-          const isEmprig = hourType.name === "Employee Rig";
-          const eff = isEmprig
+          const isRigTiered = hourType.name === "Employee Rig" || hourType.name === "Employee Rig NS";
+          const isRigNS = hourType.name === "Employee Rig NS";
+          const eff = isRigTiered
             ? computeEmprigEffectiveHours(entry.hours)
             : entry.hours * hourType.multiplier;
+          const h = Math.max(0, entry.hours || 0);
+          const reg = Math.min(8, h);
+          const ot = Math.min(4, Math.max(0, h - 8));
+          const dt = Math.max(0, h - 12);
+          const premiumDollars = isRigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0;
           acc[key].effectiveHours += eff;
-          acc[key].totalCost += eff * entry.costWageUsed;
+          acc[key].totalCost += eff * entry.costWageUsed + premiumDollars;
 
           return acc;
         },

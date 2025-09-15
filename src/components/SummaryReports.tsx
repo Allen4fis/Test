@@ -1647,7 +1647,9 @@ export function SummaryReports() {
                             )
                             .map((ht) => ht.id),
                         );
-                        const emprigId = hourTypes.find((ht) => ht.name === "Employee Rig")?.id;
+                        const rigIds = hourTypes
+                          .filter((ht) => ht.name === "Employee Rig" || ht.name === "Employee Rig NS")
+                          .map((ht) => ht.id);
                         const getWeekStartSunday = (dateStr: string) => {
                           const d = parseLocalDate(dateStr);
                           const day = d.getDay();
@@ -1667,7 +1669,7 @@ export function SummaryReports() {
                           if (!totals[entry.employeeId])
                             totals[entry.employeeId] = {};
 
-                          if (emprigId && entry.hourTypeId === emprigId) {
+                          if (rigIds.includes(entry.hourTypeId)) {
                             const add = Math.min(8, entry.hours || 0);
                             totals[entry.employeeId][wk] =
                               (totals[entry.employeeId][wk] || 0) + add;

@@ -203,6 +203,13 @@ export function useIndexedDB() {
           "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
         multiplier: 1.0,
       },
+      {
+        id: "14",
+        name: "Employee Rig NS",
+        description:
+          "Tiered cost with nightshift premium: +$3/h (first 8h), +$4.5/h (next 4h), +$6/h (remaining); billable stays 1x base plus same premiums",
+        multiplier: 1.0,
+      },
     ];
 
     // Default provinces

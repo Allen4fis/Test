@@ -374,9 +374,10 @@ export function useOptimizedTimeTracking() {
       );
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
-      const isEmprig = hourType?.name === "Employee Rig";
+      const isRigTiered = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
+      const isRigNS = hourType?.name === "Employee Rig NS";
       const baseEff = entry.hours * (hourType?.multiplier || 1);
-      const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : baseEff;
+      const effectiveHours = isRigTiered ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : baseEff;
       let adjustedBillableWage = entry.billableWageUsed || 0;
       let adjustedCostWage = entry.costWageUsed || 0;
 
@@ -386,11 +387,16 @@ export function useOptimizedTimeTracking() {
         adjustedCostWage += 3;
       }
 
-      const totalBillableAmount = (isEmprig ? entry.hours : effectiveHours) * adjustedBillableWage;
+      const h = Math.max(0, entry.hours || 0);
+      const reg = Math.min(8, h);
+      const ot = Math.min(4, Math.max(0, h - 8));
+      const dt = Math.max(0, h - 12);
+      const premiumDollars = isRigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0;
+      const totalBillableAmount = (isRigTiered ? entry.hours : effectiveHours) * adjustedBillableWage + premiumDollars;
 
       let totalCost = 0;
-      if (isEmprig) {
-        totalCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+      if (isRigTiered) {
+        totalCost = effectiveHours * adjustedCostWage + premiumDollars; // Rig tiered; NS adds premium
       } else if (employee?.category === "dsp") {
         totalCost = entry.hours * adjustedCostWage;
       } else {
@@ -455,8 +461,9 @@ export function useOptimizedTimeTracking() {
 
         if (!employee || !hourType) return acc;
 
-        const isEmprig = hourType.name === "Employee Rig";
-        const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
+        const isRigTiered = hourType.name === "Employee Rig" || hourType.name === "Employee Rig NS";
+        const isRigNS = hourType.name === "Employee Rig NS";
+        const effectiveHours = isRigTiered ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
         let adjustedBillableWage = entry.billableWageUsed || 0;
 
@@ -477,15 +484,25 @@ export function useOptimizedTimeTracking() {
           entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
           (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
 
-        if (isEmprig) {
-          cost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+        if (isRigTiered) {
+          const h = Math.max(0, entry.hours || 0);
+          const reg = Math.min(8, h);
+          const ot = Math.min(4, Math.max(0, h - 8));
+          const dt = Math.max(0, h - 12);
+          const premiumDollars = isRigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0;
+          cost = effectiveHours * adjustedCostWage + premiumDollars; // Rig tiered; NS adds premium
         } else if (shouldUse1xRates) {
           cost = entry.hours * adjustedCostWage; // 1x for DSPs and subordinates
         } else {
           cost = effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
         }
 
-        const billableAmount = (isEmprig ? entry.hours : effectiveHours) * adjustedBillableWage;
+        const h = Math.max(0, entry.hours || 0);
+        const reg = Math.min(8, h);
+        const ot = Math.min(4, Math.max(0, h - 8));
+        const dt = Math.max(0, h - 12);
+        const premiumDollars = isRigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0;
+        const billableAmount = (isRigTiered ? entry.hours : effectiveHours) * adjustedBillableWage + premiumDollars;
         const loaCost = (entry.loaCount || 0) * 200;
         const loaBillable = (entry.loaCount || 0) * 200;
 

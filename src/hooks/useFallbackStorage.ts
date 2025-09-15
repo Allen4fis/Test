@@ -67,6 +67,13 @@ export function useFallbackStorage() {
           "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
         multiplier: 1.0,
       },
+      {
+        id: "14",
+        name: "Employee Rig NS",
+        description:
+          "Tiered cost with nightshift premium: +$3/h (first 8h), +$4.5/h (next 4h), +$6/h (remaining); billable stays 1x base plus same premiums",
+        multiplier: 1.0,
+      },
     ] as HourType[],
     provinces: [
       { id: "1", name: "Alberta", code: "AB" },
@@ -118,9 +125,11 @@ export function useFallbackStorage() {
       const loadedData = loadData();
       const migrated = {
         ...loadedData,
-        hourTypes: (loadedData.hourTypes || []).map((ht: HourType) =>
-          ht.id === "13" && ht.name !== "Employee Rig" ? { ...ht, name: "Employee Rig" } : ht,
-        ),
+        hourTypes: (loadedData.hourTypes || []).map((ht: HourType) => {
+          if (ht.id === "13" && ht.name !== "Employee Rig") return { ...ht, name: "Employee Rig" };
+          if (ht.id === "14" && ht.name !== "Employee Rig NS") return { ...ht, name: "Employee Rig NS" };
+          return ht;
+        }),
       };
       if (!(migrated.hourTypes || []).some((ht: HourType) => ht.name === "Employee Rig")) {
         migrated.hourTypes = [
@@ -130,6 +139,18 @@ export function useFallbackStorage() {
             name: "Employee Rig",
             description:
               "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
+            multiplier: 1.0,
+          },
+        ];
+      }
+      if (!(migrated.hourTypes || []).some((ht: HourType) => ht.name === "Employee Rig NS")) {
+        migrated.hourTypes = [
+          ...(migrated.hourTypes || []),
+          {
+            id: "14",
+            name: "Employee Rig NS",
+            description:
+              "Tiered cost with nightshift premium: +$3/h (first 8h), +$4.5/h (next 4h), +$6/h (remaining); billable stays 1x base plus same premiums",
             multiplier: 1.0,
           },
         ];
