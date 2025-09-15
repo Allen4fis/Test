@@ -382,7 +382,7 @@ export function useOptimizedTimeTracking() {
       let adjustedCostWage = entry.costWageUsed || 0;
 
       // Add $3 for NS hour types
-      if (hourType?.name?.startsWith("NS ")) {
+      if (hourType?.name?.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
         adjustedBillableWage += 3;
         adjustedCostWage += 3;
       }
@@ -467,7 +467,7 @@ export function useOptimizedTimeTracking() {
         let adjustedCostWage = entry.costWageUsed || 0;
         let adjustedBillableWage = entry.billableWageUsed || 0;
 
-        if (hourType.name.startsWith("NS ")) {
+        if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
           adjustedCostWage += 3;
           adjustedBillableWage += 3;
         }
