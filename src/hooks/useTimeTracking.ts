@@ -99,6 +99,13 @@ const getDefaultAppData = (): AppData => ({
       description: "Billable time (does not count towards job hours total)",
       multiplier: 1.0,
     },
+    {
+      id: "13",
+      name: "EMPRIG",
+      description:
+        "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
+      multiplier: 1.0,
+    },
   ],
   provinces: [
     { id: "1", name: "Alberta", code: "AB" },
@@ -179,6 +186,20 @@ export function useTimeTracking() {
         isActive: employee.isActive ?? true, // Default to active if not set
       };
     });
+
+    // Ensure EMPRIG hour type exists
+    if (!migratedData.hourTypes?.some((ht) => ht.name === "EMPRIG")) {
+      migratedData.hourTypes = [
+        ...(migratedData.hourTypes || []),
+        {
+          id: "13",
+          name: "EMPRIG",
+          description:
+            "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
+          multiplier: 1.0,
+        },
+      ];
+    }
 
     // Add title and wage fields to existing time entries that don't have them
     migratedData.timeEntries = rawAppData.timeEntries.map((entry) => {
