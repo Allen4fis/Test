@@ -1663,13 +1663,19 @@ export function SummaryReports() {
                           if (entry.date < startDate || entry.date > endDate)
                             return;
                           if (!allowedIds.has(entry.employeeId)) return;
-                          if (!regularIds.has(entry.hourTypeId)) return;
                           const wk = getWeekStartSunday(entry.date);
                           if (!totals[entry.employeeId])
                             totals[entry.employeeId] = {};
-                          totals[entry.employeeId][wk] =
-                            (totals[entry.employeeId][wk] || 0) +
-                            (entry.hours || 0);
+
+                          if (emprigId && entry.hourTypeId === emprigId) {
+                            const add = Math.min(8, entry.hours || 0);
+                            totals[entry.employeeId][wk] =
+                              (totals[entry.employeeId][wk] || 0) + add;
+                          } else if (regularIds.has(entry.hourTypeId)) {
+                            totals[entry.employeeId][wk] =
+                              (totals[entry.employeeId][wk] || 0) +
+                              (entry.hours || 0);
+                          }
                         });
                         const details: {
                           employeeId: string;
