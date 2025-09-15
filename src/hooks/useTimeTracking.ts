@@ -721,6 +721,14 @@ export function useTimeTracking() {
 
   // Summary calculations with dual wages
   const timeEntrySummaries = useMemo((): TimeEntrySummary[] => {
+    const computeEmprigEffectiveHours = (hours: number) => {
+      const h = Math.max(0, hours || 0);
+      const reg = Math.min(8, h);
+      const ot = Math.min(4, Math.max(0, h - 8));
+      const dt = Math.max(0, h - 12);
+      return reg * 1 + ot * 1.5 + dt * 2;
+    };
+
     return appData.timeEntries.map((entry) => {
       const employee = appData.employees.find(
         (emp) => emp.id === entry.employeeId,
