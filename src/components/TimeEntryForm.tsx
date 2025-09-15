@@ -1619,7 +1619,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 const isEmprigNS = entryHourType?.name === "Employee Rig NS";
                                 const hourlyBillable =
                                   (isEmprig
-                                    ? (entry as any).hours // EMPRIG billable stays 1x
+                                    ? (entry as any).hours // Rig billable stays 1x base
                                     : (entry as any).hours * (entryHourType?.multiplier || 1)) *
                                   adjustedBillableWage;
                                 const loaBillable =
