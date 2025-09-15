@@ -106,7 +106,7 @@ function calculateTimeEntrySummaries(data: {
     let adjustedCostWage = entry.costWageUsed || 0;
 
     // NS wage adjustment
-    if (hourType?.name?.startsWith("NS ")) {
+    if (hourType?.name?.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
       adjustedBillableWage += 3;
       adjustedCostWage += 3;
     }
