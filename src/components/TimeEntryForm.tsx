@@ -1617,6 +1617,10 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                                 const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
                                 const isEmprigNS = entryHourType?.name === "Employee Rig NS";
+                                const h3 = (entry as any).hours || 0;
+                                const reg3 = Math.min(8, h3);
+                                const ot3 = Math.min(4, Math.max(0, h3 - 8));
+                                const dt3 = Math.max(0, h3 - 12);
                                 const hourlyBillable =
                                   (isEmprig
                                     ? (entry as any).hours // Rig billable stays 1x base
