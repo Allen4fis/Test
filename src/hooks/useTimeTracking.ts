@@ -755,7 +755,7 @@ export function useTimeTracking() {
       let totalCost = 0;
 
       // Add $3 to base wage for NS hour types
-      if (hourType?.name?.startsWith("NS ")) {
+      if (hourType?.name?.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
         adjustedBillableWage += 3;
         adjustedCostWage += 3;
       }
@@ -837,7 +837,7 @@ export function useTimeTracking() {
         let cost = 0;
 
         // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
+        if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
           adjustedCostWage += 3;
         }
 
@@ -922,7 +922,7 @@ export function useTimeTracking() {
         let cost = 0;
 
         // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
+        if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
           adjustedCostWage += 3;
         }
 
@@ -1013,7 +1013,7 @@ export function useTimeTracking() {
         const isRigNS = hourType.name === "NS Employee Rig";
 
         // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
+        if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
           adjustedCostWage += 3;
           adjustedBillableWage += 3;
         }
@@ -1113,7 +1113,7 @@ export function useTimeTracking() {
         let cost = 0;
 
         // Add $3 to base wage for NS hour types
-        if (hourType.name.startsWith("NS ")) {
+        if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
           adjustedCostWage += 3;
         }
 
