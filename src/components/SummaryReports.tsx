@@ -1647,7 +1647,7 @@ export function SummaryReports() {
                             )
                             .map((ht) => ht.id),
                         );
-                        const emprigId = hourTypes.find((ht) => ht.name === "EMPRIG")?.id;
+                        const emprigId = hourTypes.find((ht) => ht.name === "Employee Rig")?.id;
                         const getWeekStartSunday = (dateStr: string) => {
                           const d = parseLocalDate(dateStr);
                           const day = d.getDay();

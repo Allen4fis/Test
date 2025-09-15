@@ -62,7 +62,7 @@ export function useFallbackStorage() {
       },
       {
         id: "13",
-        name: "EMPRIG",
+        name: "Employee Rig",
         description:
           "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
         multiplier: 1.0,
@@ -116,7 +116,26 @@ export function useFallbackStorage() {
     try {
       setIsLoading(true);
       const loadedData = loadData();
-      setData(loadedData);
+      const migrated = {
+        ...loadedData,
+        hourTypes: (loadedData.hourTypes || []).map((ht: HourType) =>
+          ht.id === "13" && ht.name !== "Employee Rig" ? { ...ht, name: "Employee Rig" } : ht,
+        ),
+      };
+      if (!(migrated.hourTypes || []).some((ht: HourType) => ht.name === "Employee Rig")) {
+        migrated.hourTypes = [
+          ...(migrated.hourTypes || []),
+          {
+            id: "13",
+            name: "Employee Rig",
+            description:
+              "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
+            multiplier: 1.0,
+          },
+        ];
+      }
+      setData(migrated);
+      saveData(migrated);
       setError(null);
     } catch (err) {
       setError(

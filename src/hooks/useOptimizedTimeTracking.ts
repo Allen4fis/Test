@@ -374,7 +374,7 @@ export function useOptimizedTimeTracking() {
       );
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
-      const isEmprig = hourType?.name === "EMPRIG";
+      const isEmprig = hourType?.name === "Employee Rig";
       const baseEff = entry.hours * (hourType?.multiplier || 1);
       const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : baseEff;
       let adjustedBillableWage = entry.billableWageUsed || 0;
@@ -455,7 +455,7 @@ export function useOptimizedTimeTracking() {
 
         if (!employee || !hourType) return acc;
 
-        const isEmprig = hourType.name === "EMPRIG";
+        const isEmprig = hourType.name === "Employee Rig";
         const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
         let adjustedBillableWage = entry.billableWageUsed || 0;

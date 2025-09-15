@@ -198,7 +198,7 @@ export function useIndexedDB() {
       },
       {
         id: "13",
-        name: "EMPRIG",
+        name: "Employee Rig",
         description:
           "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
         multiplier: 1.0,

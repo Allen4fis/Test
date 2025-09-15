@@ -385,7 +385,7 @@ export default function SummaryReportsOptimized() {
           (ht) => ht.name === "Regular Time" || ht.name === "NS Regular Time",
         )
         .map((ht) => ht.id);
-      const emprigId = hourTypes.find((ht) => ht.name === "EMPRIG")?.id;
+      const emprigId = hourTypes.find((ht) => ht.name === "Employee Rig")?.id;
 
       const getWeekStartSunday = (dateStr: string) => {
         const d = parseLocalDate(dateStr);
@@ -488,7 +488,7 @@ export default function SummaryReportsOptimized() {
           }
 
           acc[key].hours += entry.hours;
-          const isEmprig = hourType.name === "EMPRIG";
+          const isEmprig = hourType.name === "Employee Rig";
           const eff = isEmprig
             ? computeEmprigEffectiveHours(entry.hours)
             : entry.hours * hourType.multiplier;

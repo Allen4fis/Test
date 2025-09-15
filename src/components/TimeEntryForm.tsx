@@ -1507,7 +1507,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 {(() => {
                                   let adjustedBillableWage = (entry as any).billableWageUsed || 0;
                                   let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                  const isEmprig = hourType?.name === "EMPRIG";
+                                  const isEmprig = hourType?.name === "Employee Rig";
 
                                   // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
                                   if (hourType?.name.startsWith("NS ")) {
@@ -1571,7 +1571,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedCostWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "EMPRIG";
+                                const isEmprig = entryHourType?.name === "Employee Rig";
 
                                 let hourlyBaseCost = 0;
                                 if (isEmprig) {
@@ -1613,7 +1613,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedBillableWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "EMPRIG";
+                                const isEmprig = entryHourType?.name === "Employee Rig";
                                 const hourlyBillable =
                                   (isEmprig
                                     ? (entry as any).hours // EMPRIG billable stays 1x
@@ -1685,7 +1685,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           adjustedCostWage += 3;
                                         }
 
-                                        const isEmprig = entryHourType?.name === "EMPRIG";
+                                        const isEmprig = entryHourType?.name === "Employee Rig";
 
                                         let hourlyBaseCost = 0;
                                         if (isEmprig) {

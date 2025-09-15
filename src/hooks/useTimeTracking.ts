@@ -101,7 +101,7 @@ const getDefaultAppData = (): AppData => ({
     },
     {
       id: "13",
-      name: "EMPRIG",
+      name: "Employee Rig",
       description:
         "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
       multiplier: 1.0,
@@ -187,13 +187,19 @@ export function useTimeTracking() {
       };
     });
 
-    // Ensure EMPRIG hour type exists
-    if (!migratedData.hourTypes?.some((ht) => ht.name === "EMPRIG")) {
+    // Rename legacy EMPRIG to Employee Rig and ensure it exists
+    const hourTypesList = Array.isArray(migratedData.hourTypes)
+      ? migratedData.hourTypes
+      : [];
+    migratedData.hourTypes = hourTypesList.map((ht) =>
+      ht.id === "13" && ht.name !== "Employee Rig" ? { ...ht, name: "Employee Rig" } : ht,
+    );
+    if (!migratedData.hourTypes.some((ht) => ht.name === "Employee Rig")) {
       migratedData.hourTypes = [
-        ...(migratedData.hourTypes || []),
+        ...migratedData.hourTypes,
         {
           id: "13",
-          name: "EMPRIG",
+          name: "Employee Rig",
           description:
             "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
           multiplier: 1.0,
@@ -739,7 +745,7 @@ export function useTimeTracking() {
       );
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
-      const isEmprig = hourType?.name === "EMPRIG";
+      const isEmprig = hourType?.name === "Employee Rig";
       const baseEff = entry.hours * (hourType?.multiplier || 1);
       const effectiveHours = isEmprig ? computeEmprigEffectiveHours(entry.hours) : baseEff;
       let adjustedBillableWage = entry.billableWageUsed || 0;
@@ -818,7 +824,7 @@ export function useTimeTracking() {
 
         const entryTitle = entry.title || employee.title;
         const key = `${entryTitle}-${job.jobNumber}`;
-        const isEmprig = hourType.name === "EMPRIG";
+        const isEmprig = hourType.name === "Employee Rig";
         const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
@@ -897,7 +903,7 @@ export function useTimeTracking() {
         if (!employee || !hourType) return acc;
 
         const key = `${entry.date}-${employee.name}`;
-        const isEmprig = hourType.name === "EMPRIG";
+        const isEmprig = hourType.name === "Employee Rig";
         const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
@@ -985,7 +991,7 @@ export function useTimeTracking() {
         let adjustedBillableWage = entry.billableWageUsed || 0;
         let cost = 0;
         let billableAmount = 0;
-        const isEmprig = hourType.name === "EMPRIG";
+        const isEmprig = hourType.name === "Employee Rig";
 
         // Add $3 to base wage for NS hour types
         if (hourType.name.startsWith("NS ")) {
@@ -1069,7 +1075,7 @@ export function useTimeTracking() {
 
         if (!employee || !job || !hourType) return acc;
 
-        const isEmprig = hourType.name === "EMPRIG";
+        const isEmprig = hourType.name === "Employee Rig";
         const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
         let cost = 0;
