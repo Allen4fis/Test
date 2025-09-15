@@ -1582,7 +1582,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   const ot = Math.min(4, Math.max(0, h - 8));
                                   const dt = Math.max(0, h - 12);
                                   const effectiveHours = reg * 1 + ot * 1.5 + dt * 2;
-                                  hourlyBaseCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+                                  hourlyBaseCost = effectiveHours * adjustedCostWage + (isEmprigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0); // Rig tiered; NS adds premium
                                 } else if (shouldUse1xRates) {
                                   hourlyBaseCost = (entry as any).hours * adjustedCostWage;
                                 } else {
@@ -1698,7 +1698,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           const ot = Math.min(4, Math.max(0, h - 8));
                                           const dt = Math.max(0, h - 12);
                                           const effectiveHours = reg * 1 + ot * 1.5 + dt * 2;
-                                          hourlyBaseCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+                                          hourlyBaseCost = effectiveHours * adjustedCostWage + (isEmprigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0); // Rig tiered; NS adds premium
                                         } else if (shouldUse1xRates) {
                                           hourlyBaseCost = (entry as any).hours * adjustedCostWage;
                                         } else {
