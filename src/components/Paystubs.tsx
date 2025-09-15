@@ -366,16 +366,23 @@ export const Paystubs = () => {
               ${paystub.entries
                 .sort((a, b) => a.date.localeCompare(b.date))
                 .map((entry) => {
-                  // Calculate effective rate with multiplier
                   const hourType = hourTypes.find(
                     (ht) => ht.name === entry.hourTypeName,
                   );
-                  const multiplier = hourType?.multiplier || 1;
-                  const effectiveRate = entry.costWage * multiplier;
-                  const rateDisplay =
-                    multiplier === 1
-                      ? `$${entry.costWage.toFixed(2)}/h`
-                      : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+                  const isEmprig = hourType?.name === "EMPRIG";
+                  let rateDisplay: string;
+                  if (isEmprig) {
+                    const loaAmount = (entry.loaCount || 0) * 200;
+                    const avgRate = (entry.totalCost - loaAmount) / Math.max(1, entry.hours);
+                    rateDisplay = `$${avgRate.toFixed(2)}/h (tiered)`;
+                  } else {
+                    const multiplier = hourType?.multiplier || 1;
+                    const effectiveRate = entry.costWage * multiplier;
+                    rateDisplay =
+                      multiplier === 1
+                        ? `$${entry.costWage.toFixed(2)}/h`
+                        : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+                  }
 
                   return `
                     <tr>
