@@ -1571,7 +1571,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedCostWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "Employee Rig";
+                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
+                                const isEmprigNS = entryHourType?.name === "Employee Rig NS";
 
                                 let hourlyBaseCost = 0;
                                 if (isEmprig) {
@@ -1613,7 +1614,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedBillableWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "Employee Rig";
+                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
+                                const isEmprigNS = entryHourType?.name === "Employee Rig NS";
                                 const hourlyBillable =
                                   (isEmprig
                                     ? (entry as any).hours // EMPRIG billable stays 1x
@@ -1685,7 +1687,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           adjustedCostWage += 3;
                                         }
 
-                                        const isEmprig = entryHourType?.name === "Employee Rig";
+                                        const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
+                                const isEmprigNS = entryHourType?.name === "Employee Rig NS";
 
                                         let hourlyBaseCost = 0;
                                         if (isEmprig) {
