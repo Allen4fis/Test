@@ -268,7 +268,7 @@ export const Paystubs = () => {
           const hourType = hourTypes.find(
             (ht) => ht.name === entry.hourTypeName,
           );
-          const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
+          const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "NS Employee Rig";
           let rateDisplay: string;
           if (isEmprig) {
             const loaAmount = (entry.loaCount || 0) * 200;
@@ -369,7 +369,7 @@ export const Paystubs = () => {
                   const hourType = hourTypes.find(
                     (ht) => ht.name === entry.hourTypeName,
                   );
-                  const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
+                  const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "NS Employee Rig";
                   let rateDisplay: string;
                   if (isEmprig) {
                     const loaAmount = (entry.loaCount || 0) * 200;

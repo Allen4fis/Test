@@ -1648,7 +1648,7 @@ export function SummaryReports() {
                             .map((ht) => ht.id),
                         );
                         const rigIds = hourTypes
-                          .filter((ht) => ht.name === "Employee Rig" || ht.name === "Employee Rig NS")
+                          .filter((ht) => ht.name === "Employee Rig" || ht.name === "NS Employee Rig")
                           .map((ht) => ht.id);
                         const getWeekStartSunday = (dateStr: string) => {
                           const d = parseLocalDate(dateStr);

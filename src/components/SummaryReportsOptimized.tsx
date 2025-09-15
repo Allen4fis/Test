@@ -386,7 +386,7 @@ export default function SummaryReportsOptimized() {
         )
         .map((ht) => ht.id);
       const rigIds = hourTypes
-        .filter((ht) => ht.name === "Employee Rig" || ht.name === "Employee Rig NS")
+        .filter((ht) => ht.name === "Employee Rig" || ht.name === "NS Employee Rig")
         .map((ht) => ht.id);
 
       const getWeekStartSunday = (dateStr: string) => {
@@ -490,8 +490,8 @@ export default function SummaryReportsOptimized() {
           }
 
           acc[key].hours += entry.hours;
-          const isRigTiered = hourType.name === "Employee Rig" || hourType.name === "Employee Rig NS";
-          const isRigNS = hourType.name === "Employee Rig NS";
+          const isRigTiered = hourType.name === "Employee Rig" || hourType.name === "NS Employee Rig";
+          const isRigNS = hourType.name === "NS Employee Rig";
           const eff = isRigTiered
             ? computeEmprigEffectiveHours(entry.hours)
             : entry.hours * hourType.multiplier;

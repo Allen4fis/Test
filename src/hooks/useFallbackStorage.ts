@@ -69,7 +69,7 @@ export function useFallbackStorage() {
       },
       {
         id: "14",
-        name: "Employee Rig NS",
+        name: "NS Employee Rig",
         description:
           "Tiered cost with nightshift premium: +$3/h (first 8h), +$4.5/h (next 4h), +$6/h (remaining); billable stays 1x base plus same premiums",
         multiplier: 1.0,
@@ -127,7 +127,7 @@ export function useFallbackStorage() {
         ...loadedData,
         hourTypes: (loadedData.hourTypes || []).map((ht: HourType) => {
           if (ht.id === "13" && ht.name !== "Employee Rig") return { ...ht, name: "Employee Rig" };
-          if (ht.id === "14" && ht.name !== "Employee Rig NS") return { ...ht, name: "Employee Rig NS" };
+          if (ht.id === "14" && ht.name !== "NS Employee Rig") return { ...ht, name: "NS Employee Rig" };
           return ht;
         }),
       };
@@ -143,12 +143,12 @@ export function useFallbackStorage() {
           },
         ];
       }
-      if (!(migrated.hourTypes || []).some((ht: HourType) => ht.name === "Employee Rig NS")) {
+      if (!(migrated.hourTypes || []).some((ht: HourType) => ht.name === "NS Employee Rig")) {
         migrated.hourTypes = [
           ...(migrated.hourTypes || []),
           {
             id: "14",
-            name: "Employee Rig NS",
+            name: "NS Employee Rig",
             description:
               "Tiered cost with nightshift premium: +$3/h (first 8h), +$4.5/h (next 4h), +$6/h (remaining); billable stays 1x base plus same premiums",
             multiplier: 1.0,

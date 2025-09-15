@@ -1507,8 +1507,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 {(() => {
                                   let adjustedBillableWage = (entry as any).billableWageUsed || 0;
                                   let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                  const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
-                                  const isEmprigNS = hourType?.name === "Employee Rig NS";
+                                  const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "NS Employee Rig";
+                                  const isEmprigNS = hourType?.name === "NS Employee Rig";
 
                                   // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
                                   if (hourType?.name.startsWith("NS ")) {
@@ -1572,8 +1572,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedCostWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
-                                const isEmprigNS = entryHourType?.name === "Employee Rig NS";
+                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "NS Employee Rig";
+                                const isEmprigNS = entryHourType?.name === "NS Employee Rig";
 
                                 let hourlyBaseCost = 0;
                                 if (isEmprig) {
@@ -1615,8 +1615,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedBillableWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
-                                const isEmprigNS = entryHourType?.name === "Employee Rig NS";
+                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "NS Employee Rig";
+                                const isEmprigNS = entryHourType?.name === "NS Employee Rig";
                                 const h3 = (entry as any).hours || 0;
                                 const reg3 = Math.min(8, h3);
                                 const ot3 = Math.min(4, Math.max(0, h3 - 8));
@@ -1692,8 +1692,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           adjustedCostWage += 3;
                                         }
 
-                                        const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "Employee Rig NS";
-                                const isEmprigNS = entryHourType?.name === "Employee Rig NS";
+                                        const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "NS Employee Rig";
+                                const isEmprigNS = entryHourType?.name === "NS Employee Rig";
 
                                         let hourlyBaseCost = 0;
                                         if (isEmprig) {

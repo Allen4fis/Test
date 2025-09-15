@@ -94,8 +94,8 @@ function calculateTimeEntrySummaries(data: {
     const hourType = hourTypeMap.get(entry.hourTypeId);
     const province = provinceMap.get(entry.provinceId);
 
-    const isRigTiered = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
-  const isRigNS = hourType?.name === "Employee Rig NS";
+    const isRigTiered = hourType?.name === "Employee Rig" || hourType?.name === "NS Employee Rig";
+  const isRigNS = hourType?.name === "NS Employee Rig";
   const baseMultiplier = hourType?.multiplier || 1;
   const effectiveHoursRaw = isRigTiered
     ? computeEmprigEffectiveHours(entry.hours)
