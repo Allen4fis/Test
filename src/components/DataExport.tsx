@@ -208,7 +208,7 @@ export function DataExport() {
       // Add $3 to base wage for NS hour types (to match Dashboard calculation)
       let adjustedBillableWage = entry.billableWageUsed;
       let adjustedCostWage = entry.costWageUsed;
-      if (hourType?.name?.startsWith("NS ")) {
+      if (hourType?.name?.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
         adjustedBillableWage += 3;
         adjustedCostWage += 3;
       }
