@@ -73,13 +73,26 @@ function calculateTimeEntrySummaries(data: {
   const hourTypeMap = new Map(hourTypes.map((ht) => [ht.id, ht]));
   const provinceMap = new Map(provinces.map((prov) => [prov.id, prov]));
 
+  function computeEmprigEffectiveHours(hours) {
+    const h = Math.max(0, hours || 0);
+    const reg = Math.min(8, h);
+    const ot = Math.min(4, Math.max(0, h - 8));
+    const dt = Math.max(0, h - 12);
+    return reg * 1 + ot * 1.5 + dt * 2;
+  }
+
   return timeEntries.map((entry) => {
     const employee = employeeMap.get(entry.employeeId);
     const job = jobMap.get(entry.jobId);
     const hourType = hourTypeMap.get(entry.hourTypeId);
     const province = provinceMap.get(entry.provinceId);
 
-    const effectiveHours = entry.hours * (hourType?.multiplier || 1);
+    const isEmprig = hourType?.name === "EMPRIG";
+    const baseMultiplier = hourType?.multiplier || 1;
+    const effectiveHoursRaw = isEmprig
+      ? computeEmprigEffectiveHours(entry.hours)
+      : entry.hours * baseMultiplier;
+
     let adjustedBillableWage = entry.billableWageUsed || 0;
     let adjustedCostWage = entry.costWageUsed || 0;
 
@@ -90,7 +103,7 @@ function calculateTimeEntrySummaries(data: {
     }
 
     // Calculate billable amount
-    let totalBillableAmount = effectiveHours * adjustedBillableWage;
+    let totalBillableAmount = (isEmprig ? entry.hours : effectiveHoursRaw) * adjustedBillableWage;
     let totalCost = 0;
 
     // DSP rate logic
@@ -105,7 +118,7 @@ function calculateTimeEntrySummaries(data: {
     if (shouldUse1xRates) {
       totalCost = entry.hours * adjustedCostWage; // 1x for DSPs
     } else {
-      totalCost = effectiveHours * adjustedCostWage; // Normal rates
+      totalCost = effectiveHoursRaw * adjustedCostWage; // Normal rates (tiered for EMPRIG)
     }
 
     // LOA calculations
@@ -123,7 +136,7 @@ function calculateTimeEntrySummaries(data: {
       provinceName: province?.name || "Unknown Province",
       date: entry.date,
       hours: hourType?.name === "Billable" ? 0 : entry.hours,
-      effectiveHours: hourType?.name === "Billable" ? 0 : effectiveHours,
+      effectiveHours: hourType?.name === "Billable" ? 0 : effectiveHoursRaw,
       loaCount: entry.loaCount,
       billableWage: entry.billableWageUsed || 0,
       costWage: adjustedCostWage,
