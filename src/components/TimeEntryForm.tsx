@@ -1511,7 +1511,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   const isEmprigNS = hourType?.name === "NS Employee Rig";
 
                                   // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
-                                  if (hourType?.name.startsWith("NS ")) {
+                                  if (hourType?.name.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
                                     adjustedBillableWage += 3;
                                     adjustedCostWage += 3;
                                   }
@@ -1568,7 +1568,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                                 // Apply nightshift premium to cost wage
                                 let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                if (entryHourType?.name.startsWith("NS ")) {
+                                if (entryHourType?.name.startsWith("NS ") && entryHourType?.name !== "NS Employee Rig") {
                                   adjustedCostWage += 3;
                                 }
 
@@ -1611,7 +1611,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                                 // Apply nightshift premium to billable wage
                                 let adjustedBillableWage = (entry as any).billableWageUsed || 0;
-                                if (entryHourType?.name.startsWith("NS ")) {
+                                if (entryHourType?.name.startsWith("NS ") && entryHourType?.name !== "NS Employee Rig") {
                                   adjustedBillableWage += 3;
                                 }
 
@@ -1688,7 +1688,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                                         // Apply nightshift premium to cost wage
                                         let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                        if (entryHourType?.name.startsWith("NS ")) {
+                                        if (entryHourType?.name.startsWith("NS ") && entryHourType?.name !== "NS Employee Rig") {
                                           adjustedCostWage += 3;
                                         }
 
