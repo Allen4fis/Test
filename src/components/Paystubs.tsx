@@ -268,12 +268,20 @@ export const Paystubs = () => {
           const hourType = hourTypes.find(
             (ht) => ht.name === entry.hourTypeName,
           );
-          const multiplier = hourType?.multiplier || 1;
-          const effectiveRate = entry.costWage * multiplier;
-          const rateDisplay =
-            multiplier === 1
-              ? `$${entry.costWage.toFixed(2)}/h`
-              : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+          const isEmprig = hourType?.name === "EMPRIG";
+          let rateDisplay: string;
+          if (isEmprig) {
+            const loaAmount = (entry.loaCount || 0) * 200;
+            const avgRate = (entry.totalCost - loaAmount) / Math.max(1, entry.hours);
+            rateDisplay = `$${avgRate.toFixed(2)}/h (tiered)`;
+          } else {
+            const multiplier = hourType?.multiplier || 1;
+            const effectiveRate = entry.costWage * multiplier;
+            rateDisplay =
+              multiplier === 1
+                ? `$${entry.costWage.toFixed(2)}/h`
+                : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
+          }
 
           return `<tr><td>${formatLocalDate(entry.date)}</td><td>${entry.jobNumber}</td><td>${entry.hourTypeName}</td><td>${entry.hours.toFixed(2)}h</td><td>${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : "—"}</td><td>${rateDisplay}</td><td>$${entry.totalCost.toFixed(2)}</td></tr>`;
         })
