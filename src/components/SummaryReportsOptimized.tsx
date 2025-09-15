@@ -443,6 +443,15 @@ export default function SummaryReportsOptimized() {
       const hourTypeMap = new Map(hourTypes.map((ht) => [ht.name, ht]));
       const provinceMap = new Map(provinces.map((prov) => [prov.name, prov]));
 
+      // Helper for EMPRIG tiered cost effective hours
+      const computeEmprigEffectiveHours = (hours: number) => {
+        const h = Math.max(0, hours || 0);
+        const reg = Math.min(8, h);
+        const ot = Math.min(4, Math.max(0, h - 8));
+        const dt = Math.max(0, h - 12);
+        return reg * 1 + ot * 1.5 + dt * 2;
+      };
+
       // Process time entries efficiently
       const summariesData = filteredEntries.reduce(
         (acc, entry) => {
@@ -473,9 +482,12 @@ export default function SummaryReportsOptimized() {
           }
 
           acc[key].hours += entry.hours;
-          acc[key].effectiveHours += entry.hours * hourType.multiplier;
-          acc[key].totalCost +=
-            entry.hours * hourType.multiplier * entry.costWageUsed;
+          const isEmprig = hourType.name === "EMPRIG";
+          const eff = isEmprig
+            ? computeEmprigEffectiveHours(entry.hours)
+            : entry.hours * hourType.multiplier;
+          acc[key].effectiveHours += eff;
+          acc[key].totalCost += eff * entry.costWageUsed;
 
           return acc;
         },
