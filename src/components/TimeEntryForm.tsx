@@ -1621,7 +1621,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   (isEmprig
                                     ? (entry as any).hours // Rig billable stays 1x base
                                     : (entry as any).hours * (entryHourType?.multiplier || 1)) *
-                                  adjustedBillableWage;
+                                  adjustedBillableWage + (isEmprigNS ? (reg3 * 3 + ot3 * 4.5 + dt3 * 6) : 0);
                                 const loaBillable =
                                   ((entry as any).loaCount || 0) *
                                   ((entry as any).loaAmount || 200);
