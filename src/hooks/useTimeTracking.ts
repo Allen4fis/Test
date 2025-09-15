@@ -1003,7 +1003,8 @@ export function useTimeTracking() {
         let adjustedBillableWage = entry.billableWageUsed || 0;
         let cost = 0;
         let billableAmount = 0;
-        const isEmprig = hourType.name === "Employee Rig";
+        const isRigTiered = hourType.name === "Employee Rig" || hourType.name === "Employee Rig NS";
+        const isRigNS = hourType.name === "Employee Rig NS";
 
         // Add $3 to base wage for NS hour types
         if (hourType.name.startsWith("NS ")) {
