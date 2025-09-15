@@ -115,10 +115,12 @@ function calculateTimeEntrySummaries(data: {
       entryEmployeeCategory === "dsp" ||
       (employee?.managerId && manager?.category === "dsp");
 
-    if (shouldUse1xRates) {
+    if (isEmprig) {
+      totalCost = effectiveHoursRaw * adjustedCostWage; // Always tiered for EMPRIG
+    } else if (shouldUse1xRates) {
       totalCost = entry.hours * adjustedCostWage; // 1x for DSPs
     } else {
-      totalCost = effectiveHoursRaw * adjustedCostWage; // Normal rates (tiered for EMPRIG)
+      totalCost = effectiveHoursRaw * adjustedCostWage; // Normal rates
     }
 
     // LOA calculations
