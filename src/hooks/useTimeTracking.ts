@@ -194,13 +194,15 @@ export function useTimeTracking() {
       };
     });
 
-    // Rename legacy EMPRIG to Employee Rig and ensure it exists
+    // Rename legacy EMPRIG to Employee Rig; add/rename NS Employee Rig and ensure both exist
     const hourTypesList = Array.isArray(migratedData.hourTypes)
       ? migratedData.hourTypes
       : [];
-    migratedData.hourTypes = hourTypesList.map((ht) =>
-      ht.id === "13" && ht.name !== "Employee Rig" ? { ...ht, name: "Employee Rig" } : ht,
-    );
+    migratedData.hourTypes = hourTypesList.map((ht) => {
+      if (ht.id === "13" && ht.name !== "Employee Rig") return { ...ht, name: "Employee Rig" };
+      if (ht.id === "14" && ht.name !== "NS Employee Rig") return { ...ht, name: "NS Employee Rig" };
+      return ht;
+    });
     if (!migratedData.hourTypes.some((ht) => ht.name === "Employee Rig")) {
       migratedData.hourTypes = [
         ...migratedData.hourTypes,
@@ -209,6 +211,18 @@ export function useTimeTracking() {
           name: "Employee Rig",
           description:
             "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
+          multiplier: 1.0,
+        },
+      ];
+    }
+    if (!migratedData.hourTypes.some((ht) => ht.name === "NS Employee Rig")) {
+      migratedData.hourTypes = [
+        ...migratedData.hourTypes,
+        {
+          id: "14",
+          name: "NS Employee Rig",
+          description:
+            "Tiered cost with nightshift premium: +$3/h (first 8h), +$4.5/h (next 4h), +$6/h (remaining); billable stays 1x base plus same premiums",
           multiplier: 1.0,
         },
       ];
