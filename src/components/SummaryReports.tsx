@@ -702,7 +702,7 @@ export function SummaryReports() {
               let entryCost = 0;
 
               // Add $3 for NS hour types
-              if (hourType.name.startsWith("NS ")) {
+              if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
                 adjustedCostWage += 3;
               }
 
@@ -788,7 +788,7 @@ export function SummaryReports() {
             let adjustedCostWage = entry.costWageUsed || 0;
             let entryCost = 0;
 
-            if (hourType.name.startsWith("NS ")) {
+            if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
               adjustedCostWage += 3;
             }
 
@@ -903,7 +903,7 @@ export function SummaryReports() {
               let entryCost = 0;
 
               // Add $3 for NS hour types
-              if (hourType.name.startsWith("NS ")) {
+              if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
                 adjustedCostWage += 3;
               }
 
@@ -989,7 +989,7 @@ export function SummaryReports() {
             let adjustedCostWage = entry.costWageUsed || 0;
             let entryCost = 0;
 
-            if (hourType.name.startsWith("NS ")) {
+            if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
               adjustedCostWage += 3;
             }
 
