@@ -841,7 +841,9 @@ export function useTimeTracking() {
           entryEmployeeCategory === "dsp" || // Direct DSP
           (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
 
-        if (shouldUse1xRates) {
+        if (isEmprig) {
+          cost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+        } else if (shouldUse1xRates) {
           // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
@@ -918,7 +920,9 @@ export function useTimeTracking() {
           entryEmployeeCategory === "dsp" || // Direct DSP
           (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
 
-        if (shouldUse1xRates) {
+        if (isEmprig) {
+          cost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+        } else if (shouldUse1xRates) {
           // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
@@ -1002,7 +1006,9 @@ export function useTimeTracking() {
           entryEmployeeCategory === "dsp" || // Direct DSP
           (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
 
-        if (shouldUse1xRates) {
+        if (isEmprig) {
+          cost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+        } else if (shouldUse1xRates) {
           // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
@@ -1086,7 +1092,9 @@ export function useTimeTracking() {
           entryEmployeeCategory === "dsp" || // Direct DSP
           (employee?.managerId && manager?.category === "dsp"); // Subordinate of current DSP
 
-        if (shouldUse1xRates) {
+        if (isEmprig) {
+          cost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+        } else if (shouldUse1xRates) {
           // For DSPs and subordinates of DSPs, use regular time (1x) multiplier for cost calculation
           cost = entry.hours * adjustedCostWage; // Always 1x for DSP costs
         } else {
