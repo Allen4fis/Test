@@ -573,8 +573,8 @@ export default function SummaryReportsOptimized() {
             const hourlyCost = summary.totalCost - loaCost;
 
             // Calculate the effective hourly rate (what they were paid per actual hour worked)
-            // This should show the multiplied rate (e.g., $37.50 for 1.5x overtime at $25 base)
-            const effectiveHourlyRate = hourlyCost / summary.hours; // Rate per actual hour worked
+            // Uses total hourly cost divided by actual hours (handles tiered EMPRIG correctly)
+            const effectiveHourlyRate = hourlyCost / Math.max(1, summary.hours);
 
             group.hourTypeBreakdown[hourTypeName].rateEntries.push({
               date: summary.date,
