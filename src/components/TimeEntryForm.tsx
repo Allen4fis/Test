@@ -1507,7 +1507,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 {(() => {
                                   let adjustedBillableWage = (entry as any).billableWageUsed || 0;
                                   let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                  const isEmprig = hourType?.name === "Employee Rig";
+                                  const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
+                                  const isEmprigNS = hourType?.name === "Employee Rig NS";
 
                                   // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
                                   if (hourType?.name.startsWith("NS ")) {
