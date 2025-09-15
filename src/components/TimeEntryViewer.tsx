@@ -332,7 +332,7 @@ export function TimeEntryViewer() {
     let adjustedBillableWage = entry.billableWageUsed || 0;
 
     // Add $3 for NS hour types
-    if (hourType?.name.startsWith("NS ")) {
+    if (hourType?.name.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
       adjustedBillableWage += 3;
     }
 
@@ -352,7 +352,7 @@ export function TimeEntryViewer() {
     let adjustedCostWage = entry.costWageUsed || 0;
 
     // Add $3 for NS hour types
-    if (hourType?.name.startsWith("NS ")) {
+    if (hourType?.name.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
       adjustedCostWage += 3;
     }
 
@@ -1057,7 +1057,7 @@ export function TimeEntryViewer() {
                                   entry.billableWageUsed || 0;
 
                                 // Add $3 for NS hour types
-                                if (hourType?.name.startsWith("NS ")) {
+                                if (hourType?.name.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
                                   adjustedBillableWage += 3;
                                 }
 
