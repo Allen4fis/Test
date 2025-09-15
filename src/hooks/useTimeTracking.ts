@@ -745,9 +745,10 @@ export function useTimeTracking() {
       );
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
-      const isEmprig = hourType?.name === "Employee Rig";
+      const isRigTiered = hourType?.name === "Employee Rig" || hourType?.name === "Employee Rig NS";
+      const isRigNS = hourType?.name === "Employee Rig NS";
       const baseEff = entry.hours * (hourType?.multiplier || 1);
-      const effectiveHours = isEmprig ? computeEmprigEffectiveHours(entry.hours) : baseEff;
+      const effectiveHours = isRigTiered ? computeEmprigEffectiveHours(entry.hours) : baseEff;
       let adjustedBillableWage = entry.billableWageUsed || 0;
       let adjustedCostWage = entry.costWageUsed || 0;
       let totalBillableAmount = 0;
@@ -759,9 +760,14 @@ export function useTimeTracking() {
         adjustedCostWage += 3;
       }
 
-      // Calculate billable amount (EMPRIG billable remains 1x)
-      const billableFactorHours = isEmprig ? entry.hours : effectiveHours;
-      totalBillableAmount = billableFactorHours * adjustedBillableWage;
+      // Calculate billable amount (Rig base stays 1x; NS adds premium dollars per tier)
+      const billableFactorHours = isRigTiered ? entry.hours : effectiveHours;
+      const h0 = Math.max(0, entry.hours || 0);
+      const reg0 = Math.min(8, h0);
+      const ot0 = Math.min(4, Math.max(0, h0 - 8));
+      const dt0 = Math.max(0, h0 - 12);
+      const premiumDollars0 = isRigNS ? reg0 * 3 + ot0 * 4.5 + dt0 * 6 : 0;
+      totalBillableAmount = billableFactorHours * adjustedBillableWage + premiumDollars0;
 
       // Calculate cost - Use stored employee category from entry
       // DSPs always get 1x rates, DSPOT and others get normal overtime rates
@@ -776,8 +782,8 @@ export function useTimeTracking() {
         entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
         (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
 
-      if (isEmprig) {
-        totalCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+      if (isRigTiered) {
+        totalCost = effectiveHours * adjustedCostWage + premiumDollars0; // Rig tiered; NS adds premium
       } else if (shouldUse1xRates) {
         totalCost = entry.hours * adjustedCostWage; // 1x for DSPs and subordinates
       } else {
