@@ -1009,8 +1009,8 @@ export function useTimeTracking() {
           cost = effectiveHours * adjustedCostWage;
         }
 
-        // Billable amount always uses the full multiplier (clients pay overtime rates)
-        billableAmount = effectiveHours * adjustedBillableWage;
+        // Billable: EMPRIG stays 1x; others use multiplier
+        billableAmount = (isEmprig ? entry.hours : effectiveHours) * adjustedBillableWage;
 
         // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
         const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
