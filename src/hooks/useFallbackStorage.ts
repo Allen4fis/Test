@@ -60,6 +60,13 @@ export function useFallbackStorage() {
         description: "Nova Scotia double time (base pay + $3) x2",
         multiplier: 2.0,
       },
+      {
+        id: "13",
+        name: "EMPRIG",
+        description:
+          "Tiered cost only: first 8h @1x, next 4h @1.5x, remaining @2x; billable stays 1x",
+        multiplier: 1.0,
+      },
     ] as HourType[],
     provinces: [
       { id: "1", name: "Alberta", code: "AB" },
