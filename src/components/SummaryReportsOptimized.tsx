@@ -385,6 +385,7 @@ export default function SummaryReportsOptimized() {
           (ht) => ht.name === "Regular Time" || ht.name === "NS Regular Time",
         )
         .map((ht) => ht.id);
+      const emprigId = hourTypes.find((ht) => ht.name === "EMPRIG")?.id;
 
       const getWeekStartSunday = (dateStr: string) => {
         const d = parseLocalDate(dateStr);
@@ -397,12 +398,17 @@ export default function SummaryReportsOptimized() {
       const totals: Record<string, Record<string, number>> = {};
 
       filteredEntries.forEach((entry: any) => {
-        if (!regularHourTypeIds.includes(entry.hourTypeId)) return;
         const weekStart = getWeekStartSunday(entry.date);
         const empId = entry.employeeId;
         if (!totals[empId]) totals[empId] = {};
-        totals[empId][weekStart] =
-          (totals[empId][weekStart] || 0) + (entry.hours || 0);
+
+        if (entry.hourTypeId === emprigId) {
+          const add = Math.min(8, entry.hours || 0);
+          totals[empId][weekStart] = (totals[empId][weekStart] || 0) + add;
+        } else if (regularHourTypeIds.includes(entry.hourTypeId)) {
+          totals[empId][weekStart] =
+            (totals[empId][weekStart] || 0) + (entry.hours || 0);
+        }
       });
 
       const details: {
