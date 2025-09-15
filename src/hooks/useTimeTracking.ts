@@ -1040,8 +1040,15 @@ export function useTimeTracking() {
           cost = effectiveHours * adjustedCostWage;
         }
 
-        // Billable: EMPRIG stays 1x; others use multiplier
-        billableAmount = (isEmprig ? entry.hours : effectiveHours) * adjustedBillableWage;
+        // Billable: Rig stays 1x base; NS adds premium dollars; others use multiplier
+        {
+          const h = Math.max(0, entry.hours || 0);
+          const reg = Math.min(8, h);
+          const ot = Math.min(4, Math.max(0, h - 8));
+          const dt = Math.max(0, h - 12);
+          const premiumDollars = isRigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0;
+          billableAmount = (isRigTiered ? entry.hours : effectiveHours) * adjustedBillableWage + premiumDollars;
+        }
 
         // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
         const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
