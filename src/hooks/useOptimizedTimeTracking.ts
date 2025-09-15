@@ -374,7 +374,9 @@ export function useOptimizedTimeTracking() {
       );
       const province = appData.provinces.find((p) => p.id === entry.provinceId);
 
-      const effectiveHours = entry.hours * (hourType?.multiplier || 1);
+      const isEmprig = hourType?.name === "EMPRIG";
+      const baseEff = entry.hours * (hourType?.multiplier || 1);
+      const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : baseEff;
       let adjustedBillableWage = entry.billableWageUsed || 0;
       let adjustedCostWage = entry.costWageUsed || 0;
 
@@ -384,10 +386,12 @@ export function useOptimizedTimeTracking() {
         adjustedCostWage += 3;
       }
 
-      const totalBillableAmount = effectiveHours * adjustedBillableWage;
+      const totalBillableAmount = (isEmprig ? entry.hours : effectiveHours) * adjustedBillableWage;
 
       let totalCost = 0;
-      if (employee?.category === "dsp") {
+      if (isEmprig) {
+        totalCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+      } else if (employee?.category === "dsp") {
         totalCost = entry.hours * adjustedCostWage;
       } else {
         totalCost = effectiveHours * adjustedCostWage;
@@ -451,7 +455,8 @@ export function useOptimizedTimeTracking() {
 
         if (!employee || !hourType) return acc;
 
-        const effectiveHours = entry.hours * hourType.multiplier;
+        const isEmprig = hourType.name === "EMPRIG";
+        const effectiveHours = isEmprig ? (() => { const h = Math.max(0, entry.hours || 0); const reg = Math.min(8, h); const ot = Math.min(4, Math.max(0, h - 8)); const dt = Math.max(0, h - 12); return reg * 1 + ot * 1.5 + dt * 2; })() : entry.hours * hourType.multiplier;
         let adjustedCostWage = entry.costWageUsed || 0;
         let adjustedBillableWage = entry.billableWageUsed || 0;
 
@@ -472,13 +477,15 @@ export function useOptimizedTimeTracking() {
           entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
           (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
 
-        if (shouldUse1xRates) {
+        if (isEmprig) {
+          cost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+        } else if (shouldUse1xRates) {
           cost = entry.hours * adjustedCostWage; // 1x for DSPs and subordinates
         } else {
           cost = effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
         }
 
-        const billableAmount = effectiveHours * adjustedBillableWage;
+        const billableAmount = (isEmprig ? entry.hours : effectiveHours) * adjustedBillableWage;
         const loaCost = (entry.loaCount || 0) * 200;
         const loaBillable = (entry.loaCount || 0) * 200;
 
