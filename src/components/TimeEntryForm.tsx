@@ -1507,6 +1507,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 {(() => {
                                   let adjustedBillableWage = (entry as any).billableWageUsed || 0;
                                   let adjustedCostWage = (entry as any).costWageUsed || 0;
+                                  const isEmprig = hourType?.name === "EMPRIG";
 
                                   // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
                                   if (hourType?.name.startsWith("NS ")) {
@@ -1515,8 +1516,24 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   }
 
                                   // Calculate effective rates
-                                  const effectiveBillableRate = adjustedBillableWage * (hourType?.multiplier || 1);
-                                  const effectiveCostRate = adjustedCostWage * (hourType?.multiplier || 1);
+                                  const hours = (entry as any).hours || 0;
+                                  const computeEmprigEffectiveHours = (h: number) => {
+                                    const H = Math.max(0, h || 0);
+                                    const reg = Math.min(8, H);
+                                    const ot = Math.min(4, Math.max(0, H - 8));
+                                    const dt = Math.max(0, H - 12);
+                                    return reg * 1 + ot * 1.5 + dt * 2;
+                                  };
+
+                                  const effectiveBillableRate = isEmprig
+                                    ? adjustedBillableWage // EMPRIG billable stays 1x
+                                    : adjustedBillableWage * (hourType?.multiplier || 1);
+
+                                  const effectiveCostRate = isEmprig
+                                    ? (hours > 0
+                                        ? (adjustedCostWage * computeEmprigEffectiveHours(hours)) / hours
+                                        : adjustedCostWage)
+                                    : adjustedCostWage * (hourType?.multiplier || 1);
 
                                   return `$${effectiveCostRate.toFixed(2)}/$${effectiveBillableRate.toFixed(2)}/h`;
                                 })()}
@@ -1554,11 +1571,24 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedCostWage += 3;
                                 }
 
-                                const hourlyBaseCost = shouldUse1xRates
-                                  ? (entry as any).hours * adjustedCostWage
-                                  : (entry as any).hours *
+                                const isEmprig = entryHourType?.name === "EMPRIG";
+
+                                let hourlyBaseCost = 0;
+                                if (isEmprig) {
+                                  const h = (entry as any).hours || 0;
+                                  const reg = Math.min(8, h);
+                                  const ot = Math.min(4, Math.max(0, h - 8));
+                                  const dt = Math.max(0, h - 12);
+                                  const effectiveHours = reg * 1 + ot * 1.5 + dt * 2;
+                                  hourlyBaseCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+                                } else if (shouldUse1xRates) {
+                                  hourlyBaseCost = (entry as any).hours * adjustedCostWage;
+                                } else {
+                                  hourlyBaseCost =
+                                    (entry as any).hours *
                                     adjustedCostWage *
                                     (entryHourType?.multiplier || 1);
+                                }
 
                                 const loaCost =
                                   ((entry as any).loaCount || 0) *
@@ -1583,16 +1613,16 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   adjustedBillableWage += 3;
                                 }
 
+                                const isEmprig = entryHourType?.name === "EMPRIG";
                                 const hourlyBillable =
-                                  (entry as any).hours *
-                                  adjustedBillableWage *
-                                  (entryHourType?.multiplier || 1);
+                                  (isEmprig
+                                    ? (entry as any).hours // EMPRIG billable stays 1x
+                                    : (entry as any).hours * (entryHourType?.multiplier || 1)) *
+                                  adjustedBillableWage;
                                 const loaBillable =
                                   ((entry as any).loaCount || 0) *
                                   ((entry as any).loaAmount || 200);
-                                return (hourlyBillable + loaBillable).toFixed(
-                                  2,
-                                );
+                                return (hourlyBillable + loaBillable).toFixed(2);
                               })()}
                             </div>
                           </TableCell>
@@ -1655,18 +1685,29 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                           adjustedCostWage += 3;
                                         }
 
-                                        const hourlyBaseCost = shouldUse1xRates
-                                          ? (entry as any).hours * adjustedCostWage
-                                          : (entry as any).hours *
+                                        const isEmprig = entryHourType?.name === "EMPRIG";
+
+                                        let hourlyBaseCost = 0;
+                                        if (isEmprig) {
+                                          const h = (entry as any).hours || 0;
+                                          const reg = Math.min(8, h);
+                                          const ot = Math.min(4, Math.max(0, h - 8));
+                                          const dt = Math.max(0, h - 12);
+                                          const effectiveHours = reg * 1 + ot * 1.5 + dt * 2;
+                                          hourlyBaseCost = effectiveHours * adjustedCostWage; // Always tiered for EMPRIG
+                                        } else if (shouldUse1xRates) {
+                                          hourlyBaseCost = (entry as any).hours * adjustedCostWage;
+                                        } else {
+                                          hourlyBaseCost =
+                                            (entry as any).hours *
                                             adjustedCostWage *
                                             (entryHourType?.multiplier || 1);
+                                        }
 
                                         const loaCost =
                                           ((entry as any).loaCount || 0) * 200;
 
-                                        return (
-                                          hourlyBaseCost + loaCost
-                                        ).toFixed(2);
+                                        return (hourlyBaseCost + loaCost).toFixed(2);
                                       })()}`,
                                       `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
                                     ],
