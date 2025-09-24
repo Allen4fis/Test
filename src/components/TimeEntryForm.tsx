@@ -28,6 +28,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -62,7 +70,7 @@ import {
 
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { toast } from "@/hooks/use-toast";
-import { TimeEntry } from "@/types";
+import { TimeEntry, RentalEntry } from "@/types";
 import {
   parseLocalDate,
   formatLocalDate,
