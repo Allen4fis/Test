@@ -135,6 +135,19 @@ const TimeEntryForm = memo(function TimeEntryForm() {
   const [duplicateEntries, setDuplicateEntries] = useState<any[]>([]);
   const [pendingSubmission, setPendingSubmission] = useState<any>(null);
 
+  // Rental edit dialog state
+  const [editingRentalEntry, setEditingRentalEntry] = useState<RentalEntry | null>(null);
+  const [rentalEditForm, setRentalEditForm] = useState({
+    rentalItemId: "",
+    jobId: "",
+    employeeId: "",
+    startDate: "",
+    endDate: "",
+    quantity: 1,
+    dspRate: "",
+    description: "",
+  });
+
   // Update title and wages when employee is selected
   useEffect(() => {
     if (formData.employeeId && !editingEntry) {
