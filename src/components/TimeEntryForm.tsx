@@ -693,6 +693,42 @@ const TimeEntryForm = memo(function TimeEntryForm() {
     }
   };
 
+  const handleRentalEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRentalEntry) return;
+    if (!rentalEditForm.rentalItemId || !rentalEditForm.jobId || !rentalEditForm.startDate || !rentalEditForm.endDate) return;
+    const selectedItem = rentalItems.find((item) => item.id === rentalEditForm.rentalItemId);
+    if (!selectedItem) return;
+
+    const updates = {
+      rentalItemId: rentalEditForm.rentalItemId,
+      jobId: rentalEditForm.jobId,
+      employeeId: rentalEditForm.employeeId || undefined,
+      startDate: rentalEditForm.startDate,
+      endDate: rentalEditForm.endDate,
+      quantity: rentalEditForm.quantity,
+      billingUnit: selectedItem.unit,
+      rateUsed: selectedItem.dailyRate,
+      dspRate: rentalEditForm.dspRate ? parseFloat(rentalEditForm.dspRate) : undefined,
+      description: rentalEditForm.description,
+    };
+
+    updateRentalEntry(editingRentalEntry.id, updates);
+    setEditingRentalEntry(null);
+    setRentalEditForm({
+      rentalItemId: "",
+      jobId: "",
+      employeeId: "",
+      startDate: "",
+      endDate: "",
+      quantity: 1,
+      dspRate: "",
+      description: "",
+    });
+
+    toast({ title: "Rental Entry Updated", description: "Rental entry was updated successfully." });
+  };
+
   // Get recent entries (both time and rental entries) - Memoized for performance
   const recentEntries = useMemo(() => {
     // Combine time entries and rental entries with a type indicator and unique keys
@@ -785,7 +821,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                         return (
                           <SelectItem key={employee.id} value={employee.id}>
-                            {employee.name} - {employee.title} ��� {employeeType}
+                            {employee.name} - {employee.title} • {employeeType}
                           </SelectItem>
                         );
                       })}
