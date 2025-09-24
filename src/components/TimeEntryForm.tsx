@@ -785,7 +785,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                         return (
                           <SelectItem key={employee.id} value={employee.id}>
-                            {employee.name} - {employee.title} • {employeeType}
+                            {employee.name} - {employee.title} ��� {employeeType}
                           </SelectItem>
                         );
                       })}
@@ -1844,14 +1844,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => {
-                                  // TODO: Add rental entry editing
-                                  toast({
-                                    title: "Rental Editing",
-                                    description:
-                                      "Rental entry editing coming soon!",
-                                  });
-                                }}
+                                onClick={() => handleEditRental(entry as any)}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
