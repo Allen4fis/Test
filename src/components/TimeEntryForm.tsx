@@ -136,7 +136,8 @@ const TimeEntryForm = memo(function TimeEntryForm() {
   const [pendingSubmission, setPendingSubmission] = useState<any>(null);
 
   // Rental edit dialog state
-  const [editingRentalEntry, setEditingRentalEntry] = useState<RentalEntry | null>(null);
+  const [editingRentalEntry, setEditingRentalEntry] =
+    useState<RentalEntry | null>(null);
   const [rentalEditForm, setRentalEditForm] = useState({
     rentalItemId: "",
     jobId: "",
@@ -364,7 +365,10 @@ const TimeEntryForm = memo(function TimeEntryForm() {
         // If duplicates found, show dialog for confirmation
         if (duplicateEntries.length > 0) {
           setDuplicateEntries(duplicateEntries);
-          setPendingSubmission({ hourEntries: computedHourEntries, rentalEntries });
+          setPendingSubmission({
+            hourEntries: computedHourEntries,
+            rentalEntries,
+          });
           setShowDuplicateDialog(true);
           return;
         }
@@ -373,7 +377,9 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       if (editingEntry) {
         // For editing, we still use the single entry approach
         const hours =
-          computedHourEntries.length > 0 ? parseFloat(computedHourEntries[0].hours) : 0;
+          computedHourEntries.length > 0
+            ? parseFloat(computedHourEntries[0].hours)
+            : 0;
         const hourTypeId =
           computedHourEntries.length > 0
             ? computedHourEntries[0].hourTypeId
@@ -696,8 +702,16 @@ const TimeEntryForm = memo(function TimeEntryForm() {
   const handleRentalEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingRentalEntry) return;
-    if (!rentalEditForm.rentalItemId || !rentalEditForm.jobId || !rentalEditForm.startDate || !rentalEditForm.endDate) return;
-    const selectedItem = rentalItems.find((item) => item.id === rentalEditForm.rentalItemId);
+    if (
+      !rentalEditForm.rentalItemId ||
+      !rentalEditForm.jobId ||
+      !rentalEditForm.startDate ||
+      !rentalEditForm.endDate
+    )
+      return;
+    const selectedItem = rentalItems.find(
+      (item) => item.id === rentalEditForm.rentalItemId,
+    );
     if (!selectedItem) return;
 
     const updates = {
@@ -709,7 +723,9 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       quantity: rentalEditForm.quantity,
       billingUnit: selectedItem.unit,
       rateUsed: selectedItem.dailyRate,
-      dspRate: rentalEditForm.dspRate ? parseFloat(rentalEditForm.dspRate) : undefined,
+      dspRate: rentalEditForm.dspRate
+        ? parseFloat(rentalEditForm.dspRate)
+        : undefined,
       description: rentalEditForm.description,
     };
 
@@ -726,7 +742,10 @@ const TimeEntryForm = memo(function TimeEntryForm() {
       description: "",
     });
 
-    toast({ title: "Rental Entry Updated", description: "Rental entry was updated successfully." });
+    toast({
+      title: "Rental Entry Updated",
+      description: "Rental entry was updated successfully.",
+    });
   };
 
   // Get recent entries (both time and rental entries) - Memoized for performance
@@ -1576,20 +1595,30 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                               </div>
                               <div className="text-xs text-gray-400 mt-1">
                                 {(() => {
-                                  let adjustedBillableWage = (entry as any).billableWageUsed || 0;
-                                  let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                  const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "NS Employee Rig";
-                                  const isEmprigNS = hourType?.name === "NS Employee Rig";
+                                  let adjustedBillableWage =
+                                    (entry as any).billableWageUsed || 0;
+                                  let adjustedCostWage =
+                                    (entry as any).costWageUsed || 0;
+                                  const isEmprig =
+                                    hourType?.name === "Employee Rig" ||
+                                    hourType?.name === "NS Employee Rig";
+                                  const isEmprigNS =
+                                    hourType?.name === "NS Employee Rig";
 
                                   // Add $3 for NS hour types (nightshift premium) to BOTH cost and billable
-                                  if (hourType?.name.startsWith("NS ") && hourType?.name !== "NS Employee Rig") {
+                                  if (
+                                    hourType?.name.startsWith("NS ") &&
+                                    hourType?.name !== "NS Employee Rig"
+                                  ) {
                                     adjustedBillableWage += 3;
                                     adjustedCostWage += 3;
                                   }
 
                                   // Calculate effective rates
                                   const hours = (entry as any).hours || 0;
-                                  const computeEmprigEffectiveHours = (h: number) => {
+                                  const computeEmprigEffectiveHours = (
+                                    h: number,
+                                  ) => {
                                     const H = Math.max(0, h || 0);
                                     const reg = Math.min(8, H);
                                     const ot = Math.min(4, Math.max(0, H - 8));
@@ -1599,13 +1628,17 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                                   const effectiveBillableRate = isEmprig
                                     ? adjustedBillableWage // EMPRIG billable stays 1x
-                                    : adjustedBillableWage * (hourType?.multiplier || 1);
+                                    : adjustedBillableWage *
+                                      (hourType?.multiplier || 1);
 
                                   const effectiveCostRate = isEmprig
-                                    ? (hours > 0
-                                        ? (adjustedCostWage * computeEmprigEffectiveHours(hours)) / hours
-                                        : adjustedCostWage)
-                                    : adjustedCostWage * (hourType?.multiplier || 1);
+                                    ? hours > 0
+                                      ? (adjustedCostWage *
+                                          computeEmprigEffectiveHours(hours)) /
+                                        hours
+                                      : adjustedCostWage
+                                    : adjustedCostWage *
+                                      (hourType?.multiplier || 1);
 
                                   return `$${effectiveCostRate.toFixed(2)}/$${effectiveBillableRate.toFixed(2)}/h`;
                                 })()}
@@ -1638,13 +1671,20 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 );
 
                                 // Apply nightshift premium to cost wage
-                                let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                if (entryHourType?.name.startsWith("NS ") && entryHourType?.name !== "NS Employee Rig") {
+                                let adjustedCostWage =
+                                  (entry as any).costWageUsed || 0;
+                                if (
+                                  entryHourType?.name.startsWith("NS ") &&
+                                  entryHourType?.name !== "NS Employee Rig"
+                                ) {
                                   adjustedCostWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "NS Employee Rig";
-                                const isEmprigNS = entryHourType?.name === "NS Employee Rig";
+                                const isEmprig =
+                                  entryHourType?.name === "Employee Rig" ||
+                                  entryHourType?.name === "NS Employee Rig";
+                                const isEmprigNS =
+                                  entryHourType?.name === "NS Employee Rig";
 
                                 let hourlyBaseCost = 0;
                                 if (isEmprig) {
@@ -1652,10 +1692,16 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                   const reg = Math.min(8, h);
                                   const ot = Math.min(4, Math.max(0, h - 8));
                                   const dt = Math.max(0, h - 12);
-                                  const effectiveHours = reg * 1 + ot * 1.5 + dt * 2;
-                                  hourlyBaseCost = effectiveHours * adjustedCostWage + (isEmprigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0); // Rig tiered; NS adds premium
+                                  const effectiveHours =
+                                    reg * 1 + ot * 1.5 + dt * 2;
+                                  hourlyBaseCost =
+                                    effectiveHours * adjustedCostWage +
+                                    (isEmprigNS
+                                      ? reg * 3 + ot * 4.5 + dt * 6
+                                      : 0); // Rig tiered; NS adds premium
                                 } else if (shouldUse1xRates) {
-                                  hourlyBaseCost = (entry as any).hours * adjustedCostWage;
+                                  hourlyBaseCost =
+                                    (entry as any).hours * adjustedCostWage;
                                 } else {
                                   hourlyBaseCost =
                                     (entry as any).hours *
@@ -1681,13 +1727,20 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 );
 
                                 // Apply nightshift premium to billable wage
-                                let adjustedBillableWage = (entry as any).billableWageUsed || 0;
-                                if (entryHourType?.name.startsWith("NS ") && entryHourType?.name !== "NS Employee Rig") {
+                                let adjustedBillableWage =
+                                  (entry as any).billableWageUsed || 0;
+                                if (
+                                  entryHourType?.name.startsWith("NS ") &&
+                                  entryHourType?.name !== "NS Employee Rig"
+                                ) {
                                   adjustedBillableWage += 3;
                                 }
 
-                                const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "NS Employee Rig";
-                                const isEmprigNS = entryHourType?.name === "NS Employee Rig";
+                                const isEmprig =
+                                  entryHourType?.name === "Employee Rig" ||
+                                  entryHourType?.name === "NS Employee Rig";
+                                const isEmprigNS =
+                                  entryHourType?.name === "NS Employee Rig";
                                 const h3 = (entry as any).hours || 0;
                                 const reg3 = Math.min(8, h3);
                                 const ot3 = Math.min(4, Math.max(0, h3 - 8));
@@ -1695,12 +1748,18 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                 const hourlyBillable =
                                   (isEmprig
                                     ? (entry as any).hours // Rig billable stays 1x base
-                                    : (entry as any).hours * (entryHourType?.multiplier || 1)) *
-                                  adjustedBillableWage + (isEmprigNS ? (reg3 * 3 + ot3 * 4.5 + dt3 * 6) : 0);
+                                    : (entry as any).hours *
+                                      (entryHourType?.multiplier || 1)) *
+                                    adjustedBillableWage +
+                                  (isEmprigNS
+                                    ? reg3 * 3 + ot3 * 4.5 + dt3 * 6
+                                    : 0);
                                 const loaBillable =
                                   ((entry as any).loaCount || 0) *
                                   ((entry as any).loaAmount || 200);
-                                return (hourlyBillable + loaBillable).toFixed(2);
+                                return (hourlyBillable + loaBillable).toFixed(
+                                  2,
+                                );
                               })()}
                             </div>
                           </TableCell>
@@ -1754,28 +1813,52 @@ const TimeEntryForm = memo(function TimeEntryForm() {
 
                                         // Find hourType within the calculation scope
                                         const entryHourType = hourTypes.find(
-                                          (ht) => ht.id === (entry as any).hourTypeId,
+                                          (ht) =>
+                                            ht.id === (entry as any).hourTypeId,
                                         );
 
                                         // Apply nightshift premium to cost wage
-                                        let adjustedCostWage = (entry as any).costWageUsed || 0;
-                                        if (entryHourType?.name.startsWith("NS ") && entryHourType?.name !== "NS Employee Rig") {
+                                        let adjustedCostWage =
+                                          (entry as any).costWageUsed || 0;
+                                        if (
+                                          entryHourType?.name.startsWith(
+                                            "NS ",
+                                          ) &&
+                                          entryHourType?.name !==
+                                            "NS Employee Rig"
+                                        ) {
                                           adjustedCostWage += 3;
                                         }
 
-                                        const isEmprig = entryHourType?.name === "Employee Rig" || entryHourType?.name === "NS Employee Rig";
-                                const isEmprigNS = entryHourType?.name === "NS Employee Rig";
+                                        const isEmprig =
+                                          entryHourType?.name ===
+                                            "Employee Rig" ||
+                                          entryHourType?.name ===
+                                            "NS Employee Rig";
+                                        const isEmprigNS =
+                                          entryHourType?.name ===
+                                          "NS Employee Rig";
 
                                         let hourlyBaseCost = 0;
                                         if (isEmprig) {
                                           const h = (entry as any).hours || 0;
                                           const reg = Math.min(8, h);
-                                          const ot = Math.min(4, Math.max(0, h - 8));
+                                          const ot = Math.min(
+                                            4,
+                                            Math.max(0, h - 8),
+                                          );
                                           const dt = Math.max(0, h - 12);
-                                          const effectiveHours = reg * 1 + ot * 1.5 + dt * 2;
-                                          hourlyBaseCost = effectiveHours * adjustedCostWage + (isEmprigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0); // Rig tiered; NS adds premium
+                                          const effectiveHours =
+                                            reg * 1 + ot * 1.5 + dt * 2;
+                                          hourlyBaseCost =
+                                            effectiveHours * adjustedCostWage +
+                                            (isEmprigNS
+                                              ? reg * 3 + ot * 4.5 + dt * 6
+                                              : 0); // Rig tiered; NS adds premium
                                         } else if (shouldUse1xRates) {
-                                          hourlyBaseCost = (entry as any).hours * adjustedCostWage;
+                                          hourlyBaseCost =
+                                            (entry as any).hours *
+                                            adjustedCostWage;
                                         } else {
                                           hourlyBaseCost =
                                             (entry as any).hours *
@@ -1786,7 +1869,9 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                                         const loaCost =
                                           ((entry as any).loaCount || 0) * 200;
 
-                                        return (hourlyBaseCost + loaCost).toFixed(2);
+                                        return (
+                                          hourlyBaseCost + loaCost
+                                        ).toFixed(2);
                                       })()}`,
                                       `Created: ${new Date(entry.createdAt).toLocaleDateString()}`,
                                     ],
@@ -1990,7 +2075,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                 <Label className="text-right">Rental Item *</Label>
                 <Select
                   value={rentalEditForm.rentalItemId}
-                  onValueChange={(value) => setRentalEditForm({ ...rentalEditForm, rentalItemId: value })}
+                  onValueChange={(value) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      rentalItemId: value,
+                    })
+                  }
                 >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select rental item" />
@@ -2011,7 +2101,9 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                 <Label className="text-right">Job *</Label>
                 <Select
                   value={rentalEditForm.jobId}
-                  onValueChange={(value) => setRentalEditForm({ ...rentalEditForm, jobId: value })}
+                  onValueChange={(value) =>
+                    setRentalEditForm({ ...rentalEditForm, jobId: value })
+                  }
                 >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select job" />
@@ -2032,7 +2124,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                 <Label className="text-right">Employee</Label>
                 <Select
                   value={rentalEditForm.employeeId}
-                  onValueChange={(value) => setRentalEditForm({ ...rentalEditForm, employeeId: value === "none" ? "" : value })}
+                  onValueChange={(value) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      employeeId: value === "none" ? "" : value,
+                    })
+                  }
                 >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select employee (optional)" />
@@ -2055,7 +2152,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                 <Input
                   type="date"
                   value={rentalEditForm.startDate}
-                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, startDate: e.target.value })}
+                  onChange={(e) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      startDate: e.target.value,
+                    })
+                  }
                   className="col-span-3"
                   required
                 />
@@ -2066,7 +2168,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                 <Input
                   type="date"
                   value={rentalEditForm.endDate}
-                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, endDate: e.target.value })}
+                  onChange={(e) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      endDate: e.target.value,
+                    })
+                  }
                   className="col-span-3"
                   required
                 />
@@ -2079,7 +2186,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                   min="1"
                   step="1"
                   value={rentalEditForm.quantity}
-                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, quantity: parseInt(e.target.value) || 1 })}
+                  onChange={(e) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      quantity: parseInt(e.target.value) || 1,
+                    })
+                  }
                   className="col-span-3"
                   required
                 />
@@ -2092,7 +2204,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                   min="0"
                   step="0.01"
                   value={rentalEditForm.dspRate}
-                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, dspRate: e.target.value })}
+                  onChange={(e) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      dspRate: e.target.value,
+                    })
+                  }
                   className="col-span-3"
                   placeholder="Enter DSP rate (optional)"
                 />
@@ -2102,7 +2219,12 @@ const TimeEntryForm = memo(function TimeEntryForm() {
                 <Label className="text-right">Description</Label>
                 <Textarea
                   value={rentalEditForm.description}
-                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setRentalEditForm({
+                      ...rentalEditForm,
+                      description: e.target.value,
+                    })
+                  }
                   className="col-span-3"
                   placeholder="Optional description"
                 />
