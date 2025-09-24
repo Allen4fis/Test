@@ -662,6 +662,20 @@ const TimeEntryForm = memo(function TimeEntryForm() {
     resetForm();
   };
 
+  const handleEditRental = (entry: RentalEntry) => {
+    setEditingRentalEntry(entry);
+    setRentalEditForm({
+      rentalItemId: entry.rentalItemId,
+      jobId: entry.jobId,
+      employeeId: entry.employeeId || "",
+      startDate: entry.startDate,
+      endDate: entry.endDate,
+      quantity: entry.quantity,
+      dspRate: entry.dspRate?.toString() || "",
+      description: entry.description || "",
+    });
+  };
+
   const handleDelete = (entry: TimeEntry) => {
     try {
       deleteTimeEntry(entry.id);
