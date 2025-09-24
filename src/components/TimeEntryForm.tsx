@@ -1956,6 +1956,165 @@ const TimeEntryForm = memo(function TimeEntryForm() {
         date={formData.date}
         duplicates={duplicateEntries}
       />
+
+      {/* Edit Rental Entry Dialog (from Recent Entries) */}
+      <Dialog
+        open={editingRentalEntry !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingRentalEntry(null);
+            setRentalEditForm({
+              rentalItemId: "",
+              jobId: "",
+              employeeId: "",
+              startDate: "",
+              endDate: "",
+              quantity: 1,
+              dspRate: "",
+              description: "",
+            });
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Rental Entry</DialogTitle>
+            <DialogDescription>
+              Update the rental entry information.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleRentalEditSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Rental Item *</Label>
+                <Select
+                  value={rentalEditForm.rentalItemId}
+                  onValueChange={(value) => setRentalEditForm({ ...rentalEditForm, rentalItemId: value })}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select rental item" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rentalItems
+                      .filter((item) => item.isActive)
+                      .map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name} - ${item.dailyRate.toFixed(2)}/{item.unit}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Job *</Label>
+                <Select
+                  value={rentalEditForm.jobId}
+                  onValueChange={(value) => setRentalEditForm({ ...rentalEditForm, jobId: value })}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select job" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {jobs
+                      .filter((job) => job.isActive)
+                      .map((job) => (
+                        <SelectItem key={job.id} value={job.id}>
+                          {job.jobNumber} - {job.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Employee</Label>
+                <Select
+                  value={rentalEditForm.employeeId}
+                  onValueChange={(value) => setRentalEditForm({ ...rentalEditForm, employeeId: value === "none" ? "" : value })}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select employee (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No Employee</SelectItem>
+                    {employees
+                      .filter((employee) => employee.isActive !== false)
+                      .map((employee) => (
+                        <SelectItem key={employee.id} value={employee.id}>
+                          {employee.name} - {employee.title}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Start Date *</Label>
+                <Input
+                  type="date"
+                  value={rentalEditForm.startDate}
+                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, startDate: e.target.value })}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">End Date *</Label>
+                <Input
+                  type="date"
+                  value={rentalEditForm.endDate}
+                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, endDate: e.target.value })}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Quantity *</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={rentalEditForm.quantity}
+                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, quantity: parseInt(e.target.value) || 1 })}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">DSP Rate</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={rentalEditForm.dspRate}
+                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, dspRate: e.target.value })}
+                  className="col-span-3"
+                  placeholder="Enter DSP rate (optional)"
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Description</Label>
+                <Textarea
+                  value={rentalEditForm.description}
+                  onChange={(e) => setRentalEditForm({ ...rentalEditForm, description: e.target.value })}
+                  className="col-span-3"
+                  placeholder="Optional description"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="submit">Update Entry</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 });
