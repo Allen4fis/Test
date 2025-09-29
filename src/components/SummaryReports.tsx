@@ -2324,9 +2324,9 @@ export function SummaryReports() {
                                           "NS Regular Time",
                                           "Overtime",
                                           "NS Overtime",
-                                          "Travel Hours",
                                           "Double Time",
                                           "NS Double Time",
+                                          "Travel Hours",
                                           "Holiday",
                                           "Stat Holiday",
                                           "NS Stat Holiday",
@@ -2381,9 +2381,9 @@ export function SummaryReports() {
                                           "NS Regular Time",
                                           "Overtime",
                                           "NS Overtime",
-                                          "Travel Hours",
                                           "Double Time",
                                           "NS Double Time",
+                                          "Travel Hours",
                                           "Holiday",
                                           "Stat Holiday",
                                           "NS Stat Holiday",
@@ -2774,18 +2774,18 @@ export function SummaryReports() {
                                               {Object.entries(subordinate.hourTypeBreakdown)
                                                 .sort(([a], [b]) => {
                                                   const order = [
-                                                    "Regular Time",
-                                                    "NS Regular Time",
-                                                    "Overtime",
-                                                    "NS Overtime",
-                                                    "Travel Hours",
-                                                    "Double Time",
-                                                    "NS Double Time",
-                                                    "Holiday",
-                                                    "Stat Holiday",
-                                                    "NS Stat Holiday",
-                                                    "Stat Holiday OT",
-                                                  ];
+                                          "Regular Time",
+                                          "NS Regular Time",
+                                          "Overtime",
+                                          "NS Overtime",
+                                          "Double Time",
+                                          "NS Double Time",
+                                          "Travel Hours",
+                                          "Holiday",
+                                          "Stat Holiday",
+                                          "NS Stat Holiday",
+                                          "Stat Holiday OT",
+                                        ];
                                                   const ai = order.indexOf(a);
                                                   const bi = order.indexOf(b);
                                                   const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
@@ -2833,18 +2833,18 @@ export function SummaryReports() {
                                               )
                                                 .sort(([a], [b]) => {
                                                   const order = [
-                                                    "Regular Time",
-                                                    "NS Regular Time",
-                                                    "Overtime",
-                                                    "NS Overtime",
-                                                    "Travel Hours",
-                                                    "Double Time",
-                                                    "NS Double Time",
-                                                    "Holiday",
-                                                    "Stat Holiday",
-                                                    "NS Stat Holiday",
-                                                    "Stat Holiday OT",
-                                                  ];
+                                          "Regular Time",
+                                          "NS Regular Time",
+                                          "Overtime",
+                                          "NS Overtime",
+                                          "Double Time",
+                                          "NS Double Time",
+                                          "Travel Hours",
+                                          "Holiday",
+                                          "Stat Holiday",
+                                          "NS Stat Holiday",
+                                          "Stat Holiday OT",
+                                        ];
                                                   const ai = order.indexOf(a);
                                                   const bi = order.indexOf(b);
                                                   const aIndex =
