@@ -2316,6 +2316,63 @@ export function SummaryReports() {
                                   <h4 className="text-sm font-semibold text-gray-300">
                                     Hour Type Breakdown
                                   </h4>
+                                  <div className="flex flex-wrap gap-2 p-2 rounded border bg-gray-800/60 border-gray-700">
+                                    {Object.entries(employee.hourTypeBreakdown)
+                                      .sort(([a], [b]) => {
+                                        const order = [
+                                          "Regular Time",
+                                          "NS Regular Time",
+                                          "Overtime",
+                                          "NS Overtime",
+                                          "Travel Hours",
+                                          "Double Time",
+                                          "NS Double Time",
+                                          "Holiday",
+                                          "Stat Holiday",
+                                          "NS Stat Holiday",
+                                          "Stat Holiday OT",
+                                        ];
+                                        const ai = order.indexOf(a);
+                                        const bi = order.indexOf(b);
+                                        const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
+                                        const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                                        return aIndex - bIndex;
+                                      })
+                                      .map(([hourType, data]: [string, any]) => {
+                                        const color =
+                                          hourType === "Regular Time"
+                                            ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
+                                            : hourType === "NS Regular Time"
+                                            ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
+                                            : hourType === "Overtime"
+                                            ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
+                                            : hourType === "NS Overtime"
+                                            ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
+                                            : hourType === "Travel Hours"
+                                            ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
+                                            : hourType === "Double Time"
+                                            ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
+                                            : hourType === "NS Double Time"
+                                            ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
+                                            : hourType === "Holiday"
+                                            ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
+                                            : hourType === "Stat Holiday"
+                                            ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
+                                            : hourType === "NS Stat Holiday"
+                                            ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
+                                            : hourType === "Stat Holiday OT"
+                                            ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
+                                            : "bg-gray-700/40 border-gray-500/60 text-gray-200";
+                                        return (
+                                          <div
+                                            key={`banner-${hourType}`}
+                                            className={`px-2 py-1 rounded border text-xs font-semibold ${color}`}
+                                          >
+                                            {data.hours.toFixed(2)}h — {hourType}
+                                          </div>
+                                        );
+                                      })}
+                                  </div>
                                   <div className="grid gap-2">
                                     {Object.entries(employee.hourTypeBreakdown)
                                       .sort(([a], [b]) => {
@@ -2713,6 +2770,63 @@ export function SummaryReports() {
                                             <h5 className="text-xs font-semibold text-blue-300 mb-1">
                                               Hour Type Breakdown
                                             </h5>
+                                            <div className="flex flex-wrap gap-2 p-2 rounded border bg-blue-900/40 border-blue-700 mb-1">
+                                              {Object.entries(subordinate.hourTypeBreakdown)
+                                                .sort(([a], [b]) => {
+                                                  const order = [
+                                                    "Regular Time",
+                                                    "NS Regular Time",
+                                                    "Overtime",
+                                                    "NS Overtime",
+                                                    "Travel Hours",
+                                                    "Double Time",
+                                                    "NS Double Time",
+                                                    "Holiday",
+                                                    "Stat Holiday",
+                                                    "NS Stat Holiday",
+                                                    "Stat Holiday OT",
+                                                  ];
+                                                  const ai = order.indexOf(a);
+                                                  const bi = order.indexOf(b);
+                                                  const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
+                                                  const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                                                  return aIndex - bIndex;
+                                                })
+                                                .map(([hourType, data]: [string, any]) => {
+                                                  const color =
+                                                    hourType === "Regular Time"
+                                                      ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
+                                                      : hourType === "NS Regular Time"
+                                                      ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
+                                                      : hourType === "Overtime"
+                                                      ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
+                                                      : hourType === "NS Overtime"
+                                                      ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
+                                                      : hourType === "Travel Hours"
+                                                      ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
+                                                      : hourType === "Double Time"
+                                                      ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
+                                                      : hourType === "NS Double Time"
+                                                      ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
+                                                      : hourType === "Holiday"
+                                                      ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
+                                                      : hourType === "Stat Holiday"
+                                                      ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
+                                                      : hourType === "NS Stat Holiday"
+                                                      ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
+                                                      : hourType === "Stat Holiday OT"
+                                                      ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
+                                                      : "bg-gray-700/40 border-gray-500/60 text-gray-200";
+                                                  return (
+                                                    <div
+                                                      key={`banner-sub-${hourType}`}
+                                                      className={`px-2 py-1 rounded border text-[10px] font-semibold ${color}`}
+                                                    >
+                                                      {data.hours.toFixed(2)}h — {hourType}
+                                                    </div>
+                                                  );
+                                                })}
+                                            </div>
                                             <div className="grid gap-1">
                                               {Object.entries(
                                                 subordinate.hourTypeBreakdown,
