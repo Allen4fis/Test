@@ -438,8 +438,13 @@ export default function SummaryReportsOptimized() {
   const weeklyRegularOver40 = useMemo(() => {
     try {
       const regularHourTypeIds = hourTypes
-        .filter(
-          (ht) => ht.name === "Regular Time" || ht.name === "NS Regular Time",
+        .filter((ht) =>
+          [
+            "Regular Time",
+            "NS Regular Time",
+            "Stat Holiday",
+            "Stat Holiday (1X)",
+          ].includes(ht.name),
         )
         .map((ht) => ht.id);
       const rigIds = hourTypes
