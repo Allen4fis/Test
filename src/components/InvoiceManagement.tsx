@@ -1318,28 +1318,83 @@ export function InvoiceManagement() {
               const groupedTimeEntries = getSortedGroupedTimeEntries(
                 getGroupedTimeEntries(breakdown.timeEntries),
               );
-              const totalLOA = breakdown.timeEntries.reduce(
-                (sum, entry) => sum + (entry.loaCount || 0),
-                0,
-              );
+              const employeesWithLOA: EmployeeLoaDetail[] = (() => {
+                const loaEntriesForDay = timeEntries.filter(
+                  (entry) =>
+                    entry.jobId === selectedJobForBreakdown.id &&
+                    entry.date === selectedDateForBreakdown &&
+                    (entry.loaCount || 0) > 0,
+                );
 
-              // Get employees with Live Out Allowances
-              const employeesWithLOA = breakdown.timeEntries
-                .filter((entry) => (entry.loaCount || 0) > 0)
-                .reduce((acc, entry) => {
-                  const existingEmployee = acc.find(
-                    (emp) => emp.name === entry.employeeName,
-                  );
-                  if (existingEmployee) {
-                    existingEmployee.allowances += entry.loaCount || 0;
+                if (loaEntriesForDay.length === 0) {
+                  return breakdown.timeEntries
+                    .filter((entry) => (entry.loaCount || 0) > 0)
+                    .reduce((acc: EmployeeLoaDetail[], entry) => {
+                      const allowances = entry.loaCount || 0;
+                      if (allowances <= 0) {
+                        return acc;
+                      }
+
+                      const existingEmployee = acc.find(
+                        (emp) => emp.name === entry.employeeName,
+                      );
+
+                      if (existingEmployee) {
+                        existingEmployee.allowances += allowances;
+                        existingEmployee.totalCost += allowances * 200;
+                      } else {
+                        acc.push({
+                          name: entry.employeeName,
+                          allowances,
+                          totalCost: allowances * 200,
+                        });
+                      }
+
+                      return acc;
+                    }, []);
+                }
+
+                const detailsMap = new Map<string, EmployeeLoaDetail>();
+
+                loaEntriesForDay.forEach((entry) => {
+                  const allowances = entry.loaCount || 0;
+                  if (allowances <= 0) {
+                    return;
+                  }
+
+                  const perLoaAmount = entry.loaAmount ?? 200;
+                  const totalCost = allowances * perLoaAmount;
+                  const summary = summaryByEntryId.get(entry.id);
+                  const employeeName =
+                    employees.find((emp) => emp.id === entry.employeeId)?.name ||
+                    summary?.employeeName ||
+                    "Unknown Employee";
+                  const key = entry.employeeId || employeeName;
+
+                  const existing = detailsMap.get(key);
+                  if (existing) {
+                    existing.allowances += allowances;
+                    existing.totalCost += totalCost;
                   } else {
-                    acc.push({
-                      name: entry.employeeName,
-                      allowances: entry.loaCount || 0,
+                    detailsMap.set(key, {
+                      name: employeeName,
+                      allowances,
+                      totalCost,
                     });
                   }
-                  return acc;
-                }, []);
+                });
+
+                return Array.from(detailsMap.values());
+              })();
+
+              const totalLoaCount = employeesWithLOA.reduce(
+                (sum, employee) => sum + employee.allowances,
+                0,
+              );
+              const totalLoaCost = employeesWithLOA.reduce(
+                (sum, employee) => sum + employee.totalCost,
+                0,
+              );
 
               return (
                 <div className="space-y-6">
