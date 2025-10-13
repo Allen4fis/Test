@@ -298,6 +298,9 @@ export function InvoiceManagement() {
         // Update cost wage to reflect the most recent entry's wage (in case it changed)
         existingEmployee.costWage = entry.costWage;
         existingEmployee.billableWage = entry.billableWage;
+        if (!existingEmployee.notes) {
+          existingEmployee.notes = [];
+        }
         if (note && !existingEmployee.notes.includes(note)) {
           existingEmployee.notes.push(note);
         }
