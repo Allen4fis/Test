@@ -2551,14 +2551,25 @@ export function SummaryReports() {
                                                               0 && (
                                                               <span className="text-yellow-400">
                                                                 {" "}
-                                                                +{" "}
-                                                                {
-                                                                  entry.loaCount
-                                                                }{" "}
-                                                                LOA ($
-                                                                {entry.loaCost.toFixed(
-                                                                  2,
-                                                                )}
+                                                                + {entry.loaCount} LOA (${entry.loaCost.toFixed(2)} total
+                                                                {(() => {
+                                                                  const perLoaAmount =
+                                                                    entry.loaCount && entry.loaCount > 0
+                                                                      ? entry.loaAmount !== undefined
+                                                                        ? entry.loaAmount
+                                                                        : entry.loaCost / entry.loaCount
+                                                                      : 0;
+                                                                  const amountClass =
+                                                                    Math.abs(perLoaAmount - 200) > 0.01
+                                                                      ? "text-amber-200"
+                                                                      : "text-gray-300";
+                                                                  return (
+                                                                    <span className={amountClass}>
+                                                                      {" "}
+                                                                      @ ${perLoaAmount.toFixed(2)}
+                                                                    </span>
+                                                                  );
+                                                                })()}
                                                                 )
                                                               </span>
                                                             )}
@@ -3094,17 +3105,28 @@ export function SummaryReports() {
                                                                       {entry.loaCount >
                                                                         0 && (
                                                                         <span className="text-yellow-400">
-                                                                          {" "}
-                                                                          +{" "}
-                                                                          {
-                                                                            entry.loaCount
-                                                                          }{" "}
-                                                                          LOA ($
-                                                                          {entry.loaCost.toFixed(
-                                                                            2,
-                                                                          )}
-                                                                          )
-                                                                        </span>
+                                                                {" "}
+                                                                + {entry.loaCount} LOA (${entry.loaCost.toFixed(2)} total
+                                                                {(() => {
+                                                                  const perLoaAmount =
+                                                                    entry.loaCount && entry.loaCount > 0
+                                                                      ? entry.loaAmount !== undefined
+                                                                        ? entry.loaAmount
+                                                                        : entry.loaCost / entry.loaCount
+                                                                      : 0;
+                                                                  const amountClass =
+                                                                    Math.abs(perLoaAmount - 200) > 0.01
+                                                                      ? "text-amber-200"
+                                                                      : "text-gray-300";
+                                                                  return (
+                                                                    <span className={amountClass}>
+                                                                      {" "}
+                                                                      @ ${perLoaAmount.toFixed(2)}
+                                                                    </span>
+                                                                  );
+                                                                })()}
+                                                                )
+                                                              </span>
                                                                       )}
                                                                       {entry.loaCount >
                                                                         0 && (
