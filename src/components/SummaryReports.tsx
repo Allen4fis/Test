@@ -175,6 +175,16 @@ export function SummaryReports() {
   const [includeUnpaid, setIncludeUnpaid] = useState(true);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
+  const toggleJobSelection = (jobNumber: string) => {
+    setSelectedJobs((prev) =>
+      prev.includes(jobNumber)
+        ? prev.filter((num) => num !== jobNumber)
+        : [...prev, jobNumber],
+    );
+  };
+
+  const isJobSelected = (jobNumber: string) => selectedJobs.includes(jobNumber);
+
   // Filter time entries based on criteria
   const filteredSummaries = useMemo(() => {
     return timeEntrySummaries.filter((summary) => {
