@@ -145,70 +145,109 @@ const EmployeeCard = memo(({ employee, gstAmount }: any) => {
 
 const SubordinateCard = memo(({ subordinate }: any) => {
   return ErrorBoundaryUtils.createSafeWrapper(
-    () => (
-      <div className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3 space-y-3">
-        <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-              ↳
-            </span>
-            <div>
-              <div className="font-medium text-blue-300">
-                {subordinate.employeeName}
+    () => {
+      const loaAmountDetails: Record<string, number> =
+        subordinate.loaAmountDetails || {};
+      const uniqueLoaAmounts = Object.keys(loaAmountDetails)
+        .map((amount) => parseFloat(amount))
+        .filter((amount) => !Number.isNaN(amount))
+        .sort((a, b) => a - b);
+      const loaCount = subordinate.totalLoaCount || 0;
+      const totalLoaAmount = subordinate.totalLoaAmount || 0;
+      const hasAdjustedLoa =
+        subordinate.hasAdjustedLoa ||
+        uniqueLoaAmounts.some((amount) => Math.abs(amount - 200) > 0.01);
+      const loaAmountSummary = uniqueLoaAmounts
+        .map((amount) => `$${amount.toFixed(2)}`)
+        .join(", ");
+      const loaTextColor =
+        loaCount > 0
+          ? hasAdjustedLoa
+            ? "text-amber-300"
+            : "text-purple-300"
+          : "text-blue-400";
+
+      return (
+        <div className="relative bg-blue-900/10 border border-blue-500/30 rounded-lg p-3 space-y-3">
+          <div className="absolute -left-4 top-4 w-3 h-3 border-l-2 border-b-2 border-blue-400"></div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+                ↳
+              </span>
+              <div>
+                <div className="font-medium text-blue-300">
+                  {subordinate.employeeName}
+                </div>
+                <div className="text-xs text-blue-200">
+                  {subordinate.employeeTitle}
+                </div>
               </div>
-              <div className="text-xs text-blue-200">
-                {subordinate.employeeTitle}
+            </div>
+          </div>
+          <div className="grid grid-cols-6 gap-3 text-center">
+            <div className="text-center">
+              <div className="font-semibold text-blue-300">
+                {subordinate.totalHours.toFixed(2)}h
+              </div>
+              <div className="text-xs text-blue-400">Hours</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-yellow-300">
+                $
+                {subordinate.totalHours > 0
+                  ? (subordinate.totalCost / subordinate.totalHours).toFixed(2)
+                  : "0.00"}
+                /h
+              </div>
+              <div className="text-xs text-blue-400">Hourly Cost</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-green-300">
+                ${subordinate.totalCost.toFixed(2)}
+              </div>
+              <div className="text-xs text-blue-400">Labor Cost</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-orange-300">
+                ${(subordinate.gstAmount || 0).toFixed(2)}
+              </div>
+              <div className="text-xs text-blue-400">GST</div>
+            </div>
+            <div className="text-center">
+              <div
+                className={`font-semibold ${subordinate.totalDspEarnings > 0 ? "text-cyan-300" : "text-blue-400"}`}
+              >
+                ${subordinate.totalDspEarnings.toFixed(2)}
+              </div>
+              <div className="text-xs text-blue-400">DSP Earnings</div>
+            </div>
+            <div className="flex flex-col items-center gap-1 text-center">
+              <div className={`font-semibold ${loaTextColor}`}>
+                {loaCount}
+              </div>
+              <div className="text-xs text-blue-400 flex flex-col items-center gap-0.5">
+                <span>LOA{hasAdjustedLoa ? " (adj)" : ""}</span>
+                {loaCount > 0 && (
+                  <span
+                    className={`text-[10px] ${
+                      hasAdjustedLoa ? "text-amber-200" : "text-blue-300"
+                    }`}
+                  >
+                    ${totalLoaAmount.toFixed(2)} total
+                  </span>
+                )}
+                {hasAdjustedLoa && loaAmountSummary && (
+                  <span className="text-[10px] text-amber-200">
+                    @ {loaAmountSummary}
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-6 gap-3 text-center">
-          <div className="text-center">
-            <div className="font-semibold text-blue-300">
-              {subordinate.totalHours.toFixed(2)}h
-            </div>
-            <div className="text-xs text-blue-400">Hours</div>
-          </div>
-          <div className="text-center">
-            <div className="font-semibold text-yellow-300">
-              $
-              {subordinate.totalHours > 0
-                ? (subordinate.totalCost / subordinate.totalHours).toFixed(2)
-                : "0.00"}
-              /h
-            </div>
-            <div className="text-xs text-blue-400">Hourly Cost</div>
-          </div>
-          <div className="text-center">
-            <div className="font-semibold text-green-300">
-              ${subordinate.totalCost.toFixed(2)}
-            </div>
-            <div className="text-xs text-blue-400">Labor Cost</div>
-          </div>
-          <div className="text-center">
-            <div className="font-semibold text-orange-300">
-              ${(subordinate.gstAmount || 0).toFixed(2)}
-            </div>
-            <div className="text-xs text-blue-400">GST</div>
-          </div>
-          <div className="text-center">
-            <div
-              className={`font-semibold ${subordinate.totalDspEarnings > 0 ? "text-cyan-300" : "text-blue-400"}`}
-            >
-              ${subordinate.totalDspEarnings.toFixed(2)}
-            </div>
-            <div className="text-xs text-blue-400">DSP Earnings</div>
-          </div>
-          <div className="text-center">
-            <div className="font-semibold text-purple-300">
-              {subordinate.totalLoaCount || 0}
-            </div>
-            <div className="text-xs text-blue-400">LOA</div>
-          </div>
-        </div>
-      </div>
-    ),
+      );
+    },
     <div className="text-red-400 p-3">Error loading subordinate</div>,
     `Failed to render subordinate card for ${subordinate.employeeName}`,
   );
