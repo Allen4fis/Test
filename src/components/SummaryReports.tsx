@@ -320,7 +320,7 @@ export function SummaryReports() {
     rentalSummaries,
     dateFilter,
     selectedEmployees,
-    jobFilter,
+    selectedJobs,
     includeInvoiced,
     includeUninvoiced,
     includePaid,
