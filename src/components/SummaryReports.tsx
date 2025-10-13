@@ -3007,13 +3007,30 @@ export function SummaryReports() {
                                                             0 && (
                                                             <span className="text-yellow-400">
                                                               {" "}
-                                                              + {
-                                                                data.loaCount
-                                                              }{" "}
-                                                              LOA ($
-                                                              {data.loaCost.toFixed(
-                                                                2,
-                                                              )}
+                                                              + {data.loaCount} LOA (${data.loaCost.toFixed(2)} total
+                                                              {(() => {
+                                                                const loaAmountDetails: Record<string, number> =
+                                                                  data.loaAmounts || {};
+                                                                const uniqueLoaAmounts = Object.keys(loaAmountDetails)
+                                                                  .map((amount) => parseFloat(amount))
+                                                                  .filter((amount) => !Number.isNaN(amount))
+                                                                  .sort((a, b) => a - b);
+                                                                const hasAdjustedLoa = uniqueLoaAmounts.some(
+                                                                  (amount) => Math.abs(amount - 200) > 0.01,
+                                                                );
+                                                                if (!hasAdjustedLoa || uniqueLoaAmounts.length === 0) {
+                                                                  return null;
+                                                                }
+                                                                const summary = uniqueLoaAmounts
+                                                                  .map((amount) => `$${amount.toFixed(2)}`)
+                                                                  .join(", ");
+                                                                return (
+                                                                  <span className="text-amber-200">
+                                                                    {" "}
+                                                                    @ {summary}
+                                                                  </span>
+                                                                );
+                                                              })()}
                                                               )
                                                             </span>
                                                           )}
