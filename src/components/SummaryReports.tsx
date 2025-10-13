@@ -434,21 +434,38 @@ export function SummaryReports() {
             loaCount: 0,
             provinces: {},
             rateEntries: [],
+            loaAmounts: {},
           };
         }
 
-        // Find the actual time entry to get the correct loaAmount
+        const employeeRecord = employees.find(
+          (emp) => emp.name === summary.employeeName,
+        );
+        const hourTypeRecord = hourTypes.find(
+          (ht) => ht.name === summary.hourTypeName,
+        );
         const timeEntry = timeEntries.find(
           (entry) =>
-            entry.employeeId ===
-              employees.find((emp) => emp.name === summary.employeeName)?.id &&
+            entry.employeeId === employeeRecord?.id &&
             entry.date === summary.date &&
-            hourTypes.find((ht) => ht.name === summary.hourTypeName)?.id ===
-              entry.hourTypeId,
+            entry.hourTypeId === hourTypeRecord?.id,
         );
         const actualLoaAmount = timeEntry?.loaAmount || 200;
         const loaCost = (summary.loaCount || 0) * actualLoaAmount;
         const hourlyCost = summary.totalCost - loaCost;
+
+        group.totalLoaAmount = (group.totalLoaAmount || 0) + loaCost;
+        if (summary.loaCount) {
+          const amountKey = actualLoaAmount.toFixed(2);
+          group.loaAmountDetails[amountKey] =
+            (group.loaAmountDetails[amountKey] || 0) + summary.loaCount;
+          group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] =
+            (group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] || 0) +
+            summary.loaCount;
+          if (Math.abs(actualLoaAmount - 200) > 0.01) {
+            group.hasAdjustedLoa = true;
+          }
+        }
 
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
@@ -460,25 +477,8 @@ export function SummaryReports() {
 
         // Track individual rate entries for this hour type
         if (summary.hours > 0) {
-          // Calculate the actual hourly rate used for this entry
-          // Since totalCost includes LOA costs, we need to calculate just the hourly portion
-          // Find the actual time entry to get the correct loaAmount
-          const timeEntry = timeEntries.find(
-            (entry) =>
-              entry.employeeId ===
-                employees.find((emp) => emp.name === summary.employeeName)
-                  ?.id &&
-              entry.date === summary.date &&
-              hourTypes.find((ht) => ht.name === summary.hourTypeName)?.id ===
-                entry.hourTypeId,
-          );
-          const actualLoaAmount = timeEntry?.loaAmount || 200;
-          const loaCost = (summary.loaCount || 0) * actualLoaAmount;
-          const hourlyCost = summary.totalCost - loaCost;
-
-          // Calculate the effective hourly rate (what they were paid per actual hour worked)
-          // This should show the multiplied rate (e.g., $37.50 for 1.5x overtime at $25 base)
-          const effectiveHourlyRate = hourlyCost / summary.hours; // Rate per actual hour worked
+          const effectiveHourlyRate =
+            summary.hours > 0 ? hourlyCost / summary.hours : 0;
 
           group.hourTypeBreakdown[hourTypeName].rateEntries.push({
             date: summary.date,
@@ -488,6 +488,7 @@ export function SummaryReports() {
             hourlyRate: effectiveHourlyRate,
             hourlyCost: hourlyCost,
             loaCount: summary.loaCount || 0,
+            loaAmount: actualLoaAmount,
             loaCost: loaCost,
             totalCost: summary.totalCost,
           });
