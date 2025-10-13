@@ -113,6 +113,7 @@ const formatLoaCostValue = (amount: number): string => {
 export function InvoiceManagement() {
   const {
     jobs,
+    employees,
     timeEntries,
     timeEntrySummaries,
     rentalSummaries,
