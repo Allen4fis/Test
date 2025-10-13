@@ -255,7 +255,7 @@ export function SummaryReports() {
     timeEntrySummaries,
     dateFilter,
     selectedEmployees,
-    jobFilter,
+    selectedJobs,
     provinceFilter,
     billableFilter,
     includeInvoiced,
