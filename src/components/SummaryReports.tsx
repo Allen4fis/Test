@@ -1192,7 +1192,7 @@ export function SummaryReports() {
   const resetFilters = () => {
     setDateFilter(getInitialDateFilter());
     setSelectedEmployees([]);
-    setJobFilter("all-jobs");
+    setSelectedJobs([]);
     setProvinceFilter("all-provinces");
     setBillableFilter("all");
     setEmployeeTypeFilter("all");
