@@ -1348,6 +1348,7 @@ export function InvoiceManagement() {
                           name: entry.employeeName,
                           allowances,
                           totalCost: allowances * 200,
+                          hasAdjustedAmount: false,
                         });
                       }
 
