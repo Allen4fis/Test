@@ -223,9 +223,7 @@ const SubordinateCard = memo(({ subordinate }: any) => {
               <div className="text-xs text-blue-400">DSP Earnings</div>
             </div>
             <div className="flex flex-col items-center gap-1 text-center">
-              <div className={`font-semibold ${loaTextColor}`}>
-                {loaCount}
-              </div>
+              <div className={`font-semibold ${loaTextColor}`}>{loaCount}</div>
               <div className="text-xs text-blue-400 flex flex-col items-center gap-0.5">
                 <span>LOA{hasAdjustedLoa ? " (adj)" : ""}</span>
                 {loaCount > 0 && (
@@ -292,26 +290,26 @@ const HourTypeBreakdown = memo(
                   hourType === "Regular Time"
                     ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
                     : hourType === "NS Regular Time"
-                    ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
-                    : hourType === "Overtime"
-                    ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
-                    : hourType === "NS Overtime"
-                    ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
-                    : hourType === "Travel Hours"
-                    ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
-                    : hourType === "Double Time"
-                    ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
-                    : hourType === "NS Double Time"
-                    ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
-                    : hourType === "Holiday"
-                    ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
-                    : hourType === "Stat Holiday"
-                    ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
-                    : hourType === "NS Stat Holiday"
-                    ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
-                    : hourType === "Stat Holiday OT"
-                    ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
-                    : "bg-gray-700/40 border-gray-500/60 text-gray-200";
+                      ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
+                      : hourType === "Overtime"
+                        ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
+                        : hourType === "NS Overtime"
+                          ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
+                          : hourType === "Travel Hours"
+                            ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
+                            : hourType === "Double Time"
+                              ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
+                              : hourType === "NS Double Time"
+                                ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
+                                : hourType === "Holiday"
+                                  ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
+                                  : hourType === "Stat Holiday"
+                                    ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
+                                    : hourType === "NS Stat Holiday"
+                                      ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
+                                      : hourType === "Stat Holiday OT"
+                                        ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
+                                        : "bg-gray-700/40 border-gray-500/60 text-gray-200";
                 return (
                   <div
                     key={`banner-${hourType}`}
@@ -367,12 +365,14 @@ const HourTypeBreakdown = memo(
                         {hourType}
                       </span>
                       <div className="text-sm text-gray-300">
-                        {data.hours.toFixed(2)}h ({data.effectiveHours.toFixed(2)}{" "}
-                        effective) - ${data.hourlyCost.toFixed(2)}
+                        {data.hours.toFixed(2)}h (
+                        {data.effectiveHours.toFixed(2)} effective) - $
+                        {data.hourlyCost.toFixed(2)}
                         {data.loaCount > 0 && (
                           <span className="text-yellow-400">
                             {" "}
-                            + {data.loaCount} LOA (${data.loaCost.toFixed(2)} total
+                            + {data.loaCount} LOA (${data.loaCost.toFixed(2)}{" "}
+                            total
                             {aggregatedLoaSummary && (
                               <span className="text-amber-200">
                                 {" "}
@@ -420,7 +420,9 @@ const HourTypeBreakdown = memo(
                                 key={`${entry.date}-${index}`}
                                 className="text-xs bg-gray-600/30 px-2 py-1 rounded flex justify-between items-center"
                               >
-                                <span className="text-gray-300">{entry.date}</span>
+                                <span className="text-gray-300">
+                                  {entry.date}
+                                </span>
                                 <span className="text-gray-200">
                                   {entry.hours.toFixed(2)}h
                                   {entry.effectiveHours !== entry.hours && (
@@ -434,7 +436,8 @@ const HourTypeBreakdown = memo(
                                   {entry.loaCount > 0 && (
                                     <span className="text-yellow-400">
                                       {" "}
-                                      + {entry.loaCount} LOA (${entry.loaCost.toFixed(2)} total
+                                      + {entry.loaCount} LOA ($
+                                      {entry.loaCost.toFixed(2)} total
                                       <span className={entryLoaColor}>
                                         {" "}
                                         @ ${entryLoaAmount.toFixed(2)}
@@ -566,7 +569,9 @@ export default function SummaryReportsOptimized() {
         )
         .map((ht) => ht.id);
       const rigIds = hourTypes
-        .filter((ht) => ht.name === "Employee Rig" || ht.name === "NS Employee Rig")
+        .filter(
+          (ht) => ht.name === "Employee Rig" || ht.name === "NS Employee Rig",
+        )
         .map((ht) => ht.id);
 
       const getWeekStartSunday = (dateStr: string) => {
@@ -675,7 +680,9 @@ export default function SummaryReportsOptimized() {
           }
 
           acc[key].hours += entry.hours;
-          const isRigTiered = hourType.name === "Employee Rig" || hourType.name === "NS Employee Rig";
+          const isRigTiered =
+            hourType.name === "Employee Rig" ||
+            hourType.name === "NS Employee Rig";
           const isRigNS = hourType.name === "NS Employee Rig";
           const eff = isRigTiered
             ? computeEmprigEffectiveHours(entry.hours)
@@ -823,20 +830,24 @@ export default function SummaryReportsOptimized() {
           if (summary.loaAmounts) {
             Object.entries(summary.loaAmounts).forEach(([amountKey, count]) => {
               group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] =
-                (group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] || 0) +
-                (count as number);
+                (group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] ||
+                  0) + (count as number);
             });
           }
 
           // Track rate entries for detailed breakdown
-          if (Array.isArray(summary.rateEntries) && summary.rateEntries.length > 0) {
+          if (
+            Array.isArray(summary.rateEntries) &&
+            summary.rateEntries.length > 0
+          ) {
             summary.rateEntries.forEach((entryDetail: any) => {
               const fallbackHourlyRate =
                 entryDetail.hourlyRate !== undefined
                   ? entryDetail.hourlyRate
                   : entryDetail.hours > 0
-                  ? entryDetail.hourlyCost / Math.max(entryDetail.hours || 0, 0.0001)
-                  : 0;
+                    ? entryDetail.hourlyCost /
+                      Math.max(entryDetail.hours || 0, 0.0001)
+                    : 0;
               group.hourTypeBreakdown[hourTypeName].rateEntries.push({
                 ...entryDetail,
                 hourlyRate: fallbackHourlyRate,

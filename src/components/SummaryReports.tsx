@@ -184,21 +184,18 @@ export function SummaryReports() {
 
   const jobSearchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const focusJobSearchInput = useCallback(
-    (cursorPosition: number) => {
-      if (typeof window === "undefined") return;
-      window.requestAnimationFrame(() => {
-        if (jobSearchInputRef.current) {
-          jobSearchInputRef.current.focus();
-          jobSearchInputRef.current.setSelectionRange(
-            cursorPosition,
-            cursorPosition,
-          );
-        }
-      });
-    },
-    [],
-  );
+  const focusJobSearchInput = useCallback((cursorPosition: number) => {
+    if (typeof window === "undefined") return;
+    window.requestAnimationFrame(() => {
+      if (jobSearchInputRef.current) {
+        jobSearchInputRef.current.focus();
+        jobSearchInputRef.current.setSelectionRange(
+          cursorPosition,
+          cursorPosition,
+        );
+      }
+    });
+  }, []);
 
   const toggleJobSelection = (jobNumber: string) => {
     setSelectedJobs((prev) =>
@@ -233,9 +230,7 @@ export function SummaryReports() {
     return sortedJobs.filter((job) => {
       const jobNumberLower = job.jobNumber.toLowerCase();
       const jobNameLower = (job.name || "").toLowerCase();
-      return (
-        jobNumberLower.includes(query) || jobNameLower.includes(query)
-      );
+      return jobNumberLower.includes(query) || jobNameLower.includes(query);
     });
   }, [sortedJobs, jobSearchTerm]);
 
@@ -379,10 +374,7 @@ export function SummaryReports() {
       }
 
       // Job filter
-      if (
-        selectedJobs.length > 0 &&
-        !selectedJobs.includes(rental.jobNumber)
-      ) {
+      if (selectedJobs.length > 0 && !selectedJobs.includes(rental.jobNumber)) {
         return false;
       }
 
@@ -810,7 +802,10 @@ export function SummaryReports() {
               let entryCost = 0;
 
               // Add $3 for NS hour types
-              if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
+              if (
+                hourType.name.startsWith("NS ") &&
+                hourType.name !== "NS Employee Rig"
+              ) {
                 adjustedCostWage += 3;
               }
 
@@ -898,7 +893,10 @@ export function SummaryReports() {
             let adjustedCostWage = entry.costWageUsed || 0;
             let entryCost = 0;
 
-            if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
+            if (
+              hourType.name.startsWith("NS ") &&
+              hourType.name !== "NS Employee Rig"
+            ) {
               adjustedCostWage += 3;
             }
 
@@ -1015,7 +1013,10 @@ export function SummaryReports() {
               let entryCost = 0;
 
               // Add $3 for NS hour types
-              if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
+              if (
+                hourType.name.startsWith("NS ") &&
+                hourType.name !== "NS Employee Rig"
+              ) {
                 adjustedCostWage += 3;
               }
 
@@ -1103,7 +1104,10 @@ export function SummaryReports() {
             let adjustedCostWage = entry.costWageUsed || 0;
             let entryCost = 0;
 
-            if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
+            if (
+              hourType.name.startsWith("NS ") &&
+              hourType.name !== "NS Employee Rig"
+            ) {
               adjustedCostWage += 3;
             }
 
@@ -1520,7 +1524,10 @@ export function SummaryReports() {
                             setJobSearchTerm("");
                             focusJobSearchInput(0);
                           }}
-                          disabled={selectedJobs.length === 0 && jobSearchTerm.trim() === ""}
+                          disabled={
+                            selectedJobs.length === 0 &&
+                            jobSearchTerm.trim() === ""
+                          }
                           className="text-orange-400 hover:text-orange-300 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed"
                         >
                           Clear
@@ -1529,7 +1536,9 @@ export function SummaryReports() {
                       <Input
                         ref={jobSearchInputRef}
                         value={jobSearchTerm}
-                        onChange={(event) => setJobSearchTerm(event.target.value)}
+                        onChange={(event) =>
+                          setJobSearchTerm(event.target.value)
+                        }
                         placeholder="Search job number or name"
                         className="bg-gray-900 border-gray-700 text-gray-100 h-8 text-sm mb-3"
                         autoComplete="off"
@@ -1554,7 +1563,9 @@ export function SummaryReports() {
                                   type="checkbox"
                                   className="mt-1 w-4 h-4 text-orange-500 bg-gray-900 border-gray-600 rounded focus:ring-orange-500"
                                   checked={checked}
-                                  onChange={() => toggleJobSelection(job.jobNumber)}
+                                  onChange={() =>
+                                    toggleJobSelection(job.jobNumber)
+                                  }
                                 />
                                 <div className="flex-1">
                                   <div className="text-sm text-gray-100">
@@ -1809,7 +1820,11 @@ export function SummaryReports() {
                             .map((ht) => ht.id),
                         );
                         const rigIds = hourTypes
-                          .filter((ht) => ht.name === "Employee Rig" || ht.name === "NS Employee Rig")
+                          .filter(
+                            (ht) =>
+                              ht.name === "Employee Rig" ||
+                              ht.name === "NS Employee Rig",
+                          )
                           .map((ht) => ht.id);
                         const getWeekStartSunday = (dateStr: string) => {
                           const d = parseLocalDate(dateStr);
@@ -2127,18 +2142,25 @@ export function SummaryReports() {
                                 </div>
                                 <div>
                                   {(() => {
-                                    const loaCount = employee.totalLoaCount || 0;
-                                    const totalLoaAmount = employee.totalLoaAmount || 0;
-                                    const loaAmountDetails: Record<string, number> =
-                                      employee.loaAmountDetails || {};
-                                    const uniqueLoaAmounts = Object.keys(loaAmountDetails)
+                                    const loaCount =
+                                      employee.totalLoaCount || 0;
+                                    const totalLoaAmount =
+                                      employee.totalLoaAmount || 0;
+                                    const loaAmountDetails: Record<
+                                      string,
+                                      number
+                                    > = employee.loaAmountDetails || {};
+                                    const uniqueLoaAmounts = Object.keys(
+                                      loaAmountDetails,
+                                    )
                                       .map((amount) => parseFloat(amount))
                                       .filter((amount) => !Number.isNaN(amount))
                                       .sort((a, b) => a - b);
                                     const hasAdjustedLoa =
                                       employee.hasAdjustedLoa ||
                                       uniqueLoaAmounts.some(
-                                        (amount) => Math.abs(amount - 200) > 0.01,
+                                        (amount) =>
+                                          Math.abs(amount - 200) > 0.01,
                                       );
                                     const loaAmountSummary = uniqueLoaAmounts
                                       .map((amount) => `$${amount.toFixed(2)}`)
@@ -2155,21 +2177,28 @@ export function SummaryReports() {
 
                                     return (
                                       <div className="flex flex-col items-center gap-1">
-                                        <div className={`text-lg font-bold ${valueClass}`}>
+                                        <div
+                                          className={`text-lg font-bold ${valueClass}`}
+                                        >
                                           {loaCount}
                                         </div>
                                         <div className="text-xs text-gray-400 flex flex-col items-center gap-0.5">
-                                          <span>LOA{hasAdjustedLoa ? " (adj)" : ""}</span>
+                                          <span>
+                                            LOA{hasAdjustedLoa ? " (adj)" : ""}
+                                          </span>
                                           {loaCount > 0 && (
-                                            <span className={`text-[10px] ${totalClass}`}>
+                                            <span
+                                              className={`text-[10px] ${totalClass}`}
+                                            >
                                               ${totalLoaAmount.toFixed(2)} total
                                             </span>
                                           )}
-                                          {hasAdjustedLoa && loaAmountSummary && (
-                                            <span className="text-[10px] text-amber-200">
-                                              @ {loaAmountSummary}
-                                            </span>
-                                          )}
+                                          {hasAdjustedLoa &&
+                                            loaAmountSummary && (
+                                              <span className="text-[10px] text-amber-200">
+                                                @ {loaAmountSummary}
+                                              </span>
+                                            )}
                                         </div>
                                       </div>
                                     );
@@ -2524,44 +2553,60 @@ export function SummaryReports() {
                                         ];
                                         const ai = order.indexOf(a);
                                         const bi = order.indexOf(b);
-                                        const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
-                                        const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                                        const aIndex =
+                                          ai === -1
+                                            ? 100 + a.localeCompare(b)
+                                            : ai;
+                                        const bIndex =
+                                          bi === -1
+                                            ? 100 + b.localeCompare(a)
+                                            : bi;
                                         return aIndex - bIndex;
                                       })
-                                      .map(([hourType, data]: [string, any]) => {
-                                        const color =
-                                          hourType === "Regular Time"
-                                            ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
-                                            : hourType === "NS Regular Time"
-                                            ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
-                                            : hourType === "Overtime"
-                                            ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
-                                            : hourType === "NS Overtime"
-                                            ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
-                                            : hourType === "Travel Hours"
-                                            ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
-                                            : hourType === "Double Time"
-                                            ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
-                                            : hourType === "NS Double Time"
-                                            ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
-                                            : hourType === "Holiday"
-                                            ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
-                                            : hourType === "Stat Holiday"
-                                            ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
-                                            : hourType === "NS Stat Holiday"
-                                            ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
-                                            : hourType === "Stat Holiday OT"
-                                            ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
-                                            : "bg-gray-700/40 border-gray-500/60 text-gray-200";
-                                        return (
-                                          <div
-                                            key={`banner-${hourType}`}
-                                            className={`px-2 py-1 rounded border text-xs font-semibold ${color}`}
-                                          >
-                                            {data.hours.toFixed(2)}h — {hourType}
-                                          </div>
-                                        );
-                                      })}
+                                      .map(
+                                        ([hourType, data]: [string, any]) => {
+                                          const color =
+                                            hourType === "Regular Time"
+                                              ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
+                                              : hourType === "NS Regular Time"
+                                                ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
+                                                : hourType === "Overtime"
+                                                  ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
+                                                  : hourType === "NS Overtime"
+                                                    ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
+                                                    : hourType ===
+                                                        "Travel Hours"
+                                                      ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
+                                                      : hourType ===
+                                                          "Double Time"
+                                                        ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
+                                                        : hourType ===
+                                                            "NS Double Time"
+                                                          ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
+                                                          : hourType ===
+                                                              "Holiday"
+                                                            ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
+                                                            : hourType ===
+                                                                "Stat Holiday"
+                                                              ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
+                                                              : hourType ===
+                                                                  "NS Stat Holiday"
+                                                                ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
+                                                                : hourType ===
+                                                                    "Stat Holiday OT"
+                                                                  ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
+                                                                  : "bg-gray-700/40 border-gray-500/60 text-gray-200";
+                                          return (
+                                            <div
+                                              key={`banner-${hourType}`}
+                                              className={`px-2 py-1 rounded border text-xs font-semibold ${color}`}
+                                            >
+                                              {data.hours.toFixed(2)}h —{" "}
+                                              {hourType}
+                                            </div>
+                                          );
+                                        },
+                                      )}
                                   </div>
                                   <div className="grid gap-2">
                                     {Object.entries(employee.hourTypeBreakdown)
@@ -2609,24 +2654,51 @@ export function SummaryReports() {
                                                 {data.loaCount > 0 && (
                                                   <span className="text-yellow-400">
                                                     {" "}
-                                                    + {data.loaCount} LOA (${data.loaCost.toFixed(2)} total
+                                                    + {data.loaCount} LOA ($
+                                                    {data.loaCost.toFixed(2)}{" "}
+                                                    total
                                                     {(() => {
-                                                      const loaAmountDetails: Record<string, number> =
-                                                        data.loaAmounts || {};
-                                                      const uniqueLoaAmounts = Object.keys(loaAmountDetails)
-                                                        .map((amount) => parseFloat(amount))
-                                                        .filter((amount) => !Number.isNaN(amount))
-                                                        .sort((a, b) => a - b);
-                                                      const hasAdjustedLoa = uniqueLoaAmounts.some(
-                                                        (amount) =>
-                                                          Math.abs(amount - 200) > 0.01,
-                                                      );
-                                                      if (!hasAdjustedLoa || uniqueLoaAmounts.length === 0) {
+                                                      const loaAmountDetails: Record<
+                                                        string,
+                                                        number
+                                                      > = data.loaAmounts || {};
+                                                      const uniqueLoaAmounts =
+                                                        Object.keys(
+                                                          loaAmountDetails,
+                                                        )
+                                                          .map((amount) =>
+                                                            parseFloat(amount),
+                                                          )
+                                                          .filter(
+                                                            (amount) =>
+                                                              !Number.isNaN(
+                                                                amount,
+                                                              ),
+                                                          )
+                                                          .sort(
+                                                            (a, b) => a - b,
+                                                          );
+                                                      const hasAdjustedLoa =
+                                                        uniqueLoaAmounts.some(
+                                                          (amount) =>
+                                                            Math.abs(
+                                                              amount - 200,
+                                                            ) > 0.01,
+                                                        );
+                                                      if (
+                                                        !hasAdjustedLoa ||
+                                                        uniqueLoaAmounts.length ===
+                                                          0
+                                                      ) {
                                                         return null;
                                                       }
-                                                      const summary = uniqueLoaAmounts
-                                                        .map((amount) => `$${amount.toFixed(2)}`)
-                                                        .join(", ");
+                                                      const summary =
+                                                        uniqueLoaAmounts
+                                                          .map(
+                                                            (amount) =>
+                                                              `$${amount.toFixed(2)}`,
+                                                          )
+                                                          .join(", ");
                                                       return (
                                                         <span className="text-amber-200">
                                                           {" "}
@@ -2705,22 +2777,44 @@ export function SummaryReports() {
                                                               0 && (
                                                               <span className="text-yellow-400">
                                                                 {" "}
-                                                                + {entry.loaCount} LOA (${entry.loaCost.toFixed(2)} total
+                                                                +{" "}
+                                                                {
+                                                                  entry.loaCount
+                                                                }{" "}
+                                                                LOA ($
+                                                                {entry.loaCost.toFixed(
+                                                                  2,
+                                                                )}{" "}
+                                                                total
                                                                 {(() => {
                                                                   const perLoaAmount =
-                                                                    entry.loaCount && entry.loaCount > 0
-                                                                      ? entry.loaAmount !== undefined
+                                                                    entry.loaCount &&
+                                                                    entry.loaCount >
+                                                                      0
+                                                                      ? entry.loaAmount !==
+                                                                        undefined
                                                                         ? entry.loaAmount
-                                                                        : entry.loaCost / entry.loaCount
+                                                                        : entry.loaCost /
+                                                                          entry.loaCount
                                                                       : 0;
                                                                   const amountClass =
-                                                                    Math.abs(perLoaAmount - 200) > 0.01
+                                                                    Math.abs(
+                                                                      perLoaAmount -
+                                                                        200,
+                                                                    ) > 0.01
                                                                       ? "text-amber-200"
                                                                       : "text-gray-300";
                                                                   return (
-                                                                    <span className={amountClass}>
+                                                                    <span
+                                                                      className={
+                                                                        amountClass
+                                                                      }
+                                                                    >
                                                                       {" "}
-                                                                      @ ${perLoaAmount.toFixed(2)}
+                                                                      @ $
+                                                                      {perLoaAmount.toFixed(
+                                                                        2,
+                                                                      )}
                                                                     </span>
                                                                   );
                                                                 })()}
@@ -2939,22 +3033,39 @@ export function SummaryReports() {
                                         </div>
                                         <div className="text-center">
                                           {(() => {
-                                            const loaCount = subordinate.totalLoaCount || 0;
-                                            const totalLoaAmount = subordinate.totalLoaAmount || 0;
-                                            const loaAmountDetails: Record<string, number> =
-                                              subordinate.loaAmountDetails || {};
-                                            const uniqueLoaAmounts = Object.keys(loaAmountDetails)
-                                              .map((amount) => parseFloat(amount))
-                                              .filter((amount) => !Number.isNaN(amount))
-                                              .sort((a, b) => a - b);
+                                            const loaCount =
+                                              subordinate.totalLoaCount || 0;
+                                            const totalLoaAmount =
+                                              subordinate.totalLoaAmount || 0;
+                                            const loaAmountDetails: Record<
+                                              string,
+                                              number
+                                            > =
+                                              subordinate.loaAmountDetails ||
+                                              {};
+                                            const uniqueLoaAmounts =
+                                              Object.keys(loaAmountDetails)
+                                                .map((amount) =>
+                                                  parseFloat(amount),
+                                                )
+                                                .filter(
+                                                  (amount) =>
+                                                    !Number.isNaN(amount),
+                                                )
+                                                .sort((a, b) => a - b);
                                             const hasAdjustedLoa =
                                               subordinate.hasAdjustedLoa ||
                                               uniqueLoaAmounts.some(
-                                                (amount) => Math.abs(amount - 200) > 0.01,
+                                                (amount) =>
+                                                  Math.abs(amount - 200) > 0.01,
                                               );
-                                            const loaAmountSummary = uniqueLoaAmounts
-                                              .map((amount) => `$${amount.toFixed(2)}`)
-                                              .join(", ");
+                                            const loaAmountSummary =
+                                              uniqueLoaAmounts
+                                                .map(
+                                                  (amount) =>
+                                                    `$${amount.toFixed(2)}`,
+                                                )
+                                                .join(", ");
                                             const valueClass =
                                               loaCount > 0
                                                 ? hasAdjustedLoa
@@ -2967,21 +3078,35 @@ export function SummaryReports() {
 
                                             return (
                                               <div className="flex flex-col items-center gap-1">
-                                                <div className={`font-semibold ${valueClass}`}>
+                                                <div
+                                                  className={`font-semibold ${valueClass}`}
+                                                >
                                                   {loaCount}
                                                 </div>
                                                 <div className="text-xs text-blue-400 flex flex-col items-center gap-0.5">
-                                                  <span>LOA{hasAdjustedLoa ? " (adj)" : ""}</span>
+                                                  <span>
+                                                    LOA
+                                                    {hasAdjustedLoa
+                                                      ? " (adj)"
+                                                      : ""}
+                                                  </span>
                                                   {loaCount > 0 && (
-                                                    <span className={`text-[10px] ${totalClass}`}>
-                                                      ${totalLoaAmount.toFixed(2)} total
+                                                    <span
+                                                      className={`text-[10px] ${totalClass}`}
+                                                    >
+                                                      $
+                                                      {totalLoaAmount.toFixed(
+                                                        2,
+                                                      )}{" "}
+                                                      total
                                                     </span>
                                                   )}
-                                                  {hasAdjustedLoa && loaAmountSummary && (
-                                                    <span className="text-[10px] text-amber-200">
-                                                      @ {loaAmountSummary}
-                                                    </span>
-                                                  )}
+                                                  {hasAdjustedLoa &&
+                                                    loaAmountSummary && (
+                                                      <span className="text-[10px] text-amber-200">
+                                                        @ {loaAmountSummary}
+                                                      </span>
+                                                    )}
                                                 </div>
                                               </div>
                                             );
@@ -3038,61 +3163,86 @@ export function SummaryReports() {
                                               Hour Type Breakdown
                                             </h5>
                                             <div className="flex flex-wrap gap-2 p-2 rounded border bg-blue-900/40 border-blue-700 mb-1">
-                                              {Object.entries(subordinate.hourTypeBreakdown)
+                                              {Object.entries(
+                                                subordinate.hourTypeBreakdown,
+                                              )
                                                 .sort(([a], [b]) => {
                                                   const order = [
-                                          "Regular Time",
-                                          "NS Regular Time",
-                                          "Overtime",
-                                          "NS Overtime",
-                                          "Double Time",
-                                          "NS Double Time",
-                                          "Travel Hours",
-                                          "Holiday",
-                                          "Stat Holiday",
-                                          "NS Stat Holiday",
-                                          "Stat Holiday OT",
-                                        ];
+                                                    "Regular Time",
+                                                    "NS Regular Time",
+                                                    "Overtime",
+                                                    "NS Overtime",
+                                                    "Double Time",
+                                                    "NS Double Time",
+                                                    "Travel Hours",
+                                                    "Holiday",
+                                                    "Stat Holiday",
+                                                    "NS Stat Holiday",
+                                                    "Stat Holiday OT",
+                                                  ];
                                                   const ai = order.indexOf(a);
                                                   const bi = order.indexOf(b);
-                                                  const aIndex = ai === -1 ? 100 + a.localeCompare(b) : ai;
-                                                  const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
+                                                  const aIndex =
+                                                    ai === -1
+                                                      ? 100 + a.localeCompare(b)
+                                                      : ai;
+                                                  const bIndex =
+                                                    bi === -1
+                                                      ? 100 + b.localeCompare(a)
+                                                      : bi;
                                                   return aIndex - bIndex;
                                                 })
-                                                .map(([hourType, data]: [string, any]) => {
-                                                  const color =
-                                                    hourType === "Regular Time"
-                                                      ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
-                                                      : hourType === "NS Regular Time"
-                                                      ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
-                                                      : hourType === "Overtime"
-                                                      ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
-                                                      : hourType === "NS Overtime"
-                                                      ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
-                                                      : hourType === "Travel Hours"
-                                                      ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
-                                                      : hourType === "Double Time"
-                                                      ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
-                                                      : hourType === "NS Double Time"
-                                                      ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
-                                                      : hourType === "Holiday"
-                                                      ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
-                                                      : hourType === "Stat Holiday"
-                                                      ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
-                                                      : hourType === "NS Stat Holiday"
-                                                      ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
-                                                      : hourType === "Stat Holiday OT"
-                                                      ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
-                                                      : "bg-gray-700/40 border-gray-500/60 text-gray-200";
-                                                  return (
-                                                    <div
-                                                      key={`banner-sub-${hourType}`}
-                                                      className={`px-2 py-1 rounded border text-[10px] font-semibold ${color}`}
-                                                    >
-                                                      {data.hours.toFixed(2)}h — {hourType}
-                                                    </div>
-                                                  );
-                                                })}
+                                                .map(
+                                                  ([hourType, data]: [
+                                                    string,
+                                                    any,
+                                                  ]) => {
+                                                    const color =
+                                                      hourType ===
+                                                      "Regular Time"
+                                                        ? "bg-emerald-700/40 border-emerald-500/60 text-emerald-200"
+                                                        : hourType ===
+                                                            "NS Regular Time"
+                                                          ? "bg-emerald-700/30 border-emerald-500/50 text-emerald-200"
+                                                          : hourType ===
+                                                              "Overtime"
+                                                            ? "bg-amber-700/40 border-amber-500/60 text-amber-200"
+                                                            : hourType ===
+                                                                "NS Overtime"
+                                                              ? "bg-amber-700/30 border-amber-500/50 text-amber-200"
+                                                              : hourType ===
+                                                                  "Travel Hours"
+                                                                ? "bg-sky-700/40 border-sky-500/60 text-sky-200"
+                                                                : hourType ===
+                                                                    "Double Time"
+                                                                  ? "bg-rose-700/40 border-rose-500/60 text-rose-200"
+                                                                  : hourType ===
+                                                                      "NS Double Time"
+                                                                    ? "bg-rose-700/30 border-rose-500/50 text-rose-200"
+                                                                    : hourType ===
+                                                                        "Holiday"
+                                                                      ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
+                                                                      : hourType ===
+                                                                          "Stat Holiday"
+                                                                        ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
+                                                                        : hourType ===
+                                                                            "NS Stat Holiday"
+                                                                          ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
+                                                                          : hourType ===
+                                                                              "Stat Holiday OT"
+                                                                            ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
+                                                                            : "bg-gray-700/40 border-gray-500/60 text-gray-200";
+                                                    return (
+                                                      <div
+                                                        key={`banner-sub-${hourType}`}
+                                                        className={`px-2 py-1 rounded border text-[10px] font-semibold ${color}`}
+                                                      >
+                                                        {data.hours.toFixed(2)}h
+                                                        — {hourType}
+                                                      </div>
+                                                    );
+                                                  },
+                                                )}
                                             </div>
                                             <div className="grid gap-1">
                                               {Object.entries(
@@ -3100,18 +3250,18 @@ export function SummaryReports() {
                                               )
                                                 .sort(([a], [b]) => {
                                                   const order = [
-                                          "Regular Time",
-                                          "NS Regular Time",
-                                          "Overtime",
-                                          "NS Overtime",
-                                          "Double Time",
-                                          "NS Double Time",
-                                          "Travel Hours",
-                                          "Holiday",
-                                          "Stat Holiday",
-                                          "NS Stat Holiday",
-                                          "Stat Holiday OT",
-                                        ];
+                                                    "Regular Time",
+                                                    "NS Regular Time",
+                                                    "Overtime",
+                                                    "NS Overtime",
+                                                    "Double Time",
+                                                    "NS Double Time",
+                                                    "Travel Hours",
+                                                    "Holiday",
+                                                    "Stat Holiday",
+                                                    "NS Stat Holiday",
+                                                    "Stat Holiday OT",
+                                                  ];
                                                   const ai = order.indexOf(a);
                                                   const bi = order.indexOf(b);
                                                   const aIndex =
@@ -3161,23 +3311,69 @@ export function SummaryReports() {
                                                             0 && (
                                                             <span className="text-yellow-400">
                                                               {" "}
-                                                              + {data.loaCount} LOA (${data.loaCost.toFixed(2)} total
+                                                              + {
+                                                                data.loaCount
+                                                              }{" "}
+                                                              LOA ($
+                                                              {data.loaCost.toFixed(
+                                                                2,
+                                                              )}{" "}
+                                                              total
                                                               {(() => {
-                                                                const loaAmountDetails: Record<string, number> =
-                                                                  data.loaAmounts || {};
-                                                                const uniqueLoaAmounts = Object.keys(loaAmountDetails)
-                                                                  .map((amount) => parseFloat(amount))
-                                                                  .filter((amount) => !Number.isNaN(amount))
-                                                                  .sort((a, b) => a - b);
-                                                                const hasAdjustedLoa = uniqueLoaAmounts.some(
-                                                                  (amount) => Math.abs(amount - 200) > 0.01,
-                                                                );
-                                                                if (!hasAdjustedLoa || uniqueLoaAmounts.length === 0) {
+                                                                const loaAmountDetails: Record<
+                                                                  string,
+                                                                  number
+                                                                > =
+                                                                  data.loaAmounts ||
+                                                                  {};
+                                                                const uniqueLoaAmounts =
+                                                                  Object.keys(
+                                                                    loaAmountDetails,
+                                                                  )
+                                                                    .map(
+                                                                      (
+                                                                        amount,
+                                                                      ) =>
+                                                                        parseFloat(
+                                                                          amount,
+                                                                        ),
+                                                                    )
+                                                                    .filter(
+                                                                      (
+                                                                        amount,
+                                                                      ) =>
+                                                                        !Number.isNaN(
+                                                                          amount,
+                                                                        ),
+                                                                    )
+                                                                    .sort(
+                                                                      (a, b) =>
+                                                                        a - b,
+                                                                    );
+                                                                const hasAdjustedLoa =
+                                                                  uniqueLoaAmounts.some(
+                                                                    (amount) =>
+                                                                      Math.abs(
+                                                                        amount -
+                                                                          200,
+                                                                      ) > 0.01,
+                                                                  );
+                                                                if (
+                                                                  !hasAdjustedLoa ||
+                                                                  uniqueLoaAmounts.length ===
+                                                                    0
+                                                                ) {
                                                                   return null;
                                                                 }
-                                                                const summary = uniqueLoaAmounts
-                                                                  .map((amount) => `$${amount.toFixed(2)}`)
-                                                                  .join(", ");
+                                                                const summary =
+                                                                  uniqueLoaAmounts
+                                                                    .map(
+                                                                      (
+                                                                        amount,
+                                                                      ) =>
+                                                                        `$${amount.toFixed(2)}`,
+                                                                    )
+                                                                    .join(", ");
                                                                 return (
                                                                   <span className="text-amber-200">
                                                                     {" "}
@@ -3276,28 +3472,52 @@ export function SummaryReports() {
                                                                       {entry.loaCount >
                                                                         0 && (
                                                                         <span className="text-yellow-400">
-                                                                {" "}
-                                                                + {entry.loaCount} LOA (${entry.loaCost.toFixed(2)} total
-                                                                {(() => {
-                                                                  const perLoaAmount =
-                                                                    entry.loaCount && entry.loaCount > 0
-                                                                      ? entry.loaAmount !== undefined
-                                                                        ? entry.loaAmount
-                                                                        : entry.loaCost / entry.loaCount
-                                                                      : 0;
-                                                                  const amountClass =
-                                                                    Math.abs(perLoaAmount - 200) > 0.01
-                                                                      ? "text-amber-200"
-                                                                      : "text-gray-300";
-                                                                  return (
-                                                                    <span className={amountClass}>
-                                                                      {" "}
-                                                                      @ ${perLoaAmount.toFixed(2)}
-                                                                    </span>
-                                                                  );
-                                                                })()}
-                                                                )
-                                                              </span>
+                                                                          {" "}
+                                                                          +{" "}
+                                                                          {
+                                                                            entry.loaCount
+                                                                          }{" "}
+                                                                          LOA ($
+                                                                          {entry.loaCost.toFixed(
+                                                                            2,
+                                                                          )}{" "}
+                                                                          total
+                                                                          {(() => {
+                                                                            const perLoaAmount =
+                                                                              entry.loaCount &&
+                                                                              entry.loaCount >
+                                                                                0
+                                                                                ? entry.loaAmount !==
+                                                                                  undefined
+                                                                                  ? entry.loaAmount
+                                                                                  : entry.loaCost /
+                                                                                    entry.loaCount
+                                                                                : 0;
+                                                                            const amountClass =
+                                                                              Math.abs(
+                                                                                perLoaAmount -
+                                                                                  200,
+                                                                              ) >
+                                                                              0.01
+                                                                                ? "text-amber-200"
+                                                                                : "text-gray-300";
+                                                                            return (
+                                                                              <span
+                                                                                className={
+                                                                                  amountClass
+                                                                                }
+                                                                              >
+                                                                                {" "}
+                                                                                @
+                                                                                $
+                                                                                {perLoaAmount.toFixed(
+                                                                                  2,
+                                                                                )}
+                                                                              </span>
+                                                                            );
+                                                                          })()}
+                                                                          )
+                                                                        </span>
                                                                       )}
                                                                       {entry.loaCount >
                                                                         0 && (

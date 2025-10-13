@@ -1405,7 +1405,8 @@ export function InvoiceManagement() {
                   const isAdjusted = Math.abs(perLoaAmount - 200) > 0.01;
                   const summary = summaryByEntryId.get(entry.id);
                   const employeeName =
-                    employees.find((emp) => emp.id === entry.employeeId)?.name ||
+                    employees.find((emp) => emp.id === entry.employeeId)
+                      ?.name ||
                     summary?.employeeName ||
                     "Unknown Employee";
                   const key = entry.employeeId || employeeName;
@@ -1512,7 +1513,8 @@ export function InvoiceManagement() {
 
                             <div className="space-y-1">
                               {employeesWithLOA.map((emp) => {
-                                const label = emp.allowances > 1 ? "LoAs" : "LoA";
+                                const label =
+                                  emp.allowances > 1 ? "LoAs" : "LoA";
                                 const highlightClass = emp.hasAdjustedAmount
                                   ? "text-yellow-300"
                                   : "text-purple-200";
@@ -1531,7 +1533,8 @@ export function InvoiceManagement() {
                             <textarea
                               value={employeesWithLOA
                                 .map((emp) => {
-                                  const label = emp.allowances > 1 ? "LoAs" : "LoA";
+                                  const label =
+                                    emp.allowances > 1 ? "LoAs" : "LoA";
                                   return `${emp.name} - ${emp.allowances} ${label} (${formatLoaCostValue(emp.totalCost)})`;
                                 })
                                 .join("\n")}
@@ -1652,23 +1655,32 @@ export function InvoiceManagement() {
                                           className="text-sm bg-gray-800/50 px-2 py-1 rounded"
                                         >
                                           <div className="font-medium">
-                                            {employee.name} - {employee.hours.toFixed(1)}h
+                                            {employee.name} -{" "}
+                                            {employee.hours.toFixed(1)}h
                                           </div>
-                                          {employee.notes && employee.notes.length > 0 && (
-                                            <div className="mt-1 space-y-1 text-xs">
-                                              {employee.notes.map((note: string, noteIndex: number) => (
-                                                <div
-                                                  key={`${employee.name}-note-${noteIndex}`}
-                                                  className="flex items-start gap-1 text-yellow-200"
-                                                >
-                                                  <span className="mt-0.5 text-[10px]">📝</span>
-                                                  <span className="leading-snug">
-                                                    {note}
-                                                  </span>
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
+                                          {employee.notes &&
+                                            employee.notes.length > 0 && (
+                                              <div className="mt-1 space-y-1 text-xs">
+                                                {employee.notes.map(
+                                                  (
+                                                    note: string,
+                                                    noteIndex: number,
+                                                  ) => (
+                                                    <div
+                                                      key={`${employee.name}-note-${noteIndex}`}
+                                                      className="flex items-start gap-1 text-yellow-200"
+                                                    >
+                                                      <span className="mt-0.5 text-[10px]">
+                                                        📝
+                                                      </span>
+                                                      <span className="leading-snug">
+                                                        {note}
+                                                      </span>
+                                                    </div>
+                                                  ),
+                                                )}
+                                              </div>
+                                            )}
                                         </div>
                                       ),
                                     )}
@@ -1739,8 +1751,7 @@ export function InvoiceManagement() {
                               $
                               {breakdown.timeEntries
                                 .reduce(
-                                  (sum, entry) =>
-                                    sum + getCostWithLoa(entry),
+                                  (sum, entry) => sum + getCostWithLoa(entry),
                                   0,
                                 )
                                 .toFixed(2)}
