@@ -313,8 +313,8 @@ export function InvoiceManagement() {
           effectiveHours: entry.effectiveHours,
           costWage: entry.costWage,
           billableWage: entry.billableWage,
-          individualCost: individualCost,
-          individualBillable: individualBillable,
+          individualCost,
+          individualBillable,
           notes: note ? [note] : [],
         });
       }
