@@ -702,6 +702,14 @@ export default function SummaryReportsOptimized() {
           group.hourTypeBreakdown[hourTypeName].loaCount +=
             summary.loaCount || 0;
 
+          if (summary.loaAmounts) {
+            Object.entries(summary.loaAmounts).forEach(([amountKey, count]) => {
+              group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] =
+                (group.hourTypeBreakdown[hourTypeName].loaAmounts[amountKey] || 0) +
+                (count as number);
+            });
+          }
+
           // Track rate entries for detailed breakdown
           if (Array.isArray(summary.rateEntries) && summary.rateEntries.length > 0) {
             summary.rateEntries.forEach((entryDetail: any) => {
