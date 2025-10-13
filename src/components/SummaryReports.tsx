@@ -668,9 +668,11 @@ export function SummaryReports() {
               return false;
 
             // Apply job filtering if active
-            if (jobFilter && jobFilter !== "all-jobs") {
+            if (selectedJobs.length > 0) {
               const job = jobs.find((j) => j.id === entry.jobId);
-              if (job?.jobNumber !== jobFilter) return false;
+              if (!job || !selectedJobs.includes(job.jobNumber)) {
+                return false;
+              }
             }
 
             // Apply billable filtering if active
@@ -869,9 +871,11 @@ export function SummaryReports() {
               return false;
 
             // Apply job filtering if active
-            if (jobFilter && jobFilter !== "all-jobs") {
+            if (selectedJobs.length > 0) {
               const job = jobs.find((j) => j.id === entry.jobId);
-              if (job?.jobNumber !== jobFilter) return false;
+              if (!job || !selectedJobs.includes(job.jobNumber)) {
+                return false;
+              }
             }
 
             // Apply billable filtering if active
