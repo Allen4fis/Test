@@ -1972,25 +1972,54 @@ export function SummaryReports() {
                                   )}
                                 </div>
                                 <div>
-                                  {employee.totalLoaCount > 0 ? (
-                                    <div>
-                                      <div className="text-lg font-bold text-purple-400">
-                                        {employee.totalLoaCount}
+                                  {(() => {
+                                    const loaCount = employee.totalLoaCount || 0;
+                                    const totalLoaAmount = employee.totalLoaAmount || 0;
+                                    const loaAmountDetails: Record<string, number> =
+                                      employee.loaAmountDetails || {};
+                                    const uniqueLoaAmounts = Object.keys(loaAmountDetails)
+                                      .map((amount) => parseFloat(amount))
+                                      .filter((amount) => !Number.isNaN(amount))
+                                      .sort((a, b) => a - b);
+                                    const hasAdjustedLoa =
+                                      employee.hasAdjustedLoa ||
+                                      uniqueLoaAmounts.some(
+                                        (amount) => Math.abs(amount - 200) > 0.01,
+                                      );
+                                    const loaAmountSummary = uniqueLoaAmounts
+                                      .map((amount) => `$${amount.toFixed(2)}`)
+                                      .join(", ");
+                                    const valueClass =
+                                      loaCount > 0
+                                        ? hasAdjustedLoa
+                                          ? "text-amber-300"
+                                          : "text-purple-400"
+                                        : "text-gray-500";
+                                    const totalClass = hasAdjustedLoa
+                                      ? "text-amber-200"
+                                      : "text-gray-500";
+
+                                    return (
+                                      <div className="flex flex-col items-center gap-1">
+                                        <div className={`text-lg font-bold ${valueClass}`}>
+                                          {loaCount}
+                                        </div>
+                                        <div className="text-xs text-gray-400 flex flex-col items-center gap-0.5">
+                                          <span>LOA{hasAdjustedLoa ? " (adj)" : ""}</span>
+                                          {loaCount > 0 && (
+                                            <span className={`text-[10px] ${totalClass}`}>
+                                              ${totalLoaAmount.toFixed(2)} total
+                                            </span>
+                                          )}
+                                          {hasAdjustedLoa && loaAmountSummary && (
+                                            <span className="text-[10px] text-amber-200">
+                                              @ {loaAmountSummary}
+                                            </span>
+                                          )}
+                                        </div>
                                       </div>
-                                      <div className="text-xs text-gray-400">
-                                        LOA
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      <div className="text-lg font-bold text-gray-500">
-                                        0
-                                      </div>
-                                      <div className="text-xs text-gray-400">
-                                        LOA
-                                      </div>
-                                    </div>
-                                  )}
+                                    );
+                                  })()}
                                 </div>
                               </div>
                             </div>
