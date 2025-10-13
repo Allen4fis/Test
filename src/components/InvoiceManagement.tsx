@@ -1738,7 +1738,7 @@ export function InvoiceManagement() {
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-purple-400">
-                          {totalLOA}
+                          {totalLoaCount}
                         </div>
                         <div className="text-sm text-gray-300">LOA Count</div>
                       </div>
