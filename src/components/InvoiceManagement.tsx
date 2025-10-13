@@ -1399,17 +1399,17 @@ export function InvoiceManagement() {
               return (
                 <div className="space-y-6">
                   {/* Overall LOA Count */}
-                  {totalLOA > 0 && (
+                  {totalLoaCount > 0 && (
                     <div className="p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg">
                       <div className="text-center">
                         <div className="text-3xl font-bold text-purple-400">
-                          {totalLOA}
+                          {totalLoaCount}
                         </div>
                         <div className="text-lg text-purple-300">
                           Total Live Out Allowances for the Day
                         </div>
                         <div className="text-sm text-purple-200 mb-3">
-                          ${(totalLOA * 200).toFixed(2)} billable
+                          ${totalLoaCost.toFixed(2)} billable
                         </div>
 
                         {/* Employee breakdown */}
@@ -1423,10 +1423,10 @@ export function InvoiceManagement() {
                             {/* Easy copy text area */}
                             <textarea
                               value={employeesWithLOA
-                                .map(
-                                  (emp) =>
-                                    `${emp.name} - ${emp.allowances} LoA${emp.allowances > 1 ? "s" : ""}`,
-                                )
+                                .map((emp) => {
+                                  const label = emp.allowances > 1 ? "LoAs" : "LoA";
+                                  return `${emp.name} - ${emp.allowances} ${label} (${formatLoaCostValue(emp.totalCost)})`;
+                                })
                                 .join("\n")}
                               readOnly
                               onClick={(e) => {
