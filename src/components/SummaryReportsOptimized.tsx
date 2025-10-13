@@ -683,6 +683,7 @@ export default function SummaryReportsOptimized() {
               loaCount: 0,
               provinces: {},
               rateEntries: [],
+              loaAmounts: {},
             };
           }
 
