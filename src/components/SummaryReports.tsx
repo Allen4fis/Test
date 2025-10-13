@@ -1500,7 +1500,13 @@ export function SummaryReports() {
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Jobs</Label>
-                    <div className="bg-gray-800 border border-gray-600 rounded-lg p-3">
+                    <div
+                      className="bg-gray-800 border border-gray-600 rounded-lg p-3"
+                      tabIndex={0}
+                      role="group"
+                      aria-label="Job filter"
+                      onKeyDown={handleJobQuickSearchKeyDown}
+                    >
                       <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
                         <span>
                           {selectedJobs.length === 0
@@ -1509,18 +1515,35 @@ export function SummaryReports() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => setSelectedJobs([])}
-                          disabled={selectedJobs.length === 0}
-                          className={`text-orange-400 hover:text-orange-300 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed`}
+                          onClick={() => {
+                            setSelectedJobs([]);
+                            setJobSearchTerm("");
+                            focusJobSearchInput(0);
+                          }}
+                          disabled={selectedJobs.length === 0 && jobSearchTerm.trim() === ""}
+                          className="text-orange-400 hover:text-orange-300 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed"
                         >
                           Clear
                         </button>
                       </div>
-                      {jobs.length === 0 ? (
-                        <div className="text-xs text-gray-500">No jobs available</div>
+                      <Input
+                        ref={jobSearchInputRef}
+                        value={jobSearchTerm}
+                        onChange={(event) => setJobSearchTerm(event.target.value)}
+                        placeholder="Search job number or name"
+                        className="bg-gray-900 border-gray-700 text-gray-100 h-8 text-sm mb-3"
+                        autoComplete="off"
+                        spellCheck={false}
+                      />
+                      {filteredJobs.length === 0 ? (
+                        <div className="text-xs text-gray-500">
+                          {jobs.length === 0
+                            ? "No jobs available"
+                            : "No jobs match your search"}
+                        </div>
                       ) : (
                         <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
-                          {jobs.map((job) => {
+                          {filteredJobs.map((job) => {
                             const checked = isJobSelected(job.jobNumber);
                             return (
                               <label
