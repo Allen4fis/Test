@@ -818,6 +818,7 @@ export function useTimeTracking() {
       totalCost += loaCost;
 
       return {
+        id: entry.id,
         employeeName: employee?.name || "Unknown Employee",
         employeeTitle: entry.title || employee?.title || "Unknown Title",
         jobNumber: job?.jobNumber || "Unknown Job",
@@ -828,6 +829,7 @@ export function useTimeTracking() {
         hours: hourType?.name === "Billable" ? 0 : entry.hours, // Exclude Billable from hour counts
         effectiveHours: hourType?.name === "Billable" ? 0 : effectiveHours, // Exclude Billable from effective hour counts
         loaCount: entry.loaCount,
+        loaAmount: entry.loaAmount,
         billableWage: entry.billableWageUsed || 0,
         costWage: adjustedCostWage, // Use the actual wage used in cost calculation
         totalBillableAmount: totalBillableAmount,
