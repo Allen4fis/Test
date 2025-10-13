@@ -243,14 +243,16 @@ export function InvoiceManagement() {
         (sum, entry) => sum + getEntryLoaTotal(entry),
         0,
       );
-      const laborCost = dayTimeEntries.reduce(
+      const laborCostWithoutLoa = dayTimeEntries.reduce(
         (sum, entry) => sum + getCostWithoutLoa(entry),
         0,
       );
-      const laborBillable = dayTimeEntries.reduce(
+      const laborBillableWithoutLoa = dayTimeEntries.reduce(
         (sum, entry) => sum + getBillableWithoutLoa(entry),
         0,
       );
+      const laborCost = laborCostWithoutLoa + totalLoaAmount;
+      const laborBillable = laborBillableWithoutLoa + totalLoaAmount;
       const rentalBillable = dayRentalEntries.reduce(
         (sum, entry) => sum + entry.totalBillable,
         0,
