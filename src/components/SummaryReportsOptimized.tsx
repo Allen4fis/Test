@@ -46,61 +46,98 @@ import {
 // Memoized components for better performance
 const EmployeeCard = memo(({ employee, gstAmount }: any) => {
   return ErrorBoundaryUtils.createSafeWrapper(
-    () => (
-      <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-4">
-        <div className="flex items-center gap-3">
-          <span className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
-            {employee.employeeName.charAt(0)}
-          </span>
-          <div>
-            <div className="font-semibold text-gray-100">
-              {employee.employeeName}
+    () => {
+      const loaAmountDetails: Record<string, number> =
+        employee.loaAmountDetails || {};
+      const uniqueLoaAmounts = Object.keys(loaAmountDetails)
+        .map((amount) => parseFloat(amount))
+        .filter((amount) => !Number.isNaN(amount))
+        .sort((a, b) => a - b);
+      const loaCount = employee.totalLoaCount || 0;
+      const totalLoaAmount = employee.totalLoaAmount || 0;
+      const hasAdjustedLoa =
+        employee.hasAdjustedLoa ||
+        uniqueLoaAmounts.some((amount) => Math.abs(amount - 200) > 0.01);
+      const loaAmountSummary = uniqueLoaAmounts
+        .map((amount) => `$${amount.toFixed(2)}`)
+        .join(", ");
+      const loaTextColor =
+        loaCount > 0
+          ? hasAdjustedLoa
+            ? "text-amber-300"
+            : "text-purple-400"
+          : "text-gray-500";
+
+      return (
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+              {employee.employeeName.charAt(0)}
+            </span>
+            <div>
+              <div className="font-semibold text-gray-100">
+                {employee.employeeName}
+              </div>
+              <div className="text-sm text-gray-300">
+                {employee.employeeTitle}
+              </div>
             </div>
-            <div className="text-sm text-gray-300">
-              {employee.employeeTitle}
+          </div>
+          <div className="grid grid-cols-5 gap-4 text-center">
+            <div>
+              <div className="text-lg font-bold text-blue-400">
+                {employee.totalHours.toFixed(2)}h
+              </div>
+              <div className="text-xs text-gray-400">Hours</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-green-400">
+                ${employee.totalCost.toFixed(2)}
+              </div>
+              <div className="text-xs text-gray-400">Labor Cost</div>
+            </div>
+            <div>
+              <div
+                className={`text-lg font-bold ${gstAmount > 0 ? "text-orange-400" : "text-gray-500"}`}
+              >
+                ${gstAmount.toFixed(2)}
+              </div>
+              <div className="text-xs text-gray-400">GST</div>
+            </div>
+            <div>
+              <div
+                className={`text-lg font-bold ${employee.totalDspEarnings > 0 ? "text-cyan-400" : "text-gray-500"}`}
+              >
+                ${employee.totalDspEarnings.toFixed(2)}
+              </div>
+              <div className="text-xs text-gray-400">DSP Earnings</div>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className={`text-lg font-bold ${loaTextColor}`}>
+                {loaCount}
+              </div>
+              <div className="text-xs text-gray-400 flex flex-col items-center gap-0.5">
+                <span>LOA{hasAdjustedLoa ? " (adj)" : ""}</span>
+                {loaCount > 0 && (
+                  <span
+                    className={`text-[10px] ${
+                      hasAdjustedLoa ? "text-amber-200" : "text-gray-500"
+                    }`}
+                  >
+                    ${totalLoaAmount.toFixed(2)} total
+                  </span>
+                )}
+                {hasAdjustedLoa && loaAmountSummary && (
+                  <span className="text-[10px] text-amber-200">
+                    @ {loaAmountSummary}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-5 gap-4 text-center">
-          <div>
-            <div className="text-lg font-bold text-blue-400">
-              {employee.totalHours.toFixed(2)}h
-            </div>
-            <div className="text-xs text-gray-400">Hours</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold text-green-400">
-              ${employee.totalCost.toFixed(2)}
-            </div>
-            <div className="text-xs text-gray-400">Labor Cost</div>
-          </div>
-          <div>
-            <div
-              className={`text-lg font-bold ${gstAmount > 0 ? "text-orange-400" : "text-gray-500"}`}
-            >
-              ${gstAmount.toFixed(2)}
-            </div>
-            <div className="text-xs text-gray-400">GST</div>
-          </div>
-          <div>
-            <div
-              className={`text-lg font-bold ${employee.totalDspEarnings > 0 ? "text-cyan-400" : "text-gray-500"}`}
-            >
-              ${employee.totalDspEarnings.toFixed(2)}
-            </div>
-            <div className="text-xs text-gray-400">DSP Earnings</div>
-          </div>
-          <div>
-            <div
-              className={`text-lg font-bold ${employee.totalLoaCount > 0 ? "text-purple-400" : "text-gray-500"}`}
-            >
-              {employee.totalLoaCount}
-            </div>
-            <div className="text-xs text-gray-400">LOA</div>
-          </div>
-        </div>
-      </div>
-    ),
+      );
+    },
     <div className="text-red-400 p-4">Error loading employee card</div>,
     `Failed to render employee card for ${employee.employeeName}`,
   );
