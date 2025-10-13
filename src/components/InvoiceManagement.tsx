@@ -54,7 +54,7 @@ import {
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { toast } from "@/hooks/use-toast";
-import { Job } from "@/types";
+import { Job, TimeEntrySummary } from "@/types";
 
 import { parseLocalDate, formatLocalDate } from "@/utils/dateUtils";
 
