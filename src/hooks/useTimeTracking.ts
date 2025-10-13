@@ -832,6 +832,7 @@ export function useTimeTracking() {
         costWage: adjustedCostWage, // Use the actual wage used in cost calculation
         totalBillableAmount: totalBillableAmount,
         totalCost: totalCost,
+        description: entry.description,
       };
     });
   }, [appData]);
