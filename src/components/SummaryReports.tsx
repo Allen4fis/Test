@@ -202,7 +202,10 @@ export function SummaryReports() {
       }
 
       // Job filter
-      if (jobFilter !== "all-jobs" && summary.jobNumber !== jobFilter) {
+      if (
+        selectedJobs.length > 0 &&
+        !selectedJobs.includes(summary.jobNumber)
+      ) {
         return false;
       }
 
