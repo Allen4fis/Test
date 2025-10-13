@@ -1689,7 +1689,7 @@ export function InvoiceManagement() {
                               {breakdown.timeEntries
                                 .reduce(
                                   (sum, entry) =>
-                                    sum + entry.totalBillableAmount,
+                                    sum + getBillableWithoutLoa(entry),
                                   0,
                                 )
                                 .toFixed(2)}
