@@ -641,10 +641,13 @@ export default function SummaryReportsOptimized() {
               totalEffectiveHours: 0,
               totalCost: 0,
               totalLoaCount: 0,
+              totalLoaAmount: 0,
               totalDspEarnings: 0,
               dspRateInfo: {},
               entries: [],
               hourTypeBreakdown: {},
+              loaAmountDetails: {},
+              hasAdjustedLoa: false,
             };
           }
 
@@ -653,6 +656,20 @@ export default function SummaryReportsOptimized() {
           group.totalEffectiveHours += summary.effectiveHours || 0;
           group.totalCost += summary.totalCost || 0;
           group.entries.push(summary);
+          group.totalLoaCount += summary.loaCount || 0;
+          group.totalLoaAmount += summary.loaCost || 0;
+
+          if (summary.loaAmounts) {
+            Object.entries(summary.loaAmounts).forEach(([amountKey, count]) => {
+              group.loaAmountDetails[amountKey] =
+                (group.loaAmountDetails[amountKey] || 0) + (count as number);
+            });
+          }
+
+          const expectedSummaryLoa = (summary.loaCount || 0) * 200;
+          if (Math.abs((summary.loaCost || 0) - expectedSummaryLoa) > 0.01) {
+            group.hasAdjustedLoa = true;
+          }
 
           // Build hour type breakdown efficiently
           const hourTypeName = summary.hourTypeName;
@@ -669,37 +686,52 @@ export default function SummaryReportsOptimized() {
             };
           }
 
-          const loaCost = (summary.loaCount || 0) * 200;
-          const hourlyCost = summary.totalCost - loaCost;
+          const summaryLoaCost = summary.loaCost || 0;
+          const summaryHourlyCost =
+            summary.hourlyCost !== undefined
+              ? summary.hourlyCost
+              : summary.totalCost - summaryLoaCost;
 
           group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
           group.hourTypeBreakdown[hourTypeName].effectiveHours +=
             summary.effectiveHours || 0;
           group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
-          group.hourTypeBreakdown[hourTypeName].hourlyCost += hourlyCost;
-          group.hourTypeBreakdown[hourTypeName].loaCost += loaCost;
+          group.hourTypeBreakdown[hourTypeName].hourlyCost += summaryHourlyCost;
+          group.hourTypeBreakdown[hourTypeName].loaCost += summaryLoaCost;
           group.hourTypeBreakdown[hourTypeName].loaCount +=
             summary.loaCount || 0;
 
           // Track rate entries for detailed breakdown
-          if (summary.hours > 0) {
-            // Calculate the actual hourly rate used for this entry
-            // Since totalCost includes LOA costs, we need to calculate just the hourly portion
-            const loaCost = (summary.loaCount || 0) * 200;
-            const hourlyCost = summary.totalCost - loaCost;
-
-            // Calculate the effective hourly rate (what they were paid per actual hour worked)
-            // Uses total hourly cost divided by actual hours (handles tiered EMPRIG correctly)
-            const effectiveHourlyRate = hourlyCost / Math.max(1, summary.hours);
-
+          if (Array.isArray(summary.rateEntries) && summary.rateEntries.length > 0) {
+            summary.rateEntries.forEach((entryDetail: any) => {
+              const fallbackHourlyRate =
+                entryDetail.hourlyRate !== undefined
+                  ? entryDetail.hourlyRate
+                  : entryDetail.hours > 0
+                  ? entryDetail.hourlyCost / Math.max(entryDetail.hours || 0, 0.0001)
+                  : 0;
+              group.hourTypeBreakdown[hourTypeName].rateEntries.push({
+                ...entryDetail,
+                hourlyRate: fallbackHourlyRate,
+              });
+            });
+          } else if (summary.hours > 0) {
+            const fallbackHourlyRate =
+              summary.hours > 0
+                ? summaryHourlyCost / Math.max(summary.hours || 0, 0.0001)
+                : 0;
             group.hourTypeBreakdown[hourTypeName].rateEntries.push({
               date: summary.date,
               hours: summary.hours,
               effectiveHours: summary.effectiveHours,
-              hourlyRate: effectiveHourlyRate,
-              hourlyCost: hourlyCost,
+              hourlyRate: fallbackHourlyRate,
+              hourlyCost: summaryHourlyCost,
               loaCount: summary.loaCount || 0,
-              loaCost: loaCost,
+              loaAmount:
+                summary.loaCount && summary.loaCount > 0
+                  ? summaryLoaCost / summary.loaCount
+                  : 200,
+              loaCost: summaryLoaCost,
               totalCost: summary.totalCost,
             });
           }
