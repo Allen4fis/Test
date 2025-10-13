@@ -1420,10 +1420,27 @@ export function InvoiceManagement() {
 
                         {/* Employee breakdown */}
                         {employeesWithLOA.length > 0 && (
-                          <div className="mt-4">
+                          <div className="mt-4 space-y-3">
                             <div className="text-sm text-purple-300 mb-2 text-center">
                               Employees with Allowances (
                               {employeesWithLOA.length})
+                            </div>
+
+                            <div className="space-y-1">
+                              {employeesWithLOA.map((emp) => {
+                                const label = emp.allowances > 1 ? "LoAs" : "LoA";
+                                const highlightClass = emp.hasAdjustedAmount
+                                  ? "text-yellow-300"
+                                  : "text-purple-200";
+                                return (
+                                  <div
+                                    key={`${emp.name}-${label}`}
+                                    className={`text-sm font-medium ${highlightClass}`}
+                                  >
+                                    {`${emp.name} - ${emp.allowances} ${label} (${formatLoaCostValue(emp.totalCost)})`}
+                                  </div>
+                                );
+                              })}
                             </div>
 
                             {/* Easy copy text area */}
