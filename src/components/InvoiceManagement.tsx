@@ -1575,8 +1575,24 @@ export function InvoiceManagement() {
                                           key={empIndex}
                                           className="text-sm bg-gray-800/50 px-2 py-1 rounded"
                                         >
-                                          {employee.name} -{" "}
-                                          {employee.hours.toFixed(1)}h
+                                          <div className="font-medium">
+                                            {employee.name} - {employee.hours.toFixed(1)}h
+                                          </div>
+                                          {employee.notes && employee.notes.length > 0 && (
+                                            <div className="mt-1 space-y-1 text-xs">
+                                              {employee.notes.map((note: string, noteIndex: number) => (
+                                                <div
+                                                  key={`${employee.name}-note-${noteIndex}`}
+                                                  className="flex items-start gap-1 text-yellow-200"
+                                                >
+                                                  <span className="mt-0.5 text-[10px]">📝</span>
+                                                  <span className="leading-snug">
+                                                    {note}
+                                                  </span>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          )}
                                         </div>
                                       ),
                                     )}
