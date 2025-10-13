@@ -187,12 +187,17 @@ export function InvoiceManagement() {
 
   const getCostWithoutLoa = (entry: TimeEntrySummary): number => {
     const costWithoutLoa = entry.totalCost - getEntryLoaTotal(entry);
-    return Number.isFinite(costWithoutLoa) ? costWithoutLoa : 0;
+    const safeValue = Number.isFinite(costWithoutLoa) ? costWithoutLoa : 0;
+    return Math.max(0, safeValue);
   };
 
   const getBillableWithoutLoa = (entry: TimeEntrySummary): number => {
-    const billableWithoutLoa = entry.totalBillableAmount - getEntryLoaTotal(entry);
-    return Number.isFinite(billableWithoutLoa) ? billableWithoutLoa : 0;
+    const billableWithoutLoa =
+      entry.totalBillableAmount - getEntryLoaTotal(entry);
+    const safeValue = Number.isFinite(billableWithoutLoa)
+      ? billableWithoutLoa
+      : 0;
+    return Math.max(0, safeValue);
   };
 
   // Get unique dates that have time entries or rental entries for the selected job
