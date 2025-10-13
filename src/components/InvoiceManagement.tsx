@@ -96,6 +96,7 @@ interface EmployeeLoaDetail {
   name: string;
   allowances: number;
   totalCost: number;
+  hasAdjustedAmount: boolean;
 }
 
 const formatLoaCostValue = (amount: number): string => {
