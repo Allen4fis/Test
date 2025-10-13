@@ -1366,6 +1366,7 @@ export function InvoiceManagement() {
 
                   const perLoaAmount = entry.loaAmount ?? 200;
                   const totalCost = allowances * perLoaAmount;
+                  const isAdjusted = Math.abs(perLoaAmount - 200) > 0.01;
                   const summary = summaryByEntryId.get(entry.id);
                   const employeeName =
                     employees.find((emp) => emp.id === entry.employeeId)?.name ||
@@ -1377,11 +1378,14 @@ export function InvoiceManagement() {
                   if (existing) {
                     existing.allowances += allowances;
                     existing.totalCost += totalCost;
+                    existing.hasAdjustedAmount =
+                      existing.hasAdjustedAmount || isAdjusted;
                   } else {
                     detailsMap.set(key, {
                       name: employeeName,
                       allowances,
                       totalCost,
+                      hasAdjustedAmount: isAdjusted,
                     });
                   }
                 });
