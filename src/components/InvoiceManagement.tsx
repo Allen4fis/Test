@@ -1437,9 +1437,57 @@ export function InvoiceManagement() {
                 (sum, employee) => sum + employee.totalCost,
                 0,
               );
+              const rentalLineItemCount = breakdown.rentalEntries.length;
+              const hourTypeLineItemCount = groupedTimeEntries.length;
+              const loaLineItemCount = totalLoaCount > 0 ? 1 : 0;
+              const totalLineItems =
+                rentalLineItemCount + hourTypeLineItemCount + loaLineItemCount;
 
               return (
                 <div className="space-y-6">
+                  {/* Line Items Summary */}
+                  <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div>
+                        <div className="text-xs uppercase tracking-wider text-blue-300">
+                          Line Items
+                        </div>
+                        <div className="text-3xl font-bold text-blue-400">
+                          {totalLineItems}
+                        </div>
+                        <div className="text-sm text-blue-200">
+                          Total groups for this day
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-3">
+                        <div className="min-w-[120px] rounded-md bg-blue-900/40 border border-blue-500/40 px-3 py-2 text-center">
+                          <div className="text-xl font-semibold text-blue-300">
+                            {hourTypeLineItemCount}
+                          </div>
+                          <div className="text-xs uppercase tracking-wide text-blue-200">
+                            Hour Types
+                          </div>
+                        </div>
+                        <div className="min-w-[120px] rounded-md bg-blue-900/40 border border-blue-500/40 px-3 py-2 text-center">
+                          <div className="text-xl font-semibold text-blue-300">
+                            {rentalLineItemCount}
+                          </div>
+                          <div className="text-xs uppercase tracking-wide text-blue-200">
+                            Rentals
+                          </div>
+                        </div>
+                        <div className="min-w-[120px] rounded-md bg-blue-900/40 border border-blue-500/40 px-3 py-2 text-center">
+                          <div className="text-xl font-semibold text-blue-300">
+                            {loaLineItemCount}
+                          </div>
+                          <div className="text-xs uppercase tracking-wide text-blue-200">
+                            Live Out Allowances
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Overall LOA Count */}
                   {totalLoaCount > 0 && (
                     <div className="p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg">
