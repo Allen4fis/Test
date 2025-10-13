@@ -344,99 +344,141 @@ const HourTypeBreakdown = memo(
                 const bIndex = bi === -1 ? 100 + b.localeCompare(a) : bi;
                 return aIndex - bIndex;
               })
-              .map(([hourType, data]: [string, any]) => (
-                <div key={hourType} className="bg-gray-700/30 rounded p-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-200">
-                      {hourType}
-                    </span>
-                    <div className="text-sm text-gray-300">
-                      {data.hours.toFixed(2)}h ({data.effectiveHours.toFixed(2)}{" "}
-                      effective) - ${data.hourlyCost.toFixed(2)}
-                      {data.loaCount > 0 && (
-                        <span className="text-yellow-400">
-                          {" "}
-                          + {data.loaCount} LOA ($
-                          {data.loaCost.toFixed(2)})
-                        </span>
-                      )}
-                      {data.loaCount > 0 && (
-                        <span className="text-gray-300">
-                          {" "}
-                          = ${data.cost.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              .map(([hourType, data]: [string, any]) => {
+                const loaAmountDetails: Record<string, number> =
+                  data.loaAmounts || {};
+                const uniqueLoaAmounts = Object.keys(loaAmountDetails)
+                  .map((amount) => parseFloat(amount))
+                  .filter((amount) => !Number.isNaN(amount))
+                  .sort((a, b) => a - b);
+                const hasAdjustedLoa = uniqueLoaAmounts.some(
+                  (amount) => Math.abs(amount - 200) > 0.01,
+                );
+                const aggregatedLoaSummary = hasAdjustedLoa
+                  ? uniqueLoaAmounts
+                      .map((amount) => `$${amount.toFixed(2)}`)
+                      .join(", ")
+                  : "";
 
-                  {/* Detailed entries breakdown */}
-                  {data.rateEntries && data.rateEntries.length > 0 && (
-                    <div className="mt-2">
-                      <div className="text-xs text-gray-400 mb-1">
-                        Daily Breakdown ({data.rateEntries.length} entries):
-                      </div>
-                      <div className="space-y-1 max-h-32 overflow-y-auto">
-                        {MemoryOptimizer.optimizeArray(
-                          data.rateEntries,
-                          50,
-                        ).map((entry: any, index: number) => (
-                          <div
-                            key={`${entry.date}-${index}`}
-                            className="text-xs bg-gray-600/30 px-2 py-1 rounded flex justify-between items-center"
-                          >
-                            <span className="text-gray-300">{entry.date}</span>
-                            <span className="text-gray-200">
-                              {entry.hours.toFixed(2)}h
-                              {entry.effectiveHours !== entry.hours && (
-                                <span className="text-gray-400">
-                                  {" "}
-                                  ({entry.effectiveHours.toFixed(2)} eff)
-                                </span>
-                              )}{" "}
-                              @ ${entry.hourlyRate.toFixed(2)}/h = $
-                              {entry.hourlyCost.toFixed(2)}
-                              {entry.loaCount > 0 && (
-                                <span className="text-yellow-400">
-                                  {" "}
-                                  + {entry.loaCount} LOA ($
-                                  {entry.loaCost.toFixed(2)})
-                                </span>
-                              )}
-                              {entry.loaCount > 0 && (
-                                <span className="text-gray-300">
-                                  {" "}
-                                  = ${entry.totalCost.toFixed(2)}
-                                </span>
-                              )}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Province breakdown */}
-                  {Object.keys(data.provinces).length > 0 && (
-                    <div className="mt-2">
-                      <div className="text-xs text-gray-400 mb-1">
-                        Provinces:
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {Object.entries(data.provinces).map(
-                          ([provinceName, provinceData]: [string, any]) => (
-                            <div
-                              key={provinceName}
-                              className="text-xs bg-gray-600/50 px-2 py-1 rounded"
-                            >
-                              {provinceName}: {provinceData.hours.toFixed(2)}h
-                            </div>
-                          ),
+                return (
+                  <div key={hourType} className="bg-gray-700/30 rounded p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-200">
+                        {hourType}
+                      </span>
+                      <div className="text-sm text-gray-300">
+                        {data.hours.toFixed(2)}h ({data.effectiveHours.toFixed(2)}{" "}
+                        effective) - ${data.hourlyCost.toFixed(2)}
+                        {data.loaCount > 0 && (
+                          <span className="text-yellow-400">
+                            {" "}
+                            + {data.loaCount} LOA (${data.loaCost.toFixed(2)} total
+                            {aggregatedLoaSummary && (
+                              <span className="text-amber-200">
+                                {" "}
+                                @ {aggregatedLoaSummary}
+                              </span>
+                            )}
+                            )
+                          </span>
+                        )}
+                        {data.loaCount > 0 && (
+                          <span className="text-gray-300">
+                            {" "}
+                            = ${data.cost.toFixed(2)}
+                          </span>
                         )}
                       </div>
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {/* Detailed entries breakdown */}
+                    {data.rateEntries && data.rateEntries.length > 0 && (
+                      <div className="mt-2">
+                        <div className="text-xs text-gray-400 mb-1">
+                          Daily Breakdown ({data.rateEntries.length} entries):
+                        </div>
+                        <div className="space-y-1 max-h-32 overflow-y-auto">
+                          {MemoryOptimizer.optimizeArray(
+                            data.rateEntries,
+                            50,
+                          ).map((entry: any, index: number) => {
+                            const entryLoaAmount =
+                              entry.loaCount && entry.loaCount > 0
+                                ? entry.loaAmount !== undefined
+                                  ? entry.loaAmount
+                                  : entry.loaCost / entry.loaCount
+                                : 0;
+                            const entryLoaColor =
+                              entry.loaCount && entry.loaCount > 0
+                                ? Math.abs(entryLoaAmount - 200) > 0.01
+                                  ? "text-amber-200"
+                                  : "text-gray-300"
+                                : "text-gray-300";
+
+                            return (
+                              <div
+                                key={`${entry.date}-${index}`}
+                                className="text-xs bg-gray-600/30 px-2 py-1 rounded flex justify-between items-center"
+                              >
+                                <span className="text-gray-300">{entry.date}</span>
+                                <span className="text-gray-200">
+                                  {entry.hours.toFixed(2)}h
+                                  {entry.effectiveHours !== entry.hours && (
+                                    <span className="text-gray-400">
+                                      {" "}
+                                      ({entry.effectiveHours.toFixed(2)} eff)
+                                    </span>
+                                  )}{" "}
+                                  @ ${entry.hourlyRate.toFixed(2)}/h = $
+                                  {entry.hourlyCost.toFixed(2)}
+                                  {entry.loaCount > 0 && (
+                                    <span className="text-yellow-400">
+                                      {" "}
+                                      + {entry.loaCount} LOA (${entry.loaCost.toFixed(2)} total
+                                      <span className={entryLoaColor}>
+                                        {" "}
+                                        @ ${entryLoaAmount.toFixed(2)}
+                                      </span>
+                                      )
+                                    </span>
+                                  )}
+                                  {entry.loaCount > 0 && (
+                                    <span className="text-gray-300">
+                                      {" "}
+                                      = ${entry.totalCost.toFixed(2)}
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Province breakdown */}
+                    {Object.keys(data.provinces).length > 0 && (
+                      <div className="mt-2">
+                        <div className="text-xs text-gray-400 mb-1">
+                          Provinces:
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {Object.entries(data.provinces).map(
+                            ([provinceName, provinceData]: [string, any]) => (
+                              <div
+                                key={provinceName}
+                                className="text-xs bg-gray-600/50 px-2 py-1 rounded"
+                              >
+                                {provinceName}: {provinceData.hours.toFixed(2)}h
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
       ),
