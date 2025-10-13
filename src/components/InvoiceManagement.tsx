@@ -284,6 +284,7 @@ export function InvoiceManagement() {
       const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
       const hourBasedCost = entry.totalCost - loaCost;
       const hourBasedBillable = entry.totalBillableAmount - loaBillable;
+      const note = entry.description?.trim();
 
       // Find existing employee or add new one
       const existingEmployee = acc[key].employees.find(
@@ -297,6 +298,9 @@ export function InvoiceManagement() {
         // Update cost wage to reflect the most recent entry's wage (in case it changed)
         existingEmployee.costWage = entry.costWage;
         existingEmployee.billableWage = entry.billableWage;
+        if (note && !existingEmployee.notes.includes(note)) {
+          existingEmployee.notes.push(note);
+        }
       } else {
         acc[key].employees.push({
           name: entry.employeeName,
@@ -306,6 +310,7 @@ export function InvoiceManagement() {
           billableWage: entry.billableWage,
           individualCost: hourBasedCost, // Only hour-based cost
           individualBillable: hourBasedBillable, // Only hour-based billable
+          notes: note ? [note] : [],
         });
       }
 
