@@ -373,10 +373,13 @@ export function SummaryReports() {
             totalEffectiveHours: 0,
             totalCost: 0,
             totalLoaCount: 0,
+            totalLoaAmount: 0,
             totalDspEarnings: 0,
             dspRateInfo: {},
             entries: [],
             hourTypeBreakdown: {},
+            loaAmountDetails: {},
+            hasAdjustedLoa: false,
           };
         }
 
