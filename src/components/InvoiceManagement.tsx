@@ -1067,7 +1067,7 @@ export function InvoiceManagement() {
                           </div>
                           <div className="text-xs mt-1 space-y-0.5">
                             <div className="text-green-400">
-                              ��� {jobStat.paidDates}
+                              ���� {jobStat.paidDates}
                             </div>
                             <div className="text-purple-400">
                               ◯ {jobStat.unpaidDates}
@@ -1434,7 +1434,7 @@ export function InvoiceManagement() {
                                   : "text-purple-200";
                                 return (
                                   <div
-                                    key={`${emp.name}-${label}`}
+                                    key={`${emp.name}-${emp.allowances}-${formatLoaCostValue(emp.totalCost)}`}
                                     className={`text-sm font-medium ${highlightClass}`}
                                   >
                                     {`${emp.name} - ${emp.allowances} ${label} (${formatLoaCostValue(emp.totalCost)})`}
