@@ -1406,38 +1406,56 @@ export function SummaryReports() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">Job</Label>
-                    <Select value={jobFilter} onValueChange={setJobFilter}>
-                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-600">
-                        <SelectItem
-                          value="all-jobs"
-                          className="text-gray-100 focus:bg-orange-500/20"
+                    <Label className="text-sm font-medium">Jobs</Label>
+                    <div className="bg-gray-800 border border-gray-600 rounded-lg p-3">
+                      <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
+                        <span>
+                          {selectedJobs.length === 0
+                            ? "All jobs shown"
+                            : `${selectedJobs.length} job${selectedJobs.length === 1 ? "" : "s"} selected`}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedJobs([])}
+                          disabled={selectedJobs.length === 0}
+                          className={`text-orange-400 hover:text-orange-300 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed`}
                         >
-                          All Jobs
-                        </SelectItem>
-                        {jobs.map((job) => (
-                          <SelectItem
-                            key={job.id}
-                            value={job.jobNumber}
-                            className="text-gray-100 focus:bg-orange-500/20"
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <span>
-                                {job.jobNumber} - {job.name}
-                              </span>
-                              {job.isBillable === false && (
-                                <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded ml-2">
-                                  Non-Billable
-                                </span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          Clear
+                        </button>
+                      </div>
+                      {jobs.length === 0 ? (
+                        <div className="text-xs text-gray-500">No jobs available</div>
+                      ) : (
+                        <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
+                          {jobs.map((job) => {
+                            const checked = isJobSelected(job.jobNumber);
+                            return (
+                              <label
+                                key={job.id}
+                                className={`flex items-start gap-2 p-2 rounded border border-transparent hover:border-orange-500/40 transition-colors ${checked ? "bg-orange-500/10 border-orange-500/50" : "bg-gray-800/60"}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="mt-1 w-4 h-4 text-orange-500 bg-gray-900 border-gray-600 rounded focus:ring-orange-500"
+                                  checked={checked}
+                                  onChange={() => toggleJobSelection(job.jobNumber)}
+                                />
+                                <div className="flex-1">
+                                  <div className="text-sm text-gray-100">
+                                    {job.jobNumber} - {job.name}
+                                  </div>
+                                  {job.isBillable === false && (
+                                    <div className="text-[10px] uppercase tracking-wide text-orange-300 mt-1">
+                                      Non-Billable
+                                    </div>
+                                  )}
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Province</Label>
