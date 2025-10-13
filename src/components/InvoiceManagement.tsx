@@ -172,14 +172,13 @@ export function InvoiceManagement() {
 
   const summaryByEntryId = useMemo(() => {
     const map = new Map<string, TimeEntrySummary>();
-    timeEntries.forEach((entry, index) => {
-      const summary = timeEntrySummaries[index];
-      if (entry?.id && summary) {
-        map.set(entry.id, summary);
+    timeEntrySummaries.forEach((summary) => {
+      if (summary.id) {
+        map.set(summary.id, summary);
       }
     });
     return map;
-  }, [timeEntries, timeEntrySummaries]);
+  }, [timeEntrySummaries]);
 
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
