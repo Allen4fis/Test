@@ -1823,7 +1823,7 @@ export function InvoiceManagement() {
                           $
                           {(
                             breakdown.timeEntries.reduce(
-                              (sum, entry) => sum + getBillableWithoutLoa(entry),
+                              (sum, entry) => sum + getBillableWithLoa(entry),
                               0,
                             ) +
                             breakdown.rentalEntries.reduce(
