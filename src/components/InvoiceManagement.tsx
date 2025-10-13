@@ -180,6 +180,21 @@ export function InvoiceManagement() {
     return map;
   }, [timeEntrySummaries]);
 
+  const getEntryLoaTotal = (entry: TimeEntrySummary): number => {
+    const perLoaAmount = entry.loaAmount ?? 200;
+    return (entry.loaCount || 0) * perLoaAmount;
+  };
+
+  const getCostWithoutLoa = (entry: TimeEntrySummary): number => {
+    const costWithoutLoa = entry.totalCost - getEntryLoaTotal(entry);
+    return Number.isFinite(costWithoutLoa) ? costWithoutLoa : 0;
+  };
+
+  const getBillableWithoutLoa = (entry: TimeEntrySummary): number => {
+    const billableWithoutLoa = entry.totalBillableAmount - getEntryLoaTotal(entry);
+    return Number.isFinite(billableWithoutLoa) ? billableWithoutLoa : 0;
+  };
+
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
