@@ -55,6 +55,7 @@ export interface TimeEntry {
 }
 
 export interface TimeEntrySummary {
+  id: string;
   employeeName: string;
   employeeTitle: string;
   jobNumber: string;
@@ -65,6 +66,7 @@ export interface TimeEntrySummary {
   hours: number;
   effectiveHours: number; // hours * multiplier
   loaCount?: number; // Live Out Allowance count
+  loaAmount?: number; // Live Out Allowance amount per LOA
   billableWage: number;
   costWage: number;
   totalBillableAmount: number; // effectiveHours * billableWage
