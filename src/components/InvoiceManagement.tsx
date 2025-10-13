@@ -1827,7 +1827,10 @@ export function InvoiceManagement() {
                         <div className="text-2xl font-bold text-orange-400">
                           $
                           {breakdown.timeEntries
-                            .reduce((sum, entry) => sum + entry.totalCost, 0)
+                            .reduce(
+                              (sum, entry) => sum + getCostWithoutLoa(entry),
+                              0,
+                            )
                             .toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-300">Labor Cost</div>
