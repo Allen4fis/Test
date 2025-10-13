@@ -200,6 +200,12 @@ export function InvoiceManagement() {
     return Math.max(0, safeValue);
   };
 
+  const getCostWithLoa = (entry: TimeEntrySummary): number =>
+    getCostWithoutLoa(entry) + getEntryLoaTotal(entry);
+
+  const getBillableWithLoa = (entry: TimeEntrySummary): number =>
+    getBillableWithoutLoa(entry) + getEntryLoaTotal(entry);
+
   // Get unique dates that have time entries or rental entries for the selected job
   const getJobDates = (job: Job): JobDateInfo[] => {
     const jobTimeEntries = timeEntrySummaries.filter(
