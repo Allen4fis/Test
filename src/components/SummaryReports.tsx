@@ -182,6 +182,24 @@ export function SummaryReports() {
   const [includeUnpaid, setIncludeUnpaid] = useState(true);
   const [showEmptyResults, setShowEmptyResults] = useState(false);
 
+  const jobSearchInputRef = useRef<HTMLInputElement | null>(null);
+
+  const focusJobSearchInput = useCallback(
+    (cursorPosition: number) => {
+      if (typeof window === "undefined") return;
+      window.requestAnimationFrame(() => {
+        if (jobSearchInputRef.current) {
+          jobSearchInputRef.current.focus();
+          jobSearchInputRef.current.setSelectionRange(
+            cursorPosition,
+            cursorPosition,
+          );
+        }
+      });
+    },
+    [],
+  );
+
   const toggleJobSelection = (jobNumber: string) => {
     setSelectedJobs((prev) =>
       prev.includes(jobNumber)
@@ -191,6 +209,74 @@ export function SummaryReports() {
   };
 
   const isJobSelected = (jobNumber: string) => selectedJobs.includes(jobNumber);
+
+  const sortedJobs = useMemo(() => {
+    return [...jobs].sort((a, b) => {
+      const numberCompare = a.jobNumber.localeCompare(b.jobNumber, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
+      if (numberCompare !== 0) {
+        return numberCompare;
+      }
+      return (a.name || "").localeCompare(b.name || "", undefined, {
+        sensitivity: "base",
+      });
+    });
+  }, [jobs]);
+
+  const filteredJobs = useMemo(() => {
+    const query = jobSearchTerm.trim().toLowerCase();
+    if (!query) {
+      return sortedJobs;
+    }
+    return sortedJobs.filter((job) => {
+      const jobNumberLower = job.jobNumber.toLowerCase();
+      const jobNameLower = (job.name || "").toLowerCase();
+      return (
+        jobNumberLower.includes(query) || jobNameLower.includes(query)
+      );
+    });
+  }, [sortedJobs, jobSearchTerm]);
+
+  const handleJobQuickSearchKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) => {
+      if (event.target === jobSearchInputRef.current) {
+        return;
+      }
+
+      if (event.key === "Backspace") {
+        event.preventDefault();
+        setJobSearchTerm((prev) => {
+          if (prev.length === 0) {
+            focusJobSearchInput(0);
+            return prev;
+          }
+          const next = prev.slice(0, -1);
+          focusJobSearchInput(next.length);
+          return next;
+        });
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setJobSearchTerm("");
+        focusJobSearchInput(0);
+        return;
+      }
+
+      if (event.key.length === 1 && /^[0-9a-zA-Z]$/.test(event.key)) {
+        event.preventDefault();
+        setJobSearchTerm((prev) => {
+          const next = `${prev}${event.key}`;
+          focusJobSearchInput(next.length);
+          return next;
+        });
+      }
+    },
+    [focusJobSearchInput],
+  );
 
   // Filter time entries based on criteria
   const filteredSummaries = useMemo(() => {
