@@ -764,9 +764,11 @@ export function SummaryReports() {
             if (entry.date < dateFilter.start || entry.date > dateFilter.end)
               return false;
 
-            if (jobFilter && jobFilter !== "all-jobs") {
+            if (selectedJobs.length > 0) {
               const job = jobs.find((j) => j.id === entry.jobId);
-              if (job?.jobNumber !== jobFilter) return false;
+              if (!job || !selectedJobs.includes(job.jobNumber)) {
+                return false;
+              }
             }
 
             if (billableFilter !== "all") {
@@ -967,9 +969,11 @@ export function SummaryReports() {
             if (entry.date < dateFilter.start || entry.date > dateFilter.end)
               return false;
 
-            if (jobFilter && jobFilter !== "all-jobs") {
+            if (selectedJobs.length > 0) {
               const job = jobs.find((j) => j.id === entry.jobId);
-              if (job?.jobNumber !== jobFilter) return false;
+              if (!job || !selectedJobs.includes(job.jobNumber)) {
+                return false;
+              }
             }
 
             if (billableFilter !== "all") {
