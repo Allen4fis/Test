@@ -297,8 +297,8 @@ export function InvoiceManagement() {
         };
       }
 
-      const individualCost = entry.totalCost;
-      const individualBillable = entry.totalBillableAmount;
+      const individualCost = getCostWithoutLoa(entry);
+      const individualBillable = getBillableWithoutLoa(entry);
       const note = entry.description?.trim();
 
       // Find existing employee or add new one
