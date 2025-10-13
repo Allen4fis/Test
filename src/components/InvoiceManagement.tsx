@@ -92,6 +92,24 @@ interface GroupedTimeEntry {
   totalBillable: number;
 }
 
+interface EmployeeLoaDetail {
+  name: string;
+  allowances: number;
+  totalCost: number;
+}
+
+const formatLoaCostValue = (amount: number): string => {
+  if (!Number.isFinite(amount)) {
+    return "0";
+  }
+  const rounded = Number(amount.toFixed(2));
+  const hasFraction = Math.abs(rounded - Math.trunc(rounded)) > 0;
+  return rounded.toLocaleString(undefined, {
+    minimumFractionDigits: hasFraction ? 2 : 0,
+    maximumFractionDigits: 2,
+  });
+};
+
 export function InvoiceManagement() {
   const {
     jobs,
