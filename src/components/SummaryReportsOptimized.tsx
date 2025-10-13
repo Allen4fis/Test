@@ -546,6 +546,11 @@ export default function SummaryReportsOptimized() {
               hours: 0,
               effectiveHours: 0,
               totalCost: 0,
+              hourlyCost: 0,
+              loaCount: 0,
+              loaCost: 0,
+              loaAmounts: {},
+              rateEntries: [],
               billableWage: entry.billableWageUsed,
               costWage: entry.costWageUsed,
             };
@@ -562,8 +567,43 @@ export default function SummaryReportsOptimized() {
           const ot = Math.min(4, Math.max(0, h - 8));
           const dt = Math.max(0, h - 12);
           const premiumDollars = isRigNS ? reg * 3 + ot * 4.5 + dt * 6 : 0;
+          const costWageUsed = entry.costWageUsed || 0;
+          const baseHourlyCost = eff * costWageUsed + premiumDollars;
+          const entryLoaCount = entry.loaCount || 0;
+          const entryLoaAmount = entry.loaAmount || 200;
+          const entryLoaCost = entryLoaCount * entryLoaAmount;
+          const totalEntryCost = baseHourlyCost + entryLoaCost;
+
           acc[key].effectiveHours += eff;
-          acc[key].totalCost += eff * entry.costWageUsed + premiumDollars;
+          acc[key].totalCost += totalEntryCost;
+          acc[key].hourlyCost += baseHourlyCost;
+          acc[key].loaCount += entryLoaCount;
+          acc[key].loaCost += entryLoaCost;
+
+          if (entryLoaCount > 0) {
+            const amountKey = entryLoaAmount.toFixed(2);
+            acc[key].loaAmounts[amountKey] =
+              (acc[key].loaAmounts[amountKey] || 0) + entryLoaCount;
+          }
+
+          const hourlyRate =
+            entry.hours > 0
+              ? baseHourlyCost / Math.max(entry.hours || 0, 0.0001)
+              : costWageUsed;
+
+          acc[key].rateEntries.push({
+            date: entry.date,
+            hours: entry.hours,
+            effectiveHours: eff,
+            hourlyRate,
+            hourlyCost: baseHourlyCost,
+            loaCount: entryLoaCount,
+            loaAmount: entryLoaAmount,
+            loaCost: entryLoaCost,
+            totalCost: totalEntryCost,
+            provinceName: province.name,
+            jobName: job.name,
+          });
 
           return acc;
         },
