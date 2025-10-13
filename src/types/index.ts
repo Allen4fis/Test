@@ -69,6 +69,7 @@ export interface TimeEntrySummary {
   costWage: number;
   totalBillableAmount: number; // effectiveHours * billableWage
   totalCost: number; // effectiveHours * costWage
+  description?: string;
 }
 
 export interface SummaryByTitleAndJob {
