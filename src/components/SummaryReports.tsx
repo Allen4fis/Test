@@ -286,17 +286,10 @@ export function SummaryReports() {
       }
 
       // Job filter
-      if (jobFilter === "billable-only") {
-        const job = jobs.find((j) => j.jobNumber === rental.jobNumber);
-        if (job?.isBillable === false) {
-          return false;
-        }
-      } else if (jobFilter === "non-billable-only") {
-        const job = jobs.find((j) => j.jobNumber === rental.jobNumber);
-        if (job?.isBillable !== false) {
-          return false;
-        }
-      } else if (jobFilter !== "all-jobs" && rental.jobNumber !== jobFilter) {
+      if (
+        selectedJobs.length > 0 &&
+        !selectedJobs.includes(rental.jobNumber)
+      ) {
         return false;
       }
 
