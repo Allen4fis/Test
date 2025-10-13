@@ -325,7 +325,7 @@ export function InvoiceManagement() {
       return acc;
     }, {});
 
-    // Calculate group totals from individual employee costs only
+    // Calculate group totals from individual employee totals (including LOA)
     const result = Object.values(grouped).map((group: any) => ({
       ...group,
       totalCost: group.employees.reduce(
