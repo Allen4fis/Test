@@ -239,7 +239,7 @@ const getDefaultAppData = (): AppData => ({
     },
     {
       id: "10",
-      name: "NS Stat Holiday",
+      name: "NS Stat Holiday OT",
       description: "Nightshift statutory holiday",
       multiplier: 1.5,
     },
