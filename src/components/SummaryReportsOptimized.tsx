@@ -562,9 +562,7 @@ export default function SummaryReportsOptimized() {
         .filter((ht) =>
           [
             "Regular Time",
-            "NS Regular Time",
-            "Stat Holiday",
-            "Stat Holiday (1X)",
+            "NS Regular Time"
           ].includes(ht.name),
         )
         .map((ht) => ht.id);
