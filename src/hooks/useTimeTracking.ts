@@ -83,7 +83,7 @@ const getDefaultAppData = (): AppData => ({
     },
     {
       id: "10",
-      name: "NS Stat Holiday",
+      name: "NS Stat Holiday OT",
       description: "Nightshift statutory holiday (base pay + $3) x1.5",
       multiplier: 1.5,
     },
@@ -1391,7 +1391,7 @@ export function useTimeTracking() {
           },
           {
             id: "10",
-            name: "NS Stat Holiday",
+            name: "NS Stat Holiday OT",
             description: "Nightshift statutory holiday (base pay + $3) x1.5",
             multiplier: 1.5,
           },

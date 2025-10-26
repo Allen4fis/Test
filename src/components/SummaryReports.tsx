@@ -2546,7 +2546,7 @@ export function SummaryReports() {
                                           "Travel Hours",
                                           "Holiday",
                                           "Stat Holiday",
-                                          "NS Stat Holiday",
+                                          "NS Stat Holiday OT",
                                           "Stat Holiday OT",
                                         ];
                                         const ai = order.indexOf(a);
@@ -2588,7 +2588,7 @@ export function SummaryReports() {
                                                                 "Stat Holiday"
                                                               ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
                                                               : hourType ===
-                                                                  "NS Stat Holiday"
+                                                                  "NS Stat Holiday OT"
                                                                 ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
                                                                 : hourType ===
                                                                     "Stat Holiday OT"
@@ -2619,7 +2619,7 @@ export function SummaryReports() {
                                           "Travel Hours",
                                           "Holiday",
                                           "Stat Holiday",
-                                          "NS Stat Holiday",
+                                          "NS Stat Holiday OT",
                                           "Stat Holiday OT",
                                         ];
                                         const ai = order.indexOf(a);
@@ -3175,7 +3175,7 @@ export function SummaryReports() {
                                                     "Travel Hours",
                                                     "Holiday",
                                                     "Stat Holiday",
-                                                    "NS Stat Holiday",
+                                                    "NS Stat Holiday OT",
                                                     "Stat Holiday OT",
                                                   ];
                                                   const ai = order.indexOf(a);
@@ -3224,7 +3224,7 @@ export function SummaryReports() {
                                                                           "Stat Holiday"
                                                                         ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
                                                                         : hourType ===
-                                                                            "NS Stat Holiday"
+                                                                            "NS Stat Holiday OT"
                                                                           ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
                                                                           : hourType ===
                                                                               "Stat Holiday OT"
@@ -3257,7 +3257,7 @@ export function SummaryReports() {
                                                     "Travel Hours",
                                                     "Holiday",
                                                     "Stat Holiday",
-                                                    "NS Stat Holiday",
+                                                    "NS Stat Holiday OT",
                                                     "Stat Holiday OT",
                                                   ];
                                                   const ai = order.indexOf(a);

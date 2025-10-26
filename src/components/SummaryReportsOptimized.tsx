@@ -276,7 +276,7 @@ const HourTypeBreakdown = memo(
                   "Travel Hours",
                   "Holiday",
                   "Stat Holiday",
-                  "NS Stat Holiday",
+                  "NS Stat Holiday OT",
                   "Stat Holiday OT",
                 ];
                 const ai = order.indexOf(a);
@@ -305,7 +305,7 @@ const HourTypeBreakdown = memo(
                                   ? "bg-teal-700/40 border-teal-500/60 text-teal-200"
                                   : hourType === "Stat Holiday"
                                     ? "bg-violet-700/40 border-violet-500/60 text-violet-200"
-                                    : hourType === "NS Stat Holiday"
+                                    : hourType === "NS Stat Holiday OT"
                                       ? "bg-purple-700/40 border-purple-500/60 text-purple-200"
                                       : hourType === "Stat Holiday OT"
                                         ? "bg-fuchsia-700/40 border-fuchsia-500/60 text-fuchsia-200"
@@ -333,7 +333,7 @@ const HourTypeBreakdown = memo(
                   "Travel Hours",
                   "Holiday",
                   "Stat Holiday",
-                  "NS Stat Holiday",
+                  "NS Stat Holiday OT",
                   "Stat Holiday OT",
                 ];
                 const ai = order.indexOf(a);
