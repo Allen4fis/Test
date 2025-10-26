@@ -1037,11 +1037,19 @@ export function RentalManagement() {
                               <SelectValue placeholder="Select job" />
                             </SelectTrigger>
                             <SelectContent>
-                              {activeJobs.map((job) => (
-                                <SelectItem key={job.id} value={job.id}>
-                                  {job.jobNumber} - {job.name}
-                                </SelectItem>
-                              ))}
+                              {[...activeJobs]
+                                .sort((a, b) => {
+                                  const aNumMatch = a.jobNumber.match(/\d+/);
+                                  const bNumMatch = b.jobNumber.match(/\d+/);
+                                  const aNum = aNumMatch ? parseInt(aNumMatch[0], 10) : 0;
+                                  const bNum = bNumMatch ? parseInt(bNumMatch[0], 10) : 0;
+                                  return aNum - bNum;
+                                })
+                                .map((job) => (
+                                  <SelectItem key={job.id} value={job.id}>
+                                    {job.jobNumber} - {job.name}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                         </div>
