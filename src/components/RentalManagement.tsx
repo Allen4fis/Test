@@ -437,10 +437,15 @@ export function RentalManagement() {
           aValue = a.rentalItemName.toLowerCase();
           bValue = b.rentalItemName.toLowerCase();
           break;
-        case "job":
-          aValue = a.jobNumber.toLowerCase();
-          bValue = b.jobNumber.toLowerCase();
+        case "job": {
+          const aNumMatch = a.jobNumber.match(/\d+/);
+          const bNumMatch = b.jobNumber.match(/\d+/);
+          const aNum = aNumMatch ? parseInt(aNumMatch[0], 10) : 0;
+          const bNum = bNumMatch ? parseInt(bNumMatch[0], 10) : 0;
+          aValue = aNum;
+          bValue = bNum;
           break;
+        }
         case "employee":
           aValue = a.employeeName.toLowerCase();
           bValue = b.employeeName.toLowerCase();
