@@ -88,7 +88,7 @@ export function RentalManagement() {
     description: "",
     category: "",
     dailyRate: "",
-    hourlyRate: "",
+
     unit: "day" as const,
     dspRate: "",
   });
@@ -149,7 +149,7 @@ export function RentalManagement() {
       description: "",
       category: "",
       dailyRate: "",
-      hourlyRate: "",
+  
       unit: "day",
       dspRate: "",
     });
@@ -216,9 +216,6 @@ export function RentalManagement() {
       description: formData.description,
       category: formData.category,
       dailyRate: parseFloat(formData.dailyRate),
-      hourlyRate: formData.hourlyRate
-        ? parseFloat(formData.hourlyRate)
-        : undefined,
       unit: formData.unit,
       dspRate: formData.dspRate ? parseFloat(formData.dspRate) : undefined,
       isActive: true,
@@ -283,7 +280,6 @@ export function RentalManagement() {
       description: item.description || "",
       category: item.category,
       dailyRate: item.dailyRate.toString(),
-      hourlyRate: item.hourlyRate?.toString() || "",
       unit: item.unit,
       dspRate: item.dspRate?.toString() || "",
     });
@@ -721,45 +717,29 @@ export function RentalManagement() {
                           />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="hourlyRate" className="text-right">
-                            Hourly Rate
-                          </Label>
-                          <Input
-                            id="hourlyRate"
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={formData.hourlyRate}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                hourlyRate: e.target.value,
-                              })
-                            }
-                            className="col-span-3"
-                            placeholder="Optional hourly rate"
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="unit" className="text-right">
                             Billing Unit *
                           </Label>
-                          <Select
-                            value={formData.unit}
-                            onValueChange={(value: any) =>
-                              setFormData({ ...formData, unit: value })
-                            }
-                          >
-                            <SelectTrigger className="col-span-3">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="day">Day</SelectItem>
-                              <SelectItem value="hour">Hour</SelectItem>
-                              <SelectItem value="week">Week</SelectItem>
-                              <SelectItem value="month">Month</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          {editingItem ? (
+                            <Select
+                              value={formData.unit}
+                              onValueChange={(value: any) =>
+                                setFormData({ ...formData, unit: value })
+                              }
+                            >
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="day">Day</SelectItem>
+                                <SelectItem value="hour">Hour</SelectItem>
+                                <SelectItem value="week">Week</SelectItem>
+                                <SelectItem value="month">Month</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input className="col-span-3" value="Day" readOnly />
+                          )}
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="dspRate" className="text-right">
