@@ -149,7 +149,7 @@ export function RentalManagement() {
       description: "",
       category: "",
       dailyRate: "",
-  
+
       unit: "day",
       dspRate: "",
     });
@@ -738,7 +738,11 @@ export function RentalManagement() {
                               </SelectContent>
                             </Select>
                           ) : (
-                            <Input className="col-span-3" value="Day" readOnly />
+                            <Input
+                              className="col-span-3"
+                              value="Day"
+                              readOnly
+                            />
                           )}
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -1021,8 +1025,12 @@ export function RentalManagement() {
                                 .sort((a, b) => {
                                   const aNumMatch = a.jobNumber.match(/\d+/);
                                   const bNumMatch = b.jobNumber.match(/\d+/);
-                                  const aNum = aNumMatch ? parseInt(aNumMatch[0], 10) : 0;
-                                  const bNum = bNumMatch ? parseInt(bNumMatch[0], 10) : 0;
+                                  const aNum = aNumMatch
+                                    ? parseInt(aNumMatch[0], 10)
+                                    : 0;
+                                  const bNum = bNumMatch
+                                    ? parseInt(bNumMatch[0], 10)
+                                    : 0;
                                   return aNum - bNum;
                                 })
                                 .map((job) => (
