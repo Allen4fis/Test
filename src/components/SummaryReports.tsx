@@ -437,7 +437,10 @@ export function SummaryReports() {
       const employee = employees.find(
         (emp) => emp.name === summary.employeeName,
       );
-      return sum + calculateGST(employee, summary.totalCost);
+      // Calculate wage cost only (excluding LOA)
+      const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
+      const wageCost = summary.totalCost - loaCost;
+      return sum + calculateGST(employee, wageCost);
     }, 0);
     const rentalBillable = filteredRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalBillable,
