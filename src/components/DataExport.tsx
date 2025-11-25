@@ -1850,10 +1850,12 @@ export function DataExport() {
               <TableRow>
                 <TableHead>Month</TableHead>
                 <TableHead>Total Hours</TableHead>
-                <TableHead>Total Cost</TableHead>
-                <TableHead>Billable Revenue</TableHead>
+                <TableHead>Total Labor Cost</TableHead>
+                <TableHead>Billable Labor Revenue</TableHead>
                 <TableHead>Non-Billable Cost</TableHead>
-                <TableHead>Net Profit</TableHead>
+                <TableHead>Rental Revenue</TableHead>
+                <TableHead>Rental Cost</TableHead>
+                <TableHead className="text-right">Net Profit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
