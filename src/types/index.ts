@@ -157,9 +157,8 @@ export interface RentalSummary {
   jobNumber: string;
   jobName: string;
   employeeName?: string;
-  startDate: string;
-  endDate: string;
-  duration: number; // Calculated duration in billing units
+  rentalDate: string;
+  duration: number; // Calculated duration in billing units (1 for single day)
   quantity: number;
   rateUsed: number; // Rate charged to client (billable rate)
   dspRate?: number; // Rate paid to DSP (cost rate)
