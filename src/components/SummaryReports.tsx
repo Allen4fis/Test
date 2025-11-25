@@ -1348,83 +1348,88 @@ export function SummaryReports() {
             </CardHeader>
             <CardContent>
               {/* Filters */}
-              <div className="space-y-4 mb-6 p-4 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
+              <div className="space-y-3 mb-6 p-3 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
                 {/* Date Range Section */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-sm font-medium">Date Range</Label>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    {/* Manual Date Input Controls */}
-                    <div className="flex items-center gap-2 flex-1">
-                      <div className="flex-1">
-                        <Label
-                          htmlFor="start-date"
-                          className="text-xs text-gray-400 mb-1 block"
-                        >
-                          From
-                        </Label>
-                        <Input
-                          id="start-date"
-                          type="date"
-                          value={dateFilter.start}
-                          onChange={(e) =>
-                            setDateFilter({
-                              ...dateFilter,
-                              start: e.target.value,
-                            })
-                          }
-                          className="bg-gray-800 border-gray-600 text-gray-100"
-                        />
-                      </div>
-                      <span className="text-gray-400 px-1 mt-5">to</span>
-                      <div className="flex-1">
-                        <Label
-                          htmlFor="end-date"
-                          className="text-xs text-gray-400 mb-1 block"
-                        >
-                          To
-                        </Label>
-                        <Input
-                          id="end-date"
-                          type="date"
-                          value={dateFilter.end}
-                          onChange={(e) =>
-                            setDateFilter({
-                              ...dateFilter,
-                              end: e.target.value,
-                            })
-                          }
-                          className="bg-gray-800 border-gray-600 text-gray-100"
-                        />
-                      </div>
+                  {/* Manual Date Input Controls */}
+                  <div className="flex items-end gap-2">
+                    <div className="flex-1">
+                      <Label
+                        htmlFor="start-date"
+                        className="text-xs text-gray-400 mb-1 block"
+                      >
+                        From
+                      </Label>
+                      <Input
+                        id="start-date"
+                        type="date"
+                        value={dateFilter.start}
+                        onChange={(e) =>
+                          setDateFilter({
+                            ...dateFilter,
+                            start: e.target.value,
+                          })
+                        }
+                        className="bg-gray-800 border-gray-600 text-gray-100"
+                      />
                     </div>
+                    <div className="flex-1">
+                      <Label
+                        htmlFor="end-date"
+                        className="text-xs text-gray-400 mb-1 block"
+                      >
+                        To
+                      </Label>
+                      <Input
+                        id="end-date"
+                        type="date"
+                        value={dateFilter.end}
+                        onChange={(e) =>
+                          setDateFilter({
+                            ...dateFilter,
+                            end: e.target.value,
+                          })
+                        }
+                        className="bg-gray-800 border-gray-600 text-gray-100"
+                      />
+                    </div>
+                  </div>
 
-                    {/* Quick Date Range Buttons */}
-                    <div className="flex gap-2 flex-wrap">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setDateFilter(getDateRange(7))}
-                        className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
-                      >
-                        7 Days
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setDateFilter(getDateRange(30))}
-                        className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
-                      >
-                        30 Days
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setDateFilter(getDateRange(90))}
-                        className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700"
-                      >
-                        90 Days
-                      </Button>
-                    </div>
+                  {/* Quick Date Range Buttons */}
+                  <div className="flex gap-1 flex-wrap pt-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDateFilter(getDateRange(7))}
+                      className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 text-xs"
+                    >
+                      7 Days
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDateFilter(getDateRange(30))}
+                      className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 text-xs"
+                    >
+                      30 Days
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDateFilter(getDateRange(90))}
+                      className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 text-xs"
+                    >
+                      90 Days
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDateFilter(getAllTimeDateRange())}
+                      className="bg-gray-800 border-gray-600 text-gray-100 hover:bg-gray-700 text-xs"
+                    >
+                      All Time
+                    </Button>
                   </div>
                 </div>
 
