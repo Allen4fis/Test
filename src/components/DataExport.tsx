@@ -377,7 +377,7 @@ export function DataExport() {
       totalBillableEffectiveHours + totalNonBillableEffectiveHours;
     const totalLaborCost = totalBillableLaborCost + totalNonBillableLaborCost;
     const totalRentalCost =
-      totalBillableRentalRevenue + totalNonBillableRentalCost;
+      totalBillableRentalCost + totalNonBillableRentalCost;
     const totalBillableRevenue =
       totalBillableAmount + totalBillableRentalRevenue;
     const totalNonBillableCost =
