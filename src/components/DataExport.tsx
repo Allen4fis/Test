@@ -581,7 +581,11 @@ export function DataExport() {
       );
       if (!detailedEntry) return;
 
-      const month = rentalEntry.rentalDate.substring(0, 7); // YYYY-MM format
+      // Handle both old format (startDate) and new format (rentalDate)
+      const dateToUse = rentalEntry.rentalDate || (rentalEntry as any).startDate;
+      if (!dateToUse) return;
+
+      const month = dateToUse.substring(0, 7); // YYYY-MM format
 
       if (!monthlyBreakdown[month]) {
         monthlyBreakdown[month] = {
