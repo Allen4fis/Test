@@ -882,9 +882,7 @@ export function SummaryReports() {
                 entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
               }
 
-              // Add LOA cost
-              const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-              entryCost += loaCost;
+
 
               // Apply GST based on stored category
               if (entryCategory === "dsp" || entryCategory === "dspot") {
@@ -1094,9 +1092,7 @@ export function SummaryReports() {
                 entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
               }
 
-              // Add LOA cost
-              const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-              entryCost += loaCost;
+
 
               // Apply GST based on stored category
               if (entryCategory === "dsp" || entryCategory === "dspot") {
