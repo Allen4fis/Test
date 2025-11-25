@@ -401,9 +401,9 @@ export function RentalManagement() {
       let bValue: string | number;
 
       switch (entrySortBy) {
-        case "startDate":
-          aValue = new Date(a.startDate).getTime();
-          bValue = new Date(b.startDate).getTime();
+        case "rentalDate":
+          aValue = new Date(a.rentalDate).getTime();
+          bValue = new Date(b.rentalDate).getTime();
           break;
         case "rentalItem":
           aValue = a.rentalItemName.toLowerCase();
@@ -431,8 +431,8 @@ export function RentalManagement() {
           bValue = b.totalBillable;
           break;
         default:
-          aValue = new Date(a.startDate).getTime();
-          bValue = new Date(b.startDate).getTime();
+          aValue = new Date(a.rentalDate).getTime();
+          bValue = new Date(b.rentalDate).getTime();
       }
 
       if (aValue < bValue) return entrySortDirection === "asc" ? -1 : 1;
