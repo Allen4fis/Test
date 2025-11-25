@@ -1000,6 +1000,7 @@ export function SummaryReports() {
 
         return {
           ...manager,
+          gstAmount: recalculatedManagerGst, // Use recalculated GST with filters applied
           subordinates: updatedSubordinates,
           subordinateGstTotal,
         };
