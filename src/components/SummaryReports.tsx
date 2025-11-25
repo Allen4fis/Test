@@ -1435,10 +1435,10 @@ export function SummaryReports() {
 
                 {/* Other Filters */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium">Employees</Label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -1449,17 +1449,17 @@ export function SummaryReports() {
                                 .map((emp) => emp.name),
                             )
                           }
-                          className="h-6 px-2 text-xs text-orange-400 hover:text-orange-300"
+                          className="h-5 px-1.5 text-xs text-orange-400 hover:text-orange-300"
                         >
-                          Select All
+                          All
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setSelectedEmployees([])}
-                          className="h-6 px-2 text-xs text-orange-400 hover:text-orange-300"
+                          className="h-5 px-1.5 text-xs text-orange-400 hover:text-orange-300"
                         >
-                          Clear All
+                          Clear
                         </Button>
                       </div>
                     </div>
