@@ -318,26 +318,8 @@ export function RentalManagement() {
         ? employees.find((emp) => emp.id === entry.employeeId)
         : null;
 
-      // Calculate duration based on billing unit
-      const startDate = new Date(entry.startDate);
-      const endDate = new Date(entry.endDate);
-      const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-
-      let duration = 1;
-      switch (entry.billingUnit) {
-        case "hour":
-          duration = Math.ceil(diffTime / (1000 * 60 * 60));
-          break;
-        case "day":
-          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-          break;
-        case "week":
-          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
-          break;
-        case "month":
-          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
-          break;
-      }
+      // Duration is always 1 for single day rental
+      const duration = 1;
 
       // Calculate billable amount (what you charge the client)
       const totalBillable = entry.rateUsed * duration * entry.quantity;
@@ -354,8 +336,7 @@ export function RentalManagement() {
         jobNumber: job?.jobNumber || "Unknown",
         jobName: job?.name || "",
         employeeName: employee?.name || "Unassigned",
-        startDate: entry.startDate,
-        endDate: entry.endDate,
+        rentalDate: entry.rentalDate,
         duration,
         quantity: entry.quantity,
         rateUsed: entry.rateUsed, // Billable rate
