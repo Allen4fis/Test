@@ -1182,9 +1182,7 @@ export function SummaryReports() {
               entryCost = effectiveHours * adjustedCostWage;
             }
 
-            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-            entryCost += loaCost;
-
+            // GST is only applied to wage, not to LOA
             if (entryCategory === "dsp" || entryCategory === "dspot") {
               return total + entryCost * 0.05;
             } else if (
