@@ -531,20 +531,23 @@ export function DataExport() {
             revenue: 0,
             hours: 0,
             billableRevenue: 0,
+            billableLaborCost: 0,
             rentalRevenue: 0,
             rentalCost: 0,
             nonBillableCost: 0,
           };
         }
 
-        acc[month].cost += detailedEntry.laborCost;
         acc[month].hours += detailedEntry.hours;
 
         if (detailedEntry.jobIsBillable) {
           acc[month].billableRevenue += detailedEntry.billableAmount;
+          acc[month].billableLaborCost += detailedEntry.laborCost;
         } else {
           acc[month].nonBillableCost += detailedEntry.laborCost;
         }
+
+        acc[month].cost += detailedEntry.laborCost;
 
         return acc;
       },
