@@ -1870,14 +1870,20 @@ export function DataExport() {
                     <TableCell className="text-orange-600">
                       ${data.nonBillableCost.toFixed(2)}
                     </TableCell>
+                    <TableCell>
+                      ${data.rentalRevenue.toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      ${data.rentalCost.toFixed(2)}
+                    </TableCell>
                     <TableCell
                       className={
-                        data.billableRevenue - data.cost >= 0
+                        (data.billableRevenue + data.rentalRevenue) - (data.billableLaborCost + data.rentalCost) >= 0
                           ? "font-semibold text-green-600"
                           : "font-semibold text-red-600"
                       }
                     >
-                      ${(data.billableRevenue - data.cost).toFixed(2)}
+                      ${((data.billableRevenue + data.rentalRevenue) - (data.billableLaborCost + data.rentalCost)).toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
