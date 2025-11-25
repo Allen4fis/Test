@@ -1572,23 +1572,23 @@ export function SummaryReports() {
                             return (
                               <label
                                 key={job.id}
-                                className={`flex items-start gap-2 p-2 rounded border border-transparent hover:border-orange-500/40 transition-colors ${checked ? "bg-orange-500/10 border-orange-500/50" : "bg-gray-800/60"}`}
+                                className={`flex items-start gap-1.5 p-1.5 rounded border border-transparent hover:border-orange-500/40 transition-colors ${checked ? "bg-orange-500/10 border-orange-500/50" : "bg-gray-800/60"}`}
                               >
                                 <input
                                   type="checkbox"
-                                  className="mt-1 w-4 h-4 text-orange-500 bg-gray-900 border-gray-600 rounded focus:ring-orange-500"
+                                  className="mt-0.5 w-3 h-3 text-orange-500 bg-gray-900 border-gray-600 rounded focus:ring-orange-500"
                                   checked={checked}
                                   onChange={() =>
                                     toggleJobSelection(job.jobNumber)
                                   }
                                 />
-                                <div className="flex-1">
-                                  <div className="text-sm text-gray-100">
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-xs text-gray-100 truncate">
                                     {job.jobNumber} - {job.name}
                                   </div>
                                   {job.isBillable === false && (
-                                    <div className="text-[10px] uppercase tracking-wide text-orange-300 mt-1">
-                                      Non-Billable
+                                    <div className="text-[9px] uppercase tracking-wide text-orange-300 mt-0.5">
+                                      NB
                                     </div>
                                   )}
                                 </div>
