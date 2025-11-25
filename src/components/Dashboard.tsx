@@ -284,6 +284,13 @@ const Dashboard = memo(function Dashboard({
     allTimeTotalBillable > 0
       ? (allTimeProfitAmount / allTimeTotalBillable) * 100
       : 0;
+
+  // Calculate gross margin (billable costs only)
+  const allTimeGrossProfit = allTimeTotalBillable - allTimeCombinedCost;
+  const allTimeGrossMargin =
+    allTimeTotalBillable > 0
+      ? (allTimeGrossProfit / allTimeTotalBillable) * 100
+      : 0;
   const activeEmployees = employees.length;
 
   // Most overworked employees (by hours this month)
