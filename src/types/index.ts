@@ -142,8 +142,7 @@ export interface RentalEntry {
   rentalItemId: string;
   jobId: string;
   employeeId?: string; // Who rented/used the item
-  startDate: string; // YYYY-MM-DD format
-  endDate: string; // YYYY-MM-DD format
+  rentalDate: string; // YYYY-MM-DD format
   quantity: number; // Number of items rented
   billingUnit: "day" | "hour" | "week" | "month";
   rateUsed: number; // Rate that was used for this rental (in case rates change)
