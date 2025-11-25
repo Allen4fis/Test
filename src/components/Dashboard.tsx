@@ -385,14 +385,26 @@ const Dashboard = memo(function Dashboard({
                   ${allTimeTotalBillable.toFixed(2)}
                 </span>
               </div>
-              <div className="border-t border-gray-700 pt-2">
-                <div
-                  className={`text-2xl font-bold ${allTimeProfitPercentage >= 0 ? "text-blue-400" : "text-red-400"}`}
-                >
-                  {allTimeProfitPercentage >= 0 ? "+" : ""}
-                  {allTimeProfitPercentage.toFixed(2)}%
+              <div className="border-t border-gray-700 pt-2 space-y-3">
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Gross Margin</div>
+                  <div
+                    className={`text-xl font-bold ${allTimeGrossMargin >= 0 ? "text-green-400" : "text-red-400"}`}
+                  >
+                    {allTimeGrossMargin >= 0 ? "+" : ""}
+                    {allTimeGrossMargin.toFixed(2)}%
+                  </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-1 flex items-center">
+                <div>
+                  <div className="text-xs text-gray-500 mb-1">Net Margin</div>
+                  <div
+                    className={`text-xl font-bold ${allTimeProfitPercentage >= 0 ? "text-blue-400" : "text-red-400"}`}
+                  >
+                    {allTimeProfitPercentage >= 0 ? "+" : ""}
+                    {allTimeProfitPercentage.toFixed(2)}%
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 mt-2 flex items-center">
                   <PiggyBank className="h-3 w-3 mr-1 text-blue-400" />
                   Including LOA & rentals
                 </p>
