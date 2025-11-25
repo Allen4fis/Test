@@ -64,6 +64,16 @@ const getLastNDays = (days: number) => {
   };
 };
 
+// Get all-time date range (from year 2000 to today)
+const getAllTimeDateRange = () => {
+  const startDate = new Date(2000, 0, 1);
+  const endDate = new Date();
+  return {
+    start: startDate.toISOString().split("T")[0],
+    end: endDate.toISOString().split("T")[0],
+  };
+};
+
 // Alias for quick date range buttons
 const getDateRange = getLastNDays;
 
