@@ -387,7 +387,7 @@ const Dashboard = memo(function Dashboard({
               </div>
               <div className="border-t border-gray-700 pt-2 space-y-3">
                 <div>
-                  <div className="text-xs text-gray-500 mb-1">Gross Margin</div>
+                  <div className="text-xs text-gray-500 mb-1">Gross Margin <span className="text-gray-600">(before non-billable)</span></div>
                   <div
                     className={`text-xl font-bold ${allTimeGrossMargin >= 0 ? "text-green-400" : "text-red-400"}`}
                   >
@@ -396,7 +396,7 @@ const Dashboard = memo(function Dashboard({
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-1">Net Margin</div>
+                  <div className="text-xs text-gray-500 mb-1">Net Margin <span className="text-gray-600">(after non-billable)</span></div>
                   <div
                     className={`text-xl font-bold ${allTimeProfitPercentage >= 0 ? "text-blue-400" : "text-red-400"}`}
                   >
