@@ -203,7 +203,24 @@ export function DataExport() {
       const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
       const province = provinces.find((p) => p.id === entry.provinceId);
 
-      const effectiveHours = entry.hours * (hourType?.multiplier || 1);
+      const isRigTiered =
+        hourType?.name === "Employee Rig" ||
+        hourType?.name === "NS Employee Rig";
+      const isRigNS = hourType?.name === "NS Employee Rig";
+
+      // Calculate effective hours for rig tiered entries
+      const computeEmprigEffectiveHours = (hours: number) => {
+        const h = Math.max(0, hours || 0);
+        const reg = Math.min(8, h);
+        const ot = Math.min(4, Math.max(0, h - 8));
+        const dt = Math.max(0, h - 12);
+        return reg * 1 + ot * 1.5 + dt * 2;
+      };
+
+      const baseEff = entry.hours * (hourType?.multiplier || 1);
+      const effectiveHours = isRigTiered
+        ? computeEmprigEffectiveHours(entry.hours)
+        : baseEff;
 
       // Add $3 to base wage for NS hour types (to match Dashboard calculation)
       let adjustedBillableWage = entry.billableWageUsed;
@@ -212,6 +229,16 @@ export function DataExport() {
         adjustedBillableWage += 3;
         adjustedCostWage += 3;
       }
+
+      // Calculate billable amount (Rig base stays 1x; NS adds premium dollars per tier)
+      const billableFactorHours = isRigTiered ? entry.hours : effectiveHours;
+      const h0 = Math.max(0, entry.hours || 0);
+      const reg0 = Math.min(8, h0);
+      const ot0 = Math.min(4, Math.max(0, h0 - 8));
+      const dt0 = Math.max(0, h0 - 12);
+      const premiumDollars0 = isRigNS ? reg0 * 3 + ot0 * 4.5 + dt0 * 6 : 0;
+      const baseBillableAmount =
+        billableFactorHours * adjustedBillableWage + premiumDollars0;
 
       // Apply DSP 1x rate logic to match Dashboard calculation
       const entryEmployeeCategory =
@@ -224,15 +251,18 @@ export function DataExport() {
         entryEmployeeCategory === "dsp" || // Entry was created when employee was DSP
         (employee?.managerId && manager?.category === "dsp"); // Current subordinate of DSP
 
-      const baseLaborCost = shouldUse1xRates
-        ? entry.hours * adjustedCostWage // 1x for DSPs and subordinates
-        : effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
+      let baseLaborCost = 0;
+      if (isRigTiered) {
+        baseLaborCost = effectiveHours * adjustedCostWage + premiumDollars0; // Rig tiered; NS adds premium
+      } else if (shouldUse1xRates) {
+        baseLaborCost = entry.hours * adjustedCostWage; // 1x for DSPs and subordinates
+      } else {
+        baseLaborCost = effectiveHours * adjustedCostWage; // Normal rates for DSPOT/others
+      }
 
       // Add LOA costs to match Dashboard calculation
       const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
       const laborCost = baseLaborCost + loaCost;
-      // Include Billable hour type in billable amount calculations (to match Dashboard timeEntrySummaries)
-      const baseBillableAmount = effectiveHours * adjustedBillableWage;
       // Add LOA to billable amount to match Dashboard calculation
       const loaBillable = (entry.loaCount || 0) * (entry.loaAmount || 200);
       const billableAmount = baseBillableAmount + loaBillable;
