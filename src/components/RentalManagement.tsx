@@ -118,8 +118,8 @@ export function RentalManagement() {
 
   // Entry sorting states
   const [entrySortBy, setEntrySortBy] = useState<
-    "startDate" | "rentalItem" | "job" | "employee" | "quantity" | "totalCost"
-  >("startDate");
+    "rentalDate" | "rentalItem" | "job" | "employee" | "quantity" | "totalCost"
+  >("rentalDate");
   const [entrySortDirection, setEntrySortDirection] = useState<"asc" | "desc">(
     "desc",
   );
