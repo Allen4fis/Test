@@ -692,6 +692,7 @@ export function DataExport() {
     employees,
     provinces,
     filteredTimeEntries,
+    filteredRentalEntries,
   ]);
 
   // Export functions
