@@ -1881,12 +1881,12 @@ export function DataExport() {
                     </TableCell>
                     <TableCell
                       className={
-                        (data.billableRevenue + data.rentalRevenue) - (data.billableLaborCost + data.rentalCost) >= 0
+                        (data.billableRevenue + data.rentalRevenue) - (data.billableLaborCost + data.rentalCost + data.nonBillableCost) >= 0
                           ? "font-semibold text-green-700"
                           : "font-semibold text-red-700"
                       }
                     >
-                      ${((data.billableRevenue + data.rentalRevenue) - (data.billableLaborCost + data.rentalCost)).toFixed(2)}
+                      ${((data.billableRevenue + data.rentalRevenue) - (data.billableLaborCost + data.rentalCost + data.nonBillableCost)).toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
