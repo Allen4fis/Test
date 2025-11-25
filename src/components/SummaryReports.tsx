@@ -1517,20 +1517,20 @@ export function SummaryReports() {
                         : `${selectedEmployees.length} employee${selectedEmployees.length === 1 ? "" : "s"} selected`}
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label className="text-sm font-medium">Jobs</Label>
                     <div
-                      className="bg-gray-800 border border-gray-600 rounded-lg p-3"
+                      className="bg-gray-800 border border-gray-600 rounded-lg p-2"
                       tabIndex={0}
                       role="group"
                       aria-label="Job filter"
                       onKeyDown={handleJobQuickSearchKeyDown}
                     >
-                      <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-                        <span>
+                      <div className="flex items-center justify-between text-xs text-gray-400 mb-1.5">
+                        <span className="truncate">
                           {selectedJobs.length === 0
-                            ? "All jobs shown"
-                            : `${selectedJobs.length} job${selectedJobs.length === 1 ? "" : "s"} selected`}
+                            ? "All"
+                            : `${selectedJobs.length}`}
                         </span>
                         <button
                           type="button"
@@ -1543,7 +1543,7 @@ export function SummaryReports() {
                             selectedJobs.length === 0 &&
                             jobSearchTerm.trim() === ""
                           }
-                          className="text-orange-400 hover:text-orange-300 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed"
+                          className="text-orange-400 hover:text-orange-300 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed text-xs"
                         >
                           Clear
                         </button>
@@ -1554,19 +1554,19 @@ export function SummaryReports() {
                         onChange={(event) =>
                           setJobSearchTerm(event.target.value)
                         }
-                        placeholder="Search job number or name"
-                        className="bg-gray-900 border-gray-700 text-gray-100 h-8 text-sm mb-3"
+                        placeholder="Search"
+                        className="bg-gray-900 border-gray-700 text-gray-100 h-7 text-xs mb-2"
                         autoComplete="off"
                         spellCheck={false}
                       />
                       {filteredJobs.length === 0 ? (
                         <div className="text-xs text-gray-500">
                           {jobs.length === 0
-                            ? "No jobs available"
-                            : "No jobs match your search"}
+                            ? "No jobs"
+                            : "No match"}
                         </div>
                       ) : (
-                        <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
+                        <div className="max-h-40 overflow-y-auto space-y-1 pr-1">
                           {filteredJobs.map((job) => {
                             const checked = isJobSelected(job.jobNumber);
                             return (
