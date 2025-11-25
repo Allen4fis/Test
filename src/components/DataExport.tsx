@@ -57,27 +57,9 @@ const getLocalDateString = (date: Date = new Date()) => {
 };
 
 // Calculate rental duration
-const calculateDuration = (
-  startDate: string,
-  endDate: string,
-  unit: string,
-): number => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const diffTime = Math.abs(end.getTime() - start.getTime());
-
-  switch (unit) {
-    case "hour":
-      return Math.ceil(diffTime / (1000 * 60 * 60));
-    case "day":
-      return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    case "week":
-      return Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
-    case "month":
-      return Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
-    default:
-      return 1;
-  }
+// Duration is always 1 day for single-day rentals
+const calculateDuration = (): number => {
+  return 1;
 };
 
 // Calculate GST for DSPs, DSPOTs and contractors
