@@ -1348,9 +1348,7 @@ export function SummaryReports() {
     };
   }, [
     sortedHierarchicalSummaries,
-    filteredSummaries,
     filteredRentalSummaries,
-    employees,
   ]);
 
   // Pagination for employee summaries
