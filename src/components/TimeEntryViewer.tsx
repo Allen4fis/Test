@@ -162,6 +162,14 @@ export function TimeEntryViewer() {
         thirtyDaysAgo.setDate(today.getDate() - 29);
         startDate = getLocalDateString(thirtyDaysAgo);
         break;
+      case "alltime":
+        if (timeEntries.length > 0) {
+          const dates = timeEntries.map((entry) => entry.date).sort();
+          startDate = dates[0];
+        } else {
+          startDate = endDate;
+        }
+        break;
       case "custom":
         startDate = customStartDate;
         break;
