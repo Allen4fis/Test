@@ -932,7 +932,7 @@ export function RentalManagement() {
                       }
                       className="px-2 h-8"
                     >
-                      {entrySortDirection === "asc" ? "↑" : "↓"}
+                      {entrySortDirection === "asc" ? "↑" : "��"}
                     </Button>
                     <span className="text-xs text-gray-500 ml-2">
                       {sortedEntries.length} entr
@@ -1234,8 +1234,7 @@ export function RentalManagement() {
                                       `Rental Item: ${entry.rentalItemName}`,
                                       `Job: ${entry.jobNumber} - ${entry.jobName}`,
                                       `Employee: ${entry.employeeName}`,
-                                      `Period: ${entry.startDate} to ${entry.endDate}`,
-                                      `Duration: ${entry.duration} days`,
+                                      `Rental Date: ${entry.rentalDate}`,
                                       `Quantity: ${entry.quantity}`,
                                       `Rate Used: $${entry.rateUsed.toFixed(2)}`,
                                       ...(entry.dspRate
