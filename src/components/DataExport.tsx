@@ -948,8 +948,7 @@ export function DataExport() {
       // DETAILED RENTAL ENTRIES
       csvData.push(["DETAILED RENTAL ENTRIES"]);
       csvData.push([
-        "Start Date",
-        "End Date",
+        "Rental Date",
         "Item Name",
         "Category",
         "Job Number",
@@ -967,8 +966,7 @@ export function DataExport() {
 
       detailedRentalEntries.forEach((entry) => {
         csvData.push([
-          entry.startDate,
-          entry.endDate,
+          entry.rentalDate,
           entry.itemName,
           entry.itemCategory,
           entry.jobNumber,
