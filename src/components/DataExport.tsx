@@ -876,7 +876,7 @@ export function DataExport() {
       .sort(([a], [b]) => a.localeCompare(b))
       .forEach(([month, data]) => {
         const totalRevenue = data.billableRevenue + data.rentalRevenue;
-        const totalCost = data.billableLaborCost + data.rentalCost;
+        const totalCost = data.billableLaborCost + data.rentalCost + data.nonBillableCost;
         const netProfit = totalRevenue - totalCost;
         csvData.push([
           month,
