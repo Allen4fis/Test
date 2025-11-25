@@ -1463,7 +1463,7 @@ export function SummaryReports() {
                         </Button>
                       </div>
                     </div>
-                    <div className="max-h-40 overflow-y-auto space-y-2 p-3 bg-gray-800 border border-gray-600 rounded-md">
+                    <div className="max-h-40 overflow-y-auto space-y-1 p-2 bg-gray-800 border border-gray-600 rounded-md">
                       {employees.length === 0 ? (
                         <p className="text-gray-400 text-sm">
                           No employees available
