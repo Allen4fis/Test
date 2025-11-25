@@ -558,6 +558,7 @@ export function DataExport() {
           revenue: number;
           hours: number;
           billableRevenue: number;
+          billableLaborCost: number;
           rentalRevenue: number;
           rentalCost: number;
           nonBillableCost: number;
