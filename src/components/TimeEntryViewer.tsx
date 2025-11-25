@@ -584,6 +584,14 @@ export function TimeEntryViewer() {
                   Last 30 Days
                 </Button>
                 <Button
+                  variant={dateRange === "alltime" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleDateRangeChange("alltime")}
+                >
+                  <Calendar className="h-4 w-4 mr-1" />
+                  All Time
+                </Button>
+                <Button
                   variant={dateRange === "custom" ? "default" : "outline"}
                   size="sm"
                   onClick={() => {
