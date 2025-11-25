@@ -109,7 +109,7 @@ export function DataExport() {
   } = useTimeTracking();
 
   const [dateRange, setDateRange] = useState({
-    startDate: getLocalDateString(new Date(new Date().getFullYear(), 0, 1)), // Start of year
+    startDate: getLocalDateString(new Date(2000, 0, 1)), // All-time data
     endDate: getLocalDateString(),
   });
 
