@@ -292,11 +292,7 @@ export function DataExport() {
         ? employees.find((emp) => emp.id === entry.employeeId)
         : null;
 
-      const duration = calculateDuration(
-        entry.startDate,
-        entry.endDate,
-        entry.billingUnit,
-      );
+      const duration = calculateDuration();
       const totalBillable = duration * entry.quantity * entry.rateUsed; // What we charge client
       const totalCost = entry.dspRate
         ? duration * entry.quantity * entry.dspRate
