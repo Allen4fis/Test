@@ -912,7 +912,7 @@ export function RentalManagement() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="startDate">Start Date</SelectItem>
+                        <SelectItem value="rentalDate">Rental Date</SelectItem>
                         <SelectItem value="rentalItem">Rental Item</SelectItem>
                         <SelectItem value="job">Job</SelectItem>
                         <SelectItem value="employee">Employee</SelectItem>
