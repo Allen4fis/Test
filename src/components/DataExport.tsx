@@ -309,7 +309,7 @@ export function DataExport() {
         duration,
         totalBillable, // Revenue field
         totalCost, // Actual cost field
-        isInvoiced: job?.invoicedDates?.includes(entry.startDate) || false,
+        isInvoiced: job?.invoicedDates?.includes(entry.rentalDate) || false,
       };
     });
   }, [filteredRentalEntries, rentalItems, jobs, employees]);
