@@ -151,9 +151,14 @@ export function DataExport() {
 
   const filteredRentalEntries = useMemo(() => {
     let filtered = rentalEntries.filter(
-      (entry) =>
-        entry.startDate >= dateRange.startDate &&
-        entry.startDate <= dateRange.endDate,
+      (entry) => {
+        // Handle both old format (startDate) and new format (rentalDate)
+        const dateToUse = entry.rentalDate || (entry as any).startDate;
+        return (
+          dateToUse >= dateRange.startDate &&
+          dateToUse <= dateRange.endDate
+        );
+      },
     );
 
     // Apply employee type filter
