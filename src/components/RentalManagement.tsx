@@ -1148,8 +1148,7 @@ export function RentalManagement() {
                         <TableHead>Rental Item</TableHead>
                         <TableHead>Job</TableHead>
                         <TableHead>Employee</TableHead>
-                        <TableHead>Start Date</TableHead>
-                        <TableHead>End Date</TableHead>
+                        <TableHead>Rental Date</TableHead>
                         <TableHead>Duration</TableHead>
                         <TableHead>Quantity</TableHead>
                         <TableHead>Rate Used</TableHead>
