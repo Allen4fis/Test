@@ -531,6 +531,8 @@ export function DataExport() {
             revenue: 0,
             hours: 0,
             billableRevenue: 0,
+            rentalRevenue: 0,
+            rentalCost: 0,
             nonBillableCost: 0,
           };
         }
@@ -553,10 +555,41 @@ export function DataExport() {
           revenue: number;
           hours: number;
           billableRevenue: number;
+          rentalRevenue: number;
+          rentalCost: number;
           nonBillableCost: number;
         }
       >,
     );
+
+    // Add rental entries to monthly breakdown
+    filteredRentalEntries.forEach((rentalEntry) => {
+      const detailedEntry = detailedRentalEntries.find(
+        (de) => de.id === rentalEntry.id,
+      );
+      if (!detailedEntry) return;
+
+      const month = rentalEntry.startDate.substring(0, 7); // YYYY-MM format
+
+      if (!monthlyBreakdown[month]) {
+        monthlyBreakdown[month] = {
+          cost: 0,
+          revenue: 0,
+          hours: 0,
+          billableRevenue: 0,
+          rentalRevenue: 0,
+          rentalCost: 0,
+          nonBillableCost: 0,
+        };
+      }
+
+      if (detailedEntry.jobIsBillable) {
+        monthlyBreakdown[month].rentalRevenue += detailedEntry.totalBillable;
+        monthlyBreakdown[month].rentalCost += detailedEntry.totalCost;
+      } else {
+        monthlyBreakdown[month].rentalCost += detailedEntry.totalCost;
+      }
+    });
 
     // Invoiced vs Non-invoiced breakdown
     const invoicedLaborAmount = billableTimeEntries
@@ -796,21 +829,28 @@ export function DataExport() {
     csvData.push([
       "Month",
       "Total Hours",
-      "Total Cost",
-      "Billable Revenue",
+      "Total Labor Cost",
+      "Billable Labor Revenue",
+      "Rental Revenue",
+      "Rental Cost",
       "Non-Billable Cost",
       "Net Profit",
     ]);
     Object.entries(summary.monthlyBreakdown)
       .sort(([a], [b]) => a.localeCompare(b))
       .forEach(([month, data]) => {
+        const totalRevenue = data.billableRevenue + data.rentalRevenue;
+        const totalCost = data.cost + data.rentalCost + data.nonBillableCost;
+        const netProfit = totalRevenue - totalCost;
         csvData.push([
           month,
           data.hours.toFixed(2),
           `$${data.cost.toFixed(2)}`,
           `$${data.billableRevenue.toFixed(2)}`,
+          `$${data.rentalRevenue.toFixed(2)}`,
+          `$${data.rentalCost.toFixed(2)}`,
           `$${data.nonBillableCost.toFixed(2)}`,
-          `$${(data.billableRevenue - data.cost).toFixed(2)}`,
+          `$${netProfit.toFixed(2)}`,
         ]);
       });
     csvData.push([""]);
@@ -1018,7 +1058,7 @@ export function DataExport() {
         0,
       );
       const rentalRevenue = jobRentalEntries.reduce(
-        (sum, e) => sum + e.totalCost,
+        (sum, e) => sum + e.totalBillable,
         0,
       );
       const totalRevenue = laborRevenue + rentalRevenue;
