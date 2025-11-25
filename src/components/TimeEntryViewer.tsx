@@ -488,6 +488,7 @@ export function TimeEntryViewer() {
     const { startDate, endDate } = getDateRange(dateRange);
     if (dateRange === "today") return "Today";
     if (dateRange === "yesterday") return "Yesterday";
+    if (dateRange === "alltime") return "All Time";
     if (dateRange === "custom") {
       if (customStartDate === customEndDate) {
         return `Selected Date: ${new Date(customStartDate).toLocaleDateString()}`;
