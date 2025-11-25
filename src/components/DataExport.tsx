@@ -303,6 +303,9 @@ export function DataExport() {
         ? duration * entry.quantity * entry.dspRate
         : 0; // What we pay DSP
 
+      // Handle both old format (startDate) and new format (rentalDate)
+      const dateToUse = entry.rentalDate || (entry as any).startDate;
+
       return {
         ...entry,
         itemName: item?.name || "Unknown Item",
@@ -314,7 +317,8 @@ export function DataExport() {
         duration,
         totalBillable, // Revenue field
         totalCost, // Actual cost field
-        isInvoiced: job?.invoicedDates?.includes(entry.rentalDate) || false,
+        rentalDate: dateToUse, // Normalize to rentalDate
+        isInvoiced: job?.invoicedDates?.includes(dateToUse) || false,
       };
     });
   }, [filteredRentalEntries, rentalItems, jobs, employees]);
