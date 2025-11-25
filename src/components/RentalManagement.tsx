@@ -1496,35 +1496,17 @@ export function RentalManagement() {
                     </Select>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-startDate" className="text-right">
-                      Start Date *
+                    <Label htmlFor="edit-rentalDate" className="text-right">
+                      Rental Date *
                     </Label>
                     <Input
-                      id="edit-startDate"
+                      id="edit-rentalDate"
                       type="date"
-                      value={entryFormData.startDate}
+                      value={entryFormData.rentalDate}
                       onChange={(e) =>
                         setEntryFormData({
                           ...entryFormData,
-                          startDate: e.target.value,
-                        })
-                      }
-                      className="col-span-3"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-endDate" className="text-right">
-                      End Date *
-                    </Label>
-                    <Input
-                      id="edit-endDate"
-                      type="date"
-                      value={entryFormData.endDate}
-                      onChange={(e) =>
-                        setEntryFormData({
-                          ...entryFormData,
-                          endDate: e.target.value,
+                          rentalDate: e.target.value,
                         })
                       }
                       className="col-span-3"
