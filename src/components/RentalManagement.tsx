@@ -234,8 +234,7 @@ export function RentalManagement() {
     if (
       !entryFormData.rentalItemId ||
       !entryFormData.jobId ||
-      !entryFormData.startDate ||
-      !entryFormData.endDate
+      !entryFormData.rentalDate
     )
       return;
 
