@@ -884,6 +884,7 @@ export function SummaryReports() {
 
 
 
+              // GST is only applied to wage, not to LOA
               // Apply GST based on stored category
               if (entryCategory === "dsp" || entryCategory === "dspot") {
                 return total + entryCost * 0.05;
@@ -1094,6 +1095,7 @@ export function SummaryReports() {
 
 
 
+              // GST is only applied to wage, not to LOA
               // Apply GST based on stored category
               if (entryCategory === "dsp" || entryCategory === "dspot") {
                 return total + entryCost * 0.05;
