@@ -260,13 +260,6 @@ const Dashboard = memo(function Dashboard({
     ) + allTimeRentalBillable;
   const allTimeCombinedCost = allTimeTotalCost + allTimeRentalCost;
 
-  // Calculate profit percentage
-  const allTimeProfitAmount = allTimeTotalBillable - allTimeCombinedCost;
-  const allTimeProfitPercentage =
-    allTimeTotalBillable > 0
-      ? (allTimeProfitAmount / allTimeTotalBillable) * 100
-      : 0;
-
   // Calculate cost of non-billable jobs
   const nonBillableJobNumbers = jobs
     .filter((job) => job.isBillable === false)
@@ -281,9 +274,16 @@ const Dashboard = memo(function Dashboard({
       const job = jobs.find((j) => j.jobNumber === rental.jobNumber);
       return job?.isBillable === false;
     })
-    .reduce((sum, rental) => sum + rental.totalBillable, 0); // For non-billable, use billable amount as cost
+    .reduce((sum, rental) => sum + rental.totalCost, 0);
 
   const totalNonBillableCosts = nonBillableJobCosts + nonBillableRentalCosts;
+
+  // Calculate profit (billable revenue minus ALL costs including non-billable losses)
+  const allTimeProfitAmount = allTimeTotalBillable - allTimeCombinedCost - totalNonBillableCosts;
+  const allTimeProfitPercentage =
+    allTimeTotalBillable > 0
+      ? (allTimeProfitAmount / allTimeTotalBillable) * 100
+      : 0;
   const activeEmployees = employees.length;
 
   // Most overworked employees (by hours this month)
