@@ -414,7 +414,7 @@ export function DataExport() {
       totalNonBillableLaborCost + totalNonBillableRentalCost;
     const totalCombinedCost = totalLaborCost + totalRentalCost;
     const totalProfit =
-      totalBillableRevenue - (totalBillableLaborCost + totalBillableRentalCost);
+      totalBillableRevenue - (totalBillableLaborCost + totalBillableRentalCost + totalNonBillableLaborCost + totalNonBillableRentalCost);
 
     // Tax breakdowns by employee category and province
     const employeeCategoriesByProvince = employees.reduce(
