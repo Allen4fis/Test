@@ -787,24 +787,20 @@ export function SummaryReports() {
             const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
             if (!hourType) return total;
 
-            const effectiveHours = entry.hours * hourType.multiplier;
             let adjustedCostWage = entry.costWageUsed || 0;
-            let entryCost = 0;
 
             // Add $3 for NS hour types
             if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
               adjustedCostWage += 3;
             }
 
-            // DSP costs are 1x
-            entryCost = entry.hours * adjustedCostWage;
+            // DSP costs are 1x for wage
+            const wageCost = entry.hours * adjustedCostWage;
 
-            // Add LOA cost
-            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
-            entryCost += loaCost;
+            // GST is only applied to wage, not to LOA
+            const gstOnWage = wageCost * 0.05;
 
-            // Apply 5% GST for DSP
-            return total + entryCost * 0.05;
+            return total + gstOnWage;
           }, 0);
         }
 
