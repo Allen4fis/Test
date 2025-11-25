@@ -1308,6 +1308,24 @@ export function SummaryReports() {
       const subordinateGst = emp.subordinateGstTotal || 0;
       return sum + managerGst + subordinateGst;
     }, 0);
+
+    // Get the names of employees that are currently being displayed (for rentals)
+    const displayedEmployeeNames = new Set();
+    sortedHierarchicalSummaries.forEach((emp) => {
+      displayedEmployeeNames.add(emp.employeeName);
+      // Also include subordinates if they're being shown
+      if (emp.subordinates && emp.subordinates.length > 0) {
+        emp.subordinates.forEach((sub) => {
+          displayedEmployeeNames.add(sub.employeeName);
+        });
+      }
+    });
+
+    // Filter rental summaries to only include displayed employees
+    const relevantRentalSummaries = filteredRentalSummaries.filter((rental) =>
+      displayedEmployeeNames.has(rental.employeeName),
+    );
+
     const rentalBillable = relevantRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalBillable,
       0,
