@@ -1190,11 +1190,10 @@ export function RentalManagement() {
                               </div>
                             )}
                           </TableCell>
-                          <TableCell>{entry.startDate}</TableCell>
-                          <TableCell>{entry.endDate}</TableCell>
+                          <TableCell>{entry.rentalDate}</TableCell>
                           <TableCell>
                             <Badge variant="secondary">
-                              {entry.duration} days
+                              {entry.duration} day
                             </Badge>
                           </TableCell>
                           <TableCell>{entry.quantity}</TableCell>
