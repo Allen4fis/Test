@@ -747,6 +747,66 @@ export function SummaryReports() {
       .filter((emp) => !emp.isSubordinate)
       .map((manager) => {
         const subordinates = subordinatesByManager[manager.employeeName] || [];
+        const managerEmployee = employees.find((e) => e.name === manager.employeeName);
+
+        // Recalculate MANAGER'S OWN GST with current filters applied
+        let recalculatedManagerGst = 0;
+        if (managerEmployee?.category === "dsp" || managerEmployee?.category === "dspot") {
+          const managerEntries = timeEntries.filter((entry) => {
+            if (entry.employeeId !== managerEmployee.id) return false;
+            if (entry.date < dateFilter.start || entry.date > dateFilter.end) return false;
+
+            // Apply job filtering
+            if (selectedJobs.length > 0) {
+              const job = jobs.find((j) => j.id === entry.jobId);
+              if (!job || !selectedJobs.includes(job.jobNumber)) return false;
+            }
+
+            // Apply billable filtering
+            if (billableFilter !== "all") {
+              const job = jobs.find((j) => j.id === entry.jobId);
+              if (billableFilter === "billable" && !job?.isBillable) return false;
+              if (billableFilter === "non-billable" && job?.isBillable !== false) return false;
+            }
+
+            // Apply invoice and payment filters
+            const job = jobs.find((j) => j.id === entry.jobId);
+            const isInvoiced = job?.invoicedDates?.includes(entry.date) || false;
+            const isPaid = job?.paidDates?.includes(entry.date) || false;
+
+            if (!includeInvoiced && isInvoiced) return false;
+            if (!includeUninvoiced && !isInvoiced) return false;
+            if (!includePaid && isPaid) return false;
+            if (!includeUnpaid && !isPaid) return false;
+
+            return true;
+          });
+
+          // Calculate GST from filtered entries for the manager
+          recalculatedManagerGst = managerEntries.reduce((total, entry) => {
+            const hourType = hourTypes.find((ht) => ht.id === entry.hourTypeId);
+            if (!hourType) return total;
+
+            const effectiveHours = entry.hours * hourType.multiplier;
+            let adjustedCostWage = entry.costWageUsed || 0;
+            let entryCost = 0;
+
+            // Add $3 for NS hour types
+            if (hourType.name.startsWith("NS ") && hourType.name !== "NS Employee Rig") {
+              adjustedCostWage += 3;
+            }
+
+            // DSP costs are 1x
+            entryCost = entry.hours * adjustedCostWage;
+
+            // Add LOA cost
+            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+            entryCost += loaCost;
+
+            // Apply 5% GST for DSP
+            return total + entryCost * 0.05;
+          }, 0);
+        }
 
         // Recalculate subordinate GST with current filters applied
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
