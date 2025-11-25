@@ -1627,13 +1627,13 @@ export function SummaryReports() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label className="text-sm font-medium">Billing Type</Label>
                     <Select
                       value={billableFilter}
                       onValueChange={setBillableFilter}
                     >
-                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100 h-8">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-800 border-gray-600">
@@ -1641,30 +1641,30 @@ export function SummaryReports() {
                           value="all"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          All Entries
+                          All
                         </SelectItem>
                         <SelectItem
                           value="billable"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          Billable Only
+                          Billable
                         </SelectItem>
                         <SelectItem
                           value="non-billable"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          Non-Billable Only
+                          Non-Billable
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label className="text-sm font-medium">Employee Type</Label>
                     <Select
                       value={employeeTypeFilter}
                       onValueChange={setEmployeeTypeFilter}
                     >
-                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100">
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-gray-100 h-8">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-800 border-gray-600">
@@ -1672,25 +1672,25 @@ export function SummaryReports() {
                           value="all"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          All Employees
+                          All
                         </SelectItem>
                         <SelectItem
                           value="dsps-with-subordinates"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          DSPs with Subordinates
+                          DSPs w/ Subs
                         </SelectItem>
                         <SelectItem
                           value="dsps-only"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          DSP's & DSPOT's Only
+                          DSP/DSPOT
                         </SelectItem>
                         <SelectItem
                           value="regular-employees"
                           className="text-gray-100 focus:bg-orange-500/20"
                         >
-                          Regular Employees Only
+                          Regular
                         </SelectItem>
                       </SelectContent>
                     </Select>
