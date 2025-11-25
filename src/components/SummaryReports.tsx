@@ -1286,42 +1286,27 @@ export function SummaryReports() {
 
   // Calculate summary statistics based on filtered employees
   const filteredSummaryStats = useMemo(() => {
-    // Get the names of employees that are currently being displayed
-    const displayedEmployeeNames = new Set();
+    // Calculate totals directly from hierarchical summaries (which already have recalculated GST)
+    const totalHours = sortedHierarchicalSummaries.reduce((sum, emp) => {
+      return sum + (emp.totalHours || 0);
+    }, 0);
 
-    sortedHierarchicalSummaries.forEach((emp) => {
-      displayedEmployeeNames.add(emp.employeeName);
-      // Also include subordinates if they're being shown
+    const totalCost = sortedHierarchicalSummaries.reduce((sum, emp) => {
+      let managerCost = emp.totalCost || 0;
+      let teamCost = 0;
       if (emp.subordinates && emp.subordinates.length > 0) {
         emp.subordinates.forEach((sub) => {
-          displayedEmployeeNames.add(sub.employeeName);
+          teamCost += sub.totalCost || 0;
         });
       }
-    });
+      return sum + managerCost + teamCost;
+    }, 0);
 
-    // Filter summaries to only include displayed employees
-    const relevantSummaries = filteredSummaries.filter((summary) =>
-      displayedEmployeeNames.has(summary.employeeName),
-    );
-
-    // Filter rental summaries to only include displayed employees
-    const relevantRentalSummaries = filteredRentalSummaries.filter((rental) =>
-      displayedEmployeeNames.has(rental.employeeName),
-    );
-
-    const totalHours = relevantSummaries.reduce(
-      (sum, summary) => sum + summary.hours,
-      0,
-    );
-    const totalCost = relevantSummaries.reduce(
-      (sum, summary) => sum + summary.totalCost,
-      0,
-    );
-    const totalGst = relevantSummaries.reduce((sum, summary) => {
-      const employee = employees.find(
-        (emp) => emp.name === summary.employeeName,
-      );
-      return sum + calculateGST(employee, summary.totalCost);
+    // Use the recalculated GST from hierarchical summaries
+    const totalGst = sortedHierarchicalSummaries.reduce((sum, emp) => {
+      const managerGst = emp.gstAmount || 0;
+      const subordinateGst = emp.subordinateGstTotal || 0;
+      return sum + managerGst + subordinateGst;
     }, 0);
     const rentalBillable = relevantRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalBillable,
