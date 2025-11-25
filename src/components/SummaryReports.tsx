@@ -1703,7 +1703,7 @@ export function SummaryReports() {
                         Invoice Status
                       </Label>
                       <div className="space-y-1">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1.5">
                           <input
                             type="checkbox"
                             id="include-invoiced"
@@ -1711,16 +1711,16 @@ export function SummaryReports() {
                             onChange={(e) =>
                               setIncludeInvoiced(e.target.checked)
                             }
-                            className="w-4 h-4 text-orange-600 bg-gray-700 border-gray-600 rounded focus:ring-orange-500 focus:ring-2"
+                            className="w-3 h-3 text-orange-600 bg-gray-700 border-gray-600 rounded focus:ring-orange-500 focus:ring-1"
                           />
                           <Label
                             htmlFor="include-invoiced"
-                            className="text-sm text-gray-300"
+                            className="text-xs text-gray-300"
                           >
-                            Include Invoiced
+                            Invoiced
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1.5">
                           <input
                             type="checkbox"
                             id="include-uninvoiced"
@@ -1728,19 +1728,19 @@ export function SummaryReports() {
                             onChange={(e) =>
                               setIncludeUninvoiced(e.target.checked)
                             }
-                            className="w-4 h-4 text-orange-600 bg-gray-700 border-gray-600 rounded focus:ring-orange-500 focus:ring-2"
+                            className="w-3 h-3 text-orange-600 bg-gray-700 border-gray-600 rounded focus:ring-orange-500 focus:ring-1"
                           />
                           <Label
                             htmlFor="include-uninvoiced"
-                            className="text-sm text-gray-300"
+                            className="text-xs text-gray-300"
                           >
-                            Include Uninvoiced
+                            Uninvoiced
                           </Label>
                         </div>
                       </div>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium">
                         Payment Status
                       </Label>
