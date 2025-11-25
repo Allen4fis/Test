@@ -1744,35 +1744,35 @@ export function SummaryReports() {
                       <Label className="text-sm font-medium">
                         Payment Status
                       </Label>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-1.5">
                           <input
                             type="checkbox"
                             id="include-paid"
                             checked={includePaid}
                             onChange={(e) => setIncludePaid(e.target.checked)}
-                            className="w-4 h-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2"
+                            className="w-3 h-3 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-1"
                           />
                           <Label
                             htmlFor="include-paid"
-                            className="text-sm text-gray-300"
+                            className="text-xs text-gray-300"
                           >
-                            Include Paid
+                            Paid
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1.5">
                           <input
                             type="checkbox"
                             id="include-unpaid"
                             checked={includeUnpaid}
                             onChange={(e) => setIncludeUnpaid(e.target.checked)}
-                            className="w-4 h-4 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500 focus:ring-2"
+                            className="w-3 h-3 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500 focus:ring-1"
                           />
                           <Label
                             htmlFor="include-unpaid"
-                            className="text-sm text-gray-300"
+                            className="text-xs text-gray-300"
                           >
-                            Include Unpaid
+                            Unpaid
                           </Label>
                         </div>
                       </div>
