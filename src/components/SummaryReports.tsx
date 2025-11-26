@@ -819,104 +819,10 @@ export function SummaryReports() {
           }, 0);
         }
 
-        // Recalculate subordinate GST with current filters applied
+        // Calculate subordinate GST based on their totalCost (which already excludes LOA)
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
-          // Find the actual employee record for this subordinate
-          const subordinateEmployee = employees.find(
-            (e) => e.name === sub.employeeName,
-          );
-          if (!subordinateEmployee) return sum;
-
-          // Get filtered time entries for this subordinate
-          const subordinateEntries = timeEntries.filter((entry) => {
-            if (entry.employeeId !== subordinateEmployee.id) return false;
-            if (entry.date < dateFilter.start || entry.date > dateFilter.end)
-              return false;
-
-            // Apply job filtering if active
-            if (selectedJobs.length > 0) {
-              const job = jobs.find((j) => j.id === entry.jobId);
-              if (!job || !selectedJobs.includes(job.jobNumber)) {
-                return false;
-              }
-            }
-
-            // Apply billable filtering if active
-            if (billableFilter !== "all") {
-              const job = jobs.find((j) => j.id === entry.jobId);
-              if (billableFilter === "billable" && !job?.isBillable)
-                return false;
-              if (
-                billableFilter === "non-billable" &&
-                job?.isBillable !== false
-              )
-                return false;
-            }
-
-            // Apply invoice and payment status filters
-            const job = jobs.find((j) => j.id === entry.jobId);
-            const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
-            const isPaid = job?.paidDates.includes(entry.date) || false;
-
-            if (!includeInvoiced && isInvoiced) return false;
-            if (!includeUninvoiced && !isInvoiced) return false;
-            if (!includePaid && isPaid) return false;
-            if (!includeUnpaid && !isPaid) return false;
-
-            return true;
-          });
-
-          // Calculate GST for filtered entries
-          const gstForSubordinate = subordinateEntries.reduce(
-            (total, entry) => {
-              const entryCategory =
-                entry.employeeCategory || subordinateEmployee?.category;
-
-              // Calculate the cost contribution of this specific entry
-              const hourType = hourTypes.find(
-                (ht) => ht.id === entry.hourTypeId,
-              );
-              if (!hourType) return total;
-
-              const effectiveHours = entry.hours * hourType.multiplier;
-              let adjustedCostWage = entry.costWageUsed || 0;
-              let entryCost = 0;
-
-              // Add $3 for NS hour types
-              if (
-                hourType.name.startsWith("NS ") &&
-                hourType.name !== "NS Employee Rig"
-              ) {
-                adjustedCostWage += 3;
-              }
-
-              // Use stored category for cost calculation
-              if (entryCategory === "dsp") {
-                entryCost = entry.hours * adjustedCostWage; // 1x for DSP
-              } else {
-                entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
-              }
-
-
-
-              // GST is only applied to wage, not to LOA
-              // Apply GST based on stored category
-              if (entryCategory === "dsp" || entryCategory === "dspot") {
-                return total + entryCost * 0.05;
-              } else if (
-                subordinateEmployee.managerId &&
-                entryCategory !== "employee" &&
-                !entryCategory
-              ) {
-                return total + entryCost * 0.05;
-              }
-
-              return total;
-            },
-            0,
-          );
-
-          return sum + gstForSubordinate;
+          const subGst = (sub.totalCost || 0) * 0.05;
+          return sum + subGst;
         }, 0);
 
         // Update subordinate objects with recalculated GST amounts
@@ -1028,104 +934,10 @@ export function SummaryReports() {
 
         const subordinates = subordinatesByManager[managerName] || [];
 
-        // Recalculate subordinate GST with current filters applied
+        // Calculate subordinate GST based on their totalCost (which already excludes LOA)
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
-          // Find the actual employee record for this subordinate
-          const subordinateEmployee = employees.find(
-            (e) => e.name === sub.employeeName,
-          );
-          if (!subordinateEmployee) return sum;
-
-          // Get filtered time entries for this subordinate
-          const subordinateEntries = timeEntries.filter((entry) => {
-            if (entry.employeeId !== subordinateEmployee.id) return false;
-            if (entry.date < dateFilter.start || entry.date > dateFilter.end)
-              return false;
-
-            // Apply job filtering if active
-            if (selectedJobs.length > 0) {
-              const job = jobs.find((j) => j.id === entry.jobId);
-              if (!job || !selectedJobs.includes(job.jobNumber)) {
-                return false;
-              }
-            }
-
-            // Apply billable filtering if active
-            if (billableFilter !== "all") {
-              const job = jobs.find((j) => j.id === entry.jobId);
-              if (billableFilter === "billable" && !job?.isBillable)
-                return false;
-              if (
-                billableFilter === "non-billable" &&
-                job?.isBillable !== false
-              )
-                return false;
-            }
-
-            // Apply invoice and payment status filters
-            const job = jobs.find((j) => j.id === entry.jobId);
-            const isInvoiced = job?.invoicedDates.includes(entry.date) || false;
-            const isPaid = job?.paidDates.includes(entry.date) || false;
-
-            if (!includeInvoiced && isInvoiced) return false;
-            if (!includeUninvoiced && !isInvoiced) return false;
-            if (!includePaid && isPaid) return false;
-            if (!includeUnpaid && !isPaid) return false;
-
-            return true;
-          });
-
-          // Calculate GST for filtered entries
-          const gstForSubordinate = subordinateEntries.reduce(
-            (total, entry) => {
-              const entryCategory =
-                entry.employeeCategory || subordinateEmployee?.category;
-
-              // Calculate the cost contribution of this specific entry
-              const hourType = hourTypes.find(
-                (ht) => ht.id === entry.hourTypeId,
-              );
-              if (!hourType) return total;
-
-              const effectiveHours = entry.hours * hourType.multiplier;
-              let adjustedCostWage = entry.costWageUsed || 0;
-              let entryCost = 0;
-
-              // Add $3 for NS hour types
-              if (
-                hourType.name.startsWith("NS ") &&
-                hourType.name !== "NS Employee Rig"
-              ) {
-                adjustedCostWage += 3;
-              }
-
-              // Use stored category for cost calculation
-              if (entryCategory === "dsp") {
-                entryCost = entry.hours * adjustedCostWage; // 1x for DSP
-              } else {
-                entryCost = effectiveHours * adjustedCostWage; // Normal multiplier
-              }
-
-
-
-              // GST is only applied to wage, not to LOA
-              // Apply GST based on stored category
-              if (entryCategory === "dsp" || entryCategory === "dspot") {
-                return total + entryCost * 0.05;
-              } else if (
-                subordinateEmployee.managerId &&
-                entryCategory !== "employee" &&
-                !entryCategory
-              ) {
-                return total + entryCost * 0.05;
-              }
-
-              return total;
-            },
-            0,
-          );
-
-          return sum + gstForSubordinate;
+          const subGst = (sub.totalCost || 0) * 0.05;
+          return sum + subGst;
         }, 0);
 
         // Update subordinate objects with recalculated GST amounts
