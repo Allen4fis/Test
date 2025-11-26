@@ -605,7 +605,7 @@ export function SummaryReports() {
             hourlyCost: hourlyCost,
             loaCount: summary.loaCount || 0,
             loaAmount: actualLoaAmount,
-            loaCost: loaCost,
+            loaCost: entryLoaCost,
             totalCost: summary.totalCost,
           });
         }
