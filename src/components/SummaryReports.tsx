@@ -566,8 +566,8 @@ export function SummaryReports() {
             entry.hourTypeId === hourTypeRecord?.id,
         );
         const actualLoaAmount = timeEntry?.loaAmount || 200;
-        const loaCost = (summary.loaCount || 0) * actualLoaAmount;
-        const hourlyCost = summary.totalCost - loaCost;
+        const entryLoaCost = (summary.loaCount || 0) * actualLoaAmount;
+        const hourlyCost = summary.totalCost - entryLoaCost;
 
         group.totalLoaAmount = (group.totalLoaAmount || 0) + loaCost;
         if (summary.loaCount) {
