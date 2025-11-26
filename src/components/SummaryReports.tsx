@@ -1312,8 +1312,16 @@ export function SummaryReports() {
     const totalGst = sortedHierarchicalSummaries.reduce((sum, emp) => {
       const managerGst = emp.gstAmount || 0;
       const subordinateGst = emp.subordinateGstTotal || 0;
+
+      // Debug logging
+      if (emp.totalCost) {
+        console.log(`[GST DEBUG] ${emp.employeeName}: totalCost=${emp.totalCost}, managerGst=${managerGst}, subordinateGst=${subordinateGst}`);
+      }
+
       return sum + managerGst + subordinateGst;
     }, 0);
+
+    console.log(`[GST DEBUG] FINAL: totalCost=${totalCost}, totalGst=${totalGst}`);
 
     // Get the names of employees that are currently being displayed (for rentals)
     const displayedEmployeeNames = new Set();
