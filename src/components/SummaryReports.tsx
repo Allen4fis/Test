@@ -1285,11 +1285,14 @@ export function SummaryReports() {
     }, 0);
 
     const totalCost = sortedHierarchicalSummaries.reduce((sum, emp) => {
-      let managerCost = emp.totalCost || 0;
+      // Exclude LOA cost from total cost for consistency with GST calculation
+      const managerLoaCost = ((emp.loaAmountDetails && Object.values(emp.loaAmountDetails).reduce((a, b) => a + b, 0)) || 0) * 200;
+      let managerCost = (emp.totalCost || 0) - managerLoaCost;
       let teamCost = 0;
       if (emp.subordinates && emp.subordinates.length > 0) {
         emp.subordinates.forEach((sub) => {
-          teamCost += sub.totalCost || 0;
+          const subLoaCost = ((sub.loaAmountDetails && Object.values(sub.loaAmountDetails).reduce((a, b) => a + b, 0)) || 0) * 200;
+          teamCost += (sub.totalCost || 0) - subLoaCost;
         });
       }
       return sum + managerCost + teamCost;
