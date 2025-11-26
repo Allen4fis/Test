@@ -18,7 +18,6 @@ import { BackupManagement } from "@/components/BackupManagement";
 import { SystemHealthCheck } from "@/components/SystemHealthCheck";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
-import { useGlobalAutosave } from "@/hooks/useGlobalAutosave";
 import {
   shouldUseOptimizedComponents,
   DataMetrics,
