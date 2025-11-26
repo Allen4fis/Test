@@ -215,7 +215,9 @@ export const Layout = memo(function Layout({
   }, [timeEntries.length]);
 
   return (
-    <div className="min-h-screen modern-gradient">
+    <>
+      <StorageWarningToast />
+      <div className="min-h-screen modern-gradient">
       {/* Header */}
       <header
         className="border-b border-orange-500/20 shadow-2xl"
@@ -383,5 +385,6 @@ export const Layout = memo(function Layout({
         </div>
       </div>
     </div>
+    </>
   );
 });
