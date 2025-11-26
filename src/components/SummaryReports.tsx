@@ -588,7 +588,7 @@ export function SummaryReports() {
         // Track wage cost only (excluding LOA)
         group.hourTypeBreakdown[hourTypeName].cost += hourlyCost || 0;
         group.hourTypeBreakdown[hourTypeName].hourlyCost += hourlyCost;
-        group.hourTypeBreakdown[hourTypeName].loaCost += loaCost;
+        group.hourTypeBreakdown[hourTypeName].loaCost += entryLoaCost;
         group.hourTypeBreakdown[hourTypeName].loaCount += summary.loaCount || 0;
 
         // Track individual rate entries for this hour type
