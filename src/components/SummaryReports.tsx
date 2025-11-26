@@ -1286,12 +1286,22 @@ export function SummaryReports() {
 
     const totalCost = sortedHierarchicalSummaries.reduce((sum, emp) => {
       // Exclude LOA cost from total cost for consistency with GST calculation
-      const managerLoaCost = ((emp.loaAmountDetails && Object.values(emp.loaAmountDetails).reduce((a, b) => a + b, 0)) || 0) * 200;
+      let managerLoaCost = 0;
+      if (emp.loaAmountDetails) {
+        Object.entries(emp.loaAmountDetails).forEach(([amount, count]) => {
+          managerLoaCost += parseInt(amount) * (count || 0);
+        });
+      }
       let managerCost = (emp.totalCost || 0) - managerLoaCost;
       let teamCost = 0;
       if (emp.subordinates && emp.subordinates.length > 0) {
         emp.subordinates.forEach((sub) => {
-          const subLoaCost = ((sub.loaAmountDetails && Object.values(sub.loaAmountDetails).reduce((a, b) => a + b, 0)) || 0) * 200;
+          let subLoaCost = 0;
+          if (sub.loaAmountDetails) {
+            Object.entries(sub.loaAmountDetails).forEach(([amount, count]) => {
+              subLoaCost += parseInt(amount) * (count || 0);
+            });
+          }
           teamCost += (sub.totalCost || 0) - subLoaCost;
         });
       }
