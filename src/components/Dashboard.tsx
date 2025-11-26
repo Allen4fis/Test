@@ -691,6 +691,9 @@ const Dashboard = memo(function Dashboard({
           </div>
         </CardContent>
       </Card>
+
+      {/* Storage Health Dashboard */}
+      <StorageHealthDashboard />
     </div>
   );
 });
