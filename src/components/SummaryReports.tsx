@@ -673,7 +673,7 @@ export function SummaryReports() {
         !employee?.category
       ) {
         // Subordinate contractors without explicit category
-        gstAmount = wageCost * 0.05;
+        gstAmount = (emp.totalCost || 0) * 0.05;
       }
 
       return {
