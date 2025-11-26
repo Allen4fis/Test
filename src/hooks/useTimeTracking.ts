@@ -305,7 +305,72 @@ export function useTimeTracking() {
     return migratedData;
   }, [rawAppData]);
 
-  // Note: Autosave functionality moved to useGlobalAutosave hook for persistent timing
+  // Setup 10-minute autosave timer (consolidated from useGlobalAutosave)
+  useEffect(() => {
+    const AUTOSAVE_INTERVAL = 10 * 60 * 1000; // 10 minutes
+    const AUTOSAVE_KEY = "timeTrackingApp-autosave";
+    const MAX_AUTOSAVES = 3;
+
+    const lastAutoSaveHashRef = { current: "" };
+
+    const generateDataHash = (data: AppData): string => {
+      return JSON.stringify({
+        employeesCount: data.employees.length,
+        jobsCount: data.jobs.length,
+        timeEntriesCount: data.timeEntries.length,
+        rentalItemsCount: data.rentalItems.length,
+        rentalEntriesCount: data.rentalEntries.length,
+        lastModified:
+          data.timeEntries[0]?.createdAt || data.employees[0]?.createdAt || "",
+      });
+    };
+
+    const performAutoSave = () => {
+      try {
+        const currentHash = generateDataHash(appData);
+
+        // Only save if data has changed
+        if (currentHash === lastAutoSaveHashRef.current) {
+          return;
+        }
+
+        const autosave = {
+          timestamp: new Date().toISOString(),
+          data: appData,
+          hash: currentHash,
+          automatic: true, // Mark as automatic save
+        };
+
+        // Get existing autosaves
+        const existingAutosaves = JSON.parse(
+          localStorage.getItem(AUTOSAVE_KEY) || "[]",
+        );
+
+        // Add new autosave and keep only the last MAX_AUTOSAVES
+        const updatedAutosaves = [autosave, ...existingAutosaves].slice(
+          0,
+          MAX_AUTOSAVES,
+        );
+
+        // Save to localStorage
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(updatedAutosaves));
+        lastAutoSaveHashRef.current = currentHash;
+      } catch (error) {
+        console.error("Automatic autosave failed:", error);
+      }
+    };
+
+    // Set initial hash
+    lastAutoSaveHashRef.current = generateDataHash(appData);
+
+    // Setup persistent autosave timer (runs once on mount)
+    const autosaveTimer = setInterval(performAutoSave, AUTOSAVE_INTERVAL);
+
+    // Cleanup timer on unmount
+    return () => {
+      clearInterval(autosaveTimer);
+    };
+  }, []); // Empty dependency - timer setup only once on mount
 
   const setAppData = (data: AppData | ((prev: AppData) => AppData)) => {
     if (typeof data === "function") {
