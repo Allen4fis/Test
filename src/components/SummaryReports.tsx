@@ -430,7 +430,12 @@ export function SummaryReports() {
       0,
     );
     const totalCost = filteredSummaries.reduce(
-      (sum, summary) => sum + summary.totalCost,
+      (sum, summary) => {
+        // Exclude LOA cost for consistency with GST calculation
+        const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
+        const wageCost = summary.totalCost - loaCost;
+        return sum + wageCost;
+      },
       0,
     );
     const totalGst = filteredSummaries.reduce((sum, summary) => {
