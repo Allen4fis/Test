@@ -585,7 +585,8 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
           summary.effectiveHours || 0;
-        group.hourTypeBreakdown[hourTypeName].cost += summary.totalCost || 0;
+        // Track wage cost only (excluding LOA)
+        group.hourTypeBreakdown[hourTypeName].cost += hourlyCost || 0;
         group.hourTypeBreakdown[hourTypeName].hourlyCost += hourlyCost;
         group.hourTypeBreakdown[hourTypeName].loaCost += loaCost;
         group.hourTypeBreakdown[hourTypeName].loaCount += summary.loaCount || 0;
