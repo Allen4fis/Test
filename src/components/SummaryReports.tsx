@@ -662,19 +662,11 @@ export function SummaryReports() {
 
       // Calculate GST using exactly 5% of wage cost (excluding LOA)
       // For DSP/DSPOT employees, GST = 5% of their total labor cost (excluding LOA)
+      // Note: emp.totalCost already excludes LOA (from employeeSummariesData grouping)
       let gstAmount = 0;
 
-      // Calculate wage cost only (excluding LOA)
-      let empLoaCost = 0;
-      if (emp.loaAmountDetails) {
-        Object.entries(emp.loaAmountDetails).forEach(([amount, count]) => {
-          empLoaCost += parseInt(amount) * (count || 0);
-        });
-      }
-      const wageCost = (emp.totalCost || 0) - empLoaCost;
-
       if (employee?.category === "dsp" || employee?.category === "dspot") {
-        gstAmount = wageCost * 0.05;
+        gstAmount = (emp.totalCost || 0) * 0.05;
       } else if (
         employee?.managerId &&
         employee?.category !== "employee" &&
