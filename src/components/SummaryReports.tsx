@@ -624,8 +624,9 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].provinces[
           provinceName
         ].effectiveHours += summary.effectiveHours || 0;
+        // Track wage cost only (excluding LOA)
         group.hourTypeBreakdown[hourTypeName].provinces[provinceName].cost +=
-          summary.totalCost || 0;
+          hourlyCost || 0;
 
         return acc;
       },
