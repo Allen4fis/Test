@@ -48,6 +48,7 @@ import {
   safeArrayReduce,
   withErrorBoundary,
 } from "@/utils/systemReliability";
+import { StorageHealthDashboard } from "@/components/StorageHealthDashboard";
 
 interface DashboardProps {
   autosaveInfo?: {
