@@ -153,8 +153,8 @@ const Index = () => {
       case "dashboard":
         component = (
           <Dashboard
-            autosaveInfo={globalAutosave.getAutosaveInfo()}
-            triggerManualSave={globalAutosave.triggerManualSave}
+            autosaveInfo={timeTracking.getAutosaveInfo()}
+            triggerManualSave={timeTracking.manualSave}
           />
         );
         break;
