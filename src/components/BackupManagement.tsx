@@ -67,6 +67,12 @@ import {
   getVersionInfo,
   CURRENT_BACKUP_VERSION,
 } from "@/utils/backupCompatibility";
+import {
+  getStorageBreakdown,
+  getStorageStats,
+  formatBytes,
+  canFitInStorage,
+} from "@/utils/storageMonitor";
 
 // Legacy interface for backward compatibility
 interface BackupMetadata {
