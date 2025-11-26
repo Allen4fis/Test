@@ -28,6 +28,7 @@ import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
 import { DiscreetReset } from "@/components/DiscreetReset";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { StorageWarningToast } from "@/components/StorageWarningToast";
 import { toast } from "@/hooks/use-toast";
 
 interface LayoutProps {
