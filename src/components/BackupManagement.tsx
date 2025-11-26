@@ -249,6 +249,54 @@ export function BackupManagement() {
         provinces,
       };
 
+      // Validate backup size before creating
+      const backupJson = JSON.stringify(data);
+      const backupSize = new Blob([backupJson]).size;
+      const storageStats = getStorageStats();
+      const storageBreakdown = getStorageBreakdown();
+
+      // Reserve 500KB minimum for app operations
+      const MINIMUM_BUFFER = 500 * 1024; // 500KB
+      const maxBackupSize = Math.max(
+        storageStats.available - MINIMUM_BUFFER,
+        1 * 1024 * 1024, // At least 1MB if lots of space
+      );
+
+      if (backupSize > maxBackupSize) {
+        toast({
+          title: "⚠️ Backup Too Large",
+          description: (
+            <div className="space-y-2">
+              <p>
+                Backup size ({formatBytes(backupSize)}) exceeds available
+                storage ({formatBytes(maxBackupSize)}).
+              </p>
+              <p className="text-xs">
+                Current usage: {formatBytes(storageBreakdown.mainData)} (data) +{" "}
+                {formatBytes(storageBreakdown.autosaves)} (autosaves) +{" "}
+                {formatBytes(storageBreakdown.backups)} (backups)
+              </p>
+              <p className="text-xs font-semibold">
+                Recommendation: Export some existing backups to files and delete them.
+              </p>
+            </div>
+          ),
+          variant: "destructive",
+          duration: 8000,
+        });
+        setIsCreatingBackup(false);
+        return;
+      }
+
+      // Warn if approaching storage limits
+      if (storageStats.percentUsed > 70) {
+        toast({
+          title: "⚠️ Storage Warning",
+          description: `Storage is ${storageStats.percentUsed.toFixed(1)}% full. Consider exporting backups to files.`,
+          duration: 5000,
+        });
+      }
+
       // Create versioned backup
       const backup = createVersionedBackup(
         `backup_${Date.now()}`,
