@@ -569,7 +569,7 @@ export function SummaryReports() {
         const entryLoaCost = (summary.loaCount || 0) * actualLoaAmount;
         const hourlyCost = summary.totalCost - entryLoaCost;
 
-        group.totalLoaAmount = (group.totalLoaAmount || 0) + loaCost;
+        group.totalLoaAmount = (group.totalLoaAmount || 0) + entryLoaCost;
         if (summary.loaCount) {
           const amountKey = actualLoaAmount.toFixed(2);
           group.loaAmountDetails[amountKey] =
