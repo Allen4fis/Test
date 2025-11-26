@@ -35,9 +35,11 @@ async function idbDelete(key: string) {
 function tryFreeLocalStorageSpace() {
   try {
     // Remove known large optional keys to free up space
+    // Note: Never automatically delete backups - user should explicitly manage them
     const optionalKeys = [
       "timeTrackingApp-autosave",
-      "trackity-doo-backups",
+      // "trackity-doo-backups" is intentionally NOT included here
+      // Backups are critical recovery points and should never be auto-deleted
     ];
     for (const k of optionalKeys) {
       if (localStorage.getItem(k)) {
