@@ -1305,24 +1305,12 @@ export function SummaryReports() {
     }, 0);
 
     const totalCost = sortedHierarchicalSummaries.reduce((sum, emp) => {
-      // Exclude LOA cost from total cost for consistency with GST calculation
-      let managerLoaCost = 0;
-      if (emp.loaAmountDetails) {
-        Object.entries(emp.loaAmountDetails).forEach(([amount, count]) => {
-          managerLoaCost += parseInt(amount) * (count || 0);
-        });
-      }
-      let managerCost = (emp.totalCost || 0) - managerLoaCost;
+      // totalCost already excludes LOA (from employeeSummariesData)
+      let managerCost = emp.totalCost || 0;
       let teamCost = 0;
       if (emp.subordinates && emp.subordinates.length > 0) {
         emp.subordinates.forEach((sub) => {
-          let subLoaCost = 0;
-          if (sub.loaAmountDetails) {
-            Object.entries(sub.loaAmountDetails).forEach(([amount, count]) => {
-              subLoaCost += parseInt(amount) * (count || 0);
-            });
-          }
-          teamCost += (sub.totalCost || 0) - subLoaCost;
+          teamCost += sub.totalCost || 0;
         });
       }
       return sum + managerCost + teamCost;
