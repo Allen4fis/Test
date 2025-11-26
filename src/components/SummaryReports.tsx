@@ -495,7 +495,10 @@ export function SummaryReports() {
         const group = acc[key];
         group.totalHours += summary.hours || 0;
         group.totalEffectiveHours += summary.effectiveHours || 0;
-        group.totalCost += summary.totalCost || 0;
+        // Exclude LOA cost for consistency
+        const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
+        const wageCost = summary.totalCost - loaCost;
+        group.totalCost += wageCost || 0;
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
 
