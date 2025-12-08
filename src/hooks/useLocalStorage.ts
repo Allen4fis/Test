@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Dexie, { Table } from "dexie";
+import { storageService } from "@/services/StorageService";
 
 // Lightweight IndexedDB KV store for large values that exceed localStorage quota
 class LocalStorageFallbackDB extends Dexie {
@@ -11,6 +12,9 @@ class LocalStorageFallbackDB extends Dexie {
 }
 
 const idb = new LocalStorageFallbackDB();
+
+// Detect if running in Electron
+const isElectron = (window as any).electronAPI !== undefined;
 
 type Marker = { __storedInIDB: true };
 const isMarker = (val: unknown): val is Marker =>
