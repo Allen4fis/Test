@@ -815,9 +815,10 @@ export function SummaryReports() {
           }, 0);
         }
 
-        // Calculate subordinate GST based on their totalCost (which includes LOA)
+        // Calculate subordinate GST based on their totalCost excluding LoA (GST does not apply to allowances)
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
-          const subGst = (sub.totalCost || 0) * 0.05;
+          const wageOnly = (sub.totalCost || 0) - (sub.totalLoaAmount || 0);
+          const subGst = wageOnly * 0.05;
           return sum + subGst;
         }, 0);
 
