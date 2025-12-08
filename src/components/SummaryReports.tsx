@@ -1103,7 +1103,7 @@ export function SummaryReports() {
     }, 0);
 
     const totalCost = sortedHierarchicalSummaries.reduce((sum, emp) => {
-      // totalCost already excludes LOA (from employeeSummariesData)
+      // totalCost includes LOA (from employeeSummariesData)
       let managerCost = emp.totalCost || 0;
       let teamCost = 0;
       if (emp.subordinates && emp.subordinates.length > 0) {
