@@ -806,10 +806,12 @@ export function SummaryReports() {
             // DSP costs are 1x for wage
             const wageCost = entry.hours * adjustedCostWage;
 
-            // GST is only applied to wage, not to LOA
-            const gstOnWage = wageCost * 0.05;
+            // Add LoA to the cost for GST calculation
+            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+            const totalWithLoa = wageCost + loaCost;
+            const gstAmount = totalWithLoa * 0.05;
 
-            return total + gstOnWage;
+            return total + gstAmount;
           }, 0);
         }
 
