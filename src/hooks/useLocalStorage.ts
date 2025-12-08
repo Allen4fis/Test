@@ -76,19 +76,26 @@ export function useLocalStorage<T>(
     }
   });
 
-  // If marker exists, load actual value from IndexedDB asynchronously
+  // Load actual value (from IDB in browser or file system in Electron)
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const item = localStorage.getItem(key);
-        if (!item) return;
-        const parsed = JSON.parse(item);
-        if (isMarker(parsed)) {
-          const idbVal = await idbGet(key);
-          if (!cancelled && idbVal != null) {
-            const json = JSON.parse(idbVal) as T;
-            setStoredValue(json);
+        if (isElectron) {
+          const value = await storageService.getJSON<T>(key, null);
+          if (!cancelled && value !== null) {
+            setStoredValue(value);
+          }
+        } else {
+          const item = localStorage.getItem(key);
+          if (!item) return;
+          const parsed = JSON.parse(item);
+          if (isMarker(parsed)) {
+            const idbVal = await idbGet(key);
+            if (!cancelled && idbVal != null) {
+              const json = JSON.parse(idbVal) as T;
+              setStoredValue(json);
+            }
           }
         }
       } catch (e) {
