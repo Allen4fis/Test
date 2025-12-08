@@ -813,10 +813,9 @@ export function SummaryReports() {
           }, 0);
         }
 
-        // Calculate subordinate GST based on their totalCost excluding LoA (GST does not apply to allowances)
+        // Calculate subordinate GST based on their totalCost (which includes LoA)
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
-          const wageOnly = (sub.totalCost || 0) - (sub.totalLoaAmount || 0);
-          const subGst = wageOnly * 0.05;
+          const subGst = (sub.totalCost || 0) * 0.05;
           return sum + subGst;
         }, 0);
 
@@ -863,7 +862,7 @@ export function SummaryReports() {
             return true;
           });
 
-          // Calculate updated GST for this subordinate
+          // Calculate updated GST for this subordinate including LoA
           const updatedGstAmount = subordinateEntries.reduce((total, entry) => {
             const entryCategory =
               entry.employeeCategory || subordinateEmployee?.category;
@@ -887,15 +886,18 @@ export function SummaryReports() {
               entryCost = effectiveHours * adjustedCostWage;
             }
 
-            // GST is only applied to wage, not to LOA
+            // Add LoA to the cost for GST calculation
+            const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
+            const totalEntryCost = entryCost + loaCost;
+
             if (entryCategory === "dsp" || entryCategory === "dspot") {
-              return total + entryCost * 0.05;
+              return total + totalEntryCost * 0.05;
             } else if (
               subordinateEmployee.managerId &&
               entryCategory !== "employee" &&
               !entryCategory
             ) {
-              return total + entryCost * 0.05;
+              return total + totalEntryCost * 0.05;
             }
 
             return total;
