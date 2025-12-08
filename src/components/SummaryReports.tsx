@@ -813,7 +813,7 @@ export function SummaryReports() {
           }, 0);
         }
 
-        // Calculate subordinate GST based on their totalCost (which already excludes LOA)
+        // Calculate subordinate GST based on their totalCost (which includes LOA)
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
           const subGst = (sub.totalCost || 0) * 0.05;
           return sum + subGst;
@@ -928,7 +928,7 @@ export function SummaryReports() {
 
         const subordinates = subordinatesByManager[managerName] || [];
 
-        // Calculate subordinate GST based on their totalCost (which already excludes LOA)
+        // Calculate subordinate GST based on their totalCost (which includes LOA)
         const subordinateGstTotal = subordinates.reduce((sum, sub) => {
           const subGst = (sub.totalCost || 0) * 0.05;
           return sum + subGst;
