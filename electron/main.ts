@@ -1,7 +1,7 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import path from "path";
-import fs from "fs";
-import isDev from "electron-is-dev";
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("path");
+const fs = require("fs");
+const isDev = require("electron-is-dev");
 
 let mainWindow: BrowserWindow | null = null;
 const dataDir = path.join(app.getPath("appData"), "TimeTracker");
