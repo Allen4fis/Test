@@ -1,6 +1,6 @@
 /**
  * Storage Service
- * Abstraction layer that works with both browser (localStorage/IndexedDB) and Electron (file system)
+ * Abstraction layer that works with both browser (localStorage/IndexedDB) and Electron (file system via IPC)
  * Automatically detects environment and uses appropriate storage backend
  */
 
@@ -141,33 +141,20 @@ class BrowserStorageBackend implements StorageBackend {
   }
 }
 
-// Electron-based backend using file system
+// Electron-based backend using IPC communication
 class ElectronStorageBackend implements StorageBackend {
-  private dataDir: string;
+  private api: any;
 
-  constructor(dataDir: string) {
-    this.dataDir = dataDir;
-  }
-
-  private getFilePath(key: string): string {
-    const encoded = Buffer.from(key).toString("base64").replace(/\//g, "_");
-    return `${this.dataDir}/${encoded}.json`;
+  constructor() {
+    this.api = (window as any).electronAPI?.storage;
+    if (!this.api) {
+      throw new Error("Electron API not available");
+    }
   }
 
   async get(key: string): Promise<string | null> {
     try {
-      const window = (globalThis as any).__TAURI_WINDOW__;
-      if (!window) return null;
-
-      const fs = window.fs;
-      const path = this.getFilePath(key);
-
-      try {
-        const content = await fs.readTextFile(path);
-        return content;
-      } catch {
-        return null;
-      }
+      return await this.api.get(key);
     } catch (error) {
       console.error(`Error reading storage key "${key}":`, error);
       return null;
@@ -176,13 +163,7 @@ class ElectronStorageBackend implements StorageBackend {
 
   async set(key: string, value: string): Promise<void> {
     try {
-      const window = (globalThis as any).__TAURI_WINDOW__;
-      if (!window) throw new Error("Tauri not available");
-
-      const fs = window.fs;
-      const path = this.getFilePath(key);
-
-      await fs.writeTextFile(path, value);
+      await this.api.set(key, value);
     } catch (error) {
       console.error(`Error setting storage key "${key}":`, error);
       throw error;
@@ -191,17 +172,7 @@ class ElectronStorageBackend implements StorageBackend {
 
   async delete(key: string): Promise<void> {
     try {
-      const window = (globalThis as any).__TAURI_WINDOW__;
-      if (!window) return;
-
-      const fs = window.fs;
-      const path = this.getFilePath(key);
-
-      try {
-        await fs.removeFile(path);
-      } catch {
-        // File doesn't exist, ignore
-      }
+      await this.api.delete(key);
     } catch (error) {
       console.error(`Error deleting storage key "${key}":`, error);
     }
@@ -209,20 +180,7 @@ class ElectronStorageBackend implements StorageBackend {
 
   async clear(): Promise<void> {
     try {
-      const window = (globalThis as any).__TAURI_WINDOW__;
-      if (!window) return;
-
-      const fs = window.fs;
-      const keys = await this.getAllKeys();
-
-      for (const key of keys) {
-        const path = this.getFilePath(key);
-        try {
-          await fs.removeFile(path);
-        } catch {
-          // Ignore individual file errors
-        }
-      }
+      await this.api.clear();
     } catch (error) {
       console.error("Error clearing storage:", error);
     }
@@ -230,19 +188,7 @@ class ElectronStorageBackend implements StorageBackend {
 
   async getAllKeys(): Promise<string[]> {
     try {
-      const window = (globalThis as any).__TAURI_WINDOW__;
-      if (!window) return [];
-
-      const fs = window.fs;
-      const entries = await fs.readDir(this.dataDir);
-
-      return entries
-        .filter((entry: any) => entry.name?.endsWith(".json"))
-        .map((entry: any) => {
-          const encoded = entry.name.replace(".json", "").replace(/_/g, "/");
-          return Buffer.from(encoded, "base64").toString();
-        })
-        .catch(() => []);
+      return await this.api.getAllKeys();
     } catch (error) {
       console.error("Error getting storage keys:", error);
       return [];
@@ -256,13 +202,18 @@ class StorageService {
   private isElectron: boolean;
 
   private constructor() {
-    this.isElectron = (globalThis as any).__TAURI_WINDOW__ !== undefined;
+    this.isElectron = (window as any).electronAPI !== undefined;
 
-    if (this.isElectron) {
-      const appDataDir = (globalThis as any).__TAURI_WINDOW__.appDataDir || "./data";
-      this.backend = new ElectronStorageBackend(appDataDir);
-    } else {
+    try {
+      if (this.isElectron) {
+        this.backend = new ElectronStorageBackend();
+      } else {
+        this.backend = new BrowserStorageBackend();
+      }
+    } catch (error) {
+      console.warn("Failed to initialize storage backend:", error);
       this.backend = new BrowserStorageBackend();
+      this.isElectron = false;
     }
   }
 
