@@ -115,43 +115,51 @@ export function useLocalStorage<T>(
         value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
 
-      try {
-        localStorage.setItem(key, JSON.stringify(valueToStore));
-      } catch (error: any) {
-        if (
-          error &&
-          (error.name === "QuotaExceededError" ||
-            error.name === "NS_ERROR_DOM_QUOTA_REACHED")
-        ) {
-          // Try freeing space and retry once
-          tryFreeLocalStorageSpace();
-          try {
-            localStorage.setItem(key, JSON.stringify(valueToStore));
-            return;
-          } catch (e2: any) {
-            if (
-              e2 &&
-              (e2.name === "QuotaExceededError" ||
-                e2.name === "NS_ERROR_DOM_QUOTA_REACHED")
-            ) {
-              // Persist to IndexedDB and store a small marker in localStorage
-              (async () => {
-                try {
-                  await idbSet(key, JSON.stringify(valueToStore));
-                  localStorage.setItem(key, JSON.stringify({ __storedInIDB: true }));
-                } catch (persistErr) {
-                  console.error(
-                    `Failed persisting large value for key "${key}" to IndexedDB:`,
-                    persistErr,
-                  );
-                }
-              })();
-            } else {
-              console.error(`Error setting localStorage key "${key}":`, e2);
+      if (isElectron) {
+        // In Electron, use the file-system storage service
+        storageService.setJSON(key, valueToStore).catch((error) => {
+          console.error(`Failed persisting value for key "${key}":`, error);
+        });
+      } else {
+        // In browser, use localStorage with IndexedDB fallback
+        try {
+          localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error: any) {
+          if (
+            error &&
+            (error.name === "QuotaExceededError" ||
+              error.name === "NS_ERROR_DOM_QUOTA_REACHED")
+          ) {
+            // Try freeing space and retry once
+            tryFreeLocalStorageSpace();
+            try {
+              localStorage.setItem(key, JSON.stringify(valueToStore));
+              return;
+            } catch (e2: any) {
+              if (
+                e2 &&
+                (e2.name === "QuotaExceededError" ||
+                  e2.name === "NS_ERROR_DOM_QUOTA_REACHED")
+              ) {
+                // Persist to IndexedDB and store a small marker in localStorage
+                (async () => {
+                  try {
+                    await idbSet(key, JSON.stringify(valueToStore));
+                    localStorage.setItem(key, JSON.stringify({ __storedInIDB: true }));
+                  } catch (persistErr) {
+                    console.error(
+                      `Failed persisting large value for key "${key}" to IndexedDB:`,
+                      persistErr,
+                    );
+                  }
+                })();
+              } else {
+                console.error(`Error setting localStorage key "${key}":`, e2);
+              }
             }
+          } else {
+            console.error(`Error setting localStorage key "${key}":`, error);
           }
-        } else {
-          console.error(`Error setting localStorage key "${key}":`, error);
         }
       }
     } catch (err) {
