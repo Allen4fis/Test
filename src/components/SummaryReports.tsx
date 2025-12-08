@@ -431,10 +431,8 @@ export function SummaryReports() {
     );
     const totalCost = filteredSummaries.reduce(
       (sum, summary) => {
-        // Exclude LOA cost for consistency with GST calculation
-        const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
-        const wageCost = summary.totalCost - loaCost;
-        return sum + wageCost;
+        // Include full totalCost which already includes LoA cost
+        return sum + summary.totalCost;
       },
       0,
     );
@@ -442,10 +440,8 @@ export function SummaryReports() {
       const employee = employees.find(
         (emp) => emp.name === summary.employeeName,
       );
-      // Calculate wage cost only (excluding LOA)
-      const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
-      const wageCost = summary.totalCost - loaCost;
-      return sum + calculateGST(employee, wageCost);
+      // Calculate GST on full totalCost which includes LoA
+      return sum + calculateGST(employee, summary.totalCost);
     }, 0);
     const rentalBillable = filteredRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalBillable,
@@ -495,10 +491,8 @@ export function SummaryReports() {
         const group = acc[key];
         group.totalHours += summary.hours || 0;
         group.totalEffectiveHours += summary.effectiveHours || 0;
-        // Exclude LOA cost for consistency
-        const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
-        const wageCost = summary.totalCost - loaCost;
-        group.totalCost += wageCost || 0;
+        // Include full totalCost which already includes LoA cost
+        group.totalCost += summary.totalCost || 0;
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
 
@@ -567,7 +561,7 @@ export function SummaryReports() {
         );
         const actualLoaAmount = timeEntry?.loaAmount || 200;
         const entryLoaCost = (summary.loaCount || 0) * actualLoaAmount;
-        const hourlyCost = summary.totalCost - entryLoaCost;
+        const hourlyCost = summary.totalCost;
 
         group.totalLoaAmount = (group.totalLoaAmount || 0) + entryLoaCost;
         if (summary.loaCount) {
@@ -585,7 +579,7 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].hours += summary.hours || 0;
         group.hourTypeBreakdown[hourTypeName].effectiveHours +=
           summary.effectiveHours || 0;
-        // Track wage cost only (excluding LOA)
+        // Track full cost including LOA
         group.hourTypeBreakdown[hourTypeName].cost += hourlyCost || 0;
         group.hourTypeBreakdown[hourTypeName].hourlyCost += hourlyCost;
         group.hourTypeBreakdown[hourTypeName].loaCost += entryLoaCost;
@@ -624,7 +618,7 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].provinces[
           provinceName
         ].effectiveHours += summary.effectiveHours || 0;
-        // Track wage cost only (excluding LOA)
+        // Track full cost including LOA
         group.hourTypeBreakdown[hourTypeName].provinces[provinceName].cost +=
           hourlyCost || 0;
 
