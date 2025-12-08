@@ -440,8 +440,10 @@ export function SummaryReports() {
       const employee = employees.find(
         (emp) => emp.name === summary.employeeName,
       );
-      // Calculate GST on full totalCost which includes LoA
-      return sum + calculateGST(employee, summary.totalCost);
+      // Calculate GST on wage cost only (excluding LoA, as GST does not apply to allowances)
+      const loaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
+      const wageCost = summary.totalCost - loaCost;
+      return sum + calculateGST(employee, wageCost);
     }, 0);
     const rentalBillable = filteredRentalSummaries.reduce(
       (sum, rental) => sum + rental.totalBillable,
