@@ -100,8 +100,8 @@
     "productName": "TimeTracker",
     "files": [
       "dist/**/*",
-      "electron/main.ts",
-      "electron/preload.ts",
+      "electron/main.js",
+      "electron/preload.js",
       "node_modules/**/*"
     ],
     "directories": {
