@@ -397,6 +397,7 @@ const TimeEntryForm = memo(function TimeEntryForm() {
           date: formData.date,
           hours: hours,
           loaCount: loaCount > 0 ? loaCount : undefined,
+          loaAmount: loaCount > 0 ? loaAmount : undefined,
           title: formData.title,
           billableWageUsed: billableWageUsed,
           costWageUsed: costWageUsed,
