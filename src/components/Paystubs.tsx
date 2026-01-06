@@ -373,7 +373,7 @@ export const Paystubs = () => {
                   const isEmprig = hourType?.name === "Employee Rig" || hourType?.name === "NS Employee Rig";
                   let rateDisplay: string;
                   if (isEmprig) {
-                    const loaAmount = (entry.loaCount || 0) * 200;
+                    const loaAmount = (entry.loaCount || 0) * (entry.loaAmount || 200);
                     const avgRate = (entry.totalCost - loaAmount) / Math.max(1, entry.hours);
                     rateDisplay = `$${avgRate.toFixed(2)}/h (tiered)`;
                   } else {
@@ -385,13 +385,14 @@ export const Paystubs = () => {
                         : `$${effectiveRate.toFixed(2)}/h (${multiplier}x)`;
                   }
 
+                  const loaPercentOrAmount = (entry.loaCount || 0) > 0 ? `${entry.loaCount} × $${(entry.loaAmount || 200).toFixed(2)}` : "—";
                   return `
                     <tr>
                       <td>${formatLocalDate(entry.date)}</td>
                       <td>${entry.jobNumber}</td>
                       <td>${entry.hourTypeName}</td>
                       <td class="text-right">${entry.hours.toFixed(2)}h</td>
-                      <td class="text-right">${(entry.loaCount || 0) > 0 ? `${entry.loaCount} × $200` : "—"}</td>
+                      <td class="text-right">${loaPercentOrAmount}</td>
                       <td class="text-right">${rateDisplay}</td>
                       <td class="text-right">$${entry.totalCost.toFixed(2)}</td>
                     </tr>
