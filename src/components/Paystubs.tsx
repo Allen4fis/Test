@@ -203,7 +203,7 @@ export const Paystubs = () => {
         acc[key].totalHours += summary.hours || 0;
         acc[key].totalCost += summary.totalCost || 0;
         acc[key].totalLoaCount += summary.loaCount || 0;
-        acc[key].totalLoaAmount += (summary.loaCount || 0) * 200; // Default LOA amount
+        acc[key].totalLoaAmount += (summary.loaCount || 0) * (summary.loaAmount || 200);
         acc[key].entries.push(summary);
 
         return acc;
