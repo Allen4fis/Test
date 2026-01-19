@@ -981,8 +981,8 @@ export function useTimeTracking() {
           cost = effectiveHours * adjustedCostWage;
         }
 
-        // Add LOA cost separately (fixed $200 per LOA count)
-        const loaCost = (entry.loaCount || 0) * 200;
+        // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
+        const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
 
         if (!acc[key]) {
           acc[key] = {
@@ -1079,8 +1079,8 @@ export function useTimeTracking() {
           cost = effectiveHours * adjustedCostWage;
         }
 
-        // Add LOA cost separately (fixed $200 per LOA count)
-        const loaCost = (entry.loaCount || 0) * 200;
+        // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
+        const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
 
         if (!acc[key]) {
           acc[key] = {
@@ -1291,8 +1291,8 @@ export function useTimeTracking() {
           cost = effectiveHours * adjustedCostWage;
         }
 
-        // Add LOA cost separately (fixed $200 per LOA count)
-        const loaCost = (entry.loaCount || 0) * 200;
+        // Add LOA cost separately (use actual loaAmount or default $200 per LOA count)
+        const loaCost = (entry.loaCount || 0) * (entry.loaAmount || 200);
 
         if (!acc[job.id]) {
           acc[job.id] = {
