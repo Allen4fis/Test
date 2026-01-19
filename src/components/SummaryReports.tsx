@@ -585,8 +585,8 @@ export function SummaryReports() {
         group.hourTypeBreakdown[hourTypeName].loaCost += entryLoaCost;
         group.hourTypeBreakdown[hourTypeName].loaCount += summary.loaCount || 0;
 
-        // Track individual rate entries for this hour type
-        if (summary.hours > 0) {
+        // Track individual rate entries for this hour type (including LoA-only entries with 0 hours)
+        if (summary.hours > 0 || summary.loaCount > 0) {
           const effectiveHourlyRate =
             summary.hours > 0 ? hourlyCost / summary.hours : 0;
 
