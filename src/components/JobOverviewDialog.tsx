@@ -265,7 +265,7 @@ export function JobOverviewDialog({
 
         {/* Time Entry Details */}
         {dateBasedBreakdown.length > 0 && (
-          <div className="mb-6">
+          <div className="print-section mb-6">
             <h3 className="text-lg font-bold mb-3 border-b pb-2">Time Entry Details</h3>
             {dateBasedBreakdown.map((dayData, dateIdx) => {
               const dateObj = new Date(dayData.date);
