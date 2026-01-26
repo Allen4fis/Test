@@ -589,66 +589,24 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
-          * {
-            box-shadow: none !important;
-          }
-
           .print\\:hidden {
             display: none !important;
           }
 
-          /* Override dialog positioning for print */
+          /* Remove scrollable container from dialog in print */
           [role="dialog"] {
-            position: static !important;
-            max-height: none !important;
-            height: auto !important;
-            overflow: visible !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-          }
-
-          /* Override dialog overlay */
-          [data-radix-dialog-overlay] {
-            display: none !important;
-          }
-
-          /* Ensure content flows naturally */
-          [role="dialog"] > div {
             max-height: none !important;
             overflow: visible !important;
           }
 
-          /* Allow major sections to break across pages */
-          .space-y-6 {
-            display: block !important;
-          }
-
+          /* Allow content to flow naturally */
           .space-y-6 > * {
             page-break-inside: avoid;
-            page-break-after: auto;
-            margin-bottom: 1rem;
           }
 
-          /* Tables can break across pages */
-          .overflow-x-auto {
-            overflow: visible !important;
-          }
-
-          table {
-            page-break-inside: auto;
-            border-collapse: collapse;
-          }
-
+          /* Prevent table rows from breaking unnecessarily */
           tbody tr {
             page-break-inside: avoid;
-            page-break-after: auto;
-          }
-
-          /* Time entry details cards */
-          [class*="border rounded-lg p-3"] {
-            page-break-inside: avoid;
-            margin-bottom: 0.5rem;
           }
         }
       `}</style>
