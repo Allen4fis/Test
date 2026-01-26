@@ -76,6 +76,9 @@ export function JobManagement() {
     addJob,
     updateJob,
     deleteJob,
+    addEmployee,
+    addTimeEntry,
+    employees,
   } = useTimeTracking();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
