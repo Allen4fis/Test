@@ -181,8 +181,8 @@ export function JobOverviewDialog({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {employeeBreakdown.map((emp) => (
-                      <TableRow key={emp.name}>
+                    {employeeBreakdown.map((emp, idx) => (
+                      <TableRow key={`emp-${idx}-${emp.name}`}>
                         <TableCell className="font-medium">{emp.name}</TableCell>
                         <TableCell className="text-right">
                           {safeNumber(emp.hours).toFixed(2)}h
