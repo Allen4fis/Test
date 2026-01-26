@@ -605,6 +605,11 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
+          [role="dialog"] > div {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+          }
         }
       `}</style>
     </Dialog>
