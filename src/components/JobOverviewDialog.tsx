@@ -535,12 +535,11 @@ export function JobOverviewDialog({
 
                       <div className="space-y-1 text-sm">
                         {employeesByDate.map((emp, empIdx) => {
-                          const firstName = emp.name.split(' ')[0];
                           const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
 
                           return (
                             <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between pl-3">
-                              <span className="font-semibold text-blue-600">{firstName}</span>
+                              <span className="font-semibold text-pink-500">{emp.name}</span>
                               <span className="font-semibold text-blue-600">{emp.hours.toFixed(2)}h{loaText}</span>
                             </div>
                           );
