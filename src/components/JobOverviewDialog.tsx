@@ -186,13 +186,6 @@ export function JobOverviewDialog({
 
   const handlePrint = () => {
     setIsPrinting(true);
-
-    // Scroll dialog to top before printing
-    const dialogContent = document.querySelector('[role="dialog"]') as HTMLElement;
-    if (dialogContent) {
-      dialogContent.scrollTop = 0;
-    }
-
     setTimeout(() => {
       window.print();
       setIsPrinting(false);
