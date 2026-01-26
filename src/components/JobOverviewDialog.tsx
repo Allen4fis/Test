@@ -598,11 +598,6 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
-          /* Remove scroll constraints during print */
-          [role="dialog"] {
-            overflow: visible !important;
-            max-height: none !important;
-          }
         }
       `}</style>
     </Dialog>
