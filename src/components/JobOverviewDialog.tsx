@@ -611,20 +611,59 @@ export function JobOverviewDialog({
             display: none !important;
           }
 
-          /* Remove scrollable container from dialog in print */
+          /* Reset all dialog positioning for print */
           [role="dialog"] {
+            all: unset !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
             max-height: none !important;
+            overflow: visible !important;
+            position: static !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+          }
+
+          /* Reset the content wrapper inside dialog */
+          [role="dialog"] > div {
+            all: unset !important;
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
             overflow: visible !important;
           }
 
-          /* Allow content to flow naturally */
+          /* Ensure sections flow naturally */
+          .space-y-6 {
+            display: block !important;
+          }
+
           .space-y-6 > * {
+            display: block !important;
+            page-break-inside: avoid;
+            margin-bottom: 1rem !important;
+          }
+
+          /* Fix table printing */
+          .overflow-x-auto {
+            overflow: visible !important;
+          }
+
+          table {
+            width: 100% !important;
+            page-break-inside: auto;
+            border-collapse: collapse !important;
+          }
+
+          tbody tr {
             page-break-inside: avoid;
           }
 
-          /* Prevent table rows from breaking unnecessarily */
-          tbody tr {
-            page-break-inside: avoid;
+          /* Reset button styles */
+          button {
+            display: none !important;
           }
         }
       `}</style>
