@@ -602,17 +602,12 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
-          /* Make dialog printable - remove all size/scroll constraints */
+          /* Allow dialog content to flow across multiple pages */
           [role="dialog"] {
+            position: static !important;
             max-height: none !important;
-            height: auto !important;
             overflow: visible !important;
-          }
-          /* Remove any height limits from parent containers */
-          [role="dialog"] > * {
-            max-height: none !important;
-            height: auto !important;
-            overflow: visible !important;
+            page-break-after: auto !important;
           }
         }
       `}</style>
