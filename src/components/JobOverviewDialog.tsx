@@ -184,7 +184,7 @@ export function JobOverviewDialog({
 
         {/* Employee Breakdown */}
         {employeeBreakdown.length > 0 && (
-          <div className="mb-6">
+          <div className="print-section mb-6">
             <h3 className="text-lg font-bold mb-3 border-b pb-2">Employee Breakdown</h3>
             <table className="w-full border-collapse">
               <thead>
