@@ -602,10 +602,17 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
-          /* Remove height constraint to prevent scroll repetition */
+          /* Make dialog printable - remove all size/scroll constraints */
           [role="dialog"] {
             max-height: none !important;
             height: auto !important;
+            overflow: visible !important;
+          }
+          /* Remove any height limits from parent containers */
+          [role="dialog"] > * {
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
           }
         }
       `}</style>
