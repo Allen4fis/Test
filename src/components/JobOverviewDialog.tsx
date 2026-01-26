@@ -596,42 +596,71 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
-          body {
+          body, html {
             margin: 0;
             padding: 0;
+            background: white;
           }
 
           .print\\:hidden {
             display: none !important;
           }
 
-          /* Override only the scrollable container properties */
+          /* Remove fixed positioning completely */
           [role="dialog"] {
-            max-height: auto !important;
+            position: static !important;
+            max-height: none !important;
             overflow: visible !important;
             height: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            left: auto !important;
+            top: auto !important;
+            transform: none !important;
+            translate: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: white !important;
           }
 
-          /* Major sections should avoid breaking inside */
+          /* Remove animations and transitions */
+          * {
+            animation: none !important;
+            transition: none !important;
+          }
+
+          /* Make sections break cleanly */
+          .space-y-6 {
+            display: block !important;
+          }
+
           .space-y-6 > div {
             page-break-inside: avoid;
             break-inside: avoid;
+            margin-bottom: 0.5rem !important;
           }
 
-          /* Allow sections to break between them */
-          .space-y-6 > div + div {
-            page-break-before: auto;
+          /* Table formatting */
+          table {
+            page-break-inside: auto;
+            border-collapse: collapse;
+            width: 100%;
           }
 
-          /* Table rows can break if needed */
+          thead {
+            display: table-header-group;
+          }
+
           tbody tr {
             page-break-inside: avoid;
             break-inside: avoid;
           }
 
-          /* Ensure tables repeat headers */
-          thead {
-            display: table-header-group;
+          /* Hide radix overlay */
+          [data-radix-dialog-overlay] {
+            display: none !important;
           }
         }
       `}</style>
