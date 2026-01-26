@@ -185,11 +185,15 @@ export function JobOverviewDialog({
   ).sort((a, b) => a.date.localeCompare(b.date));
 
   const handlePrint = () => {
-    // Scroll dialog to top before printing
-    const dialogs = document.querySelectorAll('[role="dialog"]');
-    dialogs.forEach(dialog => {
-      (dialog as HTMLElement).scrollTop = 0;
-    });
+    // Scroll to top of the dialog content
+    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
+    if (dialog) {
+      dialog.scrollTop = 0;
+      // Also try scrolling any parent containers
+      if (dialog.parentElement) {
+        dialog.parentElement.scrollTop = 0;
+      }
+    }
 
     setIsPrinting(true);
     setTimeout(() => {
