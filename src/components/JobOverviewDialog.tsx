@@ -142,6 +142,55 @@ export function JobOverviewDialog({
   }
   console.groupEnd();
 
+  // Group by month
+  const monthlyBreakdown = Array.from(
+    jobEntries.reduce((map, entry) => {
+      const date = new Date(entry.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthLabel = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+      if (!map.has(monthKey)) {
+        map.set(monthKey, {
+          key: monthKey,
+          label: monthLabel,
+          hours: 0,
+          cost: 0,
+          billable: 0,
+          entries: [],
+        });
+      }
+      const data = map.get(monthKey)!;
+      data.hours += safeNumber(entry.hours);
+      data.cost += safeNumber(entry.totalCost);
+      data.billable += safeNumber(entry.totalBillableAmount);
+      data.entries.push(entry);
+      return map;
+    }, new Map<string, { key: string; label: string; hours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
+  ).sort((a, b) => a.key.localeCompare(b.key));
+
+  // Group entries by employee with dates
+  const employeeDetailsBreakdown = Array.from(
+    jobEntries.reduce((map, entry) => {
+      const key = entry.employeeName;
+      if (!map.has(key)) {
+        map.set(key, {
+          name: entry.employeeName,
+          title: entry.employeeTitle,
+          hours: 0,
+          cost: 0,
+          billable: 0,
+          entries: [],
+        });
+      }
+      const data = map.get(key)!;
+      data.hours += safeNumber(entry.hours);
+      data.cost += safeNumber(entry.totalCost);
+      data.billable += safeNumber(entry.totalBillableAmount);
+      data.entries.push(entry);
+      return map;
+    }, new Map<string, { name: string; title: string; hours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
+  ).sort((a, b) => b.hours - a.hours);
+
   const handlePrint = () => {
     setIsPrinting(true);
     setTimeout(() => {
