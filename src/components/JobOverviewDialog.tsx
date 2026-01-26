@@ -294,7 +294,7 @@ export function JobOverviewDialog({
 
       {/* Screen dialog version */}
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto print:hidden">
           <DialogHeader>
             <DialogTitle className="text-2xl">Job Overview</DialogTitle>
             <DialogDescription>
