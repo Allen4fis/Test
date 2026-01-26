@@ -589,14 +589,36 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
+          /* Hide print button */
           .print\\:hidden {
             display: none !important;
           }
 
-          /* Only fix the scrolling - don't touch positioning */
+          /* Completely reset dialog for printing */
           [role="dialog"] {
-            max-height: auto !important;
+            position: static !important;
+            inset: auto !important;
+            transform: none !important;
+            max-width: 100% !important;
+            max-height: none !important;
             overflow: visible !important;
+            height: auto !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            display: block !important;
+          }
+
+          /* Hide overlay */
+          [data-radix-dialog-overlay] {
+            display: none !important;
+          }
+
+          /* Ensure content flows naturally */
+          [role="dialog"] > * {
+            display: block !important;
           }
         }
       `}</style>
