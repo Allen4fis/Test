@@ -187,93 +187,93 @@ export function JobOverviewDialog({
       }).join('');
 
       element.innerHTML = `
-        <h1 style="margin-top: 0; font-size: 28px;">Job Overview</h1>
-        <p style="margin: 0 0 20px 0; font-size: 14px; color: #666;"><strong>${job.jobNumber} - ${job.name}</strong></p>
+        <h1 style="margin-top: 0; font-size: 28px; color: #000000;">Job Overview</h1>
+        <p style="margin: 0 0 20px 0; font-size: 14px; color: #000000;"><strong>${job.jobNumber} - ${job.name}</strong></p>
 
-        <div style="margin-bottom: 16px; padding: 12px; border: 1px solid #999;">
-          <p style="margin: 0; font-size: 12px; color: #666;">Total Hours</p>
-          <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold;">${safeNumber(totalHours).toFixed(2)}</p>
+        <div style="margin-bottom: 16px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
+          <p style="margin: 0; font-size: 12px; color: #000000; font-weight: bold;">Total Hours</p>
+          <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold; color: #000000;">${safeNumber(totalHours).toFixed(2)}</p>
         </div>
 
-        <div style="margin-bottom: 20px; padding: 12px; border: 1px solid #999;">
-          <span style="font-weight: bold;">Status: </span>
-          <span>${job.isActive ? 'Active' : 'Inactive'}</span>
+        <div style="margin-bottom: 20px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
+          <span style="font-weight: bold; color: #000000;">Status: </span>
+          <span style="color: #000000;">${job.isActive ? 'Active' : 'Inactive'}</span>
         </div>
 
         ${employeeBreakdown.length > 0 ? `
-          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Employee Breakdown</h2>
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Employee Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
-              <tr style="background-color: #f0f0f0;">
-                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999;">Employee</th>
-                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999;">Hours</th>
+              <tr style="background-color: #333333;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Employee</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Hours</th>
               </tr>
             </thead>
             <tbody>
               ${employeeBreakdown.map(emp => `
                 <tr>
-                  <td style="padding: 8px; border: 1px solid #999;">${emp.name}</td>
-                  <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(emp.hours).toFixed(2)}h</td>
+                  <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${emp.name}</td>
+                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(emp.hours).toFixed(2)}h</td>
                 </tr>
               `).join('')}
-              <tr style="font-weight: bold; background-color: #f0f0f0;">
-                <td style="padding: 8px; border: 1px solid #999;">Total</td>
-                <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h</td>
+              <tr style="font-weight: bold; background-color: #cccccc;">
+                <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
+                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h</td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
         ${titleBreakdown.length > 0 ? `
-          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Title Breakdown</h2>
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Title Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
-              <tr style="background-color: #f0f0f0;">
-                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999;">Title</th>
-                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999;">Hours</th>
+              <tr style="background-color: #333333;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Title</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Hours</th>
               </tr>
             </thead>
             <tbody>
               ${titleBreakdown.map(title => `
                 <tr>
-                  <td style="padding: 8px; border: 1px solid #999;">${title.title}</td>
-                  <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(title.hours).toFixed(2)}h</td>
+                  <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${title.title}</td>
+                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(title.hours).toFixed(2)}h</td>
                 </tr>
               `).join('')}
-              <tr style="font-weight: bold; background-color: #f0f0f0;">
-                <td style="padding: 8px; border: 1px solid #999;">Total</td>
-                <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h</td>
+              <tr style="font-weight: bold; background-color: #cccccc;">
+                <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
+                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h</td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
         ${monthlyBreakdown.length > 0 ? `
-          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Monthly Breakdown</h2>
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Monthly Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
-              <tr style="background-color: #f0f0f0;">
-                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999;">Month</th>
-                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999;">Hours</th>
+              <tr style="background-color: #333333;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Month</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Hours</th>
               </tr>
             </thead>
             <tbody>
               ${monthlyBreakdown.map(month => `
                 <tr>
-                  <td style="padding: 8px; border: 1px solid #999;">${month.label}</td>
-                  <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(month.hours).toFixed(2)}h</td>
+                  <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${month.label}</td>
+                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(month.hours).toFixed(2)}h</td>
                 </tr>
               `).join('')}
-              <tr style="font-weight: bold; background-color: #f0f0f0;">
-                <td style="padding: 8px; border: 1px solid #999;">Total</td>
-                <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h</td>
+              <tr style="font-weight: bold; background-color: #cccccc;">
+                <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
+                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h</td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
         ${dateBasedBreakdown.length > 0 ? `
-          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Time Entry Details</h2>
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Time Entry Details</h2>
           ${dateBasedBreakdownHTML}
         ` : ''}
       `;
