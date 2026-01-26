@@ -139,156 +139,158 @@ export function JobOverviewDialog({
   ).sort((a, b) => a.date.localeCompare(b.date));
 
   const handleExportPDF = () => {
-    // Generate HTML content as string
-    const dateBasedBreakdownHTML = dateBasedBreakdown.map((dayData, idx) => {
-      const dateObj = new Date(dayData.date);
-      const formattedDate = dateObj.toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-      const dayTotalHours = dayData.entries.reduce((sum, e) => sum + safeNumber(e.hours), 0);
-      const employeesByDate = Array.from(
-        dayData.entries.reduce((map, entry) => {
-          const key = entry.employeeName;
-          if (!map.has(key)) {
-            map.set(key, { name: entry.employeeName, hours: 0, loaCount: 0 });
-          }
-          const data = map.get(key)!;
-          data.hours += safeNumber(entry.hours);
-          data.loaCount += safeNumber(entry.loaCount) || 0;
-          return map;
-        }, new Map<string, { name: string; hours: number; loaCount: number }>()).values()
-      );
+    try {
+      // Simple approach: create element and use html2pdf
+      const element = document.createElement('div');
+      element.style.padding = '20px';
+      element.style.backgroundColor = 'white';
+      element.style.color = 'black';
 
-      return `
-        <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ccc;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <p style="font-weight: bold; margin: 0;">${formattedDate}</p>
-            <p style="font-weight: bold; margin: 0;">${dayTotalHours.toFixed(2)}h</p>
-          </div>
-          ${employeesByDate.map(emp => `
-            <div style="display: flex; justify-content: space-between; padding-left: 12px; font-size: 14px;">
-              <span>${emp.name}</span>
-              <span>${emp.hours.toFixed(2)}h${emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : ''}</span>
+      const dateBasedBreakdownHTML = dateBasedBreakdown.map((dayData) => {
+        const dateObj = new Date(dayData.date);
+        const formattedDate = dateObj.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+        const dayTotalHours = dayData.entries.reduce((sum, e) => sum + safeNumber(e.hours), 0);
+        const employeesByDate = Array.from(
+          dayData.entries.reduce((map, entry) => {
+            const key = entry.employeeName;
+            if (!map.has(key)) {
+              map.set(key, { name: entry.employeeName, hours: 0, loaCount: 0 });
+            }
+            const data = map.get(key)!;
+            data.hours += safeNumber(entry.hours);
+            data.loaCount += safeNumber(entry.loaCount) || 0;
+            return map;
+          }, new Map<string, { name: string; hours: number; loaCount: number }>()).values()
+        );
+
+        const empLines = employeesByDate.map(emp =>
+          `<div style="display: flex; justify-content: space-between; padding-left: 12px; font-size: 13px; margin: 4px 0;">
+            <span>${emp.name}</span>
+            <span>${emp.hours.toFixed(2)}h${emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : ''}</span>
+          </div>`
+        ).join('');
+
+        return `
+          <div style="margin-bottom: 16px; padding: 12px; border: 1px solid #999;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold;">
+              <span>${formattedDate}</span>
+              <span>${dayTotalHours.toFixed(2)}h</span>
             </div>
-          `).join('')}
+            ${empLines}
+          </div>
+        `;
+      }).join('');
+
+      element.innerHTML = `
+        <h1 style="margin-top: 0; font-size: 28px;">Job Overview</h1>
+        <p style="margin: 0 0 20px 0; font-size: 14px; color: #666;"><strong>${job.jobNumber} - ${job.name}</strong></p>
+
+        <div style="margin-bottom: 16px; padding: 12px; border: 1px solid #999;">
+          <p style="margin: 0; font-size: 12px; color: #666;">Total Hours</p>
+          <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold;">${safeNumber(totalHours).toFixed(2)}</p>
         </div>
+
+        <div style="margin-bottom: 20px; padding: 12px; border: 1px solid #999;">
+          <span style="font-weight: bold;">Status: </span>
+          <span>${job.isActive ? 'Active' : 'Inactive'}</span>
+        </div>
+
+        ${employeeBreakdown.length > 0 ? `
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Employee Breakdown</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr style="background-color: #f0f0f0;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999;">Employee</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999;">Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${employeeBreakdown.map(emp => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #999;">${emp.name}</td>
+                  <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(emp.hours).toFixed(2)}h</td>
+                </tr>
+              `).join('')}
+              <tr style="font-weight: bold; background-color: #f0f0f0;">
+                <td style="padding: 8px; border: 1px solid #999;">Total</td>
+                <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h</td>
+              </tr>
+            </tbody>
+          </table>
+        ` : ''}
+
+        ${titleBreakdown.length > 0 ? `
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Title Breakdown</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr style="background-color: #f0f0f0;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999;">Title</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999;">Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${titleBreakdown.map(title => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #999;">${title.title}</td>
+                  <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(title.hours).toFixed(2)}h</td>
+                </tr>
+              `).join('')}
+              <tr style="font-weight: bold; background-color: #f0f0f0;">
+                <td style="padding: 8px; border: 1px solid #999;">Total</td>
+                <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h</td>
+              </tr>
+            </tbody>
+          </table>
+        ` : ''}
+
+        ${monthlyBreakdown.length > 0 ? `
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Monthly Breakdown</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr style="background-color: #f0f0f0;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #999;">Month</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #999;">Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${monthlyBreakdown.map(month => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #999;">${month.label}</td>
+                  <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(month.hours).toFixed(2)}h</td>
+                </tr>
+              `).join('')}
+              <tr style="font-weight: bold; background-color: #f0f0f0;">
+                <td style="padding: 8px; border: 1px solid #999;">Total</td>
+                <td style="padding: 8px; border: 1px solid #999; text-align: right;">${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h</td>
+              </tr>
+            </tbody>
+          </table>
+        ` : ''}
+
+        ${dateBasedBreakdown.length > 0 ? `
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #333; padding-bottom: 5px;">Time Entry Details</h2>
+          ${dateBasedBreakdownHTML}
+        ` : ''}
       `;
-    }).join('');
 
-    const employeeBreakdownHTML = employeeBreakdown.map(emp => `
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ccc;">${emp.name}</td>
-        <td style="padding: 8px; border: 1px solid #ccc; text-align: right;">${safeNumber(emp.hours).toFixed(2)}h</td>
-      </tr>
-    `).join('');
+      const opt = {
+        margin: 5,
+        filename: `${job.jobNumber.replace(/\//g, '-')}-${job.name.replace(/\s+/g, '-')}-overview.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      };
 
-    const titleBreakdownHTML = titleBreakdown.map(title => `
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ccc;">${title.title}</td>
-        <td style="padding: 8px; border: 1px solid #ccc; text-align: right;">${safeNumber(title.hours).toFixed(2)}h</td>
-      </tr>
-    `).join('');
-
-    const monthlyBreakdownHTML = monthlyBreakdown.map(month => `
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ccc;">${month.label}</td>
-        <td style="padding: 8px; border: 1px solid #ccc; text-align: right;">${safeNumber(month.hours).toFixed(2)}h</td>
-      </tr>
-    `).join('');
-
-    const htmlContent = `
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; color: black; }
-            h1 { margin-top: 0; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            th { text-align: left; font-weight: bold; padding: 8px; border: 1px solid #ccc; background-color: #f0f0f0; }
-            tr:nth-child(even) { background-color: #f9f9f9; }
-            .total-row { font-weight: bold; background-color: #f0f0f0; }
-            .section-title { font-size: 18px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px; }
-            .info-box { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; }
-          </style>
-        </head>
-        <body>
-          <h1>Job Overview</h1>
-          <p><strong>${job.jobNumber} - ${job.name}</strong></p>
-
-          <div class="info-box">
-            <p style="margin: 0; font-size: 12px; color: #666;">Total Hours</p>
-            <p style="margin: 5px 0 0 0; font-size: 32px; font-weight: bold;">${safeNumber(totalHours).toFixed(2)}</p>
-          </div>
-
-          <div class="info-box">
-            <span style="font-size: 14px; font-weight: bold;">Status:</span>
-            <span style="font-weight: bold;">${job.isActive ? 'Active' : 'Inactive'}</span>
-          </div>
-
-          ${employeeBreakdown.length > 0 ? `
-            <div class="section-title">Employee Breakdown</div>
-            <table>
-              <tr>
-                <th>Employee</th>
-                <th style="text-align: right;">Hours</th>
-              </tr>
-              ${employeeBreakdownHTML}
-              <tr class="total-row">
-                <td style="padding: 8px; border: 1px solid #ccc;">Total</td>
-                <td style="padding: 8px; border: 1px solid #ccc; text-align: right;">${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h</td>
-              </tr>
-            </table>
-          ` : ''}
-
-          ${titleBreakdown.length > 0 ? `
-            <div class="section-title">Title Breakdown</div>
-            <table>
-              <tr>
-                <th>Title</th>
-                <th style="text-align: right;">Hours</th>
-              </tr>
-              ${titleBreakdownHTML}
-              <tr class="total-row">
-                <td style="padding: 8px; border: 1px solid #ccc;">Total</td>
-                <td style="padding: 8px; border: 1px solid #ccc; text-align: right;">${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h</td>
-              </tr>
-            </table>
-          ` : ''}
-
-          ${monthlyBreakdown.length > 0 ? `
-            <div class="section-title">Monthly Breakdown</div>
-            <table>
-              <tr>
-                <th>Month</th>
-                <th style="text-align: right;">Hours</th>
-              </tr>
-              ${monthlyBreakdownHTML}
-              <tr class="total-row">
-                <td style="padding: 8px; border: 1px solid #ccc;">Total</td>
-                <td style="padding: 8px; border: 1px solid #ccc; text-align: right;">${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h</td>
-              </tr>
-            </table>
-          ` : ''}
-
-          ${dateBasedBreakdown.length > 0 ? `
-            <div class="section-title">Time Entry Details</div>
-            ${dateBasedBreakdownHTML}
-          ` : ''}
-        </body>
-      </html>
-    `;
-
-    const opt = {
-      margin: 10,
-      filename: `${job.jobNumber}-${job.name.replace(/\s+/g, '-')}-overview.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-    };
-
-    html2pdf().set(opt).from(htmlContent, 'html').save();
+      (html2pdf as any)().set(opt).from(element).save();
+    } catch (error) {
+      console.error('PDF export error:', error);
+      alert('Error exporting PDF. Please check the console.');
+    }
   };
 
   return (
