@@ -589,14 +589,33 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
-          body {
-            background: white;
-            margin: 0;
-            padding: 0;
+          html, body {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
           .print\\:hidden {
             display: none !important;
           }
+          /* Hide overlay */
+          [role="presentation"] {
+            display: none !important;
+          }
+          /* Adjust dialog positioning */
+          [role="dialog"] {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            transform: none !important;
+            fixed: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
+          /* Make content scrollable area normal */
           [role="dialog"] > div {
             overflow: visible !important;
             height: auto !important;
