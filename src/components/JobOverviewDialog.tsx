@@ -240,8 +240,8 @@ export function JobOverviewDialog({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {titleBreakdown.map((title) => (
-                      <TableRow key={title.title}>
+                    {titleBreakdown.map((title, idx) => (
+                      <TableRow key={`title-${idx}-${title.title}`}>
                         <TableCell className="font-medium">
                           {title.title}
                         </TableCell>
