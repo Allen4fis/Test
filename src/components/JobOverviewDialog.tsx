@@ -589,54 +589,18 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
+          body, html {
+            margin: 0;
+            padding: 0;
+          }
+
           .print\\:hidden {
             display: none !important;
           }
 
-          /* Override dialog constraints for print */
+          /* Simply remove the overflow constraint */
           [role="dialog"] {
-            position: static !important;
-            transform: none !important;
-            max-height: 100vh !important;
             overflow: visible !important;
-            height: auto !important;
-            width: 100% !important;
-          }
-
-          /* Ensure dialog content doesn't create scroll context */
-          [role="dialog"] * {
-            max-height: none !important;
-          }
-
-          /* Allow sections to break naturally across pages */
-          .space-y-6 > * {
-            page-break-inside: avoid !important;
-            margin: 0 0 1rem 0 !important;
-          }
-
-          /* Tables should print with proper formatting */
-          .overflow-x-auto {
-            overflow: visible !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-
-          table {
-            page-break-inside: auto !important;
-            border-collapse: collapse !important;
-          }
-
-          thead {
-            display: table-header-group !important;
-          }
-
-          tbody tr {
-            page-break-inside: avoid !important;
-          }
-
-          /* Hide print button */
-          .print\\:hidden {
-            display: none !important;
           }
         }
       `}</style>
