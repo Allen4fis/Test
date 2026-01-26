@@ -64,6 +64,7 @@ import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { toast } from "@/hooks/use-toast";
 import { Job } from "@/types";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
+import { JobOverviewDialog } from "@/components/JobOverviewDialog";
 
 export function JobManagement() {
   const {
