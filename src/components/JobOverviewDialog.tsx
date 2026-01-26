@@ -39,6 +39,7 @@ export function JobOverviewDialog({
   onOpenChange,
 }: JobOverviewDialogProps) {
   const [isPrinting, setIsPrinting] = useState(false);
+  const [isClientView, setIsClientView] = useState(false);
 
   if (!job) return null;
 
