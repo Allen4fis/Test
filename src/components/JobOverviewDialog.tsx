@@ -294,8 +294,14 @@ export function JobOverviewDialog({
           )}
 
           {jobEntries.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              No time entries found for this job.
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+              <p className="text-gray-700 font-medium">No Time Entries Found</p>
+              <p className="text-sm text-gray-600 mt-2">
+                There are no time entries assigned to this job yet.
+              </p>
+              <p className="text-xs text-gray-500 mt-3">
+                Create time entries in the "Time Entry" section and assign them to this job to see the overview data.
+              </p>
             </div>
           )}
 
