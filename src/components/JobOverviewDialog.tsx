@@ -147,7 +147,9 @@ export function JobOverviewDialog({
       element.style.color = 'black';
 
       const dateBasedBreakdownHTML = dateBasedBreakdown.map((dayData) => {
-        const dateObj = new Date(dayData.date);
+        // Parse date string as local date, not UTC
+        const [year, month, day] = dayData.date.split('-');
+        const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         const formattedDate = dateObj.toLocaleDateString('en-US', {
           weekday: 'short',
           month: 'short',
