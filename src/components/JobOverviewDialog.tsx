@@ -42,33 +42,35 @@ export function JobOverviewDialog({
 
   if (!job) return null;
 
-  // Debug: Log data to console with detailed information
-  console.log("=== JobOverviewDialog Debug ===");
-  console.log("Job object:", job);
-  console.log("Job.jobNumber:", job.jobNumber);
-  console.log("Total timeEntrySummaries:", timeEntrySummaries?.length || 0);
+  // Debug: Comprehensive logging
+  console.group("🔍 JobOverviewDialog Debug");
+  console.log("Job ID:", job.id);
+  console.log("Job Number:", job.jobNumber, `(type: ${typeof job.jobNumber})`);
+  console.log("Job Name:", job.name);
+  console.log("---");
+  console.log("Total timeEntrySummaries available:", timeEntrySummaries?.length || 0);
 
+  // Show all unique job numbers in the summaries
   if (timeEntrySummaries && timeEntrySummaries.length > 0) {
-    console.log("Sample summaries (first 3):");
-    timeEntrySummaries.slice(0, 3).forEach((s, i) => {
-      console.log(`  [${i}] jobNumber="${s.jobNumber}" (type: ${typeof s.jobNumber})`);
+    const uniqueJobNumbers = [...new Set(timeEntrySummaries.map(s => s.jobNumber))];
+    console.log("Unique job numbers in summaries:", uniqueJobNumbers);
+    console.log("First 5 summaries:");
+    timeEntrySummaries.slice(0, 5).forEach((s, i) => {
+      console.log(`  [${i}] jobNumber="${s.jobNumber}" (matches: ${s.jobNumber === job.jobNumber}), employee: "${s.employeeName}", hours: ${s.hours}`);
     });
   }
 
   // Filter time entries for this job
   const jobEntries = (timeEntrySummaries || []).filter((entry) => {
-    const match = entry.jobNumber === job.jobNumber;
-    if (!match && timeEntrySummaries!.length > 0) {
-      // Log mismatches for first few entries
-      if (timeEntrySummaries!.indexOf(entry) < 3) {
-        console.log(`Comparing: "${entry.jobNumber}" === "${job.jobNumber}" = ${match}`);
-      }
-    }
-    return match;
+    return entry.jobNumber === job.jobNumber;
   });
 
-  console.log("Filtered entries for job:", jobEntries.length);
-  console.log("=== End Debug ===");
+  console.log("---");
+  console.log("✅ Filtered entries for this job:", jobEntries.length);
+  if (jobEntries.length > 0) {
+    console.log("Sample filtered entry:", jobEntries[0]);
+  }
+  console.groupEnd();
 
   // Calculate total hours with safe number conversion
   const totalHours = jobEntries.reduce(
