@@ -79,6 +79,8 @@ export function JobManagement() {
   } = useTimeTracking();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [overviewJob, setOverviewJob] = useState<Job | null>(null);
+  const [isOverviewDialogOpen, setIsOverviewDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     jobNumber: "",
     name: "",
