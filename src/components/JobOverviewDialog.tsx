@@ -138,12 +138,19 @@ export function JobOverviewDialog({
     }, new Map<string, { date: string; entries: TimeEntrySummary[] }>()).values()
   ).sort((a, b) => a.date.localeCompare(b.date));
 
-  const handlePrint = () => {
-    setIsPrinting(true);
-    setTimeout(() => {
-      window.print();
-      setIsPrinting(false);
-    }, 100);
+  const handleExportPDF = () => {
+    const element = document.getElementById('job-overview-pdf-content');
+    if (!element) return;
+
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: `${job.jobNumber}-${job.name.replace(/\s+/g, '-')}-overview.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+    };
+
+    html2pdf().set(opt).from(element).save();
   };
 
   return (
