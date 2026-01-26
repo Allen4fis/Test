@@ -592,6 +592,12 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
+
+          /* Override only the scrollable container properties */
+          [role="dialog"] {
+            max-height: auto !important;
+            overflow: visible !important;
+          }
         }
       `}</style>
     </Dialog>
