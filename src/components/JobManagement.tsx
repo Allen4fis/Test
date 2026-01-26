@@ -1005,6 +1005,14 @@ export function JobManagement() {
           </div>
         )}
       </CardContent>
+
+      {/* Job Overview Dialog */}
+      <JobOverviewDialog
+        job={overviewJob}
+        timeEntrySummaries={timeEntrySummaries}
+        isOpen={isOverviewDialogOpen}
+        onOpenChange={setIsOverviewDialogOpen}
+      />
     </Card>
   );
 }
