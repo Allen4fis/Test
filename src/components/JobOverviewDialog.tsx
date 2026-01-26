@@ -42,10 +42,17 @@ export function JobOverviewDialog({
 
   if (!job) return null;
 
+  // Debug: Log data to console
+  console.log("JobOverviewDialog - Job:", job);
+  console.log("JobOverviewDialog - Total summaries:", timeEntrySummaries?.length || 0);
+  console.log("JobOverviewDialog - First few summaries:", timeEntrySummaries?.slice(0, 3));
+
   // Filter time entries for this job
-  const jobEntries = timeEntrySummaries.filter(
+  const jobEntries = (timeEntrySummaries || []).filter(
     (entry) => entry.jobNumber === job.jobNumber
   );
+
+  console.log("JobOverviewDialog - Filtered entries for job:", jobEntries.length);
 
   // Calculate total hours with safe number conversion
   const totalHours = jobEntries.reduce(
