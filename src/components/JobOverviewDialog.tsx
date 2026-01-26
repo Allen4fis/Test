@@ -148,26 +148,7 @@ export function JobOverviewDialog({
   return (
     <>
       {/* Print-only version - hidden from screen, shown only when printing */}
-      <style>{`
-        @media print {
-          body {
-            margin: 0;
-            padding: 0;
-          }
-          #root {
-            background: white;
-            color: black;
-          }
-          .print-content {
-            page-break-after: avoid;
-          }
-          .print-section {
-            page-break-inside: avoid;
-            margin-bottom: 1.5rem;
-          }
-        }
-      `}</style>
-      <div className="hidden print:block print:bg-white print:text-black" style={{ padding: '0.5in', margin: 0 }}>
+      <div className="hidden print:block p-8 bg-white text-black">
         <h1 className="text-2xl font-bold mb-1">Job Overview</h1>
         <p className="text-sm text-gray-700 mb-6">{job.jobNumber} - {job.name}</p>
 
