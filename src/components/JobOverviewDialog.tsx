@@ -185,27 +185,10 @@ export function JobOverviewDialog({
   ).sort((a, b) => a.date.localeCompare(b.date));
 
   const handlePrint = () => {
-    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
-    if (!dialog) return;
-
-    // Save original styles
-    const originalMaxHeight = dialog.style.maxHeight;
-    const originalOverflow = dialog.style.overflow;
-
-    // Remove print-blocking constraints
-    dialog.style.maxHeight = 'unset';
-    dialog.style.overflow = 'visible';
-    dialog.scrollTop = 0;
-
     setIsPrinting(true);
     setTimeout(() => {
       window.print();
-      // Restore original styles after print
-      setTimeout(() => {
-        dialog.style.maxHeight = originalMaxHeight;
-        dialog.style.overflow = originalOverflow;
-        setIsPrinting(false);
-      }, 100);
+      setIsPrinting(false);
     }, 100);
   };
 
