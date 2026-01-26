@@ -153,7 +153,7 @@ export function JobOverviewDialog({
         <p className="text-sm text-gray-700 mb-6">{job.jobNumber} - {job.name}</p>
 
         {/* Total Hours */}
-        <div className="print-section mb-6 p-4 border">
+        <div className="mb-6 p-4 border">
           <p className="text-sm font-medium text-gray-600">Total Hours</p>
           <p className="text-3xl font-bold text-gray-900 mt-2">{safeNumber(totalHours).toFixed(2)}</p>
         </div>
