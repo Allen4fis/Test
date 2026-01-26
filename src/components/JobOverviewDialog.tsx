@@ -70,7 +70,6 @@ export function JobOverviewDialog({
   if (jobEntries.length > 0) {
     console.log("Sample filtered entry:", jobEntries[0]);
   }
-  console.groupEnd();
 
   // Calculate total hours with safe number conversion
   const totalHours = jobEntries.reduce(
@@ -85,6 +84,11 @@ export function JobOverviewDialog({
     (sum, entry) => sum + safeNumber(entry.totalBillableAmount),
     0
   );
+
+  console.log("Totals calculated:");
+  console.log("  totalHours:", totalHours);
+  console.log("  totalCost:", totalCost);
+  console.log("  totalBillable:", totalBillable);
 
   // Group by employee with safe number handling
   const employeeBreakdown = Array.from(
