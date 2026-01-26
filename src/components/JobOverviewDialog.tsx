@@ -42,17 +42,33 @@ export function JobOverviewDialog({
 
   if (!job) return null;
 
-  // Debug: Log data to console
-  console.log("JobOverviewDialog - Job:", job);
-  console.log("JobOverviewDialog - Total summaries:", timeEntrySummaries?.length || 0);
-  console.log("JobOverviewDialog - First few summaries:", timeEntrySummaries?.slice(0, 3));
+  // Debug: Log data to console with detailed information
+  console.log("=== JobOverviewDialog Debug ===");
+  console.log("Job object:", job);
+  console.log("Job.jobNumber:", job.jobNumber);
+  console.log("Total timeEntrySummaries:", timeEntrySummaries?.length || 0);
+
+  if (timeEntrySummaries && timeEntrySummaries.length > 0) {
+    console.log("Sample summaries (first 3):");
+    timeEntrySummaries.slice(0, 3).forEach((s, i) => {
+      console.log(`  [${i}] jobNumber="${s.jobNumber}" (type: ${typeof s.jobNumber})`);
+    });
+  }
 
   // Filter time entries for this job
-  const jobEntries = (timeEntrySummaries || []).filter(
-    (entry) => entry.jobNumber === job.jobNumber
-  );
+  const jobEntries = (timeEntrySummaries || []).filter((entry) => {
+    const match = entry.jobNumber === job.jobNumber;
+    if (!match && timeEntrySummaries!.length > 0) {
+      // Log mismatches for first few entries
+      if (timeEntrySummaries!.indexOf(entry) < 3) {
+        console.log(`Comparing: "${entry.jobNumber}" === "${job.jobNumber}" = ${match}`);
+      }
+    }
+    return match;
+  });
 
-  console.log("JobOverviewDialog - Filtered entries for job:", jobEntries.length);
+  console.log("Filtered entries for job:", jobEntries.length);
+  console.log("=== End Debug ===");
 
   // Calculate total hours with safe number conversion
   const totalHours = jobEntries.reduce(
