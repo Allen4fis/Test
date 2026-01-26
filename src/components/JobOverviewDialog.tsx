@@ -589,19 +589,66 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
+          * {
+            box-shadow: none !important;
+          }
+
           .print\\:hidden {
             display: none !important;
           }
-          /* Make dialog content print correctly */
+
+          /* Override dialog positioning for print */
           [role="dialog"] {
-            max-height: 100% !important;
+            position: static !important;
+            max-height: none !important;
+            height: auto !important;
             overflow: visible !important;
-            page-break-inside: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
           }
-          /* Ensure sections can break across pages naturally */
+
+          /* Override dialog overlay */
+          [data-radix-dialog-overlay] {
+            display: none !important;
+          }
+
+          /* Ensure content flows naturally */
+          [role="dialog"] > div {
+            max-height: none !important;
+            overflow: visible !important;
+          }
+
+          /* Allow major sections to break across pages */
+          .space-y-6 {
+            display: block !important;
+          }
+
           .space-y-6 > * {
-            page-break-inside: auto !important;
-            page-break-after: auto !important;
+            page-break-inside: avoid;
+            page-break-after: auto;
+            margin-bottom: 1rem;
+          }
+
+          /* Tables can break across pages */
+          .overflow-x-auto {
+            overflow: visible !important;
+          }
+
+          table {
+            page-break-inside: auto;
+            border-collapse: collapse;
+          }
+
+          tbody tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+          }
+
+          /* Time entry details cards */
+          [class*="border rounded-lg p-3"] {
+            page-break-inside: avoid;
+            margin-bottom: 0.5rem;
           }
         }
       `}</style>
