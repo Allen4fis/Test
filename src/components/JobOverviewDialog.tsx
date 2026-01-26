@@ -169,15 +169,15 @@ export function JobOverviewDialog({
         );
 
         const empLines = employeesByDate.map(emp =>
-          `<div style="display: flex; justify-content: space-between; padding-left: 12px; font-size: 13px; margin: 4px 0;">
+          `<div style="display: flex; justify-content: space-between; padding-left: 12px; font-size: 13px; margin: 4px 0; color: #000000;">
             <span>${emp.name}</span>
             <span>${emp.hours.toFixed(2)}h${emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : ''}</span>
           </div>`
         ).join('');
 
         return `
-          <div style="margin-bottom: 16px; padding: 12px; border: 1px solid #999;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold;">
+          <div style="margin-bottom: 16px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; color: #000000;">
               <span>${formattedDate}</span>
               <span>${dayTotalHours.toFixed(2)}h</span>
             </div>
