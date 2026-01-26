@@ -596,6 +596,11 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
+          body {
+            margin: 0;
+            padding: 0;
+          }
+
           .print\\:hidden {
             display: none !important;
           }
@@ -604,6 +609,29 @@ export function JobOverviewDialog({
           [role="dialog"] {
             max-height: auto !important;
             overflow: visible !important;
+            height: auto !important;
+          }
+
+          /* Major sections should avoid breaking inside */
+          .space-y-6 > div {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+
+          /* Allow sections to break between them */
+          .space-y-6 > div + div {
+            page-break-before: auto;
+          }
+
+          /* Table rows can break if needed */
+          tbody tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+
+          /* Ensure tables repeat headers */
+          thead {
+            display: table-header-group;
           }
         }
       `}</style>
