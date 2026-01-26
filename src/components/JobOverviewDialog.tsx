@@ -611,58 +611,49 @@ export function JobOverviewDialog({
             display: none !important;
           }
 
-          /* Reset all dialog positioning for print */
+          /* Override dialog constraints for print */
           [role="dialog"] {
-            all: unset !important;
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
-            max-height: none !important;
-            overflow: visible !important;
             position: static !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: white !important;
-          }
-
-          /* Reset the content wrapper inside dialog */
-          [role="dialog"] > div {
-            all: unset !important;
-            display: block !important;
-            width: 100% !important;
-            height: auto !important;
+            transform: none !important;
+            max-height: 100vh !important;
             overflow: visible !important;
+            height: auto !important;
+            width: 100% !important;
           }
 
-          /* Ensure sections flow naturally */
-          .space-y-6 {
-            display: block !important;
+          /* Ensure dialog content doesn't create scroll context */
+          [role="dialog"] * {
+            max-height: none !important;
           }
 
+          /* Allow sections to break naturally across pages */
           .space-y-6 > * {
-            display: block !important;
-            page-break-inside: avoid;
-            margin-bottom: 1rem !important;
+            page-break-inside: avoid !important;
+            margin: 0 0 1rem 0 !important;
           }
 
-          /* Fix table printing */
+          /* Tables should print with proper formatting */
           .overflow-x-auto {
             overflow: visible !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
 
           table {
-            width: 100% !important;
-            page-break-inside: auto;
+            page-break-inside: auto !important;
             border-collapse: collapse !important;
           }
 
-          tbody tr {
-            page-break-inside: avoid;
+          thead {
+            display: table-header-group !important;
           }
 
-          /* Reset button styles */
-          button {
+          tbody tr {
+            page-break-inside: avoid !important;
+          }
+
+          /* Hide print button */
+          .print\\:hidden {
             display: none !important;
           }
         }
