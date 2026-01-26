@@ -596,71 +596,14 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
-          body, html {
-            margin: 0;
-            padding: 0;
-            background: white;
-          }
-
           .print\\:hidden {
             display: none !important;
           }
 
-          /* Remove fixed positioning completely */
+          /* Only fix the scrolling - don't touch positioning */
           [role="dialog"] {
-            position: static !important;
-            max-height: none !important;
+            max-height: auto !important;
             overflow: visible !important;
-            height: auto !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            left: auto !important;
-            top: auto !important;
-            transform: none !important;
-            translate: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            background: white !important;
-          }
-
-          /* Remove animations and transitions */
-          * {
-            animation: none !important;
-            transition: none !important;
-          }
-
-          /* Make sections break cleanly */
-          .space-y-6 {
-            display: block !important;
-          }
-
-          .space-y-6 > div {
-            page-break-inside: avoid;
-            break-inside: avoid;
-            margin-bottom: 0.5rem !important;
-          }
-
-          /* Table formatting */
-          table {
-            page-break-inside: auto;
-            border-collapse: collapse;
-            width: 100%;
-          }
-
-          thead {
-            display: table-header-group;
-          }
-
-          tbody tr {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-
-          /* Hide radix overlay */
-          [data-radix-dialog-overlay] {
-            display: none !important;
           }
         }
       `}</style>
