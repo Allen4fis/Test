@@ -145,26 +145,25 @@ export function JobOverviewDialog({
           </div>
 
           {/* Job Details */}
-          <div className="bg-gray-50 p-4 rounded-lg border">
-            <p className="text-sm text-gray-600">
+          <div className="bg-gray-50 p-4 rounded-lg border space-y-2">
+            <div className="text-sm text-gray-600 flex items-center gap-2">
               <span className="font-medium">Status:</span>{" "}
               <Badge
                 variant={job.isActive ? "default" : "secondary"}
-                className="ml-2"
               >
                 {job.isActive ? "Active" : "Inactive"}
               </Badge>
-            </p>
+            </div>
             {job.description && (
-              <p className="text-sm text-gray-600 mt-2">
+              <div className="text-sm text-gray-600">
                 <span className="font-medium">Description:</span>{" "}
                 {job.description}
-              </p>
+              </div>
             )}
-            <p className="text-sm text-gray-600 mt-2">
+            <div className="text-sm text-gray-600">
               <span className="font-medium">Billable:</span>{" "}
               {job.isBillable ? "Yes" : "No"}
-            </p>
+            </div>
           </div>
 
           {/* Employee Breakdown */}
