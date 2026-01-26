@@ -589,38 +589,6 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
-          /* Hide the dialog overlay */
-          [data-radix-dialog-overlay] {
-            display: none !important;
-          }
-
-          /* Override Radix dialog's fixed positioning */
-          [role="dialog"] {
-            position: static !important;
-            left: auto !important;
-            top: auto !important;
-            transform: none !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            translate: none !important;
-            z-index: auto !important;
-            border: none !important;
-            box-shadow: none !important;
-            background: white !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            max-height: none !important;
-            overflow: visible !important;
-            height: auto !important;
-            grid-template-columns: none !important;
-            gap: 0 !important;
-          }
-
-          /* Remove animations */
-          [data-state] {
-            animation: none !important;
-          }
-
           .print\\:hidden {
             display: none !important;
           }
