@@ -525,10 +525,10 @@ export function JobOverviewDialog({
                   );
 
                   return (
-                    <div key={`date-${dateIdx}-${dayData.date}`} className="border rounded-lg p-3 bg-gray-50">
+                    <div key={`date-${dateIdx}-${dayData.date}`} className="border rounded-lg p-3 bg-white">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="font-semibold text-gray-900">{formattedDate}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-bold text-blue-700">{formattedDate}</p>
+                        <p className="text-sm font-semibold text-blue-600">
                           {dayTotalHours.toFixed(2)}h
                         </p>
                       </div>
@@ -539,9 +539,9 @@ export function JobOverviewDialog({
                           const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
 
                           return (
-                            <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between text-gray-700 pl-3">
-                              <span>{firstName}</span>
-                              <span className="text-gray-600">{emp.hours.toFixed(2)}h{loaText}</span>
+                            <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between text-gray-800 pl-3">
+                              <span className="font-semibold">{firstName}</span>
+                              <span className="font-semibold text-gray-700">{emp.hours.toFixed(2)}h{loaText}</span>
                             </div>
                           );
                         })}
