@@ -16,7 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Printer } from "lucide-react";
+import { Download } from "lucide-react";
+import html2pdf from "html2pdf.js";
 import { Job, TimeEntrySummary } from "@/types";
 
 interface JobOverviewDialogProps {
