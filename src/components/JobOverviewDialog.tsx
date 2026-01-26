@@ -26,6 +26,12 @@ interface JobOverviewDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// Helper function to safely convert to number
+const safeNumber = (value: any): number => {
+  const num = Number(value) || 0;
+  return isNaN(num) ? 0 : num;
+};
+
 export function JobOverviewDialog({
   job,
   timeEntrySummaries,
@@ -41,15 +47,21 @@ export function JobOverviewDialog({
     (entry) => entry.jobNumber === job.jobNumber
   );
 
-  // Calculate total hours
-  const totalHours = jobEntries.reduce((sum, entry) => sum + entry.hours, 0);
-  const totalCost = jobEntries.reduce((sum, entry) => sum + entry.totalCost, 0);
+  // Calculate total hours with safe number conversion
+  const totalHours = jobEntries.reduce(
+    (sum, entry) => sum + safeNumber(entry.hours),
+    0
+  );
+  const totalCost = jobEntries.reduce(
+    (sum, entry) => sum + safeNumber(entry.totalCost),
+    0
+  );
   const totalBillable = jobEntries.reduce(
-    (sum, entry) => sum + entry.totalBillableAmount,
+    (sum, entry) => sum + safeNumber(entry.totalBillableAmount),
     0
   );
 
-  // Group by employee
+  // Group by employee with safe number handling
   const employeeBreakdown = Array.from(
     jobEntries.reduce((map, entry) => {
       const key = entry.employeeName;
@@ -62,14 +74,14 @@ export function JobOverviewDialog({
         });
       }
       const data = map.get(key)!;
-      data.hours += entry.hours;
-      data.cost += entry.totalCost;
-      data.billable += entry.totalBillableAmount;
+      data.hours += safeNumber(entry.hours);
+      data.cost += safeNumber(entry.totalCost);
+      data.billable += safeNumber(entry.totalBillableAmount);
       return map;
     }, new Map<string, { name: string; hours: number; cost: number; billable: number }>())
   ).sort((a, b) => b.hours - a.hours);
 
-  // Group by title
+  // Group by title with safe number handling
   const titleBreakdown = Array.from(
     jobEntries.reduce((map, entry) => {
       const key = entry.employeeTitle;
@@ -82,9 +94,9 @@ export function JobOverviewDialog({
         });
       }
       const data = map.get(key)!;
-      data.hours += entry.hours;
-      data.cost += entry.totalCost;
-      data.billable += entry.totalBillableAmount;
+      data.hours += safeNumber(entry.hours);
+      data.cost += safeNumber(entry.totalCost);
+      data.billable += safeNumber(entry.totalBillableAmount);
       return map;
     }, new Map<string, { title: string; hours: number; cost: number; billable: number }>())
   ).sort((a, b) => b.hours - a.hours);
@@ -113,13 +125,13 @@ export function JobOverviewDialog({
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-gray-600 font-medium">Total Hours</p>
               <p className="text-3xl font-bold text-blue-600 mt-1">
-                {totalHours.toFixed(2)}
+                {safeNumber(totalHours).toFixed(2)}
               </p>
             </div>
             <div className="bg-green-50 p-4 rounded-lg border border-green-200">
               <p className="text-sm text-gray-600 font-medium">Total Cost</p>
               <p className="text-3xl font-bold text-green-600 mt-1">
-                ${totalCost.toFixed(2)}
+                ${safeNumber(totalCost).toFixed(2)}
               </p>
             </div>
             <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
@@ -127,7 +139,7 @@ export function JobOverviewDialog({
                 Total Billable
               </p>
               <p className="text-3xl font-bold text-purple-600 mt-1">
-                ${totalBillable.toFixed(2)}
+                ${safeNumber(totalBillable).toFixed(2)}
               </p>
             </div>
           </div>
@@ -174,35 +186,38 @@ export function JobOverviewDialog({
                       <TableRow key={emp.name}>
                         <TableCell className="font-medium">{emp.name}</TableCell>
                         <TableCell className="text-right">
-                          {emp.hours.toFixed(2)}h
+                          {safeNumber(emp.hours).toFixed(2)}h
                         </TableCell>
                         <TableCell className="text-right">
-                          ${emp.cost.toFixed(2)}
+                          ${safeNumber(emp.cost).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right">
-                          ${emp.billable.toFixed(2)}
+                          ${safeNumber(emp.billable).toFixed(2)}
                         </TableCell>
                       </TableRow>
                     ))}
                     <TableRow className="font-semibold bg-gray-100">
                       <TableCell>Total</TableCell>
                       <TableCell className="text-right">
-                        {employeeBreakdown
-                          .reduce((sum, e) => sum + e.hours, 0)
-                          .toFixed(2)}
+                        {safeNumber(
+                          employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)
+                        ).toFixed(2)}
                         h
                       </TableCell>
                       <TableCell className="text-right">
                         $
-                        {employeeBreakdown
-                          .reduce((sum, e) => sum + e.cost, 0)
-                          .toFixed(2)}
+                        {safeNumber(
+                          employeeBreakdown.reduce((sum, e) => sum + e.cost, 0)
+                        ).toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right">
                         $
-                        {employeeBreakdown
-                          .reduce((sum, e) => sum + e.billable, 0)
-                          .toFixed(2)}
+                        {safeNumber(
+                          employeeBreakdown.reduce(
+                            (sum, e) => sum + e.billable,
+                            0
+                          )
+                        ).toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -232,35 +247,38 @@ export function JobOverviewDialog({
                           {title.title}
                         </TableCell>
                         <TableCell className="text-right">
-                          {title.hours.toFixed(2)}h
+                          {safeNumber(title.hours).toFixed(2)}h
                         </TableCell>
                         <TableCell className="text-right">
-                          ${title.cost.toFixed(2)}
+                          ${safeNumber(title.cost).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right">
-                          ${title.billable.toFixed(2)}
+                          ${safeNumber(title.billable).toFixed(2)}
                         </TableCell>
                       </TableRow>
                     ))}
                     <TableRow className="font-semibold bg-gray-100">
                       <TableCell>Total</TableCell>
                       <TableCell className="text-right">
-                        {titleBreakdown
-                          .reduce((sum, t) => sum + t.hours, 0)
-                          .toFixed(2)}
+                        {safeNumber(
+                          titleBreakdown.reduce((sum, t) => sum + t.hours, 0)
+                        ).toFixed(2)}
                         h
                       </TableCell>
                       <TableCell className="text-right">
                         $
-                        {titleBreakdown
-                          .reduce((sum, t) => sum + t.cost, 0)
-                          .toFixed(2)}
+                        {safeNumber(
+                          titleBreakdown.reduce((sum, t) => sum + t.cost, 0)
+                        ).toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right">
                         $
-                        {titleBreakdown
-                          .reduce((sum, t) => sum + t.billable, 0)
-                          .toFixed(2)}
+                        {safeNumber(
+                          titleBreakdown.reduce(
+                            (sum, t) => sum + t.billable,
+                            0
+                          )
+                        ).toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
