@@ -539,9 +539,9 @@ export function JobOverviewDialog({
                           const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
 
                           return (
-                            <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between text-gray-800 pl-3">
-                              <span className="font-semibold">{firstName}</span>
-                              <span className="font-semibold text-gray-700">{emp.hours.toFixed(2)}h{loaText}</span>
+                            <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between pl-3">
+                              <span className="font-semibold text-blue-600">{firstName}</span>
+                              <span className="font-semibold text-blue-600">{emp.hours.toFixed(2)}h{loaText}</span>
                             </div>
                           );
                         })}
