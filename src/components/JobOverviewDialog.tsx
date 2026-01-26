@@ -204,11 +204,7 @@ export function JobOverviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" style={{ maxHeight: 'unset', overflow: 'visible' }} onPrint={(e) => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.maxHeight = 'unset';
-        el.style.overflow = 'visible';
-      }}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Job Overview</DialogTitle>
           <DialogDescription>
