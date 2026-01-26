@@ -110,6 +110,11 @@ export function JobOverviewDialog({
     }, new Map<string, { name: string; hours: number; cost: number; billable: number }>())
   ).sort((a, b) => b.hours - a.hours);
 
+  console.log("Employee breakdown count:", employeeBreakdown.length);
+  if (employeeBreakdown.length > 0) {
+    console.log("First employee:", employeeBreakdown[0]);
+  }
+
   // Group by title with safe number handling
   const titleBreakdown = Array.from(
     jobEntries.reduce((map, entry) => {
@@ -129,6 +134,12 @@ export function JobOverviewDialog({
       return map;
     }, new Map<string, { title: string; hours: number; cost: number; billable: number }>())
   ).sort((a, b) => b.hours - a.hours);
+
+  console.log("Title breakdown count:", titleBreakdown.length);
+  if (titleBreakdown.length > 0) {
+    console.log("First title:", titleBreakdown[0]);
+  }
+  console.groupEnd();
 
   const handlePrint = () => {
     setIsPrinting(true);
