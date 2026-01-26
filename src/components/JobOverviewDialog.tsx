@@ -155,8 +155,8 @@ export function JobOverviewDialog({
 
   return (
     <>
-      {/* Print-only version - hidden from screen, shown only when printing */}
-      <div className="hidden print:block p-8 bg-white text-black">
+      {/* Hidden div for PDF export */}
+      <div id="job-overview-pdf-content" style={{ display: 'none' }} className="p-8 bg-white text-black">
         <h1 className="text-2xl font-bold mb-1">Job Overview</h1>
         <p className="text-sm text-gray-700 mb-6">{job.jobNumber} - {job.name}</p>
 
