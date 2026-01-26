@@ -161,7 +161,21 @@ export function JobOverviewDialog({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Summary Cards */}
+          {/* View Toggle */}
+          <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
+            <span className="text-sm font-medium text-gray-700">
+              {isClientView ? "👥 Client View" : "👨‍💼 Internal View"}
+            </span>
+            <button
+              onClick={() => setIsClientView(!isClientView)}
+              className="px-3 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors"
+            >
+              {isClientView ? "Show Internal Data" : "Show Client View"}
+            </button>
+          </div>
+
+          {/* Summary Cards - Hidden in Client View */}
+          {!isClientView && (
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-gray-600 font-medium">Total Hours</p>
@@ -184,8 +198,19 @@ export function JobOverviewDialog({
               </p>
             </div>
           </div>
+          )}
 
-          {/* Job Details */}
+          {/* Total Hours - Always Shown */}
+          {isClientView && (
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="text-sm text-gray-600 font-medium">Total Hours</p>
+            <p className="text-3xl font-bold text-blue-600 mt-1">
+              {safeNumber(totalHours).toFixed(2)}
+            </p>
+          </div>
+          )}
+
+          {/* Job Details - Simplified for Client View */}
           <div className="bg-gray-50 p-4 rounded-lg border space-y-2">
             <div className="text-sm text-gray-600 flex items-center gap-2">
               <span className="font-medium">Status:</span>{" "}
@@ -201,10 +226,12 @@ export function JobOverviewDialog({
                 {job.description}
               </div>
             )}
+            {!isClientView && (
             <div className="text-sm text-gray-600">
               <span className="font-medium">Billable:</span>{" "}
               {job.isBillable ? "Yes" : "No"}
             </div>
+            )}
           </div>
 
           {/* Employee Breakdown */}
