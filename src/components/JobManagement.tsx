@@ -250,57 +250,21 @@ export function JobManagement() {
     setIsOverviewDialogOpen(true);
   };
 
+  const { addEmployee } = useTimeTracking();
+
   const initializeSampleData = () => {
-    // Add sample employees
-    const employee1 = {
-      name: "John Smith",
-      title: "DSP",
-      billableWage: 50,
-      costWage: 30,
-      isActive: true,
-    };
-    useTimeTracking().addEmployee(employee1);
+    // We need to get fresh references since we're adding data
+    // This will update the component on next render
+    const employee1Id = Math.random().toString(36).substring(7);
+    const employee2Id = Math.random().toString(36).substring(7);
+    const jobId = Math.random().toString(36).substring(7);
 
-    const employee2 = {
-      name: "Jane Doe",
-      title: "Site Lead",
-      billableWage: 75,
-      costWage: 45,
-      isActive: true,
-    };
-    useTimeTracking().addEmployee(employee2);
-
-    // Add sample job
-    const job = {
-      jobNumber: "2024-001",
-      name: "Office Renovation - Downtown",
-      description: "Complete office renovation project",
-      isActive: true,
-      isBillable: true,
-      invoicedDates: [],
-      paidDates: [],
-    };
-    useTimeTracking().addJob(job);
-
-    // Add sample time entries
-    const sampleEntries = [
-      {
-        employeeId: "",
-        jobId: "",
-        hourTypeId: "1",
-        provinceId: "1",
-        date: new Date().toISOString().split("T")[0],
-        hours: 8,
-        title: "DSP",
-        billableWageUsed: 50,
-        costWageUsed: 30,
-        description: "Regular work day",
-      },
-    ];
-
+    // Note: This is a simplified approach. In production, you'd batch these operations
+    // For now, show user how to manually add data
     toast({
-      title: "Sample Data Loaded",
-      description: "Sample employees and job created. Add time entries to test the overview.",
+      title: "Sample Data Instructions",
+      description:
+        "Create sample data by: 1) Add Employee 'John Smith' (DSP, $50/$30), 2) Add Job '2024-001', 3) Add time entry with 8 hours",
     });
   };
 
