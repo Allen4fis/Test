@@ -602,13 +602,6 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
-          /* Allow dialog content to flow across multiple pages */
-          [role="dialog"] {
-            position: static !important;
-            max-height: none !important;
-            overflow: visible !important;
-            page-break-after: auto !important;
-          }
         }
       `}</style>
     </Dialog>
