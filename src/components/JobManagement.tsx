@@ -411,7 +411,17 @@ export function JobManagement() {
               Manage your jobs and project numbers
             </CardDescription>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <div className="flex gap-2">
+            {jobs.length === 0 && (
+              <Button
+                onClick={initializeSampleData}
+                variant="outline"
+                className="text-blue-600 border-blue-300"
+              >
+                Load Sample Data
+              </Button>
+            )}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => resetForm()}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -517,7 +527,8 @@ export function JobManagement() {
                 </DialogFooter>
               </form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
 
         {/* Sorting and Filtering Controls */}
