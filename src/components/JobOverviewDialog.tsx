@@ -614,16 +614,15 @@ export function JobOverviewDialog({
               </div>
             )}
 
-            {/* Print Button */}
-            <div className="flex gap-2 pt-4 border-t print:hidden">
+            {/* Export Button */}
+            <div className="flex gap-2 pt-4 border-t">
               <Button
-                onClick={handlePrint}
+                onClick={handleExportPDF}
                 variant="outline"
                 className="flex items-center gap-2"
-                disabled={isPrinting}
               >
-                <Printer className="h-4 w-4" />
-                Print Overview
+                <Download className="h-4 w-4" />
+                Export as PDF
               </Button>
               <Button
                 onClick={() => onOpenChange(false)}
