@@ -427,6 +427,149 @@ export function JobOverviewDialog({
             </div>
           )}
 
+          {/* Monthly Breakdown */}
+          {monthlyBreakdown.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Monthly Breakdown</h3>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Month</TableHead>
+                      <TableHead className="text-right">Hours</TableHead>
+                      {!isClientView && (
+                        <>
+                          <TableHead className="text-right">Cost</TableHead>
+                          <TableHead className="text-right">Billable</TableHead>
+                        </>
+                      )}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {monthlyBreakdown.map((month, idx) => (
+                      <TableRow key={`month-${idx}-${month.key}`}>
+                        <TableCell className="font-medium">{month.label}</TableCell>
+                        <TableCell className="text-right">
+                          {safeNumber(month.hours).toFixed(2)}h
+                        </TableCell>
+                        {!isClientView && (
+                          <>
+                            <TableCell className="text-right">
+                              ${safeNumber(month.cost).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              ${safeNumber(month.billable).toFixed(2)}
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    ))}
+                    <TableRow className="font-semibold bg-gray-100">
+                      <TableCell>Total</TableCell>
+                      <TableCell className="text-right">
+                        {safeNumber(
+                          monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)
+                        ).toFixed(2)}
+                        h
+                      </TableCell>
+                      {!isClientView && (
+                        <>
+                          <TableCell className="text-right">
+                            $
+                            {safeNumber(
+                              monthlyBreakdown.reduce((sum, m) => sum + m.cost, 0)
+                            ).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            $
+                            {safeNumber(
+                              monthlyBreakdown.reduce(
+                                (sum, m) => sum + m.billable,
+                                0
+                              )
+                            ).toFixed(2)}
+                          </TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+
+          {/* Employee Details with Dates */}
+          {employeeDetailsBreakdown.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Employee Details</h3>
+              <div className="space-y-4">
+                {employeeDetailsBreakdown.map((emp, empIdx) => (
+                  <div key={`emp-detail-${empIdx}-${emp.name}`} className="border rounded-lg p-4 bg-gray-50">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-semibold text-gray-900">{emp.name}</p>
+                        <p className="text-sm text-gray-600">{emp.title}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">
+                          {safeNumber(emp.hours).toFixed(2)}h
+                        </p>
+                        {!isClientView && (
+                          <p className="text-sm text-gray-600">
+                            ${safeNumber(emp.cost).toFixed(2)} / ${safeNumber(emp.billable).toFixed(2)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <Table className="text-sm">
+                        <TableHeader>
+                          <TableRow className="bg-white hover:bg-white">
+                            <TableHead className="text-xs">Date</TableHead>
+                            <TableHead className="text-xs">Hours</TableHead>
+                            {!isClientView && (
+                              <>
+                                <TableHead className="text-xs">Cost</TableHead>
+                                <TableHead className="text-xs">Billable</TableHead>
+                              </>
+                            )}
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {emp.entries.map((entry, entryIdx) => (
+                            <TableRow key={`entry-${empIdx}-${entryIdx}`} className="text-xs">
+                              <TableCell className="py-2">
+                                {new Date(entry.date).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                              </TableCell>
+                              <TableCell className="text-right py-2">
+                                {safeNumber(entry.hours).toFixed(2)}h
+                              </TableCell>
+                              {!isClientView && (
+                                <>
+                                  <TableCell className="text-right py-2">
+                                    ${safeNumber(entry.totalCost).toFixed(2)}
+                                  </TableCell>
+                                  <TableCell className="text-right py-2">
+                                    ${safeNumber(entry.totalBillableAmount).toFixed(2)}
+                                  </TableCell>
+                                </>
+                              )}
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {jobEntries.length === 0 && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
               <p className="text-gray-700 font-medium">No Time Entries Found</p>
