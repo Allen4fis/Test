@@ -558,7 +558,9 @@ export function JobOverviewDialog({
                 <h3 className="text-lg font-semibold mb-3">Time Entry Details</h3>
                 <div className="space-y-3">
                   {dateBasedBreakdown.map((dayData, dateIdx) => {
-                    const dateObj = new Date(dayData.date);
+                    // Parse date string as local date, not UTC
+                    const [year, month, day] = dayData.date.split('-');
+                    const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                     const formattedDate = dateObj.toLocaleDateString('en-US', {
                       weekday: 'short',
                       month: 'short',
