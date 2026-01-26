@@ -244,8 +244,12 @@ export function JobOverviewDialog({
                     <TableRow>
                       <TableHead>Employee</TableHead>
                       <TableHead className="text-right">Hours</TableHead>
-                      <TableHead className="text-right">Cost</TableHead>
-                      <TableHead className="text-right">Billable</TableHead>
+                      {!isClientView && (
+                        <>
+                          <TableHead className="text-right">Cost</TableHead>
+                          <TableHead className="text-right">Billable</TableHead>
+                        </>
+                      )}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -255,12 +259,16 @@ export function JobOverviewDialog({
                         <TableCell className="text-right">
                           {safeNumber(emp.hours).toFixed(2)}h
                         </TableCell>
-                        <TableCell className="text-right">
-                          ${safeNumber(emp.cost).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          ${safeNumber(emp.billable).toFixed(2)}
-                        </TableCell>
+                        {!isClientView && (
+                          <>
+                            <TableCell className="text-right">
+                              ${safeNumber(emp.cost).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              ${safeNumber(emp.billable).toFixed(2)}
+                            </TableCell>
+                          </>
+                        )}
                       </TableRow>
                     ))}
                     <TableRow className="font-semibold bg-gray-100">
@@ -271,21 +279,25 @@ export function JobOverviewDialog({
                         ).toFixed(2)}
                         h
                       </TableCell>
-                      <TableCell className="text-right">
-                        $
-                        {safeNumber(
-                          employeeBreakdown.reduce((sum, e) => sum + e.cost, 0)
-                        ).toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        $
-                        {safeNumber(
-                          employeeBreakdown.reduce(
-                            (sum, e) => sum + e.billable,
-                            0
-                          )
-                        ).toFixed(2)}
-                      </TableCell>
+                      {!isClientView && (
+                        <>
+                          <TableCell className="text-right">
+                            $
+                            {safeNumber(
+                              employeeBreakdown.reduce((sum, e) => sum + e.cost, 0)
+                            ).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            $
+                            {safeNumber(
+                              employeeBreakdown.reduce(
+                                (sum, e) => sum + e.billable,
+                                0
+                              )
+                            ).toFixed(2)}
+                          </TableCell>
+                        </>
+                      )}
                     </TableRow>
                   </TableBody>
                 </Table>
