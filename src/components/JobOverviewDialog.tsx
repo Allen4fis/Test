@@ -168,28 +168,21 @@ export function JobOverviewDialog({
     }, new Map<string, { key: string; label: string; hours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
   ).sort((a, b) => a.key.localeCompare(b.key));
 
-  // Group entries by employee with dates
-  const employeeDetailsBreakdown = Array.from(
+  // Group entries by date
+  const dateBasedBreakdown = Array.from(
     jobEntries.reduce((map, entry) => {
-      const key = entry.employeeName;
+      const key = entry.date;
       if (!map.has(key)) {
         map.set(key, {
-          name: entry.employeeName,
-          title: entry.employeeTitle,
-          hours: 0,
-          cost: 0,
-          billable: 0,
+          date: entry.date,
           entries: [],
         });
       }
       const data = map.get(key)!;
-      data.hours += safeNumber(entry.hours);
-      data.cost += safeNumber(entry.totalCost);
-      data.billable += safeNumber(entry.totalBillableAmount);
       data.entries.push(entry);
       return map;
-    }, new Map<string, { name: string; title: string; hours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
-  ).sort((a, b) => b.hours - a.hours);
+    }, new Map<string, { date: string; entries: TimeEntrySummary[] }>()).values()
+  ).sort((a, b) => a.date.localeCompare(b.date));
 
   const handlePrint = () => {
     setIsPrinting(true);
