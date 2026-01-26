@@ -238,7 +238,7 @@ export function JobOverviewDialog({
 
         {/* Monthly Breakdown */}
         {monthlyBreakdown.length > 0 && (
-          <div className="mb-6">
+          <div className="print-section mb-6">
             <h3 className="text-lg font-bold mb-3 border-b pb-2">Monthly Breakdown</h3>
             <table className="w-full border-collapse">
               <thead>
