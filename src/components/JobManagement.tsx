@@ -250,6 +250,60 @@ export function JobManagement() {
     setIsOverviewDialogOpen(true);
   };
 
+  const initializeSampleData = () => {
+    // Add sample employees
+    const employee1 = {
+      name: "John Smith",
+      title: "DSP",
+      billableWage: 50,
+      costWage: 30,
+      isActive: true,
+    };
+    useTimeTracking().addEmployee(employee1);
+
+    const employee2 = {
+      name: "Jane Doe",
+      title: "Site Lead",
+      billableWage: 75,
+      costWage: 45,
+      isActive: true,
+    };
+    useTimeTracking().addEmployee(employee2);
+
+    // Add sample job
+    const job = {
+      jobNumber: "2024-001",
+      name: "Office Renovation - Downtown",
+      description: "Complete office renovation project",
+      isActive: true,
+      isBillable: true,
+      invoicedDates: [],
+      paidDates: [],
+    };
+    useTimeTracking().addJob(job);
+
+    // Add sample time entries
+    const sampleEntries = [
+      {
+        employeeId: "",
+        jobId: "",
+        hourTypeId: "1",
+        provinceId: "1",
+        date: new Date().toISOString().split("T")[0],
+        hours: 8,
+        title: "DSP",
+        billableWageUsed: 50,
+        costWageUsed: 30,
+        description: "Regular work day",
+      },
+    ];
+
+    toast({
+      title: "Sample Data Loaded",
+      description: "Sample employees and job created. Add time entries to test the overview.",
+    });
+  };
+
   // Filtered and sorted jobs with profit data
   const filteredAndSortedJobsWithProfit = useMemo(() => {
     let filtered = jobProfitData;
