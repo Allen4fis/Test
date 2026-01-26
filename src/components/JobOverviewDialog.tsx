@@ -589,38 +589,13 @@ export function JobOverviewDialog({
       {/* Print Styles */}
       <style>{`
         @media print {
-          * {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
           body {
-            margin: 0;
-            padding: 20px;
             background: white;
+            margin: 0;
+            padding: 0;
           }
           .print\\:hidden {
             display: none !important;
-          }
-          dialog {
-            position: static !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            background: white !important;
-          }
-          [role="dialog"] {
-            position: static !important;
-          }
-          [role="presentation"] {
-            display: none !important;
-          }
-          .space-y-6 > * {
-            page-break-inside: avoid;
-          }
-          .overflow-x-auto {
-            page-break-inside: auto;
           }
         }
       `}</style>
