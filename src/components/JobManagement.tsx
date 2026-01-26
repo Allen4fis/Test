@@ -253,22 +253,54 @@ export function JobManagement() {
     setIsOverviewDialogOpen(true);
   };
 
-  const { addEmployee } = useTimeTracking();
-
   const initializeSampleData = () => {
-    // We need to get fresh references since we're adding data
-    // This will update the component on next render
-    const employee1Id = Math.random().toString(36).substring(7);
-    const employee2Id = Math.random().toString(36).substring(7);
-    const jobId = Math.random().toString(36).substring(7);
+    try {
+      // Add sample employees if they don't exist
+      if (!employees.find((e) => e.name === "John Smith")) {
+        addEmployee({
+          name: "John Smith",
+          title: "DSP",
+          billableWage: 50,
+          costWage: 30,
+          isActive: true,
+        });
+      }
 
-    // Note: This is a simplified approach. In production, you'd batch these operations
-    // For now, show user how to manually add data
-    toast({
-      title: "Sample Data Instructions",
-      description:
-        "Create sample data by: 1) Add Employee 'John Smith' (DSP, $50/$30), 2) Add Job '2024-001', 3) Add time entry with 8 hours",
-    });
+      if (!employees.find((e) => e.name === "Jane Doe")) {
+        addEmployee({
+          name: "Jane Doe",
+          title: "Site Lead",
+          billableWage: 75,
+          costWage: 45,
+          isActive: true,
+        });
+      }
+
+      // Add sample job if it doesn't exist
+      if (!jobs.find((j) => j.jobNumber === "2024-001")) {
+        addJob({
+          jobNumber: "2024-001",
+          name: "Office Renovation - Downtown",
+          description: "Complete office renovation project",
+          isActive: true,
+          isBillable: true,
+          invoicedDates: [],
+          paidDates: [],
+        });
+      }
+
+      toast({
+        title: "Sample Data Created",
+        description:
+          "Sample employees and job added! Now go to Time Entry to create entries for the job.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create sample data",
+        variant: "destructive",
+      });
+    }
   };
 
   // Filtered and sorted jobs with profit data
