@@ -602,6 +602,10 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
+          /* Prevent scroll-based repetition in print */
+          body, html {
+            overflow: visible;
+          }
         }
       `}</style>
     </Dialog>
