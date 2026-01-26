@@ -245,6 +245,11 @@ export function JobManagement() {
     updateJob(job.id, { isActive: !job.isActive });
   };
 
+  const openOverview = (job: Job) => {
+    setOverviewJob(job);
+    setIsOverviewDialogOpen(true);
+  };
+
   // Filtered and sorted jobs with profit data
   const filteredAndSortedJobsWithProfit = useMemo(() => {
     let filtered = jobProfitData;
