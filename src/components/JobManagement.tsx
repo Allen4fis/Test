@@ -921,6 +921,14 @@ export function JobManagement() {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => openOverview(job)}
+                          title="View job overview with hours breakdown"
+                        >
+                          Overview
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => toggleJobStatus(job)}
                         >
                           {job.isActive ? "Deactivate" : "Activate"}
