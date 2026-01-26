@@ -592,6 +592,17 @@ export function JobOverviewDialog({
           .print\\:hidden {
             display: none !important;
           }
+          /* Make dialog content print correctly */
+          [role="dialog"] {
+            max-height: 100% !important;
+            overflow: visible !important;
+            page-break-inside: auto !important;
+          }
+          /* Ensure sections can break across pages naturally */
+          .space-y-6 > * {
+            page-break-inside: auto !important;
+            page-break-after: auto !important;
+          }
         }
       `}</style>
     </Dialog>
