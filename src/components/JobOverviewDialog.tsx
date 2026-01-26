@@ -505,26 +505,43 @@ export function JobOverviewDialog({
                     year: 'numeric'
                   });
                   const dayTotalHours = dayData.entries.reduce((sum, e) => sum + safeNumber(e.hours), 0);
-                  const dayTotalLoA = dayData.entries.reduce((sum, e) => sum + (safeNumber(e.loaCount) || 0), 0);
+
+                  // Group entries by employee name for this date
+                  const employeesByDate = Array.from(
+                    dayData.entries.reduce((map, entry) => {
+                      const key = entry.employeeName;
+                      if (!map.has(key)) {
+                        map.set(key, {
+                          name: entry.employeeName,
+                          hours: 0,
+                          loaCount: 0,
+                        });
+                      }
+                      const data = map.get(key)!;
+                      data.hours += safeNumber(entry.hours);
+                      data.loaCount += safeNumber(entry.loaCount) || 0;
+                      return map;
+                    }, new Map<string, { name: string; hours: number; loaCount: number }>()).values()
+                  );
 
                   return (
                     <div key={`date-${dateIdx}-${dayData.date}`} className="border rounded-lg p-3 bg-gray-50">
                       <div className="flex items-center justify-between mb-2">
                         <p className="font-semibold text-gray-900">{formattedDate}</p>
                         <p className="text-sm text-gray-600">
-                          {dayTotalHours.toFixed(2)}h {dayTotalLoA > 0 ? `• ${dayTotalLoA} LoA` : ''}
+                          {dayTotalHours.toFixed(2)}h
                         </p>
                       </div>
 
                       <div className="space-y-1 text-sm">
-                        {dayData.entries.map((entry, entryIdx) => {
-                          const firstName = entry.employeeName.split(' ')[0];
-                          const loaText = entry.loaCount ? ` • ${entry.loaCount} LoA` : '';
+                        {employeesByDate.map((emp, empIdx) => {
+                          const firstName = emp.name.split(' ')[0];
+                          const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
 
                           return (
-                            <div key={`entry-${dateIdx}-${entryIdx}`} className="flex items-center justify-between text-gray-700 pl-3">
-                              <span>{firstName} ({entry.employeeTitle})</span>
-                              <span className="text-gray-600">{safeNumber(entry.hours).toFixed(2)}h{loaText}</span>
+                            <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between text-gray-700 pl-3">
+                              <span>{firstName}</span>
+                              <span className="text-gray-600">{emp.hours.toFixed(2)}h{loaText}</span>
                             </div>
                           );
                         })}
