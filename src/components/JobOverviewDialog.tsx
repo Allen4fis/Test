@@ -186,8 +186,26 @@ export function JobOverviewDialog({
 
   const handlePrint = () => {
     setIsPrinting(true);
+
+    // Find and temporarily adjust dialog for printing
+    const dialogContent = document.querySelector('[role="dialog"]') as HTMLElement;
+    const originalMaxHeight = dialogContent?.style.maxHeight;
+    const originalOverflow = dialogContent?.style.overflow;
+
+    if (dialogContent) {
+      dialogContent.style.maxHeight = 'none';
+      dialogContent.style.overflow = 'visible';
+    }
+
     setTimeout(() => {
       window.print();
+
+      // Restore original styles
+      if (dialogContent) {
+        dialogContent.style.maxHeight = originalMaxHeight;
+        dialogContent.style.overflow = originalOverflow;
+      }
+
       setIsPrinting(false);
     }, 100);
   };
