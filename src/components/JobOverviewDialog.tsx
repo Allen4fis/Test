@@ -107,7 +107,7 @@ export function JobOverviewDialog({
       data.cost += safeNumber(entry.totalCost);
       data.billable += safeNumber(entry.totalBillableAmount);
       return map;
-    }, new Map<string, { name: string; hours: number; cost: number; billable: number }>())
+    }, new Map<string, { name: string; hours: number; cost: number; billable: number }>()).values()
   ).sort((a, b) => b.hours - a.hours);
 
   console.log("Employee breakdown count:", employeeBreakdown.length);
