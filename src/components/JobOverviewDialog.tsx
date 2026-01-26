@@ -159,7 +159,7 @@ export function JobOverviewDialog({
         </div>
 
         {/* Status */}
-        <div className="print-section mb-6 p-4 border">
+        <div className="mb-6 p-4 border">
           <span className="text-sm font-medium">Status:</span> <span className="font-bold">{job.isActive ? "Active" : "Inactive"}</span>
         </div>
 
