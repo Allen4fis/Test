@@ -497,6 +497,11 @@ export function SummaryReports() {
         group.totalLoaCount += summary.loaCount || 0;
         group.entries.push(summary);
 
+        // Calculate cost without LoA for reporting purposes
+        const summaryLoaCost = (summary.loaCount || 0) * (summary.loaAmount || 200);
+        const summaryCostWithoutLoa = (summary.totalCost || 0) - summaryLoaCost;
+        group.totalCostWithoutLoa += summaryCostWithoutLoa;
+
         // Calculate DSP earnings for this employee from rental entries
         const employeeRentalEntries = filteredRentalSummaries.filter(
           (rental) => rental.employeeName === summary.employeeName,
