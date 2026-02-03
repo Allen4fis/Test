@@ -1913,10 +1913,10 @@ export function SummaryReports() {
                                 </div>
                               </div>
                               <div
-                                className="grid grid-cols-8 gap-4 text-center"
+                                className="grid gap-4 text-center"
                                 style={{
                                   gridTemplateColumns:
-                                    "minmax(60px, 1fr) minmax(80px, 1fr) minmax(80px, 1fr) minmax(90px, 1fr) minmax(90px, 1fr) minmax(70px, 1fr) minmax(80px, 1fr) minmax(70px, 1fr)",
+                                    "minmax(60px, 1fr) minmax(80px, 1fr) minmax(90px, 1fr) minmax(80px, 1fr) minmax(90px, 1fr) minmax(90px, 1fr) minmax(70px, 1fr) minmax(80px, 1fr) minmax(70px, 1fr)",
                                 }}
                               >
                                 <div>
@@ -1933,6 +1933,14 @@ export function SummaryReports() {
                                   </div>
                                   <div className="text-xs text-gray-400">
                                     Labor Cost
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-lg font-bold text-emerald-500">
+                                    ${employee.totalCostWithoutLoa.toFixed(2)}
+                                  </div>
+                                  <div className="text-xs text-gray-400">
+                                    Cost (excl. LoA)
                                   </div>
                                 </div>
                                 <div>
