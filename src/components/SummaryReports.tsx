@@ -1174,6 +1174,7 @@ export function SummaryReports() {
     return {
       totalHours,
       totalCost,
+      totalCostWithoutLoa,
       totalGst,
       rentalBillable,
       rentalCost,
