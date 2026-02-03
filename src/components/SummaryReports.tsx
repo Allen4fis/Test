@@ -1820,7 +1820,7 @@ export function SummaryReports() {
                     })()}
 
                     {/* Summary Statistics */}
-                    <div className="grid grid-cols-4 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
+                    <div className="grid grid-cols-5 gap-4 p-4 mb-6 bg-gradient-to-r from-orange-500/10 to-transparent border border-orange-500/20 rounded-lg">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-400">
                           {filteredSummaryStats.totalHours.toFixed(2)}h
@@ -1832,6 +1832,12 @@ export function SummaryReports() {
                           ${filteredSummaryStats.totalCombinedCost.toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-300">Total Cost</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-emerald-500">
+                          ${filteredSummaryStats.totalCostWithoutLoa.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-gray-300">Cost (excl. LoA)</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-orange-400">
