@@ -2038,10 +2038,10 @@ export function SummaryReports() {
                                   </div>
                                 ) : (
                                   <div>
-                                    <div className="text-lg font-bold text-gray-500">
+                                    <div className="text-base font-bold text-gray-500">
                                       $0.00
                                     </div>
-                                    <div className="text-xs text-gray-400">
+                                    <div className="text-[10px] text-gray-400">
                                       GST
                                     </div>
                                   </div>
@@ -2049,19 +2049,19 @@ export function SummaryReports() {
                                 <div>
                                   {employee.totalDspEarnings > 0 ? (
                                     <div>
-                                      <div className="text-lg font-bold text-cyan-400">
+                                      <div className="text-base font-bold text-cyan-400">
                                         ${employee.totalDspEarnings.toFixed(2)}
                                       </div>
-                                      <div className="text-xs text-gray-400">
+                                      <div className="text-[10px] text-gray-400">
                                         DSP Earnings
                                       </div>
                                     </div>
                                   ) : (
                                     <div>
-                                      <div className="text-lg font-bold text-gray-500">
+                                      <div className="text-base font-bold text-gray-500">
                                         $0.00
                                       </div>
-                                      <div className="text-xs text-gray-400">
+                                      <div className="text-[10px] text-gray-400">
                                         DSP Earnings
                                       </div>
                                     </div>
