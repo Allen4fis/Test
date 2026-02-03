@@ -1125,6 +1125,18 @@ export function SummaryReports() {
       return sum + managerCost + teamCost;
     }, 0);
 
+    const totalCostWithoutLoa = sortedHierarchicalSummaries.reduce((sum, emp) => {
+      // totalCostWithoutLoa excludes LoA for reporting purposes
+      let managerCost = emp.totalCostWithoutLoa || 0;
+      let teamCost = 0;
+      if (emp.subordinates && emp.subordinates.length > 0) {
+        emp.subordinates.forEach((sub) => {
+          teamCost += sub.totalCostWithoutLoa || 0;
+        });
+      }
+      return sum + managerCost + teamCost;
+    }, 0);
+
     // Use the recalculated GST from hierarchical summaries
     const totalGst = sortedHierarchicalSummaries.reduce((sum, emp) => {
       const managerGst = emp.gstAmount || 0;
