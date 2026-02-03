@@ -1954,12 +1954,12 @@ export function SummaryReports() {
                                       : "0.00"}
                                     /h
                                   </div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-[10px] text-gray-400">
                                     Hourly Cost
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-lg font-bold text-emerald-400">
+                                  <div className="text-base font-bold text-emerald-400">
                                     $
                                     {(() => {
                                       // Calculate total billable amount for this employee's entries from billable jobs only
@@ -1985,12 +1985,12 @@ export function SummaryReports() {
                                       return totalBillable.toFixed(2);
                                     })()}
                                   </div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-[10px] text-gray-400">
                                     Billable Amount
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-lg font-bold text-cyan-400">
+                                  <div className="text-base font-bold text-cyan-400">
                                     $
                                     {(() => {
                                       if (employee.totalHours === 0)
@@ -2021,16 +2021,16 @@ export function SummaryReports() {
                                     })()}
                                     /h
                                   </div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-[10px] text-gray-400">
                                     Hourly Billable
                                   </div>
                                 </div>
                                 {totalGst > 0 ? (
                                   <div>
-                                    <div className="text-lg font-bold text-orange-400">
+                                    <div className="text-base font-bold text-orange-400">
                                       ${totalGst.toFixed(2)}
                                     </div>
-                                    <div className="text-xs text-gray-400">
+                                    <div className="text-[10px] text-gray-400">
                                       {employee.subordinateGstTotal > 0
                                         ? "Total GST"
                                         : "GST"}
