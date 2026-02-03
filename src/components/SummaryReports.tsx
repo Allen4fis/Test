@@ -477,6 +477,7 @@ export function SummaryReports() {
             totalHours: 0,
             totalEffectiveHours: 0,
             totalCost: 0,
+            totalCostWithoutLoa: 0,
             totalLoaCount: 0,
             totalLoaAmount: 0,
             totalDspEarnings: 0,
