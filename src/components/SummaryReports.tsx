@@ -2105,11 +2105,11 @@ export function SummaryReports() {
                                     return (
                                       <div className="flex flex-col items-center gap-1">
                                         <div
-                                          className={`text-lg font-bold ${valueClass}`}
+                                          className={`text-base font-bold ${valueClass}`}
                                         >
                                           {loaCount}
                                         </div>
-                                        <div className="text-xs text-gray-400 flex flex-col items-center gap-0.5">
+                                        <div className="text-[10px] text-gray-400 flex flex-col items-center gap-0.5">
                                           <span>
                                             LOA{hasAdjustedLoa ? " (adj)" : ""}
                                           </span>
