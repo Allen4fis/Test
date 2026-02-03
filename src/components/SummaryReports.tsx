@@ -1920,31 +1920,31 @@ export function SummaryReports() {
                                 }}
                               >
                                 <div>
-                                  <div className="text-lg font-bold text-blue-400">
+                                  <div className="text-base font-bold text-blue-400">
                                     {employee.totalHours.toFixed(2)}h
                                   </div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-[10px] text-gray-400">
                                     Hours
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-lg font-bold text-red-400">
+                                  <div className="text-base font-bold text-red-400">
                                     ${employee.totalCost.toFixed(2)}
                                   </div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-[10px] text-gray-400">
                                     Labor Cost
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-lg font-bold text-emerald-500">
+                                  <div className="text-base font-bold text-emerald-500">
                                     ${employee.totalCostWithoutLoa.toFixed(2)}
                                   </div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-[10px] text-gray-400">
                                     Cost (excl. LoA)
                                   </div>
                                 </div>
                                 <div>
-                                  <div className="text-lg font-bold text-yellow-400">
+                                  <div className="text-base font-bold text-yellow-400">
                                     $
                                     {employee.totalHours > 0
                                       ? (
