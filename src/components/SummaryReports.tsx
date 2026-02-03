@@ -1913,10 +1913,10 @@ export function SummaryReports() {
                                 </div>
                               </div>
                               <div
-                                className="grid gap-2 text-center overflow-x-auto"
+                                className="grid gap-2 text-center"
                                 style={{
                                   gridTemplateColumns:
-                                    "minmax(65px, 1fr) minmax(85px, 1fr) minmax(90px, 1fr) minmax(80px, 1fr) minmax(90px, 1fr) minmax(90px, 1fr) minmax(75px, 1fr) minmax(85px, 1fr) minmax(70px, 1fr)",
+                                    "repeat(9, minmax(70px, 1fr))",
                                 }}
                               >
                                 <div>
