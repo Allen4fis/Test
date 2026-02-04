@@ -220,21 +220,31 @@ export function JobOverviewDialog({
           dayData.entries.reduce((map, entry) => {
             const key = entry.employeeName;
             if (!map.has(key)) {
-              map.set(key, { name: entry.employeeName, hours: 0, loaCount: 0 });
+              map.set(key, { name: entry.employeeName, workHours: 0, travelHours: 0, loaCount: 0 });
             }
             const data = map.get(key)!;
-            data.hours += safeNumber(entry.hours);
+            const isTravelHours = entry.hourTypeName === 'Travel Hours';
+            if (isTravelHours) {
+              data.travelHours += safeNumber(entry.hours);
+            } else {
+              data.workHours += safeNumber(entry.hours);
+            }
             data.loaCount += safeNumber(entry.loaCount) || 0;
             return map;
-          }, new Map<string, { name: string; hours: number; loaCount: number }>()).values()
+          }, new Map<string, { name: string; workHours: number; travelHours: number; loaCount: number }>()).values()
         );
 
-        const empLines = employeesByDate.map(emp =>
-          `<div style="display: flex; justify-content: space-between; padding-left: 12px; font-size: 13px; margin: 4px 0; color: #000000;">
+        const empLines = employeesByDate.map(emp => {
+          const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
+          const totalEmpHours = emp.workHours + emp.travelHours;
+          const hoursDisplay = emp.travelHours > 0
+            ? `${emp.workHours.toFixed(2)}HR - ${emp.travelHours.toFixed(2)}TRV`
+            : `${totalEmpHours.toFixed(2)}HR`;
+          return `<div style="display: flex; justify-content: space-between; padding-left: 12px; font-size: 13px; margin: 4px 0; color: #000000;">
             <span>${emp.name}</span>
-            <span>${emp.hours.toFixed(2)}h${emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : ''}</span>
-          </div>`
-        ).join('');
+            <span>${hoursDisplay}${loaText}</span>
+          </div>`;
+        }).join('');
 
         return `
           <div style="margin-bottom: 16px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
