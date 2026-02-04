@@ -479,7 +479,8 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Employee</TableHead>
-                        <TableHead className="text-right">Hours</TableHead>
+                        <TableHead className="text-right">Work Hours</TableHead>
+                        <TableHead className="text-right">Travel Hours</TableHead>
                         {!isClientView && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
@@ -494,6 +495,9 @@ export function JobOverviewDialog({
                           <TableCell className="font-medium">{emp.name}</TableCell>
                           <TableCell className="text-right">
                             {safeNumber(emp.hours).toFixed(2)}h
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {safeNumber(emp.travelHours).toFixed(2)}h
                           </TableCell>
                           {!isClientView && (
                             <>
