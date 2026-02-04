@@ -608,7 +608,8 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Month</TableHead>
-                        <TableHead className="text-right">Hours</TableHead>
+                        <TableHead className="text-right">Work Hours</TableHead>
+                        <TableHead className="text-right">Travel Hours</TableHead>
                         {!isClientView && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
@@ -623,6 +624,9 @@ export function JobOverviewDialog({
                           <TableCell className="font-medium">{month.label}</TableCell>
                           <TableCell className="text-right">
                             {safeNumber(month.hours).toFixed(2)}h
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {safeNumber(month.travelHours).toFixed(2)}h
                           </TableCell>
                           {!isClientView && (
                             <>
@@ -641,6 +645,9 @@ export function JobOverviewDialog({
                         <TableCell className="text-right">
                           {safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h
                         </TableCell>
+                        <TableCell className="text-right">
+                          {safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.travelHours, 0)).toFixed(2)}h
+                        </TableCell>
                         {!isClientView && (
                           <>
                             <TableCell className="text-right">
@@ -648,6 +655,72 @@ export function JobOverviewDialog({
                             </TableCell>
                             <TableCell className="text-right">
                               ${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.billable, 0)).toFixed(2)}
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+
+            {/* Weekly Breakdown */}
+            {weeklyBreakdown.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Weekly Breakdown</h3>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Week</TableHead>
+                        <TableHead className="text-right">Work Hours</TableHead>
+                        <TableHead className="text-right">Travel Hours</TableHead>
+                        {!isClientView && (
+                          <>
+                            <TableHead className="text-right">Cost</TableHead>
+                            <TableHead className="text-right">Billable</TableHead>
+                          </>
+                        )}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {weeklyBreakdown.map((week, idx) => (
+                        <TableRow key={`week-${idx}-${week.key}`}>
+                          <TableCell className="font-medium">{week.label}</TableCell>
+                          <TableCell className="text-right">
+                            {safeNumber(week.hours).toFixed(2)}h
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {safeNumber(week.travelHours).toFixed(2)}h
+                          </TableCell>
+                          {!isClientView && (
+                            <>
+                              <TableCell className="text-right">
+                                ${safeNumber(week.cost).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                ${safeNumber(week.billable).toFixed(2)}
+                              </TableCell>
+                            </>
+                          )}
+                        </TableRow>
+                      ))}
+                      <TableRow className="font-semibold bg-gray-100">
+                        <TableCell>Total</TableCell>
+                        <TableCell className="text-right">
+                          {safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours, 0)).toFixed(2)}h
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0)).toFixed(2)}h
+                        </TableCell>
+                        {!isClientView && (
+                          <>
+                            <TableCell className="text-right">
+                              ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.cost, 0)).toFixed(2)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.billable, 0)).toFixed(2)}
                             </TableCell>
                           </>
                         )}
