@@ -882,13 +882,18 @@ export function JobOverviewDialog({
                       dayData.entries.reduce((map, entry) => {
                         const key = entry.employeeName;
                         if (!map.has(key)) {
-                          map.set(key, { name: entry.employeeName, hours: 0, loaCount: 0 });
+                          map.set(key, { name: entry.employeeName, workHours: 0, travelHours: 0, loaCount: 0 });
                         }
                         const data = map.get(key)!;
-                        data.hours += safeNumber(entry.hours);
+                        const isTravelHours = entry.hourTypeName === 'Travel Hours';
+                        if (isTravelHours) {
+                          data.travelHours += safeNumber(entry.hours);
+                        } else {
+                          data.workHours += safeNumber(entry.hours);
+                        }
                         data.loaCount += safeNumber(entry.loaCount) || 0;
                         return map;
-                      }, new Map<string, { name: string; hours: number; loaCount: number }>()).values()
+                      }, new Map<string, { name: string; workHours: number; travelHours: number; loaCount: number }>()).values()
                     );
 
                     return (
@@ -900,10 +905,14 @@ export function JobOverviewDialog({
                         <div className="space-y-1 text-sm">
                           {employeesByDate.map((emp, empIdx) => {
                             const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
+                            const totalEmpHours = emp.workHours + emp.travelHours;
+                            const hoursDisplay = emp.travelHours > 0
+                              ? `${emp.workHours.toFixed(2)}HR - ${emp.travelHours.toFixed(2)}TRV`
+                              : `${totalEmpHours.toFixed(2)}HR`;
                             return (
                               <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between pl-3">
                                 <span className="font-semibold text-pink-500">{emp.name}</span>
-                                <span className="font-semibold text-blue-600">{emp.hours.toFixed(2)}h{loaText}</span>
+                                <span className="font-semibold text-blue-600">{hoursDisplay}{loaText}</span>
                               </div>
                             );
                           })}
