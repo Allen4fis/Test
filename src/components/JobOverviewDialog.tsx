@@ -109,18 +109,65 @@ export function JobOverviewDialog({
           key: monthKey,
           label: monthLabel,
           hours: 0,
+          travelHours: 0,
           cost: 0,
           billable: 0,
           entries: [],
         });
       }
       const data = map.get(monthKey)!;
-      data.hours += safeNumber(entry.hours);
+      const isTravelHours = entry.hourTypeName === 'Travel Hours';
+      if (isTravelHours) {
+        data.travelHours += safeNumber(entry.hours);
+      } else {
+        data.hours += safeNumber(entry.hours);
+      }
       data.cost += safeNumber(entry.totalCost);
       data.billable += safeNumber(entry.totalBillableAmount);
       data.entries.push(entry);
       return map;
-    }, new Map<string, { key: string; label: string; hours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
+    }, new Map<string, { key: string; label: string; hours: number; travelHours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
+  ).sort((a, b) => a.key.localeCompare(b.key));
+
+  const getWeekStart = (date: Date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day;
+    return new Date(d.setDate(diff));
+  };
+
+  const weeklyBreakdown = Array.from(
+    jobEntries.reduce((map, entry) => {
+      const date = new Date(entry.date);
+      const weekStart = getWeekStart(date);
+      const weekKey = weekStart.toISOString().split('T')[0];
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+      if (!map.has(weekKey)) {
+        map.set(weekKey, {
+          key: weekKey,
+          label: weekLabel,
+          hours: 0,
+          travelHours: 0,
+          cost: 0,
+          billable: 0,
+          entries: [],
+        });
+      }
+      const data = map.get(weekKey)!;
+      const isTravelHours = entry.hourTypeName === 'Travel Hours';
+      if (isTravelHours) {
+        data.travelHours += safeNumber(entry.hours);
+      } else {
+        data.hours += safeNumber(entry.hours);
+      }
+      data.cost += safeNumber(entry.totalCost);
+      data.billable += safeNumber(entry.totalBillableAmount);
+      data.entries.push(entry);
+      return map;
+    }, new Map<string, { key: string; label: string; hours: number; travelHours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
   ).sort((a, b) => a.key.localeCompare(b.key));
 
   const dateBasedBreakdown = Array.from(
