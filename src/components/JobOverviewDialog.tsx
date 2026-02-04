@@ -67,17 +67,23 @@ export function JobOverviewDialog({
         map.set(key, {
           name: entry.employeeName,
           hours: 0,
+          travelHours: 0,
           cost: 0,
           billable: 0,
         });
       }
       const data = map.get(key)!;
-      data.hours += safeNumber(entry.hours);
+      const isTravelHours = entry.hourTypeName === 'Travel Hours';
+      if (isTravelHours) {
+        data.travelHours += safeNumber(entry.hours);
+      } else {
+        data.hours += safeNumber(entry.hours);
+      }
       data.cost += safeNumber(entry.totalCost);
       data.billable += safeNumber(entry.totalBillableAmount);
       return map;
-    }, new Map<string, { name: string; hours: number; cost: number; billable: number }>()).values()
-  ).sort((a, b) => b.hours - a.hours);
+    }, new Map<string, { name: string; hours: number; travelHours: number; cost: number; billable: number }>()).values()
+  ).sort((a, b) => (b.hours + b.travelHours) - (a.hours + a.travelHours));
 
   const titleBreakdown = Array.from(
     jobEntries.reduce((map, entry) => {
