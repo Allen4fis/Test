@@ -342,6 +342,33 @@ export function JobOverviewDialog({
           </table>
         ` : ''}
 
+        ${weeklyBreakdown.length > 0 ? `
+          <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Weekly Breakdown</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr style="background-color: #333333;">
+                <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Week</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Work Hours</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Travel Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${weeklyBreakdown.map(week => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${week.label}</td>
+                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(week.hours).toFixed(2)}h</td>
+                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(week.travelHours).toFixed(2)}h</td>
+                </tr>
+              `).join('')}
+              <tr style="font-weight: bold; background-color: #cccccc;">
+                <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
+                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours, 0)).toFixed(2)}h</td>
+                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0)).toFixed(2)}h</td>
+              </tr>
+            </tbody>
+          </table>
+        ` : ''}
+
         ${dateBasedBreakdown.length > 0 ? `
           <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Time Entry Details</h2>
           ${dateBasedBreakdownHTML}
