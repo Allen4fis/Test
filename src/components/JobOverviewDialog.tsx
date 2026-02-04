@@ -357,22 +357,25 @@ export function JobOverviewDialog({
             <thead>
               <tr style="background-color: #333333;">
                 <th style="text-align: left; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Week</th>
-                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Work Hours</th>
-                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Travel Hours</th>
+                <th style="text-align: right; font-weight: bold; padding: 8px; border: 1px solid #000000; color: #ffffff;">Total Hours</th>
               </tr>
             </thead>
             <tbody>
               ${weeklyBreakdown.map(week => `
                 <tr>
                   <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${week.label}</td>
-                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(week.hours).toFixed(2)}h</td>
-                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(week.travelHours).toFixed(2)}h</td>
+                  <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
+                    ${safeNumber(week.hours + week.travelHours).toFixed(2)}h
+                    ${week.travelHours > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(week.hours).toFixed(2)}h + ${safeNumber(week.travelHours).toFixed(2)}h trv)</div>` : ''}
+                  </td>
                 </tr>
               `).join('')}
               <tr style="font-weight: bold; background-color: #cccccc;">
                 <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
-                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours, 0)).toFixed(2)}h</td>
-                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0)).toFixed(2)}h</td>
+                <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
+                  ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours + w.travelHours, 0)).toFixed(2)}h
+                  ${weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours, 0)).toFixed(2)}h + ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
+                </td>
               </tr>
             </tbody>
           </table>
