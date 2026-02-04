@@ -516,6 +516,9 @@ export function JobOverviewDialog({
                         <TableCell className="text-right">
                           {safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h
                         </TableCell>
+                        <TableCell className="text-right">
+                          {safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.travelHours, 0)).toFixed(2)}h
+                        </TableCell>
                         {!isClientView && (
                           <>
                             <TableCell className="text-right">
