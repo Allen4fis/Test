@@ -577,8 +577,14 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Title</TableHead>
-                        <TableHead className="text-right">Work Hours</TableHead>
-                        <TableHead className="text-right">Travel Hours</TableHead>
+                        {isClientView ? (
+                          <TableHead className="text-right">Total Hours</TableHead>
+                        ) : (
+                          <>
+                            <TableHead className="text-right">Work Hours</TableHead>
+                            <TableHead className="text-right">Travel Hours</TableHead>
+                          </>
+                        )}
                         {!isClientView && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
@@ -591,12 +597,25 @@ export function JobOverviewDialog({
                       {titleBreakdown.map((title, idx) => (
                         <TableRow key={`title-${idx}-${title.title}`}>
                           <TableCell className="font-medium">{title.title}</TableCell>
-                          <TableCell className="text-right">
-                            {safeNumber(title.hours).toFixed(2)}h
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {safeNumber(title.travelHours).toFixed(2)}h
-                          </TableCell>
+                          {isClientView ? (
+                            <TableCell className="text-right">
+                              {safeNumber(title.hours + title.travelHours).toFixed(2)}h
+                              {title.travelHours > 0 && (
+                                <div className="text-xs text-gray-500">
+                                  ({safeNumber(title.hours).toFixed(2)}h + {safeNumber(title.travelHours).toFixed(2)}h trv)
+                                </div>
+                              )}
+                            </TableCell>
+                          ) : (
+                            <>
+                              <TableCell className="text-right">
+                                {safeNumber(title.hours).toFixed(2)}h
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {safeNumber(title.travelHours).toFixed(2)}h
+                              </TableCell>
+                            </>
+                          )}
                           {!isClientView && (
                             <>
                               <TableCell className="text-right">
@@ -611,12 +630,25 @@ export function JobOverviewDialog({
                       ))}
                       <TableRow className="font-semibold bg-gray-100">
                         <TableCell>Total</TableCell>
-                        <TableCell className="text-right">
-                          {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0)).toFixed(2)}h
-                        </TableCell>
+                        {isClientView ? (
+                          <TableCell className="text-right">
+                            {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours + t.travelHours, 0)).toFixed(2)}h
+                            {titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0) > 0 && (
+                              <div className="text-xs text-gray-500">
+                                ({safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h + {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0)).toFixed(2)}h trv)
+                              </div>
+                            )}
+                          </TableCell>
+                        ) : (
+                          <>
+                            <TableCell className="text-right">
+                              {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0)).toFixed(2)}h
+                            </TableCell>
+                          </>
+                        )}
                         {!isClientView && (
                           <>
                             <TableCell className="text-right">
