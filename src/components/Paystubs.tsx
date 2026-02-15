@@ -500,26 +500,69 @@ XOXO,
 
       // Small delay then open email
       setTimeout(() => {
-        // For Docker/iframe environments where mailto might be restricted,
-        // show the email preview dialog as the primary method
-        setEmailPreview({
-          recipientEmail: paystub.employeeEmail || paystub.employeeName,
-          recipientName: paystub.employeeName,
-          subject,
-          body: emailBody,
-        });
-
-        // Also try to trigger mailto as a secondary attempt
         const recipientEmail = paystub.employeeEmail || "";
         const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
 
+        let emailOpened = false;
+
+        // Method 1: Try window.location.href assignment
         try {
-          // Try clicking via link element
-          const link = document.createElement("a");
-          link.href = mailtoLink;
-          link.click();
+          const originalHref = window.location.href;
+          window.location.href = mailtoLink;
+          emailOpened = true;
         } catch (error) {
-          console.log("Mailto link could not be triggered, using dialog");
+          console.log("Method 1 failed");
+        }
+
+        // Method 2: Try link element with multiple click attempts
+        if (!emailOpened) {
+          try {
+            const link = document.createElement("a");
+            link.href = mailtoLink;
+            link.style.display = "none";
+            document.body.appendChild(link);
+
+            // Try click
+            link.click();
+
+            // Try alternative click methods
+            if (link.onclick) link.onclick(new MouseEvent("click"));
+
+            document.body.removeChild(link);
+            emailOpened = true;
+          } catch (error) {
+            console.log("Method 2 failed");
+          }
+        }
+
+        // Method 3: Try with dispatchEvent
+        if (!emailOpened) {
+          try {
+            const link = document.createElement("a");
+            link.href = mailtoLink;
+            const event = new MouseEvent("click", {
+              view: window,
+              bubbles: true,
+              cancelable: true,
+            });
+            link.dispatchEvent(event);
+            emailOpened = true;
+          } catch (error) {
+            console.log("Method 3 failed");
+          }
+        }
+
+        // Fallback: Show dialog if email couldn't be opened
+        if (!emailOpened) {
+          // Wait a moment before showing dialog to give mailto time to work
+          setTimeout(() => {
+            setEmailPreview({
+              recipientEmail: paystub.employeeEmail || paystub.employeeName,
+              recipientName: paystub.employeeName,
+              subject,
+              body: emailBody,
+            });
+          }, 1000);
         }
       }, 500);
     } catch (error) {
