@@ -500,56 +500,26 @@ XOXO,
 
       // Small delay then open email
       setTimeout(() => {
-        // Try to open email client with mailto link (works with or without pre-filled email)
+        // For Docker/iframe environments where mailto might be restricted,
+        // show the email preview dialog as the primary method
+        setEmailPreview({
+          recipientEmail: paystub.employeeEmail || paystub.employeeName,
+          recipientName: paystub.employeeName,
+          subject,
+          body: emailBody,
+        });
+
+        // Also try to trigger mailto as a secondary attempt
         const recipientEmail = paystub.employeeEmail || "";
         const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
 
-        // Try multiple approaches to trigger email client
-        let emailTriggered = false;
-
-        // Method 1: Direct window.location
         try {
-          window.location.href = mailtoLink;
-          emailTriggered = true;
+          // Try clicking via link element
+          const link = document.createElement("a");
+          link.href = mailtoLink;
+          link.click();
         } catch (error) {
-          console.log("Method 1 failed, trying Method 2");
-        }
-
-        // Method 2: window.open (try after a small delay if method 1 didn't work)
-        if (!emailTriggered) {
-          try {
-            const emailWindow = window.open(mailtoLink, "_blank");
-            if (emailWindow) {
-              emailTriggered = true;
-            }
-          } catch (error) {
-            console.log("Method 2 failed, trying Method 3");
-          }
-        }
-
-        // Method 3: Create link element and click it
-        if (!emailTriggered) {
-          try {
-            const link = document.createElement("a");
-            link.href = mailtoLink;
-            link.target = "_blank";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            emailTriggered = true;
-          } catch (error) {
-            console.log("Method 3 failed, showing fallback dialog");
-          }
-        }
-
-        // If none of the mailto methods worked, show the dialog as fallback
-        if (!emailTriggered) {
-          setEmailPreview({
-            recipientEmail: paystub.employeeName,
-            recipientName: paystub.employeeName,
-            subject,
-            body: emailBody,
-          });
+          console.log("Mailto link could not be triggered, using dialog");
         }
       }, 500);
     } catch (error) {
