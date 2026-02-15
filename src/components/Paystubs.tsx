@@ -481,14 +481,34 @@ XOXO,
 
       // Small delay then open email
       setTimeout(() => {
-        const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+        const recipientEmail = paystub.employeeEmail;
+        if (!recipientEmail) {
+          alert(`No email found for ${paystub.employeeName}. Please add their email address to their employee profile.`);
+          return;
+        }
 
-        const link = document.createElement("a");
-        link.href = mailtoLink;
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+
+        // Try direct window.location approach first
+        try {
+          window.location.href = mailtoLink;
+        } catch (error) {
+          // Fallback to link element approach
+          try {
+            const link = document.createElement("a");
+            link.href = mailtoLink;
+            link.style.display = "none";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } catch (fallbackError) {
+            console.error("Error opening email client:", fallbackError);
+            // Copy to clipboard as final fallback
+            navigator.clipboard.writeText(`Subject: ${subject}\n\nTo: ${recipientEmail}\n\n${emailBody}`).then(() => {
+              alert("Email could not open. Email details have been copied to clipboard. Please open Outlook manually and paste the content.");
+            });
+          }
+        }
       }, 2000);
     } catch (error) {
       console.error("Error in PDF and email workflow:", error);
