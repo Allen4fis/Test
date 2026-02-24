@@ -226,8 +226,7 @@ export function TimeEntryViewer() {
       const matchesJob =
         !jobFilter ||
         jobFilter === "all-jobs" ||
-        job?.jobNumber.toLowerCase().includes(jobFilter.toLowerCase()) ||
-        job?.name.toLowerCase().includes(jobFilter.toLowerCase());
+        job?.jobNumber.toLowerCase().includes(jobFilter.toLowerCase());
 
       // Billable filter
       const matchesBillable =
