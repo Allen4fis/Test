@@ -102,16 +102,32 @@ export function TicketsAndInsurances() {
   // Helper to check ticket status
   const getTicketStatus = (expirationDate: string) => {
     const expDate = new Date(expirationDate);
+    let daysLabel = "";
+
     if (expDate < today) {
-      return { status: "expired", label: "Expired", color: "bg-red-100 text-red-800" };
+      const daysExpired = Math.floor(
+        (today.getTime() - expDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      daysLabel = `${daysExpired} day${daysExpired !== 1 ? "s" : ""} ago`;
+      return {
+        status: "expired",
+        label: "Expired",
+        color: "bg-red-100 text-red-800",
+        daysLabel,
+      };
     } else if (expDate <= oneMonthFromNow) {
+      const daysUntil = Math.floor(
+        (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      daysLabel = `${daysUntil} day${daysUntil !== 1 ? "s" : ""} left`;
       return {
         status: "expiring-soon",
         label: "Expiring Soon",
         color: "bg-yellow-100 text-yellow-800",
+        daysLabel,
       };
     }
-    return { status: "valid", label: "Valid", color: "bg-green-100 text-green-800" };
+    return { status: "valid", label: "Valid", color: "bg-green-100 text-green-800", daysLabel: "" };
   };
 
   // Get tickets with employee and category info
@@ -305,42 +321,99 @@ export function TicketsAndInsurances() {
     <div className="space-y-6">
       {/* Critical Alerts */}
       {criticalTickets.length > 0 && (
-        <Card className="border-red-500 bg-red-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-700">
-              <AlertTriangle className="h-5 w-5" />
-              ⚠️ CRITICAL: Expired or Expiring Tickets/Insurances
-            </CardTitle>
-            <CardDescription className="text-red-600">
-              {criticalTickets.length} ticket(s) require immediate attention
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {criticalTickets.map((ticket) => (
-                <div
-                  key={ticket.id}
-                  className="flex items-center justify-between bg-white p-3 rounded-lg border-l-4 border-red-500"
-                >
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">
-                      {ticket.employeeName} - {ticket.categoryName}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {ticket.status === "expired"
-                        ? `Expired on ${new Date(ticket.expirationDate).toLocaleDateString()}`
-                        : `Expires on ${new Date(ticket.expirationDate).toLocaleDateString()}`}
-                    </p>
-                  </div>
-                  <Badge
-                    className={`${ticket.color} border-0`}
-                  >
-                    {ticket.label}
-                  </Badge>
+        <Card className="border-l-4 border-red-500 bg-red-50/50 mb-4">
+          <div className="p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold text-red-900">
+                    Expired/Expiring Tickets & Insurances
+                  </h3>
+                  <p className="text-xs text-red-700">
+                    {criticalTickets.filter((t) => t.status === "expired").length > 0 && (
+                      <>
+                        <span className="font-semibold">
+                          {criticalTickets.filter((t) => t.status === "expired").length} expired
+                        </span>
+                        {criticalTickets.filter((t) => t.status === "expiring-soon").length > 0 && " • "}
+                      </>
+                    )}
+                    {criticalTickets.filter((t) => t.status === "expiring-soon").length > 0 && (
+                      <span className="font-semibold">
+                        {criticalTickets.filter((t) => t.status === "expiring-soon").length} expiring soon
+                      </span>
+                    )}
+                  </p>
                 </div>
-              ))}
+              </div>
             </div>
-          </CardContent>
+
+            {criticalTickets.length > 0 && (
+              <div className="space-y-1 mt-3 text-xs">
+                {criticalTickets.slice(0, 3).map((ticket, index) => {
+                  const isMandatory = ticket.requirementLevel === "mandatory";
+                  const nextTicket = criticalTickets[index + 1];
+                  const isLastMandatory =
+                    isMandatory && nextTicket?.requirementLevel !== "mandatory";
+
+                  return (
+                    <div key={ticket.id}>
+                      <div
+                        className={`flex items-center justify-between p-2 rounded border-l-2 ${
+                          isMandatory
+                            ? "bg-white/80 border-red-500"
+                            : "bg-white/50 border-orange-400"
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <span
+                            className={`truncate block ${
+                              isMandatory
+                                ? "font-semibold text-gray-900"
+                                : "font-medium text-gray-700"
+                            }`}
+                          >
+                            {ticket.employeeName}: {ticket.categoryName}
+                          </span>
+                          <span
+                            className={`text-xs ${
+                              isMandatory ? "text-gray-700" : "text-gray-500"
+                            }`}
+                          >
+                            {ticket.status === "expired"
+                              ? `Expired ${ticket.daysLabel || "ago"}`
+                              : `Expires ${ticket.daysLabel || "soon"}`}
+                          </span>
+                        </div>
+                        <Badge
+                          className={`border-0 text-xs ml-2 flex-shrink-0 ${
+                            ticket.status === "expired"
+                              ? isMandatory
+                                ? "bg-red-600 text-white"
+                                : "bg-red-500 text-white"
+                              : isMandatory
+                                ? "bg-yellow-600 text-white"
+                                : "bg-yellow-500 text-white"
+                          }`}
+                        >
+                          {ticket.status === "expired" ? "Expired" : "Soon"}
+                        </Badge>
+                      </div>
+                      {isLastMandatory && (
+                        <div className="my-1 border-t border-gray-300" />
+                      )}
+                    </div>
+                  );
+                })}
+                {criticalTickets.length > 3 && (
+                  <p className="text-xs text-red-600 font-semibold px-2">
+                    +{criticalTickets.length - 3} more
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
         </Card>
       )}
 
