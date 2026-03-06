@@ -478,145 +478,37 @@ export function TicketsAndInsurances() {
         </Card>
       )}
 
-      {/* Employee Summary Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Employee Tickets Summary
-              </CardTitle>
-              <CardDescription>
-                Quick overview of each employee's ticket and insurance status
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {employeeTicketsSummary.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">No employees with tickets</p>
-              <p className="text-sm">Add employees and assign tickets to get started</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {employeeTicketsSummary.map((group) => (
-                <div
-                  key={group.employeeId}
-                  onClick={() =>
-                    setSelectedEmployeeId(
-                      selectedEmployeeId === group.employeeId ? null : group.employeeId,
-                    )
-                  }
-                  className={`p-4 border rounded-lg hover:shadow-md transition-all cursor-pointer ${
-                    selectedEmployeeId === group.employeeId
-                      ? "border-blue-500 bg-blue-50 shadow-md"
-                      : "hover:border-gray-400"
-                  }`}
-                >
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    {group.employeeName}
-                  </h3>
-                  
-                  {/* Ticket Summary Stats */}
-                  <div className="space-y-2 text-sm">
-                    {/* Mandatory */}
-                    {group.mandatoryCount > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-700">
-                          Mandatory: {group.mandatoryCount}
-                        </span>
-                        <div className="flex gap-1">
-                          {group.expiredCount > 0 && (
-                            <Badge className="bg-red-600 text-white text-xs">
-                              {group.expiredCount} expired
-                            </Badge>
-                          )}
-                          {group.expiringCount > 0 && (
-                            <Badge className="bg-yellow-600 text-white text-xs">
-                              {group.expiringCount} expiring
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Recommended */}
-                    {group.recommendedCount > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-700">
-                          Recommended: {group.recommendedCount}
-                        </span>
-                        <div className="flex gap-1">
-                          {group.expiringCount > 0 && (
-                            <Badge className="bg-orange-500 text-white text-xs">
-                              {group.expiringCount} expiring
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Optional */}
-                    {group.optionalCount > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600 text-xs">
-                          Optional: {group.optionalCount}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Valid tickets count */}
-                    {group.validCount > 0 && (
-                      <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-green-700 text-xs font-medium">
-                          {group.validCount} ✓ valid
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Employee Tickets Section */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Employee Tickets & Insurances
-                    {selectedEmployeeId && (
-                      <Badge className="bg-blue-600 ml-2">
-                        {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    {selectedEmployeeId
-                      ? "Viewing tickets for selected employee"
-                      : "Track ticket and insurance expiration dates for each employee"}
-                  </CardDescription>
-                  {selectedEmployeeId && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedEmployeeId(null)}
-                      className="text-xs h-auto p-1 mt-2"
-                    >
-                      Clear Filter
-                    </Button>
-                  )}
-                </div>
-              </div>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Employee Tickets & Insurances
+              </CardTitle>
+              <CardDescription>
+                Track ticket and insurance expiration dates for each employee
+              </CardDescription>
+            </div>
+            <div className="w-56">
+              <Label className="text-xs font-medium mb-2 block">Filter by Employee</Label>
+              <Select value={selectedEmployeeId || ""} onValueChange={(value) => setSelectedEmployeeId(value || null)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All employees" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All employees</SelectItem>
+                  {employees
+                    .filter((emp) => emp.isActive)
+                    .map((emp) => (
+                      <SelectItem key={emp.id} value={emp.id}>
+                        {emp.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
             <Dialog open={isAddingTicket} onOpenChange={setIsAddingTicket}>
               <DialogTrigger asChild>
