@@ -494,12 +494,12 @@ export function TicketsAndInsurances() {
             </div>
             <div className="w-56">
               <Label className="text-xs font-medium mb-2 block">Filter by Employee</Label>
-              <Select value={selectedEmployeeId || ""} onValueChange={(value) => setSelectedEmployeeId(value || null)}>
+              <Select value={selectedEmployeeId || "all-employees"} onValueChange={(value) => setSelectedEmployeeId(value === "all-employees" ? null : value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All employees" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All employees</SelectItem>
+                  <SelectItem value="all-employees">All employees</SelectItem>
                   {employees
                     .filter((emp) => emp.isActive)
                     .map((emp) => (
