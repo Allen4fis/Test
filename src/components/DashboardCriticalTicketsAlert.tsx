@@ -58,23 +58,23 @@ export function DashboardCriticalTicketsAlert({ onViewTickets }: DashboardCritic
       })
       .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional" && !ticket.excludeFromAlert)
       .sort((a, b) => {
-        // Expired first, then expiring-soon
-        // Within each status, mandatory first then recommended
-        const statusOrder: Record<string, number> = {
-          expired: 0,
-          "expiring-soon": 1,
-        };
+        // Mandatory first, then recommended
+        // Within each requirement level, expired first then expiring-soon
         const levelOrder: Record<string, number> = {
           mandatory: 0,
           recommended: 1,
         };
+        const statusOrder: Record<string, number> = {
+          expired: 0,
+          "expiring-soon": 1,
+        };
 
-        const statusDiff = (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2);
-        if (statusDiff !== 0) return statusDiff;
+        const levelDiff = (levelOrder[a.requirementLevel] ?? 2) - (levelOrder[b.requirementLevel] ?? 2);
+        if (levelDiff !== 0) return levelDiff;
 
         return (
-          (levelOrder[a.requirementLevel] ?? 2) -
-          (levelOrder[b.requirementLevel] ?? 2)
+          (statusOrder[a.status] ?? 2) -
+          (statusOrder[b.status] ?? 2)
         );
       });
   }, [employeeTickets, employees, ticketCategories]);
