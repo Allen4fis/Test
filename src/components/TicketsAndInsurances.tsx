@@ -509,17 +509,17 @@ export function TicketsAndInsurances() {
                 {employeeTicketsSummary.map((group) => (
                   <div
                     key={group.employeeId}
-                    className="p-4 border rounded-lg hover:shadow-md transition-all cursor-pointer hover:border-blue-400"
+                    className="p-4 border-2 rounded-lg hover:shadow-lg transition-all cursor-pointer bg-white border-blue-200 hover:border-blue-500 hover:bg-blue-50"
                     onClick={() => setSelectedEmployeeId(group.employeeId)}
                   >
-                    <h3 className="font-semibold text-gray-900 mb-3">
+                    <h3 className="font-bold text-lg text-blue-900 mb-3">
                       {group.employeeName}
                     </h3>
 
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-3 text-sm">
                       {group.mandatoryCount > 0 && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-700">
+                        <div className="flex items-center justify-between bg-red-50 p-2 rounded border-l-4 border-red-500">
+                          <span className="font-medium text-red-900">
                             Mandatory: {group.mandatoryCount}
                           </span>
                           <div className="flex gap-1">
@@ -529,7 +529,7 @@ export function TicketsAndInsurances() {
                               </Badge>
                             )}
                             {group.expiringCount > 0 && (
-                              <Badge className="bg-yellow-600 text-white text-xs">
+                              <Badge className="bg-red-500 text-white text-xs">
                                 {group.expiringCount} expiring
                               </Badge>
                             )}
@@ -538,8 +538,8 @@ export function TicketsAndInsurances() {
                       )}
 
                       {group.recommendedCount > 0 && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-700">
+                        <div className="flex items-center justify-between bg-orange-50 p-2 rounded border-l-4 border-orange-500">
+                          <span className="font-medium text-orange-900">
                             Recommended: {group.recommendedCount}
                           </span>
                           <div className="flex gap-1">
@@ -553,17 +553,17 @@ export function TicketsAndInsurances() {
                       )}
 
                       {group.optionalCount > 0 && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-600 text-xs">
+                        <div className="flex items-center justify-between bg-gray-50 p-2 rounded border-l-4 border-gray-400">
+                          <span className="font-medium text-gray-700">
                             Optional: {group.optionalCount}
                           </span>
                         </div>
                       )}
 
                       {group.validCount > 0 && (
-                        <div className="flex items-center justify-between pt-2 border-t">
-                          <span className="text-green-700 text-xs font-medium">
-                            {group.validCount} ✓ valid
+                        <div className="flex items-center justify-between bg-green-50 p-2 rounded border-l-4 border-green-500">
+                          <span className="text-green-900 text-sm font-bold">
+                            {group.validCount} ✓ Valid
                           </span>
                         </div>
                       )}
