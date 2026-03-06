@@ -485,97 +485,6 @@ export function TicketsAndInsurances() {
       )}
 
 
-      {/* Employee Summary Grid */}
-      {!selectedEmployeeId && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Employee Tickets Summary
-            </CardTitle>
-            <CardDescription>
-              Quick overview of each employee's ticket and insurance status
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {employeeTicketsSummary.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-lg font-medium">No employees with tickets</p>
-                <p className="text-sm">Add employees and assign tickets to get started</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {employeeTicketsSummary.map((group) => (
-                  <div
-                    key={group.employeeId}
-                    className="p-4 border-2 rounded-lg hover:shadow-lg transition-all cursor-pointer bg-white border-blue-200 hover:border-blue-500 hover:bg-blue-50"
-                    onClick={() => setSelectedEmployeeId(group.employeeId)}
-                  >
-                    <h3 className="font-bold text-lg text-indigo-700 mb-3">
-                      {group.employeeName}
-                    </h3>
-
-                    <div className="space-y-3 text-sm">
-                      {group.mandatoryCount > 0 && (
-                        <div className="flex items-center justify-between bg-red-50 p-2 rounded border-l-4 border-red-500">
-                          <span className="font-medium text-red-900">
-                            Mandatory: {group.mandatoryCount}
-                          </span>
-                          <div className="flex gap-1">
-                            {group.expiredCount > 0 && (
-                              <Badge className="bg-red-600 text-white text-xs">
-                                {group.expiredCount} expired
-                              </Badge>
-                            )}
-                            {group.expiringCount > 0 && (
-                              <Badge className="bg-red-500 text-white text-xs">
-                                {group.expiringCount} expiring
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {group.recommendedCount > 0 && (
-                        <div className="flex items-center justify-between bg-orange-50 p-2 rounded border-l-4 border-orange-500">
-                          <span className="font-medium text-orange-900">
-                            Recommended: {group.recommendedCount}
-                          </span>
-                          <div className="flex gap-1">
-                            {group.expiringCount > 0 && (
-                              <Badge className="bg-orange-500 text-white text-xs">
-                                {group.expiringCount} expiring
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {group.optionalCount > 0 && (
-                        <div className="flex items-center justify-between bg-gray-50 p-2 rounded border-l-4 border-gray-400">
-                          <span className="font-medium text-gray-700">
-                            Optional: {group.optionalCount}
-                          </span>
-                        </div>
-                      )}
-
-                      {group.validCount > 0 && (
-                        <div className="flex items-center justify-between bg-green-50 p-2 rounded border-l-4 border-green-500">
-                          <span className="text-green-900 text-sm font-bold">
-                            {group.validCount} ✓ Valid
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
       {/* Employee Tickets Section */}
       <Card>
         <CardHeader>
@@ -584,38 +493,29 @@ export function TicketsAndInsurances() {
               <CardTitle className="flex items-center gap-2 text-white">
                 <Clock className="h-5 w-5" />
                 Employee Tickets & Insurances
-                {selectedEmployeeId && (
-                  <Badge className="bg-blue-600 ml-2">
-                    {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
-                  </Badge>
-                )}
               </CardTitle>
               <CardDescription className="text-gray-300">
-                {selectedEmployeeId
-                  ? "Viewing tickets for selected employee"
-                  : "Click an employee card above to view their tickets in detail"}
+                Select an employee to view and manage their tickets
               </CardDescription>
             </div>
-            {selectedEmployeeId && (
-              <div className="w-56">
-                <Label className="text-xs font-medium mb-2 block">Filter by Employee</Label>
-                <Select value={selectedEmployeeId || "all-employees"} onValueChange={(value) => setSelectedEmployeeId(value === "all-employees" ? null : value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All employees" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all-employees">All employees</SelectItem>
-                    {employees
-                      .filter((emp) => emp.isActive)
-                      .map((emp) => (
-                        <SelectItem key={emp.id} value={emp.id}>
-                          {emp.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            <div className="w-56">
+              <Label className="text-xs font-medium mb-2 block">Filter by Employee</Label>
+              <Select value={selectedEmployeeId || "all-employees"} onValueChange={(value) => setSelectedEmployeeId(value === "all-employees" ? null : value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All employees" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all-employees">All employees</SelectItem>
+                  {employees
+                    .filter((emp) => emp.isActive)
+                    .map((emp) => (
+                      <SelectItem key={emp.id} value={emp.id}>
+                        {emp.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Dialog open={isAddingTicket} onOpenChange={setIsAddingTicket}>
               <DialogTrigger asChild>
                 <Button className="gap-2">
@@ -1244,6 +1144,95 @@ export function TicketsAndInsurances() {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Employee Summary Grid */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Employee Tickets Summary
+          </CardTitle>
+          <CardDescription>
+            Quick overview of each employee's ticket and insurance status
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {employeeTicketsSummary.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium">No employees with tickets</p>
+              <p className="text-sm">Add employees and assign tickets to get started</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {employeeTicketsSummary.map((group) => (
+                <div
+                  key={group.employeeId}
+                  className="p-4 border-2 rounded-lg hover:shadow-lg transition-all cursor-pointer bg-white border-blue-200 hover:border-blue-500 hover:bg-blue-50"
+                  onClick={() => setSelectedEmployeeId(group.employeeId)}
+                >
+                  <h3 className="font-bold text-lg text-indigo-700 mb-3">
+                    {group.employeeName}
+                  </h3>
+
+                  <div className="space-y-3 text-sm">
+                    {group.mandatoryCount > 0 && (
+                      <div className="flex items-center justify-between bg-red-50 p-2 rounded border-l-4 border-red-500">
+                        <span className="font-medium text-red-900">
+                          Mandatory: {group.mandatoryCount}
+                        </span>
+                        <div className="flex gap-1">
+                          {group.expiredCount > 0 && (
+                            <Badge className="bg-red-600 text-white text-xs">
+                              {group.expiredCount} expired
+                            </Badge>
+                          )}
+                          {group.expiringCount > 0 && (
+                            <Badge className="bg-red-500 text-white text-xs">
+                              {group.expiringCount} expiring
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {group.recommendedCount > 0 && (
+                      <div className="flex items-center justify-between bg-orange-50 p-2 rounded border-l-4 border-orange-500">
+                        <span className="font-medium text-orange-900">
+                          Recommended: {group.recommendedCount}
+                        </span>
+                        <div className="flex gap-1">
+                          {group.expiringCount > 0 && (
+                            <Badge className="bg-orange-500 text-white text-xs">
+                              {group.expiringCount} expiring
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {group.optionalCount > 0 && (
+                      <div className="flex items-center justify-between bg-gray-50 p-2 rounded border-l-4 border-gray-400">
+                        <span className="font-medium text-gray-700">
+                          Optional: {group.optionalCount}
+                        </span>
+                      </div>
+                    )}
+
+                    {group.validCount > 0 && (
+                      <div className="flex items-center justify-between bg-green-50 p-2 rounded border-l-4 border-green-500">
+                        <span className="text-green-900 text-sm font-bold">
+                          {group.validCount} ✓ Valid
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
