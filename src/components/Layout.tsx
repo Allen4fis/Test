@@ -23,6 +23,7 @@ import {
   Database,
   Save,
   Activity,
+  Shield,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { useOptimizedTimeTracking } from "@/hooks/useOptimizedTimeTracking";
@@ -170,6 +171,13 @@ export const Layout = memo(function Layout({
         description: "Equipment & item rentals",
         count: activeRentalItemsCount,
         color: "text-cyan-400",
+      },
+      {
+        id: "tickets" as const,
+        label: "Tickets & Insurances",
+        icon: Shield,
+        description: "Manage licenses & insurance",
+        color: "text-yellow-400",
       },
       {
         id: "employees" as const,

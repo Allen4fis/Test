@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DashboardCriticalTicketsAlert } from "@/components/DashboardCriticalTicketsAlert";
 import {
   Table,
   TableBody,
@@ -340,6 +341,9 @@ const Dashboard = memo(function Dashboard({
           Real-time insights into your workforce and project metrics
         </p>
       </div>
+
+      {/* Critical Tickets Alert */}
+      <DashboardCriticalTicketsAlert />
 
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

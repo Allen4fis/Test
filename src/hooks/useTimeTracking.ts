@@ -9,6 +9,8 @@ import {
   TimeEntry,
   RentalItem,
   RentalEntry,
+  TicketCategory,
+  EmployeeTicket,
   SummaryByTitleAndJob,
   SummaryByDateAndName,
   TimeEntrySummary,
@@ -132,6 +134,8 @@ const getDefaultAppData = (): AppData => ({
   timeEntries: [],
   rentalItems: [],
   rentalEntries: [],
+  ticketCategories: [],
+  employeeTickets: [],
 });
 
 export function useTimeTracking() {
@@ -155,6 +159,7 @@ export function useTimeTracking() {
     | "costs"
     | "invoices"
     | "rentals"
+    | "tickets"
     | "export"
     | "backup"
   >("dashboard");
@@ -745,6 +750,79 @@ export function useTimeTracking() {
       ...prev,
       rentalEntries: (prev.rentalEntries || []).filter(
         (entry) => entry.id !== id,
+      ),
+    }));
+  };
+
+  // Ticket category operations
+  const addTicketCategory = (
+    category: Omit<TicketCategory, "id" | "createdAt">,
+  ) => {
+    const newCategory: TicketCategory = {
+      ...category,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    };
+    setAppData((prev) => ({
+      ...prev,
+      ticketCategories: [...(prev.ticketCategories || []), newCategory],
+    }));
+  };
+
+  const updateTicketCategory = (
+    id: string,
+    updates: Partial<TicketCategory>,
+  ) => {
+    setAppData((prev) => ({
+      ...prev,
+      ticketCategories: (prev.ticketCategories || []).map((category) =>
+        category.id === id ? { ...category, ...updates } : category,
+      ),
+    }));
+  };
+
+  const deleteTicketCategory = (id: string) => {
+    setAppData((prev) => ({
+      ...prev,
+      ticketCategories: (prev.ticketCategories || []).filter(
+        (category) => category.id !== id,
+      ),
+      employeeTickets: (prev.employeeTickets || []).filter(
+        (ticket) => ticket.categoryId !== id,
+      ),
+    }));
+  };
+
+  // Employee ticket operations
+  const addEmployeeTicket = (ticket: Omit<EmployeeTicket, "id" | "createdAt">) => {
+    const newTicket: EmployeeTicket = {
+      ...ticket,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    };
+    setAppData((prev) => ({
+      ...prev,
+      employeeTickets: [...(prev.employeeTickets || []), newTicket],
+    }));
+  };
+
+  const updateEmployeeTicket = (
+    id: string,
+    updates: Partial<EmployeeTicket>,
+  ) => {
+    setAppData((prev) => ({
+      ...prev,
+      employeeTickets: (prev.employeeTickets || []).map((ticket) =>
+        ticket.id === id ? { ...ticket, ...updates } : ticket,
+      ),
+    }));
+  };
+
+  const deleteEmployeeTicket = (id: string) => {
+    setAppData((prev) => ({
+      ...prev,
+      employeeTickets: (prev.employeeTickets || []).filter(
+        (ticket) => ticket.id !== id,
       ),
     }));
   };
@@ -1389,6 +1467,18 @@ export function useTimeTracking() {
     updateRentalEntry,
     deleteRentalEntry,
 
+    // Ticket category operations
+    ticketCategories: appData.ticketCategories || [],
+    addTicketCategory,
+    updateTicketCategory,
+    deleteTicketCategory,
+
+    // Employee ticket operations
+    employeeTickets: appData.employeeTickets || [],
+    addEmployeeTicket,
+    updateEmployeeTicket,
+    deleteEmployeeTicket,
+
     // Summaries
     timeEntrySummaries,
     rentalSummaries,
@@ -1506,6 +1596,8 @@ export function useTimeTracking() {
         timeEntries: [],
         rentalItems: [],
         rentalEntries: [],
+        ticketCategories: [],
+        employeeTickets: [],
       };
       setRawAppData(emptyData);
     },

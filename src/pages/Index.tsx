@@ -12,6 +12,7 @@ import { JobManagement } from "@/components/JobManagement";
 import { OptimizedEmployeeManagement } from "@/components/OptimizedEmployeeManagement";
 import { OptimizedJobManagement } from "@/components/OptimizedJobManagement";
 import { RentalManagement } from "@/components/RentalManagement";
+import { TicketsAndInsurances } from "@/components/TicketsAndInsurances";
 import { DatabaseErrorHandler } from "@/components/DatabaseErrorHandler";
 import { DataExport } from "@/components/DataExport";
 import { BackupManagement } from "@/components/BackupManagement";
@@ -182,6 +183,9 @@ const Index = () => {
         break;
       case "rentals":
         component = <RentalManagement />;
+        break;
+      case "tickets":
+        component = <TicketsAndInsurances />;
         break;
       case "export":
         component = <DataExport />;

@@ -167,6 +167,24 @@ export interface RentalSummary {
   totalProfit: number; // Profit margin (billable - cost)
 }
 
+export interface TicketCategory {
+  id: string;
+  name: string; // e.g., "Class 1 License", "CPR Certification", "Safety Training"
+  description?: string;
+  requirementLevel?: "mandatory" | "recommended" | "optional"; // How critical this is
+  createdAt: string;
+}
+
+export interface EmployeeTicket {
+  id: string;
+  employeeId: string;
+  categoryId: string;
+  expirationDate: string; // YYYY-MM-DD format
+  issueDate?: string; // YYYY-MM-DD format
+  notes?: string;
+  createdAt: string;
+}
+
 export interface AppData {
   employees: Employee[];
   jobs: Job[];
@@ -175,4 +193,6 @@ export interface AppData {
   timeEntries: TimeEntry[];
   rentalItems: RentalItem[];
   rentalEntries: RentalEntry[];
+  ticketCategories: TicketCategory[];
+  employeeTickets: EmployeeTicket[];
 }
