@@ -577,11 +577,11 @@ export function TicketsAndInsurances() {
       )}
 
       {/* Employee Tickets Section */}
-      <Card className="border-2 border-blue-200 bg-blue-50">
-        <CardHeader className="bg-blue-100">
+      <Card>
+        <CardHeader>
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <CardTitle className="flex items-center gap-2 text-blue-900">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Clock className="h-5 w-5" />
                 Employee Tickets & Insurances
                 {selectedEmployeeId && (
@@ -590,7 +590,7 @@ export function TicketsAndInsurances() {
                   </Badge>
                 )}
               </CardTitle>
-              <CardDescription className="text-blue-800">
+              <CardDescription className="text-gray-300">
                 {selectedEmployeeId
                   ? "Viewing tickets for selected employee"
                   : "Click an employee card above to view their tickets in detail"}
