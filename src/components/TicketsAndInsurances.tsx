@@ -80,7 +80,7 @@ export function TicketsAndInsurances() {
   const [editingTicket, setEditingTicket] = useState<EmployeeTicket | null>(
     null,
   );
-  const [viewMode, setViewMode] = useState<"list" | "by-employee">("by-employee");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
 
   const [categoryForm, setCategoryForm] = useState({
     name: "",
@@ -151,7 +151,8 @@ export function TicketsAndInsurances() {
     });
   }, [employeeTickets, employees, ticketCategories]);
 
-  // Get expired and expiring tickets grouped by employee
+  // Get critical tickets (expired or expiring within 1 month)
+  // Exclude optional tickets - only show mandatory and recommended
   const criticalTickets = useMemo(() => {
     return ticketsWithDetails.filter(
       (ticket) =>
@@ -477,6 +478,481 @@ export function TicketsAndInsurances() {
         </Card>
       )}
 
+      {/* Employee Summary Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Employee Tickets Summary
+              </CardTitle>
+              <CardDescription>
+                Quick overview of each employee's ticket and insurance status
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {employeeTicketsSummary.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium">No employees with tickets</p>
+              <p className="text-sm">Add employees and assign tickets to get started</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {employeeTicketsSummary.map((group) => (
+                <div
+                  key={group.employeeId}
+                  onClick={() =>
+                    setSelectedEmployeeId(
+                      selectedEmployeeId === group.employeeId ? null : group.employeeId,
+                    )
+                  }
+                  className={`p-4 border rounded-lg hover:shadow-md transition-all cursor-pointer ${
+                    selectedEmployeeId === group.employeeId
+                      ? "border-blue-500 bg-blue-50 shadow-md"
+                      : "hover:border-gray-400"
+                  }`}
+                >
+                  <h3 className="font-semibold text-gray-900 mb-3">
+                    {group.employeeName}
+                  </h3>
+                  
+                  {/* Ticket Summary Stats */}
+                  <div className="space-y-2 text-sm">
+                    {/* Mandatory */}
+                    {group.mandatoryCount > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-700">
+                          Mandatory: {group.mandatoryCount}
+                        </span>
+                        <div className="flex gap-1">
+                          {group.expiredCount > 0 && (
+                            <Badge className="bg-red-600 text-white text-xs">
+                              {group.expiredCount} expired
+                            </Badge>
+                          )}
+                          {group.expiringCount > 0 && (
+                            <Badge className="bg-yellow-600 text-white text-xs">
+                              {group.expiringCount} expiring
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recommended */}
+                    {group.recommendedCount > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-700">
+                          Recommended: {group.recommendedCount}
+                        </span>
+                        <div className="flex gap-1">
+                          {group.expiringCount > 0 && (
+                            <Badge className="bg-orange-500 text-white text-xs">
+                              {group.expiringCount} expiring
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Optional */}
+                    {group.optionalCount > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 text-xs">
+                          Optional: {group.optionalCount}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Valid tickets count */}
+                    {group.validCount > 0 && (
+                      <div className="flex items-center justify-between pt-2 border-t">
+                        <span className="text-green-700 text-xs font-medium">
+                          {group.validCount} ✓ valid
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Employee Tickets Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Employee Tickets & Insurances
+                {selectedEmployeeId && (
+                  <Badge className="bg-blue-600 ml-2">
+                    {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                {selectedEmployeeId ? (
+                  <div className="flex items-center gap-2 mt-2">
+                    <Badge className="bg-blue-600">
+                      {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
+                    </Badge>
+                    <span>Viewing tickets for selected employee</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedEmployeeId(null)}
+                      className="text-xs h-auto p-1"
+                    >
+                      Clear Filter
+                    </Button>
+                  </div>
+                ) : (
+                  "Track ticket and insurance expiration dates for each employee"
+                )}
+              </CardDescription>
+            </div>
+            <Dialog open={isAddingTicket} onOpenChange={setIsAddingTicket}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Ticket
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Employee Ticket</DialogTitle>
+                  <DialogDescription>
+                    Assign a ticket or insurance to an employee
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Employee *</Label>
+                    <Select
+                      value={ticketForm.employeeId}
+                      onValueChange={(value) =>
+                        setTicketForm({ ...ticketForm, employeeId: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select employee" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {employees
+                          .filter((emp) => emp.isActive)
+                          .map((emp) => (
+                            <SelectItem key={emp.id} value={emp.id}>
+                              {emp.name} - {emp.title}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Category *</Label>
+                    <Select
+                      value={ticketForm.categoryId}
+                      onValueChange={(value) =>
+                        setTicketForm({ ...ticketForm, categoryId: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ticketCategories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Expiration Date *</Label>
+                    <Input
+                      type="date"
+                      value={ticketForm.expirationDate}
+                      onChange={(e) =>
+                        setTicketForm({
+                          ...ticketForm,
+                          expirationDate: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Issue Date</Label>
+                    <Input
+                      type="date"
+                      value={ticketForm.issueDate}
+                      onChange={(e) =>
+                        setTicketForm({ ...ticketForm, issueDate: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Notes</Label>
+                    <Input
+                      placeholder="Optional notes"
+                      value={ticketForm.notes}
+                      onChange={(e) =>
+                        setTicketForm({ ...ticketForm, notes: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsAddingTicket(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleAddTicket}>Add Ticket</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {(() => {
+            const filteredTickets = selectedEmployeeId
+              ? ticketsWithDetails.filter(
+                  (ticket) => ticket.employeeId === selectedEmployeeId,
+                )
+              : ticketsWithDetails;
+
+            return filteredTickets.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium">
+                  {selectedEmployeeId
+                    ? "No tickets for this employee"
+                    : "No tickets assigned yet"}
+                </p>
+                <p className="text-sm">
+                  {selectedEmployeeId
+                    ? "This employee has no ticket records"
+                    : "Add an employee ticket to get started"}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {!selectedEmployeeId && <TableHead>Employee</TableHead>}
+                      <TableHead>Category</TableHead>
+                      <TableHead>Expiration Date</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Issue Date</TableHead>
+                      <TableHead>Notes</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredTickets.map((ticket) => (
+                      <TableRow key={ticket.id}>
+                        {!selectedEmployeeId && (
+                          <TableCell className="font-medium">
+                            {ticket.employeeName}
+                          </TableCell>
+                        )}
+                        <TableCell>{ticket.categoryName}</TableCell>
+                        <TableCell>
+                          {new Date(ticket.expirationDate).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={ticket.color}>
+                            {ticket.label}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {ticket.issueDate
+                            ? new Date(ticket.issueDate).toLocaleDateString()
+                            : "—"}
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate">
+                          {ticket.notes || "—"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => openEditTicket(ticket)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit Employee Ticket</DialogTitle>
+                                  <DialogDescription>
+                                    Update the ticket details
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div className="space-y-2">
+                                    <Label>Employee *</Label>
+                                    <Select
+                                      value={ticketForm.employeeId}
+                                      onValueChange={(value) =>
+                                        setTicketForm({
+                                          ...ticketForm,
+                                          employeeId: value,
+                                        })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select employee" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {employees
+                                          .filter((emp) => emp.isActive)
+                                          .map((emp) => (
+                                            <SelectItem
+                                              key={emp.id}
+                                              value={emp.id}
+                                            >
+                                              {emp.name} - {emp.title}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Category *</Label>
+                                    <Select
+                                      value={ticketForm.categoryId}
+                                      onValueChange={(value) =>
+                                        setTicketForm({
+                                          ...ticketForm,
+                                          categoryId: value,
+                                        })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select category" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {ticketCategories.map((cat) => (
+                                          <SelectItem key={cat.id} value={cat.id}>
+                                            {cat.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Expiration Date *</Label>
+                                    <Input
+                                      type="date"
+                                      value={ticketForm.expirationDate}
+                                      onChange={(e) =>
+                                        setTicketForm({
+                                          ...ticketForm,
+                                          expirationDate: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Issue Date</Label>
+                                    <Input
+                                      type="date"
+                                      value={ticketForm.issueDate}
+                                      onChange={(e) =>
+                                        setTicketForm({
+                                          ...ticketForm,
+                                          issueDate: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Notes</Label>
+                                    <Input
+                                      placeholder="Optional notes"
+                                      value={ticketForm.notes}
+                                      onChange={(e) =>
+                                        setTicketForm({
+                                          ...ticketForm,
+                                          notes: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <DialogFooter>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingTicket(null);
+                                      setTicketForm({
+                                        employeeId: "",
+                                        categoryId: "",
+                                        expirationDate: "",
+                                        issueDate: "",
+                                        notes: "",
+                                      });
+                                    }}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button onClick={handleEditTicket}>
+                                    Save Changes
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Ticket</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete this ticket?
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteTicket(ticket.id)}
+                                    className="bg-red-600"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
       {/* Ticket Categories Section */}
       <Card>
         <CardHeader>
@@ -759,432 +1235,6 @@ export function TicketsAndInsurances() {
                                   onClick={() =>
                                     handleDeleteCategory(category.id)
                                   }
-                                  className="bg-red-600"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Employee Summary Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Employee Tickets Summary
-              </CardTitle>
-              <CardDescription>
-                Quick overview of each employee's ticket and insurance status
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {employeeTicketsSummary.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">No employees with tickets</p>
-              <p className="text-sm">Add employees and assign tickets to get started</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {employeeTicketsSummary.map((group) => (
-                <div
-                  key={group.employeeId}
-                  className="p-4 border rounded-lg hover:shadow-md transition-shadow"
-                >
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    {group.employeeName}
-                  </h3>
-
-                  {/* Ticket Summary Stats */}
-                  <div className="space-y-2 text-sm">
-                    {/* Mandatory */}
-                    {group.mandatoryCount > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-700">
-                          Mandatory: {group.mandatoryCount}
-                        </span>
-                        <div className="flex gap-1">
-                          {group.expiredCount > 0 && (
-                            <Badge className="bg-red-600 text-white text-xs">
-                              {group.expiredCount} expired
-                            </Badge>
-                          )}
-                          {group.expiringCount > 0 && (
-                            <Badge className="bg-yellow-600 text-white text-xs">
-                              {group.expiringCount} expiring
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Recommended */}
-                    {group.recommendedCount > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-700">
-                          Recommended: {group.recommendedCount}
-                        </span>
-                        <div className="flex gap-1">
-                          {group.expiringCount > 0 && (
-                            <Badge className="bg-orange-500 text-white text-xs">
-                              {group.expiringCount} expiring
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Optional */}
-                    {group.optionalCount > 0 && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600 text-xs">
-                          Optional: {group.optionalCount}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Valid tickets count */}
-                    {group.validCount > 0 && (
-                      <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-green-700 text-xs font-medium">
-                          {group.validCount} ✓ valid
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Employee Tickets Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Employee Tickets & Insurances
-              </CardTitle>
-              <CardDescription>
-                Track ticket and insurance expiration dates for each employee
-              </CardDescription>
-            </div>
-            <Dialog open={isAddingTicket} onOpenChange={setIsAddingTicket}>
-              <DialogTrigger asChild>
-                <Button className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Add Ticket
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add Employee Ticket</DialogTitle>
-                  <DialogDescription>
-                    Assign a ticket or insurance to an employee
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Employee *</Label>
-                    <Select
-                      value={ticketForm.employeeId}
-                      onValueChange={(value) =>
-                        setTicketForm({ ...ticketForm, employeeId: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select employee" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {employees
-                          .filter((emp) => emp.isActive)
-                          .map((emp) => (
-                            <SelectItem key={emp.id} value={emp.id}>
-                              {emp.name} - {emp.title}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Category *</Label>
-                    <Select
-                      value={ticketForm.categoryId}
-                      onValueChange={(value) =>
-                        setTicketForm({ ...ticketForm, categoryId: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ticketCategories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Expiration Date *</Label>
-                    <Input
-                      type="date"
-                      value={ticketForm.expirationDate}
-                      onChange={(e) =>
-                        setTicketForm({
-                          ...ticketForm,
-                          expirationDate: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Issue Date</Label>
-                    <Input
-                      type="date"
-                      value={ticketForm.issueDate}
-                      onChange={(e) =>
-                        setTicketForm({ ...ticketForm, issueDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Notes</Label>
-                    <Input
-                      placeholder="Optional notes"
-                      value={ticketForm.notes}
-                      onChange={(e) =>
-                        setTicketForm({ ...ticketForm, notes: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsAddingTicket(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddTicket}>Add Ticket</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {ticketsWithDetails.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">No tickets assigned yet</p>
-              <p className="text-sm">Add an employee ticket to get started</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Expiration Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Issue Date</TableHead>
-                    <TableHead>Notes</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ticketsWithDetails.map((ticket) => (
-                    <TableRow key={ticket.id}>
-                      <TableCell className="font-medium">
-                        {ticket.employeeName}
-                      </TableCell>
-                      <TableCell>{ticket.categoryName}</TableCell>
-                      <TableCell>
-                        {new Date(ticket.expirationDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={ticket.color}>
-                          {ticket.label}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {ticket.issueDate
-                          ? new Date(ticket.issueDate).toLocaleDateString()
-                          : "—"}
-                      </TableCell>
-                      <TableCell className="max-w-xs truncate">
-                        {ticket.notes || "—"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => openEditTicket(ticket)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit Employee Ticket</DialogTitle>
-                                <DialogDescription>
-                                  Update the ticket details
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <div className="space-y-2">
-                                  <Label>Employee *</Label>
-                                  <Select
-                                    value={ticketForm.employeeId}
-                                    onValueChange={(value) =>
-                                      setTicketForm({
-                                        ...ticketForm,
-                                        employeeId: value,
-                                      })
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select employee" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {employees
-                                        .filter((emp) => emp.isActive)
-                                        .map((emp) => (
-                                          <SelectItem
-                                            key={emp.id}
-                                            value={emp.id}
-                                          >
-                                            {emp.name} - {emp.title}
-                                          </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Category *</Label>
-                                  <Select
-                                    value={ticketForm.categoryId}
-                                    onValueChange={(value) =>
-                                      setTicketForm({
-                                        ...ticketForm,
-                                        categoryId: value,
-                                      })
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {ticketCategories.map((cat) => (
-                                        <SelectItem key={cat.id} value={cat.id}>
-                                          {cat.name}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Expiration Date *</Label>
-                                  <Input
-                                    type="date"
-                                    value={ticketForm.expirationDate}
-                                    onChange={(e) =>
-                                      setTicketForm({
-                                        ...ticketForm,
-                                        expirationDate: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Issue Date</Label>
-                                  <Input
-                                    type="date"
-                                    value={ticketForm.issueDate}
-                                    onChange={(e) =>
-                                      setTicketForm({
-                                        ...ticketForm,
-                                        issueDate: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Notes</Label>
-                                  <Input
-                                    placeholder="Optional notes"
-                                    value={ticketForm.notes}
-                                    onChange={(e) =>
-                                      setTicketForm({
-                                        ...ticketForm,
-                                        notes: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                              </div>
-                              <DialogFooter>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => {
-                                    setEditingTicket(null);
-                                    setTicketForm({
-                                      employeeId: "",
-                                      categoryId: "",
-                                      expirationDate: "",
-                                      issueDate: "",
-                                      notes: "",
-                                    });
-                                  }}
-                                >
-                                  Cancel
-                                </Button>
-                                <Button onClick={handleEditTicket}>
-                                  Save Changes
-                                </Button>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <Trash2 className="h-4 w-4 text-red-500" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Ticket</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete this ticket?
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteTicket(ticket.id)}
                                   className="bg-red-600"
                                 >
                                   Delete
