@@ -494,7 +494,7 @@ export function TicketsAndInsurances() {
                 <Clock className="h-5 w-5" />
                 Employee Tickets & Insurances
               </CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardDescription className="text-white">
                 Select an employee to view and manage their tickets
               </CardDescription>
             </div>
