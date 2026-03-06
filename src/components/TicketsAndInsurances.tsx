@@ -161,11 +161,32 @@ export function TicketsAndInsurances() {
   // Get critical tickets (expired or expiring within 1 month)
   // Exclude optional tickets and those marked to exclude from alert
   const criticalTickets = useMemo(() => {
-    return ticketsWithDetails.filter(
-      (ticket) =>
-        (ticket.status === "expired" || ticket.status === "expiring-soon") &&
-        !ticket.excludeFromAlert,
-    );
+    return ticketsWithDetails
+      .filter(
+        (ticket) =>
+          (ticket.status === "expired" || ticket.status === "expiring-soon") &&
+          !ticket.excludeFromAlert,
+      )
+      .sort((a, b) => {
+        // Expired first, then expiring-soon
+        // Within each status, mandatory first then recommended
+        const statusOrder: Record<string, number> = {
+          expired: 0,
+          "expiring-soon": 1,
+        };
+        const levelOrder: Record<string, number> = {
+          mandatory: 0,
+          recommended: 1,
+        };
+
+        const statusDiff = (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2);
+        if (statusDiff !== 0) return statusDiff;
+
+        return (
+          (levelOrder[a.requirementLevel] ?? 2) -
+          (levelOrder[b.requirementLevel] ?? 2)
+        );
+      });
   }, [ticketsWithDetails]);
 
   // Get tickets grouped by employee with summary
@@ -448,8 +469,8 @@ export function TicketsAndInsurances() {
                         className={`flex items-center justify-between p-2 rounded border-l-3 text-xs gap-2 ${
                           isExpired && isMandatory
                             ? "border-red-700"
-                            : isExpired
-                              ? "border-red-600"
+                            : isExpired && !isMandatory
+                              ? "bg-orange-100 border-red-600"
                               : isMandatory
                                 ? "bg-orange-100 border-orange-600"
                                 : "bg-orange-50 border-orange-400"
