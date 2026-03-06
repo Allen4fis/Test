@@ -183,6 +183,7 @@ export interface EmployeeTicket {
   expirationDate: string; // YYYY-MM-DD format
   issueDate?: string; // YYYY-MM-DD format
   notes?: string;
+  excludeFromAlert?: boolean; // Hide this ticket from the alert banner
   createdAt: string;
 }
 

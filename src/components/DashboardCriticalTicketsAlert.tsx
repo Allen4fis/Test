@@ -52,7 +52,7 @@ export function DashboardCriticalTicketsAlert() {
           daysLabel,
         };
       })
-      .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional")
+      .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional" && !ticket.excludeFromAlert)
       .sort((a, b) => {
         // Mandatory first, then recommended
         const priorityOrder: Record<string, number> = {
@@ -195,13 +195,13 @@ export function DashboardCriticalTicketsAlert() {
                     </Badge>
                   </div>
                   {isLastMandatory && (
-                    <div className="my-1 border-t border-gray-300" />
+                    <div className="my-2 py-1 border-t-2 border-gray-400" />
                   )}
                 </div>
               );
             })}
             {criticalTickets.length > 3 && (
-              <p className="text-xs text-red-600 font-semibold px-2">
+              <p className="text-xs text-yellow-400 font-bold px-2 py-1">
                 +{criticalTickets.length - 3} more
               </p>
             )}

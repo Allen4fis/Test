@@ -101,6 +101,7 @@ export function TicketsAndInsurances() {
     expirationDate: "",
     issueDate: "",
     notes: "",
+    excludeFromAlert: false,
   });
 
   const today = new Date();
@@ -158,11 +159,12 @@ export function TicketsAndInsurances() {
   }, [employeeTickets, employees, ticketCategories]);
 
   // Get critical tickets (expired or expiring within 1 month)
-  // Exclude optional tickets - only show mandatory and recommended
+  // Exclude optional tickets and those marked to exclude from alert
   const criticalTickets = useMemo(() => {
     return ticketsWithDetails.filter(
       (ticket) =>
-        ticket.status === "expired" || ticket.status === "expiring-soon",
+        (ticket.status === "expired" || ticket.status === "expiring-soon") &&
+        !ticket.excludeFromAlert,
     );
   }, [ticketsWithDetails]);
 
@@ -300,6 +302,7 @@ export function TicketsAndInsurances() {
       expirationDate: ticketForm.expirationDate,
       issueDate: ticketForm.issueDate || undefined,
       notes: ticketForm.notes || undefined,
+      excludeFromAlert: ticketForm.excludeFromAlert || undefined,
     });
 
     setTicketForm({
@@ -308,6 +311,7 @@ export function TicketsAndInsurances() {
       expirationDate: "",
       issueDate: "",
       notes: "",
+      excludeFromAlert: false,
     });
     setIsAddingTicket(false);
 
@@ -338,6 +342,7 @@ export function TicketsAndInsurances() {
       expirationDate: ticketForm.expirationDate,
       issueDate: ticketForm.issueDate || undefined,
       notes: ticketForm.notes || undefined,
+      excludeFromAlert: ticketForm.excludeFromAlert || undefined,
     });
 
     setEditingTicket(null);
@@ -347,6 +352,7 @@ export function TicketsAndInsurances() {
       expirationDate: "",
       issueDate: "",
       notes: "",
+      excludeFromAlert: false,
     });
 
     toast({
@@ -380,6 +386,7 @@ export function TicketsAndInsurances() {
       expirationDate: ticket.expirationDate,
       issueDate: ticket.issueDate || "",
       notes: ticket.notes || "",
+      excludeFromAlert: ticket.excludeFromAlert || false,
     });
     setEditingTicket(ticket);
   };
@@ -500,13 +507,13 @@ export function TicketsAndInsurances() {
                         </Badge>
                       </div>
                       {isLastMandatory && (
-                        <div className="my-1 border-t border-gray-300" />
+                        <div className="my-2 py-1 border-t-2 border-gray-400" />
                       )}
                     </div>
                   );
                 })}
                 {criticalTickets.length > 3 && (
-                  <p className="text-xs text-red-600 font-semibold px-2">
+                  <p className="text-xs text-yellow-400 font-bold px-2 py-1">
                     +{criticalTickets.length - 3} more
                   </p>
                 )}
@@ -637,6 +644,20 @@ export function TicketsAndInsurances() {
                         setTicketForm({ ...ticketForm, notes: e.target.value })
                       }
                     />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="excludeFromAlert"
+                      checked={ticketForm.excludeFromAlert}
+                      onChange={(e) =>
+                        setTicketForm({ ...ticketForm, excludeFromAlert: e.target.checked })
+                      }
+                      className="rounded"
+                    />
+                    <Label htmlFor="excludeFromAlert" className="cursor-pointer">
+                      Exclude from alert banner
+                    </Label>
                   </div>
                 </div>
                 <DialogFooter>
@@ -822,6 +843,20 @@ export function TicketsAndInsurances() {
                                     }
                                   />
                                 </div>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    id="excludeFromAlertEdit"
+                                    checked={ticketForm.excludeFromAlert}
+                                    onChange={(e) =>
+                                      setTicketForm({ ...ticketForm, excludeFromAlert: e.target.checked })
+                                    }
+                                    className="rounded"
+                                  />
+                                  <Label htmlFor="excludeFromAlertEdit" className="cursor-pointer">
+                                    Exclude from alert banner
+                                  </Label>
+                                </div>
                               </div>
                               <DialogFooter>
                                 <Button
@@ -834,6 +869,7 @@ export function TicketsAndInsurances() {
                                       expirationDate: "",
                                       issueDate: "",
                                       notes: "",
+                                      excludeFromAlert: false,
                                     });
                                   }}
                                 >
