@@ -51,7 +51,18 @@ export function DashboardCriticalTicketsAlert() {
           daysLabel,
         };
       })
-      .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional");
+      .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional")
+      .sort((a, b) => {
+        // Mandatory first, then recommended
+        const priorityOrder: Record<string, number> = {
+          mandatory: 0,
+          recommended: 1,
+        };
+        return (
+          (priorityOrder[a.requirementLevel] ?? 2) -
+          (priorityOrder[b.requirementLevel] ?? 2)
+        );
+      });
   }, [employeeTickets, employees, ticketCategories]);
 
   if (criticalTickets.length === 0) {
@@ -101,30 +112,51 @@ export function DashboardCriticalTicketsAlert() {
 
         {criticalTickets.length > 0 && (
           <div className="space-y-1 mt-3 text-xs">
-            {criticalTickets.slice(0, 3).map((ticket) => (
-              <div
-                key={ticket.id}
-                className="flex items-center justify-between bg-white/60 p-2 rounded border-l-2 border-red-400"
-              >
-                <div className="flex-1 min-w-0">
-                  <span className="font-medium text-gray-800 truncate block">
-                    {ticket.employeeName}: {ticket.categoryName}
-                  </span>
-                  <span className="text-gray-600 text-xs">
-                    {ticket.daysLabel}
-                  </span>
-                </div>
-                <Badge
-                  className={
-                    ticket.status === "expired"
-                      ? "bg-red-600 text-white border-0 text-xs ml-2 flex-shrink-0"
-                      : "bg-yellow-600 text-white border-0 text-xs ml-2 flex-shrink-0"
-                  }
+            {criticalTickets.slice(0, 3).map((ticket) => {
+              const isMandatory = ticket.requirementLevel === "mandatory";
+              return (
+                <div
+                  key={ticket.id}
+                  className={`flex items-center justify-between p-2 rounded border-l-2 ${
+                    isMandatory
+                      ? "bg-white/80 border-red-500"
+                      : "bg-white/50 border-orange-400"
+                  }`}
                 >
-                  {ticket.status === "expired" ? "Expired" : "Soon"}
-                </Badge>
-              </div>
-            ))}
+                  <div className="flex-1 min-w-0">
+                    <span
+                      className={`truncate block ${
+                        isMandatory
+                          ? "font-semibold text-gray-900"
+                          : "font-medium text-gray-700"
+                      }`}
+                    >
+                      {ticket.employeeName}: {ticket.categoryName}
+                    </span>
+                    <span
+                      className={`text-xs ${
+                        isMandatory ? "text-gray-700" : "text-gray-500"
+                      }`}
+                    >
+                      {ticket.daysLabel}
+                    </span>
+                  </div>
+                  <Badge
+                    className={`border-0 text-xs ml-2 flex-shrink-0 ${
+                      ticket.status === "expired"
+                        ? isMandatory
+                          ? "bg-red-600 text-white"
+                          : "bg-red-500 text-white"
+                        : isMandatory
+                          ? "bg-yellow-600 text-white"
+                          : "bg-yellow-500 text-white"
+                    }`}
+                  >
+                    {ticket.status === "expired" ? "Expired" : "Soon"}
+                  </Badge>
+                </div>
+              );
+            })}
             {criticalTickets.length > 3 && (
               <p className="text-xs text-red-600 font-semibold px-2">
                 +{criticalTickets.length - 3} more
