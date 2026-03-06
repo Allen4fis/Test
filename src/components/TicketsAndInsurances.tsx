@@ -105,11 +105,9 @@ export function TicketsAndInsurances() {
   });
 
   const today = new Date();
-  const oneMonthFromNow = new Date();
-  oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
 
   // Helper to check ticket status
-  const getTicketStatus = (expirationDate: string) => {
+  const getTicketStatus = (expirationDate: string, alertDaysBeforeExpiry: number = 30) => {
     const expDate = new Date(expirationDate);
     let daysLabel = "";
 
@@ -124,7 +122,12 @@ export function TicketsAndInsurances() {
         color: "bg-red-100 text-red-800",
         daysLabel,
       };
-    } else if (expDate <= oneMonthFromNow) {
+    }
+
+    const alertDate = new Date(expDate);
+    alertDate.setDate(alertDate.getDate() - alertDaysBeforeExpiry);
+
+    if (today >= alertDate && expDate > today) {
       const daysUntil = Math.floor(
         (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
       );
@@ -146,7 +149,8 @@ export function TicketsAndInsurances() {
       const category = ticketCategories.find(
         (cat) => cat.id === ticket.categoryId,
       );
-      const ticketStatus = getTicketStatus(ticket.expirationDate);
+      const alertDaysBeforeExpiry = category?.alertDaysBeforeExpiry || 30;
+      const ticketStatus = getTicketStatus(ticket.expirationDate, alertDaysBeforeExpiry);
 
       return {
         ...ticket,
