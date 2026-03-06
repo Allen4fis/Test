@@ -169,6 +169,7 @@ export function TicketsAndInsurances() {
       .filter(
         (ticket) =>
           (ticket.status === "expired" || ticket.status === "expiring-soon") &&
+          ticket.requirementLevel !== "optional" &&
           !ticket.excludeFromAlert,
       )
       .sort((a, b) => {
