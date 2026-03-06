@@ -589,35 +589,34 @@ export function TicketsAndInsurances() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Employee Tickets & Insurances
-                {selectedEmployeeId && (
-                  <Badge className="bg-blue-600 ml-2">
-                    {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
-                  </Badge>
-                )}
-              </CardTitle>
-              <CardDescription>
-                {selectedEmployeeId ? (
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge className="bg-blue-600">
-                      {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
-                    </Badge>
-                    <span>Viewing tickets for selected employee</span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Employee Tickets & Insurances
+                    {selectedEmployeeId && (
+                      <Badge className="bg-blue-600 ml-2">
+                        {employees.find((emp) => emp.id === selectedEmployeeId)?.name}
+                      </Badge>
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    {selectedEmployeeId
+                      ? "Viewing tickets for selected employee"
+                      : "Track ticket and insurance expiration dates for each employee"}
+                  </CardDescription>
+                  {selectedEmployeeId && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setSelectedEmployeeId(null)}
-                      className="text-xs h-auto p-1"
+                      className="text-xs h-auto p-1 mt-2"
                     >
                       Clear Filter
                     </Button>
-                  </div>
-                ) : (
-                  "Track ticket and insurance expiration dates for each employee"
-                )}
-              </CardDescription>
+                  )}
+                </div>
+              </div>
             </div>
             <Dialog open={isAddingTicket} onOpenChange={setIsAddingTicket}>
               <DialogTrigger asChild>
