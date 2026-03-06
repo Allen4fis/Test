@@ -14,6 +14,7 @@ export function DashboardCriticalTicketsAlert() {
   oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
 
   // Get critical tickets (expired or expiring within 1 month)
+  // Exclude optional tickets - only show mandatory and recommended
   const criticalTickets = useMemo(() => {
     return employeeTickets
       .map((ticket) => {
@@ -34,11 +35,12 @@ export function DashboardCriticalTicketsAlert() {
           ...ticket,
           employeeName: employee?.name || "Unknown",
           categoryName: category?.name || "Unknown",
+          requirementLevel: category?.requirementLevel || "optional",
           status,
           expirationDate: expDate,
         };
       })
-      .filter((ticket) => ticket.status !== "valid");
+      .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional");
   }, [employeeTickets, employees, ticketCategories]);
 
   if (criticalTickets.length === 0) {
