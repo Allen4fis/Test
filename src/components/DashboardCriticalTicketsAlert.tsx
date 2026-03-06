@@ -127,7 +127,7 @@ export function DashboardCriticalTicketsAlert({ onViewTickets }: DashboardCritic
                 50% { color: rgb(255, 200, 124); }
               }
             `}</style>
-            {criticalTickets.slice(0, 3).map((ticket, index) => {
+            {criticalTickets.map((ticket, index) => {
               const isMandatory = ticket.requirementLevel === "mandatory";
               const isExpired = ticket.status === "expired";
               const nextTicket = criticalTickets[index + 1];
@@ -204,11 +204,6 @@ export function DashboardCriticalTicketsAlert({ onViewTickets }: DashboardCritic
                 </div>
               );
             })}
-            {criticalTickets.length > 3 && (
-              <p className="text-xs text-yellow-400 font-bold px-2 py-1">
-                +{criticalTickets.length - 3} more
-              </p>
-            )}
           </div>
         )}
       </div>

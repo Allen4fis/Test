@@ -425,7 +425,7 @@ export function TicketsAndInsurances() {
 
             {criticalTickets.length > 0 && (
               <div className="space-y-1 mt-3 text-xs">
-                {criticalTickets.slice(0, 3).map((ticket, index) => {
+                {criticalTickets.map((ticket, index) => {
                   const isMandatory = ticket.requirementLevel === "mandatory";
                   const isExpired = ticket.status === "expired";
                   const nextTicket = criticalTickets[index + 1];
@@ -512,11 +512,6 @@ export function TicketsAndInsurances() {
                     </div>
                   );
                 })}
-                {criticalTickets.length > 3 && (
-                  <p className="text-xs text-yellow-400 font-bold px-2 py-1">
-                    +{criticalTickets.length - 3} more
-                  </p>
-                )}
               </div>
             )}
           </div>
