@@ -426,26 +426,42 @@ export function TicketsAndInsurances() {
 
                   return (
                     <div key={ticket.id}>
+                      <style>{`
+                        @keyframes hellishFlash {
+                          0%, 100% { background-color: rgb(239, 68, 68); }
+                          50% { background-color: rgb(127, 29, 29); }
+                        }
+                        @keyframes hellishTextFlash {
+                          0%, 100% { color: rgb(255, 255, 255); }
+                          50% { color: rgb(255, 200, 124); }
+                        }
+                      `}</style>
                       <div
-                        className={`flex items-center justify-between p-2 rounded border-l-2 ${
+                        className={`flex items-center justify-between p-2 rounded border-l-3 text-xs gap-2 ${
                           isMandatory
-                            ? "bg-white/80 border-red-500"
+                            ? "border-red-700 animate-pulse"
                             : "bg-white/50 border-orange-400"
                         }`}
+                        style={isMandatory ? {
+                          animation: "hellishFlash 0.6s infinite",
+                        } : {}}
                       >
                         <div className="flex-1 min-w-0">
                           <span
                             className={`truncate block ${
                               isMandatory
-                                ? "font-semibold text-gray-900"
+                                ? "font-bold text-white"
                                 : "font-medium text-gray-700"
                             }`}
+                            style={isMandatory ? {
+                              animation: "hellishTextFlash 0.6s infinite",
+                            } : {}}
                           >
                             {ticket.employeeName}: {ticket.categoryName}
                           </span>
                           <span
                             className={`text-xs ${
-                              isMandatory ? "text-gray-700" : "text-gray-500"
+                              isMandatory ? "text-yellow-100" : "text-gray-500"
                             }`}
                           >
                             {ticket.status === "expired"
@@ -454,17 +470,17 @@ export function TicketsAndInsurances() {
                           </span>
                         </div>
                         <Badge
-                          className={`border-0 text-xs ml-2 flex-shrink-0 ${
+                          className={`border-0 text-xs flex-shrink-0 ${
                             ticket.status === "expired"
                               ? isMandatory
-                                ? "bg-red-600 text-white"
+                                ? "bg-red-900 text-yellow-100 animate-pulse"
                                 : "bg-red-500 text-white"
                               : isMandatory
-                                ? "bg-yellow-600 text-white"
+                                ? "bg-yellow-600 text-red-900 font-bold animate-pulse"
                                 : "bg-yellow-500 text-white"
                           }`}
                         >
-                          {ticket.status === "expired" ? "Expired" : "Soon"}
+                          {ticket.status === "expired" ? "EXPIRED" : "SOON"}
                         </Badge>
                       </div>
                       {isLastMandatory && (
