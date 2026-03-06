@@ -113,8 +113,19 @@ export function DashboardCriticalTicketsAlert() {
 
         {criticalTickets.length > 0 && (
           <div className="space-y-1 mt-3 text-xs">
+            <style>{`
+              @keyframes hellishFlash {
+                0%, 100% { background-color: rgb(239, 68, 68); }
+                50% { background-color: rgb(127, 29, 29); }
+              }
+              @keyframes hellishTextFlash {
+                0%, 100% { color: rgb(255, 255, 255); }
+                50% { color: rgb(255, 200, 124); }
+              }
+            `}</style>
             {criticalTickets.slice(0, 3).map((ticket, index) => {
               const isMandatory = ticket.requirementLevel === "mandatory";
+              const isExpired = ticket.status === "expired";
               const nextTicket = criticalTickets[index + 1];
               const isLastMandatory =
                 isMandatory && nextTicket?.requirementLevel !== "mandatory";
@@ -122,42 +133,65 @@ export function DashboardCriticalTicketsAlert() {
               return (
                 <div key={ticket.id}>
                   <div
-                    className={`flex items-center justify-between p-2 rounded border-l-2 ${
-                      isMandatory
-                        ? "bg-white/80 border-red-500"
-                        : "bg-white/50 border-orange-400"
+                    className={`flex items-center justify-between p-2 rounded border-l-3 text-xs gap-2 ${
+                      isExpired && isMandatory
+                        ? "border-red-700"
+                        : isExpired
+                          ? "border-red-600"
+                          : isMandatory
+                            ? "bg-orange-100 border-orange-600"
+                            : "bg-orange-50 border-orange-400"
                     }`}
+                    style={isExpired && isMandatory ? {
+                      animation: "hellishFlash 0.6s infinite",
+                    } : {}}
                   >
                     <div className="flex-1 min-w-0">
                       <span
-                        className={`truncate block ${
-                          isMandatory
-                            ? "font-semibold text-gray-900"
-                            : "font-medium text-gray-700"
+                        className={`truncate block font-bold ${
+                          isExpired && isMandatory
+                            ? "text-white"
+                            : isExpired
+                              ? "text-red-900"
+                              : isMandatory
+                                ? "text-orange-900"
+                                : "text-orange-800"
                         }`}
+                        style={isExpired && isMandatory ? {
+                          animation: "hellishTextFlash 0.6s infinite",
+                        } : {}}
                       >
                         {ticket.employeeName}: {ticket.categoryName}
                       </span>
                       <span
                         className={`text-xs ${
-                          isMandatory ? "text-gray-700" : "text-gray-500"
+                          isExpired && isMandatory
+                            ? "text-yellow-100"
+                            : isExpired
+                              ? "text-red-700"
+                              : "text-orange-700"
                         }`}
                       >
-                        {ticket.daysLabel}
+                        {isExpired
+                          ? `Expired ${ticket.daysLabel || "ago"}`
+                          : `Expires ${ticket.daysLabel || "soon"}`}
                       </span>
                     </div>
                     <Badge
-                      className={`border-0 text-xs ml-2 flex-shrink-0 ${
-                        ticket.status === "expired"
-                          ? isMandatory
+                      className={`border-0 text-xs flex-shrink-0 font-bold ${
+                        isExpired && isMandatory
+                          ? "bg-red-900 text-yellow-100"
+                          : isExpired && !isMandatory
                             ? "bg-red-600 text-white"
-                            : "bg-red-500 text-white"
-                          : isMandatory
-                            ? "bg-yellow-600 text-white"
-                            : "bg-yellow-500 text-white"
+                            : isMandatory
+                              ? "bg-orange-600 text-white"
+                              : "bg-orange-500 text-white"
                       }`}
+                      style={isExpired && isMandatory ? {
+                        animation: "hellishFlash 0.6s infinite",
+                      } : {}}
                     >
-                      {ticket.status === "expired" ? "Expired" : "Soon"}
+                      {isExpired ? "EXPIRED" : "SOON"}
                     </Badge>
                   </div>
                   {isLastMandatory && (

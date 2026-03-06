@@ -420,6 +420,7 @@ export function TicketsAndInsurances() {
               <div className="space-y-1 mt-3 text-xs">
                 {criticalTickets.slice(0, 3).map((ticket, index) => {
                   const isMandatory = ticket.requirementLevel === "mandatory";
+                  const isExpired = ticket.status === "expired";
                   const nextTicket = criticalTickets[index + 1];
                   const isLastMandatory =
                     isMandatory && nextTicket?.requirementLevel !== "mandatory";
@@ -438,22 +439,30 @@ export function TicketsAndInsurances() {
                       `}</style>
                       <div
                         className={`flex items-center justify-between p-2 rounded border-l-3 text-xs gap-2 ${
-                          isMandatory
-                            ? "border-red-700 animate-pulse"
-                            : "bg-white/50 border-orange-400"
+                          isExpired && isMandatory
+                            ? "border-red-700"
+                            : isExpired
+                              ? "border-red-600"
+                              : isMandatory
+                                ? "bg-orange-100 border-orange-600"
+                                : "bg-orange-50 border-orange-400"
                         }`}
-                        style={isMandatory ? {
+                        style={isExpired && isMandatory ? {
                           animation: "hellishFlash 0.6s infinite",
                         } : {}}
                       >
                         <div className="flex-1 min-w-0">
                           <span
-                            className={`truncate block ${
-                              isMandatory
-                                ? "font-bold text-white"
-                                : "font-medium text-gray-700"
+                            className={`truncate block font-bold ${
+                              isExpired && isMandatory
+                                ? "text-white"
+                                : isExpired
+                                  ? "text-red-900"
+                                  : isMandatory
+                                    ? "text-orange-900"
+                                    : "text-orange-800"
                             }`}
-                            style={isMandatory ? {
+                            style={isExpired && isMandatory ? {
                               animation: "hellishTextFlash 0.6s infinite",
                             } : {}}
                           >
@@ -461,26 +470,33 @@ export function TicketsAndInsurances() {
                           </span>
                           <span
                             className={`text-xs ${
-                              isMandatory ? "text-yellow-100" : "text-gray-500"
+                              isExpired && isMandatory
+                                ? "text-yellow-100"
+                                : isExpired
+                                  ? "text-red-700"
+                                  : "text-orange-700"
                             }`}
                           >
-                            {ticket.status === "expired"
+                            {isExpired
                               ? `Expired ${ticket.daysLabel || "ago"}`
                               : `Expires ${ticket.daysLabel || "soon"}`}
                           </span>
                         </div>
                         <Badge
-                          className={`border-0 text-xs flex-shrink-0 ${
-                            ticket.status === "expired"
-                              ? isMandatory
-                                ? "bg-red-900 text-yellow-100 animate-pulse"
-                                : "bg-red-500 text-white"
-                              : isMandatory
-                                ? "bg-yellow-600 text-red-900 font-bold animate-pulse"
-                                : "bg-yellow-500 text-white"
+                          className={`border-0 text-xs flex-shrink-0 font-bold ${
+                            isExpired && isMandatory
+                              ? "bg-red-900 text-yellow-100"
+                              : isExpired && !isMandatory
+                                ? "bg-red-600 text-white"
+                                : isMandatory
+                                  ? "bg-orange-600 text-white"
+                                  : "bg-orange-500 text-white"
                           }`}
+                          style={isExpired && isMandatory ? {
+                            animation: "hellishFlash 0.6s infinite",
+                          } : {}}
                         >
-                          {ticket.status === "expired" ? "EXPIRED" : "SOON"}
+                          {isExpired ? "EXPIRED" : "SOON"}
                         </Badge>
                       </div>
                       {isLastMandatory && (
