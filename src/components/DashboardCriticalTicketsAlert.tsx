@@ -25,10 +25,20 @@ export function DashboardCriticalTicketsAlert() {
         const expDate = new Date(ticket.expirationDate);
 
         let status = "valid";
+        let daysLabel = "";
+
         if (expDate < today) {
           status = "expired";
+          const daysExpired = Math.floor(
+            (today.getTime() - expDate.getTime()) / (1000 * 60 * 60 * 24),
+          );
+          daysLabel = `${daysExpired} day${daysExpired !== 1 ? "s" : ""} ago`;
         } else if (expDate <= oneMonthFromNow) {
           status = "expiring-soon";
+          const daysUntil = Math.floor(
+            (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+          );
+          daysLabel = `${daysUntil} day${daysUntil !== 1 ? "s" : ""} left`;
         }
 
         return {
@@ -38,6 +48,7 @@ export function DashboardCriticalTicketsAlert() {
           requirementLevel: category?.requirementLevel || "optional",
           status,
           expirationDate: expDate,
+          daysLabel,
         };
       })
       .filter((ticket) => ticket.status !== "valid" && ticket.requirementLevel !== "optional");
@@ -95,14 +106,19 @@ export function DashboardCriticalTicketsAlert() {
                 key={ticket.id}
                 className="flex items-center justify-between bg-white/60 p-2 rounded border-l-2 border-red-400"
               >
-                <span className="font-medium text-gray-800 truncate">
-                  {ticket.employeeName}: {ticket.categoryName}
-                </span>
+                <div className="flex-1 min-w-0">
+                  <span className="font-medium text-gray-800 truncate block">
+                    {ticket.employeeName}: {ticket.categoryName}
+                  </span>
+                  <span className="text-gray-600 text-xs">
+                    {ticket.daysLabel}
+                  </span>
+                </div>
                 <Badge
                   className={
                     ticket.status === "expired"
-                      ? "bg-red-600 text-white border-0 text-xs"
-                      : "bg-yellow-600 text-white border-0 text-xs"
+                      ? "bg-red-600 text-white border-0 text-xs ml-2 flex-shrink-0"
+                      : "bg-yellow-600 text-white border-0 text-xs ml-2 flex-shrink-0"
                   }
                 >
                   {ticket.status === "expired" ? "Expired" : "Soon"}
