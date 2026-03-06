@@ -650,14 +650,14 @@ export function TicketsAndInsurances() {
                       <div className="flex items-center justify-between gap-4 flex-1 text-left">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           {!selectedEmployeeId && (
-                            <div className="text-sm font-medium text-gray-700 min-w-fit">
+                            <div className="text-sm font-medium text-white min-w-fit">
                               {ticket.employeeName}
                             </div>
                           )}
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-white">
                             {ticket.categoryName}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-300">
                             Exp: {new Date(ticket.expirationDate).toLocaleDateString()}
                           </div>
                         </div>
