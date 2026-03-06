@@ -112,48 +112,56 @@ export function DashboardCriticalTicketsAlert() {
 
         {criticalTickets.length > 0 && (
           <div className="space-y-1 mt-3 text-xs">
-            {criticalTickets.slice(0, 3).map((ticket) => {
+            {criticalTickets.slice(0, 3).map((ticket, index) => {
               const isMandatory = ticket.requirementLevel === "mandatory";
+              const nextTicket = criticalTickets[index + 1];
+              const isLastMandatory =
+                isMandatory && nextTicket?.requirementLevel !== "mandatory";
+
               return (
-                <div
-                  key={ticket.id}
-                  className={`flex items-center justify-between p-2 rounded border-l-2 ${
-                    isMandatory
-                      ? "bg-white/80 border-red-500"
-                      : "bg-white/50 border-orange-400"
-                  }`}
-                >
-                  <div className="flex-1 min-w-0">
-                    <span
-                      className={`truncate block ${
-                        isMandatory
-                          ? "font-semibold text-gray-900"
-                          : "font-medium text-gray-700"
-                      }`}
-                    >
-                      {ticket.employeeName}: {ticket.categoryName}
-                    </span>
-                    <span
-                      className={`text-xs ${
-                        isMandatory ? "text-gray-700" : "text-gray-500"
-                      }`}
-                    >
-                      {ticket.daysLabel}
-                    </span>
-                  </div>
-                  <Badge
-                    className={`border-0 text-xs ml-2 flex-shrink-0 ${
-                      ticket.status === "expired"
-                        ? isMandatory
-                          ? "bg-red-600 text-white"
-                          : "bg-red-500 text-white"
-                        : isMandatory
-                          ? "bg-yellow-600 text-white"
-                          : "bg-yellow-500 text-white"
+                <div key={ticket.id}>
+                  <div
+                    className={`flex items-center justify-between p-2 rounded border-l-2 ${
+                      isMandatory
+                        ? "bg-white/80 border-red-500"
+                        : "bg-white/50 border-orange-400"
                     }`}
                   >
-                    {ticket.status === "expired" ? "Expired" : "Soon"}
-                  </Badge>
+                    <div className="flex-1 min-w-0">
+                      <span
+                        className={`truncate block ${
+                          isMandatory
+                            ? "font-semibold text-gray-900"
+                            : "font-medium text-gray-700"
+                        }`}
+                      >
+                        {ticket.employeeName}: {ticket.categoryName}
+                      </span>
+                      <span
+                        className={`text-xs ${
+                          isMandatory ? "text-gray-700" : "text-gray-500"
+                        }`}
+                      >
+                        {ticket.daysLabel}
+                      </span>
+                    </div>
+                    <Badge
+                      className={`border-0 text-xs ml-2 flex-shrink-0 ${
+                        ticket.status === "expired"
+                          ? isMandatory
+                            ? "bg-red-600 text-white"
+                            : "bg-red-500 text-white"
+                          : isMandatory
+                            ? "bg-yellow-600 text-white"
+                            : "bg-yellow-500 text-white"
+                      }`}
+                    >
+                      {ticket.status === "expired" ? "Expired" : "Soon"}
+                    </Badge>
+                  </div>
+                  {isLastMandatory && (
+                    <div className="my-1 border-t border-gray-300" />
+                  )}
                 </div>
               );
             })}
