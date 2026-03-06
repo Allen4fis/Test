@@ -499,9 +499,9 @@ export function TicketsAndInsurances() {
               </CardDescription>
             </div>
             <div className="w-56">
-              <Label className="text-xs font-medium mb-2 block">Filter by Employee</Label>
+              <Label className="text-xs font-medium mb-2 block text-white">Filter by Employee</Label>
               <Select value={selectedEmployeeId || "all-employees"} onValueChange={(value) => setSelectedEmployeeId(value === "all-employees" ? null : value)}>
-                <SelectTrigger>
+                <SelectTrigger className="text-white">
                   <SelectValue placeholder="All employees" />
                 </SelectTrigger>
                 <SelectContent>
