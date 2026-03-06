@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 
-export function DashboardCriticalTicketsAlert() {
-  const { employees, ticketCategories, employeeTickets, setSelectedView } =
+interface DashboardCriticalTicketsAlertProps {
+  onViewTickets?: () => void;
+}
+
+export function DashboardCriticalTicketsAlert({ onViewTickets }: DashboardCriticalTicketsAlertProps = {}) {
+  const { employees, ticketCategories, employeeTickets } =
     useTimeTracking();
 
   const today = new Date();
@@ -103,7 +107,7 @@ export function DashboardCriticalTicketsAlert() {
             </div>
           </div>
           <Button
-            onClick={() => setSelectedView("tickets")}
+            onClick={onViewTickets}
             size="sm"
             className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0"
           >

@@ -78,6 +78,7 @@ const Dashboard = memo(function Dashboard({
     rentalSummaries,
     summaryByTitleAndJob,
     getAutosaveInfo,
+    setSelectedView,
   } = useTimeTracking();
 
   // Get recent entries (last 7 days) with safe array operations
@@ -343,7 +344,7 @@ const Dashboard = memo(function Dashboard({
       </div>
 
       {/* Critical Tickets Alert */}
-      <DashboardCriticalTicketsAlert />
+      <DashboardCriticalTicketsAlert onViewTickets={() => setSelectedView("tickets")} />
 
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
