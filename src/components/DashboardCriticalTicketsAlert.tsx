@@ -10,10 +10,8 @@ export function DashboardCriticalTicketsAlert() {
     useTimeTracking();
 
   const today = new Date();
-  const oneMonthFromNow = new Date();
-  oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
 
-  // Get critical tickets (expired or expiring within 1 month)
+  // Get critical tickets (expired or expiring based on alert days setting)
   // Exclude optional tickets - only show mandatory and recommended
   const criticalTickets = useMemo(() => {
     return employeeTickets
@@ -23,6 +21,9 @@ export function DashboardCriticalTicketsAlert() {
           (cat) => cat.id === ticket.categoryId,
         );
         const expDate = new Date(ticket.expirationDate);
+        const alertDays = category?.alertDaysBeforeExpiry || 30;
+        const alertDate = new Date(expDate);
+        alertDate.setDate(alertDate.getDate() - alertDays);
 
         let status = "valid";
         let daysLabel = "";
@@ -33,7 +34,7 @@ export function DashboardCriticalTicketsAlert() {
             (today.getTime() - expDate.getTime()) / (1000 * 60 * 60 * 24),
           );
           daysLabel = `${daysExpired} day${daysExpired !== 1 ? "s" : ""} ago`;
-        } else if (expDate <= oneMonthFromNow) {
+        } else if (today >= alertDate) {
           status = "expiring-soon";
           const daysUntil = Math.floor(
             (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),

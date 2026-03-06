@@ -172,6 +172,7 @@ export interface TicketCategory {
   name: string; // e.g., "Class 1 License", "CPR Certification", "Safety Training"
   description?: string;
   requirementLevel?: "mandatory" | "recommended" | "optional"; // How critical this is
+  alertDaysBeforeExpiry?: number; // Number of days before expiration to trigger alert (default: 30)
   createdAt: string;
 }
 

@@ -84,6 +84,7 @@ export function TicketsAndInsurances() {
     name: "",
     description: "",
     requirementLevel: "mandatory" as const,
+    alertDaysBeforeExpiry: 30,
   });
 
   const [ticketForm, setTicketForm] = useState({
@@ -154,9 +155,10 @@ export function TicketsAndInsurances() {
       name: categoryForm.name,
       description: categoryForm.description || undefined,
       requirementLevel: categoryForm.requirementLevel,
+      alertDaysBeforeExpiry: categoryForm.alertDaysBeforeExpiry || 30,
     });
 
-    setCategoryForm({ name: "", description: "", requirementLevel: "mandatory" });
+    setCategoryForm({ name: "", description: "", requirementLevel: "mandatory", alertDaysBeforeExpiry: 30 });
     setIsAddingCategory(false);
 
     toast({
@@ -179,10 +181,11 @@ export function TicketsAndInsurances() {
       name: categoryForm.name,
       description: categoryForm.description || undefined,
       requirementLevel: categoryForm.requirementLevel,
+      alertDaysBeforeExpiry: categoryForm.alertDaysBeforeExpiry || 30,
     });
 
     setEditingCategory(null);
-    setCategoryForm({ name: "", description: "", requirementLevel: "mandatory" });
+    setCategoryForm({ name: "", description: "", requirementLevel: "mandatory", alertDaysBeforeExpiry: 30 });
 
     toast({
       title: "Success",
@@ -282,6 +285,7 @@ export function TicketsAndInsurances() {
       name: category.name,
       description: category.description || "",
       requirementLevel: category.requirementLevel || "mandatory",
+      alertDaysBeforeExpiry: category.alertDaysBeforeExpiry || 30,
     });
     setEditingCategory(category);
   };
@@ -413,6 +417,24 @@ export function TicketsAndInsurances() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="space-y-2">
+                    <Label>Alert Days Before Expiry</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      value={categoryForm.alertDaysBeforeExpiry}
+                      onChange={(e) =>
+                        setCategoryForm({
+                          ...categoryForm,
+                          alertDaysBeforeExpiry: parseInt(e.target.value) || 30,
+                        })
+                      }
+                      placeholder="30"
+                    />
+                    <p className="text-xs text-gray-500">
+                      Alert will trigger this many days before expiration
+                    </p>
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button
@@ -442,6 +464,7 @@ export function TicketsAndInsurances() {
                     <TableHead>Category Name</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Level</TableHead>
+                    <TableHead>Alert Days Before Expiry</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -464,6 +487,11 @@ export function TicketsAndInsurances() {
                         >
                           {category.requirementLevel || "Optional"}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium text-gray-800">
+                          {category.alertDaysBeforeExpiry || 30} days
+                        </span>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -538,6 +566,24 @@ export function TicketsAndInsurances() {
                                     </SelectContent>
                                   </Select>
                                 </div>
+                                <div className="space-y-2">
+                                  <Label>Alert Days Before Expiry</Label>
+                                  <Input
+                                    type="number"
+                                    min="1"
+                                    value={categoryForm.alertDaysBeforeExpiry}
+                                    onChange={(e) =>
+                                      setCategoryForm({
+                                        ...categoryForm,
+                                        alertDaysBeforeExpiry: parseInt(e.target.value) || 30,
+                                      })
+                                    }
+                                    placeholder="30"
+                                  />
+                                  <p className="text-xs text-gray-500">
+                                    Alert will trigger this many days before expiration
+                                  </p>
+                                </div>
                               </div>
                               <DialogFooter>
                                 <Button
@@ -548,6 +594,7 @@ export function TicketsAndInsurances() {
                                       name: "",
                                       description: "",
                                       requirementLevel: "mandatory",
+                                      alertDaysBeforeExpiry: 30,
                                     });
                                   }}
                                 >
