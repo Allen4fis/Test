@@ -17,13 +17,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -637,208 +635,207 @@ export function TicketsAndInsurances() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      {!selectedEmployeeId && <TableHead>Employee</TableHead>}
-                      <TableHead>Category</TableHead>
-                      <TableHead>Expiration Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Issue Date</TableHead>
-                      <TableHead>Notes</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredTickets.map((ticket) => (
-                      <TableRow key={ticket.id}>
-                        {!selectedEmployeeId && (
-                          <TableCell className="font-medium">
-                            {ticket.employeeName}
-                          </TableCell>
+              <Accordion type="single" collapsible className="space-y-2">
+                {filteredTickets.map((ticket) => (
+                  <AccordionItem key={ticket.id} value={ticket.id} className="border rounded-lg px-4">
+                    <AccordionTrigger className="hover:no-underline py-3">
+                      <div className="flex items-center justify-between gap-4 flex-1 text-left">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          {!selectedEmployeeId && (
+                            <div className="text-sm font-medium text-gray-700 min-w-fit">
+                              {ticket.employeeName}
+                            </div>
+                          )}
+                          <div className="text-sm font-medium text-gray-900">
+                            {ticket.categoryName}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Exp: {new Date(ticket.expirationDate).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <Badge className={ticket.color}>
+                          {ticket.label}
+                        </Badge>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-0">
+                      <div className="space-y-3 pl-0">
+                        {ticket.issueDate && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Issue Date:</span>
+                            <span className="font-medium">{new Date(ticket.issueDate).toLocaleDateString()}</span>
+                          </div>
                         )}
-                        <TableCell>{ticket.categoryName}</TableCell>
-                        <TableCell>
-                          {new Date(ticket.expirationDate).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={ticket.color}>
-                            {ticket.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {ticket.issueDate
-                            ? new Date(ticket.issueDate).toLocaleDateString()
-                            : "—"}
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {ticket.notes || "—"}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => openEditTicket(ticket)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Edit Employee Ticket</DialogTitle>
-                                  <DialogDescription>
-                                    Update the ticket details
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                  <div className="space-y-2">
-                                    <Label>Employee *</Label>
-                                    <Select
-                                      value={ticketForm.employeeId}
-                                      onValueChange={(value) =>
-                                        setTicketForm({
-                                          ...ticketForm,
-                                          employeeId: value,
-                                        })
-                                      }
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select employee" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {employees
-                                          .filter((emp) => emp.isActive)
-                                          .map((emp) => (
-                                            <SelectItem
-                                              key={emp.id}
-                                              value={emp.id}
-                                            >
-                                              {emp.name} - {emp.title}
-                                            </SelectItem>
-                                          ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Category *</Label>
-                                    <Select
-                                      value={ticketForm.categoryId}
-                                      onValueChange={(value) =>
-                                        setTicketForm({
-                                          ...ticketForm,
-                                          categoryId: value,
-                                        })
-                                      }
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select category" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {ticketCategories.map((cat) => (
-                                          <SelectItem key={cat.id} value={cat.id}>
-                                            {cat.name}
+                        {ticket.notes && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Notes:</span>
+                            <span className="font-medium text-gray-700">{ticket.notes}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 pt-2 border-t">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditTicket(ticket)}
+                              >
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Edit Employee Ticket</DialogTitle>
+                                <DialogDescription>
+                                  Update the ticket details
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label>Employee *</Label>
+                                  <Select
+                                    value={ticketForm.employeeId}
+                                    onValueChange={(value) =>
+                                      setTicketForm({
+                                        ...ticketForm,
+                                        employeeId: value,
+                                      })
+                                    }
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select employee" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {employees
+                                        .filter((emp) => emp.isActive)
+                                        .map((emp) => (
+                                          <SelectItem
+                                            key={emp.id}
+                                            value={emp.id}
+                                          >
+                                            {emp.name} - {emp.title}
                                           </SelectItem>
                                         ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Expiration Date *</Label>
-                                    <Input
-                                      type="date"
-                                      value={ticketForm.expirationDate}
-                                      onChange={(e) =>
-                                        setTicketForm({
-                                          ...ticketForm,
-                                          expirationDate: e.target.value,
-                                        })
-                                      }
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Issue Date</Label>
-                                    <Input
-                                      type="date"
-                                      value={ticketForm.issueDate}
-                                      onChange={(e) =>
-                                        setTicketForm({
-                                          ...ticketForm,
-                                          issueDate: e.target.value,
-                                        })
-                                      }
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Notes</Label>
-                                    <Input
-                                      placeholder="Optional notes"
-                                      value={ticketForm.notes}
-                                      onChange={(e) =>
-                                        setTicketForm({
-                                          ...ticketForm,
-                                          notes: e.target.value,
-                                        })
-                                      }
-                                    />
-                                  </div>
+                                    </SelectContent>
+                                  </Select>
                                 </div>
-                                <DialogFooter>
-                                  <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                      setEditingTicket(null);
+                                <div className="space-y-2">
+                                  <Label>Category *</Label>
+                                  <Select
+                                    value={ticketForm.categoryId}
+                                    onValueChange={(value) =>
                                       setTicketForm({
-                                        employeeId: "",
-                                        categoryId: "",
-                                        expirationDate: "",
-                                        issueDate: "",
-                                        notes: "",
-                                      });
-                                    }}
+                                        ...ticketForm,
+                                        categoryId: value,
+                                      })
+                                    }
                                   >
-                                    Cancel
-                                  </Button>
-                                  <Button onClick={handleEditTicket}>
-                                    Save Changes
-                                  </Button>
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {ticketCategories.map((cat) => (
+                                        <SelectItem key={cat.id} value={cat.id}>
+                                          {cat.name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Expiration Date *</Label>
+                                  <Input
+                                    type="date"
+                                    value={ticketForm.expirationDate}
+                                    onChange={(e) =>
+                                      setTicketForm({
+                                        ...ticketForm,
+                                        expirationDate: e.target.value,
+                                      })
+                                    }
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Issue Date</Label>
+                                  <Input
+                                    type="date"
+                                    value={ticketForm.issueDate}
+                                    onChange={(e) =>
+                                      setTicketForm({
+                                        ...ticketForm,
+                                        issueDate: e.target.value,
+                                      })
+                                    }
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Notes</Label>
+                                  <Input
+                                    placeholder="Optional notes"
+                                    value={ticketForm.notes}
+                                    onChange={(e) =>
+                                      setTicketForm({
+                                        ...ticketForm,
+                                        notes: e.target.value,
+                                      })
+                                    }
+                                  />
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingTicket(null);
+                                    setTicketForm({
+                                      employeeId: "",
+                                      categoryId: "",
+                                      expirationDate: "",
+                                      issueDate: "",
+                                      notes: "",
+                                    });
+                                  }}
+                                >
+                                  Cancel
                                 </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete Ticket</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete this ticket?
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteTicket(ticket.id)}
-                                    className="bg-red-600"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                                <Button onClick={handleEditTicket}>
+                                  Save Changes
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                                <Trash2 className="h-4 w-4 mr-1" />
+                                Delete
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Ticket</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete this ticket?
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteTicket(ticket.id)}
+                                  className="bg-red-600"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             );
           })()}
         </CardContent>
