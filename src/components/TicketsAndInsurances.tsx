@@ -512,7 +512,7 @@ export function TicketsAndInsurances() {
                     className="p-4 border-2 rounded-lg hover:shadow-lg transition-all cursor-pointer bg-white border-blue-200 hover:border-blue-500 hover:bg-blue-50"
                     onClick={() => setSelectedEmployeeId(group.employeeId)}
                   >
-                    <h3 className="font-bold text-lg text-blue-900 mb-3">
+                    <h3 className="font-bold text-lg text-indigo-700 mb-3">
                       {group.employeeName}
                     </h3>
 
@@ -577,11 +577,11 @@ export function TicketsAndInsurances() {
       )}
 
       {/* Employee Tickets Section */}
-      <Card>
-        <CardHeader>
+      <Card className="border-2 border-blue-200 bg-blue-50">
+        <CardHeader className="bg-blue-100">
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-blue-900">
                 <Clock className="h-5 w-5" />
                 Employee Tickets & Insurances
                 {selectedEmployeeId && (
@@ -590,7 +590,7 @@ export function TicketsAndInsurances() {
                   </Badge>
                 )}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-blue-800">
                 {selectedEmployeeId
                   ? "Viewing tickets for selected employee"
                   : "Click an employee card above to view their tickets in detail"}
