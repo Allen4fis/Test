@@ -53,6 +53,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
+  Users,
 } from "lucide-react";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import { EmployeeTicket, TicketCategory } from "@/types";
@@ -79,6 +80,7 @@ export function TicketsAndInsurances() {
   const [editingTicket, setEditingTicket] = useState<EmployeeTicket | null>(
     null,
   );
+  const [viewMode, setViewMode] = useState<"list" | "by-employee">("by-employee");
 
   const [categoryForm, setCategoryForm] = useState({
     name: "",
@@ -156,6 +158,64 @@ export function TicketsAndInsurances() {
         ticket.status === "expired" || ticket.status === "expiring-soon",
     );
   }, [ticketsWithDetails]);
+
+  // Get tickets grouped by employee with summary
+  const employeeTicketsSummary = useMemo(() => {
+    const grouped = new Map<
+      string,
+      {
+        employeeId: string;
+        employeeName: string;
+        tickets: typeof ticketsWithDetails;
+        mandatoryCount: number;
+        recommendedCount: number;
+        optionalCount: number;
+        expiredCount: number;
+        expiringCount: number;
+        validCount: number;
+      }
+    >();
+
+    ticketsWithDetails.forEach((ticket) => {
+      if (!grouped.has(ticket.employeeId)) {
+        const employee = employees.find((emp) => emp.id === ticket.employeeId);
+        grouped.set(ticket.employeeId, {
+          employeeId: ticket.employeeId,
+          employeeName: employee?.name || "Unknown",
+          tickets: [],
+          mandatoryCount: 0,
+          recommendedCount: 0,
+          optionalCount: 0,
+          expiredCount: 0,
+          expiringCount: 0,
+          validCount: 0,
+        });
+      }
+
+      const group = grouped.get(ticket.employeeId)!;
+      group.tickets.push(ticket);
+
+      if (ticket.requirementLevel === "mandatory") {
+        group.mandatoryCount++;
+      } else if (ticket.requirementLevel === "recommended") {
+        group.recommendedCount++;
+      } else {
+        group.optionalCount++;
+      }
+
+      if (ticket.status === "expired") {
+        group.expiredCount++;
+      } else if (ticket.status === "expiring-soon") {
+        group.expiringCount++;
+      } else {
+        group.validCount++;
+      }
+    });
+
+    return Array.from(grouped.values()).sort((a, b) =>
+      a.employeeName.localeCompare(b.employeeName),
+    );
+  }, [ticketsWithDetails, employees]);
 
   const handleAddCategory = () => {
     if (!categoryForm.name.trim()) {
@@ -712,6 +772,103 @@ export function TicketsAndInsurances() {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Employee Summary Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Employee Tickets Summary
+              </CardTitle>
+              <CardDescription>
+                Quick overview of each employee's ticket and insurance status
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {employeeTicketsSummary.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium">No employees with tickets</p>
+              <p className="text-sm">Add employees and assign tickets to get started</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {employeeTicketsSummary.map((group) => (
+                <div
+                  key={group.employeeId}
+                  className="p-4 border rounded-lg hover:shadow-md transition-shadow"
+                >
+                  <h3 className="font-semibold text-gray-900 mb-3">
+                    {group.employeeName}
+                  </h3>
+
+                  {/* Ticket Summary Stats */}
+                  <div className="space-y-2 text-sm">
+                    {/* Mandatory */}
+                    {group.mandatoryCount > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-700">
+                          Mandatory: {group.mandatoryCount}
+                        </span>
+                        <div className="flex gap-1">
+                          {group.expiredCount > 0 && (
+                            <Badge className="bg-red-600 text-white text-xs">
+                              {group.expiredCount} expired
+                            </Badge>
+                          )}
+                          {group.expiringCount > 0 && (
+                            <Badge className="bg-yellow-600 text-white text-xs">
+                              {group.expiringCount} expiring
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recommended */}
+                    {group.recommendedCount > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-700">
+                          Recommended: {group.recommendedCount}
+                        </span>
+                        <div className="flex gap-1">
+                          {group.expiringCount > 0 && (
+                            <Badge className="bg-orange-500 text-white text-xs">
+                              {group.expiringCount} expiring
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Optional */}
+                    {group.optionalCount > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 text-xs">
+                          Optional: {group.optionalCount}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Valid tickets count */}
+                    {group.validCount > 0 && (
+                      <div className="flex items-center justify-between pt-2 border-t">
+                        <span className="text-green-700 text-xs font-medium">
+                          {group.validCount} ✓ valid
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
