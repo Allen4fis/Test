@@ -21,7 +21,6 @@ import {
   Eye,
   Download,
   Database,
-  Save,
   Activity,
   Shield,
 } from "lucide-react";
@@ -47,7 +46,6 @@ export const Layout = memo(function Layout({
     jobs,
     timeEntries,
     rentalItems,
-    manualSave,
   } = timeTracking;
 
   // Debug: Track when counts change
@@ -89,25 +87,6 @@ export const Layout = memo(function Layout({
   const activeRentalItemsCount = useMemo(() => {
     return rentalItems.filter((item) => item.isActive).length;
   }, [rentalItems]);
-
-  // Optimized save handler with useCallback
-  const handleSave = useCallback(() => {
-    const result = manualSave();
-    if (result.success) {
-      toast({
-        title: "💾 Data Saved Successfully!",
-        description: `All your data has been safely saved at ${new Date(result.timestamp).toLocaleTimeString()}`,
-        duration: 3000,
-      });
-    } else {
-      toast({
-        title: "❌ Save Failed",
-        description: "There was an issue saving your data. Please try again.",
-        variant: "destructive",
-        duration: 5000,
-      });
-    }
-  }, [manualSave, toast]);
 
   // Optimized view selection handler
   const handleViewChange = useCallback(
@@ -264,19 +243,6 @@ export const Layout = memo(function Layout({
               </div>
             </div>
 
-            {/* Enhanced Save Button */}
-            <div className="flex items-center">
-              <Button
-                onClick={handleSave}
-                className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold px-8 py-3 rounded-2xl shadow-2xl hover:shadow-pink-500/25 transform hover:scale-105 transition-all duration-300 border border-pink-400/30"
-                size="lg"
-              >
-                <Save className="h-5 w-5 mr-3 drop-shadow-sm" />
-                <span className="font-bold tracking-wide text-lg">
-                  SAVE NOW
-                </span>
-              </Button>
-            </div>
           </div>
         </div>
       </header>
