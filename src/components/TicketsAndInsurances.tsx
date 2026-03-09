@@ -87,6 +87,12 @@ export function TicketsAndInsurances() {
     null,
   );
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const [selectedCategoryForView, setSelectedCategoryForView] = useState<TicketCategory | null>(null);
+  const [quickAddEmployeeId, setQuickAddEmployeeId] = useState<string>("");
+  const [quickAddDates, setQuickAddDates] = useState({
+    expirationDate: "",
+    issueDate: "",
+  });
 
   const [categoryForm, setCategoryForm] = useState({
     name: "",
@@ -415,6 +421,43 @@ export function TicketsAndInsurances() {
       excludeFromAlert: ticket.excludeFromAlert || false,
     });
     setEditingTicket(ticket);
+  };
+
+  const getEmployeesForCategory = (categoryId: string) => {
+    const assigned = employeeTickets.filter((t) => t.categoryId === categoryId);
+    const assignedEmployeeIds = new Set(assigned.map((t) => t.employeeId));
+    const unassigned = employees.filter(
+      (emp) => emp.isActive && !assignedEmployeeIds.has(emp.id)
+    );
+    return { assigned, unassigned };
+  };
+
+  const handleQuickAddTicket = () => {
+    if (!quickAddEmployeeId || !quickAddDates.expirationDate || !selectedCategoryForView) {
+      toast({
+        title: "Error",
+        description: "Please select employee and expiration date",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addEmployeeTicket({
+      employeeId: quickAddEmployeeId,
+      categoryId: selectedCategoryForView.id,
+      expirationDate: quickAddDates.expirationDate,
+      issueDate: quickAddDates.issueDate || undefined,
+      notes: undefined,
+      excludeFromAlert: undefined,
+    });
+
+    setQuickAddEmployeeId("");
+    setQuickAddDates({ expirationDate: "", issueDate: "" });
+
+    toast({
+      title: "Success",
+      description: "Employee ticket added",
+    });
   };
 
   return (
@@ -1063,180 +1106,377 @@ export function TicketsAndInsurances() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {ticketCategories.map((category) => (
-                    <TableRow key={category.id}>
-                      <TableCell className="font-medium">
-                        {category.name}
-                      </TableCell>
-                      <TableCell>
-                        {category.description || "—"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            category.requirementLevel === "mandatory"
-                              ? "default"
-                              : "outline"
-                          }
-                        >
-                          {category.requirementLevel || "Optional"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-medium text-gray-800">
-                          {category.alertDaysBeforeExpiry || 30} days
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => openEditCategory(category)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit Ticket Category</DialogTitle>
-                                <DialogDescription>
-                                  Update the ticket category details
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <div className="space-y-2">
-                                  <Label>Category Name *</Label>
-                                  <Input
-                                    placeholder="e.g., Class 1 License, CPR Certification"
-                                    value={categoryForm.name}
-                                    onChange={(e) =>
-                                      setCategoryForm({
-                                        ...categoryForm,
-                                        name: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Description</Label>
-                                  <Input
-                                    placeholder="Optional description"
-                                    value={categoryForm.description}
-                                    onChange={(e) =>
-                                      setCategoryForm({
-                                        ...categoryForm,
-                                        description: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Requirement Level</Label>
-                                  <Select
-                                    value={categoryForm.requirementLevel}
-                                    onValueChange={(value) =>
-                                      setCategoryForm({
-                                        ...categoryForm,
-                                        requirementLevel: value as any,
-                                      })
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="mandatory">
-                                        Mandatory
-                                      </SelectItem>
-                                      <SelectItem value="recommended">
-                                        Recommended
-                                      </SelectItem>
-                                      <SelectItem value="optional">
-                                        Optional
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label>Alert Days Before Expiry</Label>
-                                  <Input
-                                    type="number"
-                                    min="1"
-                                    value={categoryForm.alertDaysBeforeExpiry}
-                                    onChange={(e) =>
-                                      setCategoryForm({
-                                        ...categoryForm,
-                                        alertDaysBeforeExpiry: parseInt(e.target.value) || 30,
-                                      })
-                                    }
-                                    placeholder="30"
-                                  />
-                                  <p className="text-xs text-gray-500">
-                                    Alert will trigger this many days before expiration
-                                  </p>
-                                </div>
-                              </div>
-                              <DialogFooter>
+                  {ticketCategories.map((category) => {
+                    const { assigned, unassigned } = getEmployeesForCategory(category.id);
+                    return (
+                      <TableRow
+                        key={category.id}
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => setSelectedCategoryForView(category)}
+                      >
+                        <TableCell className="font-medium">
+                          {category.name}
+                        </TableCell>
+                        <TableCell>
+                          {category.description || "—"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              category.requirementLevel === "mandatory"
+                                ? "default"
+                                : "outline"
+                            }
+                          >
+                            {category.requirementLevel || "Optional"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium text-gray-800">
+                            {category.alertDaysBeforeExpiry || 30} days
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {assigned.length}/{employees.filter((e) => e.isActive).length}
+                            </Badge>
+                            <Dialog>
+                              <DialogTrigger asChild onClick={(e) => e.stopPropagation()}>
                                 <Button
-                                  variant="outline"
-                                  onClick={() => {
-                                    setEditingCategory(null);
-                                    setCategoryForm({
-                                      name: "",
-                                      description: "",
-                                      requirementLevel: "mandatory",
-                                      alertDaysBeforeExpiry: 30,
-                                    });
-                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => openEditCategory(category)}
                                 >
-                                  Cancel
+                                  <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button onClick={handleEditCategory}>
-                                  Save Changes
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit Ticket Category</DialogTitle>
+                                  <DialogDescription>
+                                    Update the ticket category details
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div className="space-y-2">
+                                    <Label>Category Name *</Label>
+                                    <Input
+                                      placeholder="e.g., Class 1 License, CPR Certification"
+                                      value={categoryForm.name}
+                                      onChange={(e) =>
+                                        setCategoryForm({
+                                          ...categoryForm,
+                                          name: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Description</Label>
+                                    <Input
+                                      placeholder="Optional description"
+                                      value={categoryForm.description}
+                                      onChange={(e) =>
+                                        setCategoryForm({
+                                          ...categoryForm,
+                                          description: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Requirement Level</Label>
+                                    <Select
+                                      value={categoryForm.requirementLevel}
+                                      onValueChange={(value) =>
+                                        setCategoryForm({
+                                          ...categoryForm,
+                                          requirementLevel: value as any,
+                                        })
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="mandatory">
+                                          Mandatory
+                                        </SelectItem>
+                                        <SelectItem value="recommended">
+                                          Recommended
+                                        </SelectItem>
+                                        <SelectItem value="optional">
+                                          Optional
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Alert Days Before Expiry</Label>
+                                    <Input
+                                      type="number"
+                                      min="1"
+                                      value={categoryForm.alertDaysBeforeExpiry}
+                                      onChange={(e) =>
+                                        setCategoryForm({
+                                          ...categoryForm,
+                                          alertDaysBeforeExpiry: parseInt(e.target.value) || 30,
+                                        })
+                                      }
+                                      placeholder="30"
+                                    />
+                                    <p className="text-xs text-gray-500">
+                                      Alert will trigger this many days before expiration
+                                    </p>
+                                  </div>
+                                </div>
+                                <DialogFooter>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingCategory(null);
+                                      setCategoryForm({
+                                        name: "",
+                                        description: "",
+                                        requirementLevel: "mandatory",
+                                        alertDaysBeforeExpiry: 30,
+                                      });
+                                    }}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button onClick={handleEditCategory}>
+                                    Save Changes
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                <Button variant="ghost" size="sm">
+                                  <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <Trash2 className="h-4 w-4 text-red-500" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Category</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete "{category.name}"?
-                                  This will also delete all associated employee tickets.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    handleDeleteCategory(category.id)
-                                  }
-                                  className="bg-red-600"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Category</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete "{category.name}"?
+                                    This will also delete all associated employee tickets.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() =>
+                                      handleDeleteCategory(category.id)
+                                    }
+                                    className="bg-red-600"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Category Assignment View Dialog */}
+      <Dialog open={selectedCategoryForView !== null} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedCategoryForView(null);
+          setQuickAddEmployeeId("");
+          setQuickAddDates({ expirationDate: "", issueDate: "" });
+        }
+      }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedCategoryForView?.name} - Assignment Overview
+            </DialogTitle>
+            <DialogDescription>
+              View which employees have this ticket assigned and quickly add more
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedCategoryForView && (() => {
+            const { assigned, unassigned } = getEmployeesForCategory(selectedCategoryForView.id);
+            const assignedTickets = employeeTickets.filter(
+              (t) => t.categoryId === selectedCategoryForView.id
+            );
+
+            return (
+              <div className="space-y-6 max-h-96 overflow-y-auto">
+                {/* Assigned Employees */}
+                {assigned.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5" />
+                      Assigned ({assigned.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {assigned.map((employee) => {
+                        const ticket = assignedTickets.find(
+                          (t) => t.employeeId === employee.id
+                        );
+                        if (!ticket) return null;
+
+                        const status = getTicketStatus(
+                          ticket.expirationDate,
+                          selectedCategoryForView.alertDaysBeforeExpiry || 30
+                        );
+
+                        return (
+                          <div
+                            key={employee.id}
+                            className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg"
+                          >
+                            <div>
+                              <p className="font-medium text-green-900">{employee.name}</p>
+                              <p className="text-xs text-green-700">
+                                Expires: {new Date(ticket.expirationDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <Badge className={status.color}>{status.label}</Badge>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Unassigned Employees */}
+                {unassigned.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-orange-700 mb-3 flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      Not Assigned ({unassigned.length})
+                    </h3>
+                    <div className="space-y-3">
+                      {unassigned.map((employee) => (
+                        <div
+                          key={employee.id}
+                          className="p-3 bg-orange-50 border border-orange-200 rounded-lg"
+                        >
+                          <div className="flex items-center justify-between gap-3 mb-2">
+                            <div>
+                              <p className="font-medium text-orange-900">{employee.name}</p>
+                              <p className="text-xs text-orange-700">{employee.title}</p>
+                            </div>
+                          </div>
+
+                          {/* Quick Add Form */}
+                          {quickAddEmployeeId === employee.id ? (
+                            <div className="space-y-2 mt-2 pt-2 border-t border-orange-200">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <Label className="text-xs">Expiration Date *</Label>
+                                  <Input
+                                    type="date"
+                                    value={quickAddDates.expirationDate}
+                                    onChange={(e) =>
+                                      setQuickAddDates({
+                                        ...quickAddDates,
+                                        expirationDate: e.target.value,
+                                      })
+                                    }
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Certification Date</Label>
+                                  <Input
+                                    type="date"
+                                    value={quickAddDates.issueDate}
+                                    onChange={(e) =>
+                                      setQuickAddDates({
+                                        ...quickAddDates,
+                                        issueDate: e.target.value,
+                                      })
+                                    }
+                                    className="h-8 text-sm"
+                                  />
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    setQuickAddEmployeeId(employee.id);
+                                    handleQuickAddTicket();
+                                  }}
+                                  className="flex-1 h-8"
+                                >
+                                  Add
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setQuickAddEmployeeId("");
+                                    setQuickAddDates({
+                                      expirationDate: "",
+                                      issueDate: "",
+                                    });
+                                  }}
+                                  className="flex-1 h-8"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setQuickAddEmployeeId(employee.id)}
+                              className="w-full h-8"
+                            >
+                              <Plus className="h-3 w-3 mr-1" />
+                              Add To Ticket
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {unassigned.length === 0 && assigned.length > 0 && (
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                    <p className="text-sm font-medium text-blue-900">
+                      ✓ All active employees have this ticket assigned
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedCategoryForView(null);
+                setQuickAddEmployeeId("");
+                setQuickAddDates({ expirationDate: "", issueDate: "" });
+              }}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Employee Summary Grid */}
       <Card>
