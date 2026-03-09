@@ -411,15 +411,18 @@ export function TicketsAndInsurances() {
   };
 
   const handleExportPDF = () => {
-    // Get only mandatory expired tickets
-    const mandatoryExpired = criticalTickets.filter(
-      (ticket) => ticket.requirementLevel === "mandatory" && ticket.status === "expired"
+    // Get all mandatory and recommended tickets
+    const mandatoryTickets = ticketsWithDetails.filter(
+      (ticket) => ticket.requirementLevel === "mandatory"
+    );
+    const recommendedTickets = ticketsWithDetails.filter(
+      (ticket) => ticket.requirementLevel === "recommended"
     );
 
-    if (mandatoryExpired.length === 0) {
+    if (mandatoryTickets.length === 0 && recommendedTickets.length === 0) {
       toast({
         title: "No Data to Export",
-        description: "There are no mandatory expired tickets to export",
+        description: "There are no mandatory or recommended tickets to export",
       });
       return;
     }
@@ -428,65 +431,119 @@ export function TicketsAndInsurances() {
     const dateStr = today.toLocaleDateString();
     const timeStr = today.toLocaleTimeString();
 
+    const generateTableRows = (tickets: typeof ticketsWithDetails) => {
+      return tickets
+        .map((ticket) => {
+          const expDate = new Date(ticket.expirationDate);
+          let statusBadge = "";
+          let statusColor = "";
+
+          if (ticket.status === "expired") {
+            statusBadge = "EXPIRED";
+            statusColor = "#dc2626";
+          } else if (ticket.status === "expiring-soon") {
+            statusBadge = "EXPIRING SOON";
+            statusColor = "#ea580c";
+          } else {
+            statusBadge = "VALID";
+            statusColor = "#16a34a";
+          }
+
+          const daysText =
+            ticket.status === "expired"
+              ? `${Math.floor((today.getTime() - expDate.getTime()) / (1000 * 60 * 60 * 24))} days ago`
+              : ticket.daysLabel || "—";
+
+          return `
+            <tr>
+              <td style="color: #1f2937; font-weight: 500;">${ticket.employeeName}</td>
+              <td style="color: #1f2937;">${ticket.categoryName}</td>
+              <td style="color: #1f2937;">${expDate.toLocaleDateString()}</td>
+              <td style="color: #1f2937;">${daysText}</td>
+              <td><span style="background-color: ${statusColor}; color: white; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">${statusBadge}</span></td>
+            </tr>
+          `;
+        })
+        .join("");
+    };
+
     const htmlContent = `
       <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
-            h1 { color: #dc2626; border-bottom: 3px solid #dc2626; padding-bottom: 10px; }
-            .report-date { color: #666; margin-bottom: 20px; font-size: 12px; }
+            body { font-family: Arial, sans-serif; margin: 20px; color: #1f2937; }
+            h1 { color: #1f2937; border-bottom: 3px solid #dc2626; padding-bottom: 10px; font-size: 24px; }
+            h2 { color: #1f2937; margin-top: 25px; margin-bottom: 12px; font-size: 16px; border-left: 4px solid #dc2626; padding-left: 10px; }
+            .report-date { color: #4b5563; margin-bottom: 20px; font-size: 13px; }
             .warning-box { background-color: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-            .warning-text { color: #991b1b; font-weight: bold; font-size: 14px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th { background-color: #dc2626; color: white; padding: 12px; text-align: left; font-weight: bold; }
-            td { padding: 10px 12px; border-bottom: 1px solid #ddd; }
-            tr:nth-child(even) { background-color: #fef2f2; }
-            .expired-badge { background-color: #dc2626; color: white; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; }
-            .footer { margin-top: 30px; font-size: 11px; color: #999; border-top: 1px solid #ddd; padding-top: 15px; }
-            .action-required { color: #991b1b; font-weight: bold; }
+            .warning-text { color: #7f1d1d; font-weight: bold; font-size: 14px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th { background-color: #dc2626; color: white; padding: 12px; text-align: left; font-weight: bold; border: 1px solid #991b1b; }
+            td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: #1f2937; }
+            tr:nth-child(even) { background-color: #f9fafb; }
+            .footer { margin-top: 30px; font-size: 12px; color: #4b5563; border-top: 1px solid #d1d5db; padding-top: 15px; }
+            .summary-box { background-color: #f3f4f6; padding: 12px; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #3b82f6; }
+            .summary-text { color: #1f2937; font-size: 13px; }
           </style>
         </head>
         <body>
-          <h1>⚠️ MANDATORY EXPIRED TICKETS/INSURANCES REPORT</h1>
+          <h1>📋 TICKETS & INSURANCES REPORT</h1>
           <div class="report-date">Generated: ${dateStr} at ${timeStr}</div>
 
-          <div class="warning-box">
-            <div class="warning-text">ACTION REQUIRED: The following employees have expired mandatory tickets/insurances and should not be assigned to work until renewed.</div>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Employee Name</th>
-                <th>Ticket/Insurance</th>
-                <th>Expired Date</th>
-                <th>Days Expired</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${mandatoryExpired
-                .map((ticket) => {
-                  const expDate = new Date(ticket.expirationDate);
-                  const daysExpired = Math.floor(
-                    (today.getTime() - expDate.getTime()) / (1000 * 60 * 60 * 24)
-                  );
-                  return `
+          ${
+            mandatoryTickets.length > 0
+              ? `
+            <h2>🔴 MANDATORY TICKETS/INSURANCES</h2>
+            <div class="warning-box">
+              <div class="warning-text">ACTION REQUIRED: Employees with expired mandatory tickets should not be assigned to work until renewed.</div>
+            </div>
+            <table>
+              <thead>
                 <tr>
-                  <td><strong>${ticket.employeeName}</strong></td>
-                  <td>${ticket.categoryName}</td>
-                  <td>${expDate.toLocaleDateString()}</td>
-                  <td class="action-required">${daysExpired} day${daysExpired !== 1 ? "s" : ""}</td>
-                  <td><span class="expired-badge">EXPIRED</span></td>
+                  <th>Employee Name</th>
+                  <th>Ticket/Insurance</th>
+                  <th>Expiration Date</th>
+                  <th>Status Details</th>
+                  <th>Status</th>
                 </tr>
-              `;
-                })
-                .join("")}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${generateTableRows(mandatoryTickets)}
+              </tbody>
+            </table>
+          `
+              : ""
+          }
+
+          ${
+            recommendedTickets.length > 0
+              ? `
+            <h2>🟠 RECOMMENDED TICKETS/INSURANCES</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee Name</th>
+                  <th>Ticket/Insurance</th>
+                  <th>Expiration Date</th>
+                  <th>Status Details</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${generateTableRows(recommendedTickets)}
+              </tbody>
+            </table>
+          `
+              : ""
+          }
 
           <div class="footer">
-            <p><strong>Report Summary:</strong> ${mandatoryExpired.length} employee(s) with expired mandatory ticket(s)/insurance(s)</p>
+            <div class="summary-box">
+              <p class="summary-text"><strong>Report Summary:</strong></p>
+              <p class="summary-text">• Mandatory Tickets: ${mandatoryTickets.length}</p>
+              <p class="summary-text">• Recommended Tickets: ${recommendedTickets.length}</p>
+              <p class="summary-text">• Total: ${mandatoryTickets.length + recommendedTickets.length}</p>
+            </div>
             <p>This report was automatically generated from the Trackity-doo system.</p>
           </div>
         </body>
@@ -498,7 +555,7 @@ export function TicketsAndInsurances() {
 
     const opt = {
       margin: 10,
-      filename: `Expired-Tickets-Report-${new Date().toISOString().split("T")[0]}.pdf`,
+      filename: `Tickets-Insurances-Report-${new Date().toISOString().split("T")[0]}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { orientation: "portrait", unit: "mm", format: "a4" },
@@ -508,7 +565,7 @@ export function TicketsAndInsurances() {
 
     toast({
       title: "PDF Exported",
-      description: `Report with ${mandatoryExpired.length} expired ticket(s) has been downloaded`,
+      description: `Report with ${mandatoryTickets.length + recommendedTickets.length} ticket(s) has been downloaded`,
     });
   };
 
