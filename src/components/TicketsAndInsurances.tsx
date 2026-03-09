@@ -456,10 +456,10 @@ export function TicketsAndInsurances() {
 
           return `
             <tr>
-              <td>${ticket.employeeName}</td>
-              <td>${ticket.categoryName}</td>
-              <td>${expDate.toLocaleDateString()}</td>
-              <td>${daysText}</td>
+              <td style="color: #000000;">${ticket.employeeName}</td>
+              <td style="color: #000000;">${ticket.categoryName}</td>
+              <td style="color: #000000;">${expDate.toLocaleDateString()}</td>
+              <td style="color: #000000;">${daysText}</td>
               <td><span style="background-color: ${statusColor}; color: white; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">${statusBadge}</span></td>
             </tr>
           `;
