@@ -425,12 +425,15 @@ export function TicketsAndInsurances() {
   };
 
   const getEmployeesForCategory = (categoryId: string) => {
-    const assigned = employeeTickets.filter((t) => t.categoryId === categoryId);
-    const assignedEmployeeIds = new Set(assigned.map((t) => t.employeeId));
+    const assignedTickets = employeeTickets.filter((t) => t.categoryId === categoryId);
+    const assignedEmployeeIds = new Set(assignedTickets.map((t) => t.employeeId));
+    const assigned = employees.filter(
+      (emp) => emp.isActive && assignedEmployeeIds.has(emp.id)
+    );
     const unassigned = employees.filter(
       (emp) => emp.isActive && !assignedEmployeeIds.has(emp.id)
     );
-    return { assigned, unassigned };
+    return { assigned, unassigned, assignedTickets };
   };
 
   const handleQuickAddTicket = () => {
@@ -1108,7 +1111,8 @@ export function TicketsAndInsurances() {
                 </TableHeader>
                 <TableBody>
                   {ticketCategories.map((category) => {
-                    const { assigned, unassigned } = getEmployeesForCategory(category.id);
+                    const { assigned } = getEmployeesForCategory(category.id);
+                    const activeEmployeeCount = employees.filter((e) => e.isActive).length;
                     return (
                       <TableRow
                         key={category.id}
@@ -1140,7 +1144,7 @@ export function TicketsAndInsurances() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Badge variant="secondary" className="text-xs">
-                              {assigned.length}/{employees.filter((e) => e.isActive).length}
+                              {assigned.length}/{activeEmployeeCount}
                             </Badge>
                             <Dialog>
                               <DialogTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -1312,10 +1316,7 @@ export function TicketsAndInsurances() {
           </DialogHeader>
 
           {selectedCategoryForView && (() => {
-            const { assigned, unassigned } = getEmployeesForCategory(selectedCategoryForView.id);
-            const assignedTickets = employeeTickets.filter(
-              (t) => t.categoryId === selectedCategoryForView.id
-            );
+            const { assigned, unassigned, assignedTickets } = getEmployeesForCategory(selectedCategoryForView.id);
 
             // Filter by selected letter
             const filterByLetter = (employees: typeof unassigned) => {
