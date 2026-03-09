@@ -637,7 +637,7 @@ export function JobOverviewDialog({
                   <span className="font-medium">Description:</span> {job.description}
                 </div>
               )}
-              {!isClientView && (
+              {viewMode === "internal" && (
                 <div className="text-sm text-gray-600">
                   <span className="font-medium">Billable:</span> {job.isBillable ? "Yes" : "No"}
                 </div>
@@ -706,7 +706,7 @@ export function JobOverviewDialog({
                       ))}
                       <TableRow className="font-semibold bg-gray-100">
                         <TableCell>Total</TableCell>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableCell className="text-right">
                             {safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours + e.travelHours, 0)).toFixed(2)}h
                             {employeeBreakdown.reduce((sum, e) => sum + e.travelHours, 0) > 0 && (
@@ -725,7 +725,7 @@ export function JobOverviewDialog({
                             </TableCell>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableCell className="text-right">
                               ${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.cost, 0)).toFixed(2)}
@@ -751,7 +751,7 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Title</TableHead>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableHead className="text-right">Total Hours</TableHead>
                         ) : (
                           <>
@@ -759,7 +759,7 @@ export function JobOverviewDialog({
                             <TableHead className="text-right">Travel Hours</TableHead>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
                             <TableHead className="text-right">Billable</TableHead>
@@ -771,7 +771,7 @@ export function JobOverviewDialog({
                       {titleBreakdown.map((title, idx) => (
                         <TableRow key={`title-${idx}-${title.title}`}>
                           <TableCell className="font-medium">{title.title}</TableCell>
-                          {isClientView ? (
+                          {viewMode === "client" ? (
                             <TableCell className="text-right">
                               {safeNumber(title.hours + title.travelHours).toFixed(2)}h
                               {title.travelHours > 0 && (
@@ -790,7 +790,7 @@ export function JobOverviewDialog({
                               </TableCell>
                             </>
                           )}
-                          {!isClientView && (
+                          {viewMode === "internal" && (
                             <>
                               <TableCell className="text-right">
                                 ${safeNumber(title.cost).toFixed(2)}
@@ -804,7 +804,7 @@ export function JobOverviewDialog({
                       ))}
                       <TableRow className="font-semibold bg-gray-100">
                         <TableCell>Total</TableCell>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableCell className="text-right">
                             {safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours + t.travelHours, 0)).toFixed(2)}h
                             {titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0) > 0 && (
@@ -823,7 +823,7 @@ export function JobOverviewDialog({
                             </TableCell>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableCell className="text-right">
                               ${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.cost, 0)).toFixed(2)}
@@ -849,7 +849,7 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Month</TableHead>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableHead className="text-right">Total Hours</TableHead>
                         ) : (
                           <>
@@ -857,7 +857,7 @@ export function JobOverviewDialog({
                             <TableHead className="text-right">Travel Hours</TableHead>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
                             <TableHead className="text-right">Billable</TableHead>
@@ -869,7 +869,7 @@ export function JobOverviewDialog({
                       {monthlyBreakdown.map((month, idx) => (
                         <TableRow key={`month-${idx}-${month.key}`}>
                           <TableCell className="font-medium">{month.label}</TableCell>
-                          {isClientView ? (
+                          {viewMode === "client" ? (
                             <TableCell className="text-right">
                               {safeNumber(month.hours + month.travelHours).toFixed(2)}h
                               {month.travelHours > 0 && (
@@ -888,7 +888,7 @@ export function JobOverviewDialog({
                               </TableCell>
                             </>
                           )}
-                          {!isClientView && (
+                          {viewMode === "internal" && (
                             <>
                               <TableCell className="text-right">
                                 ${safeNumber(month.cost).toFixed(2)}
@@ -902,7 +902,7 @@ export function JobOverviewDialog({
                       ))}
                       <TableRow className="font-semibold bg-gray-100">
                         <TableCell>Total</TableCell>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableCell className="text-right">
                             {safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours + m.travelHours, 0)).toFixed(2)}h
                             {monthlyBreakdown.reduce((sum, m) => sum + m.travelHours, 0) > 0 && (
@@ -921,7 +921,7 @@ export function JobOverviewDialog({
                             </TableCell>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableCell className="text-right">
                               ${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.cost, 0)).toFixed(2)}
@@ -947,7 +947,7 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Week</TableHead>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableHead className="text-right">Total Hours</TableHead>
                         ) : (
                           <>
@@ -955,7 +955,7 @@ export function JobOverviewDialog({
                             <TableHead className="text-right">Travel Hours</TableHead>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
                             <TableHead className="text-right">Billable</TableHead>
@@ -967,7 +967,7 @@ export function JobOverviewDialog({
                       {weeklyBreakdown.map((week, idx) => (
                         <TableRow key={`week-${idx}-${week.key}`}>
                           <TableCell className="font-medium">{week.label}</TableCell>
-                          {isClientView ? (
+                          {viewMode === "client" ? (
                             <TableCell className="text-right">
                               {safeNumber(week.hours + week.travelHours).toFixed(2)}h
                               {week.travelHours > 0 && (
@@ -986,7 +986,7 @@ export function JobOverviewDialog({
                               </TableCell>
                             </>
                           )}
-                          {!isClientView && (
+                          {viewMode === "internal" && (
                             <>
                               <TableCell className="text-right">
                                 ${safeNumber(week.cost).toFixed(2)}
@@ -1000,7 +1000,7 @@ export function JobOverviewDialog({
                       ))}
                       <TableRow className="font-semibold bg-gray-100">
                         <TableCell>Total</TableCell>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableCell className="text-right">
                             {safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours + w.travelHours, 0)).toFixed(2)}h
                             {weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0) > 0 && (
@@ -1019,7 +1019,7 @@ export function JobOverviewDialog({
                             </TableCell>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableCell className="text-right">
                               ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.cost, 0)).toFixed(2)}
