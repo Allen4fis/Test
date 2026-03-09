@@ -766,19 +766,45 @@ export function TicketsAndInsurances() {
             ) : (
               <Accordion type="single" collapsible className="space-y-2">
                 {filteredTickets.map((ticket) => (
-                  <AccordionItem key={ticket.id} value={ticket.id} className="border rounded-lg px-4">
+                  <AccordionItem
+                    key={ticket.id}
+                    value={ticket.id}
+                    className={`border rounded-lg px-4 ${
+                      ticket.excludeFromAlert
+                        ? "bg-orange-50 border-orange-300"
+                        : "border-gray-300"
+                    }`}
+                  >
                     <AccordionTrigger className="hover:no-underline py-3">
                       <div className="flex items-center justify-between gap-4 flex-1 text-left">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           {!selectedEmployeeId && (
-                            <div className="text-sm font-medium text-white min-w-fit">
+                            <div
+                              className={`text-sm font-medium min-w-fit ${
+                                ticket.excludeFromAlert
+                                  ? "text-orange-700"
+                                  : "text-white"
+                              }`}
+                            >
                               {ticket.employeeName}
                             </div>
                           )}
-                          <div className="text-sm font-medium text-white">
+                          <div
+                            className={`text-sm font-medium ${
+                              ticket.excludeFromAlert
+                                ? "text-orange-700"
+                                : "text-white"
+                            }`}
+                          >
                             {ticket.categoryName}
                           </div>
-                          <div className="text-xs text-gray-300">
+                          <div
+                            className={`text-xs ${
+                              ticket.excludeFromAlert
+                                ? "text-orange-600"
+                                : "text-gray-300"
+                            }`}
+                          >
                             Exp: {new Date(ticket.expirationDate).toLocaleDateString()}
                           </div>
                         </div>
