@@ -206,6 +206,62 @@ export function JobOverviewDialog({
       element.style.backgroundColor = 'white';
       element.style.color = 'black';
 
+      // Filter entries for DSP view if selected
+      const filteredEntries = viewMode === "dsp"
+        ? jobEntries.filter(e => selectedDSPEmployees.includes(e.employeeName))
+        : jobEntries;
+
+      // Create filtered breakdowns for DSP view
+      const filteredEmployeeBreakdown = Array.from(
+        filteredEntries.reduce((map, entry) => {
+          const key = entry.employeeName;
+          if (!map.has(key)) {
+            map.set(key, {
+              name: entry.employeeName,
+              hours: 0,
+              travelHours: 0,
+              cost: 0,
+              billable: 0,
+            });
+          }
+          const data = map.get(key)!;
+          const isTravelHours = entry.hourTypeName === 'Travel Hours';
+          if (isTravelHours) {
+            data.travelHours += safeNumber(entry.hours);
+          } else {
+            data.hours += safeNumber(entry.hours);
+          }
+          data.cost += safeNumber(entry.totalCost);
+          data.billable += safeNumber(entry.totalBillableAmount);
+          return map;
+        }, new Map<string, { name: string; hours: number; travelHours: number; cost: number; billable: number }>()).values()
+      ).sort((a, b) => (b.hours + b.travelHours) - (a.hours + a.travelHours));
+
+      const filteredTitleBreakdown = Array.from(
+        filteredEntries.reduce((map, entry) => {
+          const key = entry.employeeTitle;
+          if (!map.has(key)) {
+            map.set(key, {
+              title: entry.employeeTitle,
+              hours: 0,
+              travelHours: 0,
+              cost: 0,
+              billable: 0,
+            });
+          }
+          const data = map.get(key)!;
+          const isTravelHours = entry.hourTypeName === 'Travel Hours';
+          if (isTravelHours) {
+            data.travelHours += safeNumber(entry.hours);
+          } else {
+            data.hours += safeNumber(entry.hours);
+          }
+          data.cost += safeNumber(entry.totalCost);
+          data.billable += safeNumber(entry.totalBillableAmount);
+          return map;
+        }, new Map<string, { title: string; hours: number; travelHours: number; cost: number; billable: number }>()).values()
+      ).sort((a, b) => (b.hours + b.travelHours) - (a.hours + a.travelHours));
+
       // Filter data for DSP view if selected
       const filteredDateBasedBreakdown = viewMode === "dsp"
         ? dateBasedBreakdown.map(dayData => ({
@@ -213,6 +269,78 @@ export function JobOverviewDialog({
             entries: dayData.entries.filter(e => selectedDSPEmployees.includes(e.employeeName))
           })).filter(dayData => dayData.entries.length > 0)
         : dateBasedBreakdown;
+
+      const filteredMonthlyBreakdown = Array.from(
+        filteredEntries.reduce((map, entry) => {
+          const date = new Date(entry.date);
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          const monthLabel = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+          if (!map.has(monthKey)) {
+            map.set(monthKey, {
+              key: monthKey,
+              label: monthLabel,
+              hours: 0,
+              travelHours: 0,
+              cost: 0,
+              billable: 0,
+              entries: [],
+            });
+          }
+          const data = map.get(monthKey)!;
+          const isTravelHours = entry.hourTypeName === 'Travel Hours';
+          if (isTravelHours) {
+            data.travelHours += safeNumber(entry.hours);
+          } else {
+            data.hours += safeNumber(entry.hours);
+          }
+          data.cost += safeNumber(entry.totalCost);
+          data.billable += safeNumber(entry.totalBillableAmount);
+          data.entries.push(entry);
+          return map;
+        }, new Map<string, { key: string; label: string; hours: number; travelHours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
+      ).sort((a, b) => a.key.localeCompare(b.key));
+
+      const getWeekStart = (date: Date) => {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day;
+        return new Date(d.setDate(diff));
+      };
+
+      const filteredWeeklyBreakdown = Array.from(
+        filteredEntries.reduce((map, entry) => {
+          const date = new Date(entry.date);
+          const weekStart = getWeekStart(date);
+          const weekKey = weekStart.toISOString().split('T')[0];
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekEnd.getDate() + 6);
+          const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+          if (!map.has(weekKey)) {
+            map.set(weekKey, {
+              key: weekKey,
+              label: weekLabel,
+              hours: 0,
+              travelHours: 0,
+              cost: 0,
+              billable: 0,
+              entries: [],
+            });
+          }
+          const data = map.get(weekKey)!;
+          const isTravelHours = entry.hourTypeName === 'Travel Hours';
+          if (isTravelHours) {
+            data.travelHours += safeNumber(entry.hours);
+          } else {
+            data.hours += safeNumber(entry.hours);
+          }
+          data.cost += safeNumber(entry.totalCost);
+          data.billable += safeNumber(entry.totalBillableAmount);
+          data.entries.push(entry);
+          return map;
+        }, new Map<string, { key: string; label: string; hours: number; travelHours: number; cost: number; billable: number; entries: TimeEntrySummary[] }>()).values()
+      ).sort((a, b) => a.key.localeCompare(b.key));
 
       const dateBasedBreakdownHTML = filteredDateBasedBreakdown.map((dayData) => {
         // Parse date string as local date, not UTC
@@ -271,6 +399,11 @@ export function JobOverviewDialog({
         ? `<p style="margin: 0 0 20px 0; font-size: 12px; color: #666666; font-style: italic;">Filtered for: ${selectedDSPEmployees.join(", ")}</p>`
         : "";
 
+      const filteredTotalHours = filteredEntries.reduce(
+        (sum, entry) => sum + safeNumber(entry.hours),
+        0
+      );
+
       element.innerHTML = `
         <h1 style="margin-top: 0; font-size: 28px; color: #000000;">Job Overview${viewLabel}</h1>
         <p style="margin: 0 0 20px 0; font-size: 14px; color: #000000;"><strong>${job.jobNumber} - ${job.name}</strong></p>
@@ -278,7 +411,7 @@ export function JobOverviewDialog({
 
         <div style="margin-bottom: 16px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
           <p style="margin: 0; font-size: 12px; color: #000000; font-weight: bold;">Total Hours</p>
-          <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold; color: #000000;">${safeNumber(totalHours).toFixed(2)}</p>
+          <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold; color: #000000;">${safeNumber(viewMode === "dsp" ? filteredTotalHours : totalHours).toFixed(2)}</p>
         </div>
 
         <div style="margin-bottom: 20px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
@@ -286,7 +419,7 @@ export function JobOverviewDialog({
           <span style="color: #000000;">${job.isActive ? 'Active' : 'Inactive'}</span>
         </div>
 
-        ${employeeBreakdown.length > 0 ? `
+        ${filteredEmployeeBreakdown.length > 0 ? `
           <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Employee Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
@@ -296,7 +429,7 @@ export function JobOverviewDialog({
               </tr>
             </thead>
             <tbody>
-              ${employeeBreakdown.map(emp => `
+              ${filteredEmployeeBreakdown.map(emp => `
                 <tr>
                   <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${emp.name}</td>
                   <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
@@ -308,15 +441,15 @@ export function JobOverviewDialog({
               <tr style="font-weight: bold; background-color: #cccccc;">
                 <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
                 <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
-                  ${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours + e.travelHours, 0)).toFixed(2)}h
-                  ${employeeBreakdown.reduce((sum, e) => sum + e.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h + ${safeNumber(employeeBreakdown.reduce((sum, e) => sum + e.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
+                  ${safeNumber(filteredEmployeeBreakdown.reduce((sum, e) => sum + e.hours + e.travelHours, 0)).toFixed(2)}h
+                  ${filteredEmployeeBreakdown.reduce((sum, e) => sum + e.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(filteredEmployeeBreakdown.reduce((sum, e) => sum + e.hours, 0)).toFixed(2)}h + ${safeNumber(filteredEmployeeBreakdown.reduce((sum, e) => sum + e.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
                 </td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
-        ${titleBreakdown.length > 0 ? `
+        ${filteredTitleBreakdown.length > 0 ? `
           <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Title Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
@@ -326,7 +459,7 @@ export function JobOverviewDialog({
               </tr>
             </thead>
             <tbody>
-              ${titleBreakdown.map(title => `
+              ${filteredTitleBreakdown.map(title => `
                 <tr>
                   <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${title.title}</td>
                   <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
@@ -338,15 +471,15 @@ export function JobOverviewDialog({
               <tr style="font-weight: bold; background-color: #cccccc;">
                 <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
                 <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
-                  ${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours + t.travelHours, 0)).toFixed(2)}h
-                  ${titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h + ${safeNumber(titleBreakdown.reduce((sum, t) => sum + t.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
+                  ${safeNumber(filteredTitleBreakdown.reduce((sum, t) => sum + t.hours + t.travelHours, 0)).toFixed(2)}h
+                  ${filteredTitleBreakdown.reduce((sum, t) => sum + t.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(filteredTitleBreakdown.reduce((sum, t) => sum + t.hours, 0)).toFixed(2)}h + ${safeNumber(filteredTitleBreakdown.reduce((sum, t) => sum + t.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
                 </td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
-        ${monthlyBreakdown.length > 0 ? `
+        ${filteredMonthlyBreakdown.length > 0 ? `
           <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Monthly Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
@@ -356,7 +489,7 @@ export function JobOverviewDialog({
               </tr>
             </thead>
             <tbody>
-              ${monthlyBreakdown.map(month => `
+              ${filteredMonthlyBreakdown.map(month => `
                 <tr>
                   <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${month.label}</td>
                   <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
@@ -368,15 +501,15 @@ export function JobOverviewDialog({
               <tr style="font-weight: bold; background-color: #cccccc;">
                 <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
                 <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
-                  ${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours + m.travelHours, 0)).toFixed(2)}h
-                  ${monthlyBreakdown.reduce((sum, m) => sum + m.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h + ${safeNumber(monthlyBreakdown.reduce((sum, m) => sum + m.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
+                  ${safeNumber(filteredMonthlyBreakdown.reduce((sum, m) => sum + m.hours + m.travelHours, 0)).toFixed(2)}h
+                  ${filteredMonthlyBreakdown.reduce((sum, m) => sum + m.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(filteredMonthlyBreakdown.reduce((sum, m) => sum + m.hours, 0)).toFixed(2)}h + ${safeNumber(filteredMonthlyBreakdown.reduce((sum, m) => sum + m.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
                 </td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
-        ${weeklyBreakdown.length > 0 ? `
+        ${filteredWeeklyBreakdown.length > 0 ? `
           <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Weekly Breakdown</h2>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
@@ -386,7 +519,7 @@ export function JobOverviewDialog({
               </tr>
             </thead>
             <tbody>
-              ${weeklyBreakdown.map(week => `
+              ${filteredWeeklyBreakdown.map(week => `
                 <tr>
                   <td style="padding: 8px; border: 1px solid #000000; color: #000000;">${week.label}</td>
                   <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
@@ -398,15 +531,15 @@ export function JobOverviewDialog({
               <tr style="font-weight: bold; background-color: #cccccc;">
                 <td style="padding: 8px; border: 1px solid #000000; color: #000000;">Total</td>
                 <td style="padding: 8px; border: 1px solid #000000; text-align: right; color: #000000;">
-                  ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours + w.travelHours, 0)).toFixed(2)}h
-                  ${weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.hours, 0)).toFixed(2)}h + ${safeNumber(weeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
+                  ${safeNumber(filteredWeeklyBreakdown.reduce((sum, w) => sum + w.hours + w.travelHours, 0)).toFixed(2)}h
+                  ${filteredWeeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0) > 0 ? `<div style="font-size: 11px; color: #666666; margin-top: 2px;">(${safeNumber(filteredWeeklyBreakdown.reduce((sum, w) => sum + w.hours, 0)).toFixed(2)}h + ${safeNumber(filteredWeeklyBreakdown.reduce((sum, w) => sum + w.travelHours, 0)).toFixed(2)}h trv)</div>` : ''}
                 </td>
               </tr>
             </tbody>
           </table>
         ` : ''}
 
-        ${dateBasedBreakdown.length > 0 ? `
+        ${filteredDateBasedBreakdown.length > 0 ? `
           <h2 style="font-size: 18px; margin: 20px 0 10px 0; border-bottom: 2px solid #000000; padding-bottom: 5px; color: #000000;">Time Entry Details</h2>
           ${dateBasedBreakdownHTML}
         ` : ''}
