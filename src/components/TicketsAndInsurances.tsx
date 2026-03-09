@@ -488,15 +488,15 @@ export function TicketsAndInsurances() {
           </style>
         </head>
         <body>
-          <h1>📋 TICKETS & INSURANCES REPORT</h1>
-          <div class="report-date">Generated: ${dateStr} at ${timeStr}</div>
+          <h1 style="color: #000000;">📋 TICKETS & INSURANCES REPORT</h1>
+          <div class="report-date" style="color: #000000;">Generated: ${dateStr} at ${timeStr}</div>
 
           ${
             mandatoryTickets.length > 0
               ? `
-            <h2>🔴 MANDATORY TICKETS/INSURANCES</h2>
+            <h2 style="color: #000000;">🔴 MANDATORY TICKETS/INSURANCES</h2>
             <div class="warning-box">
-              <div class="warning-text">ACTION REQUIRED: Employees with expired mandatory tickets should not be assigned to work until renewed.</div>
+              <div class="warning-text" style="color: #7f1d1d;">ACTION REQUIRED: Employees with expired mandatory tickets should not be assigned to work until renewed.</div>
             </div>
             <table>
               <thead>
@@ -519,7 +519,7 @@ export function TicketsAndInsurances() {
           ${
             recommendedTickets.length > 0
               ? `
-            <h2>🟠 RECOMMENDED TICKETS/INSURANCES</h2>
+            <h2 style="color: #000000;">🟠 RECOMMENDED TICKETS/INSURANCES</h2>
             <table>
               <thead>
                 <tr>
@@ -538,14 +538,14 @@ export function TicketsAndInsurances() {
               : ""
           }
 
-          <div class="footer">
-            <div class="summary-box">
-              <p class="summary-text"><strong>Report Summary:</strong></p>
-              <p class="summary-text">• Mandatory Tickets: ${mandatoryTickets.length}</p>
-              <p class="summary-text">• Recommended Tickets: ${recommendedTickets.length}</p>
-              <p class="summary-text">• Total: ${mandatoryTickets.length + recommendedTickets.length}</p>
+          <div class="footer" style="color: #000000;">
+            <div class="summary-box" style="color: #000000;">
+              <p class="summary-text" style="color: #000000;"><strong>Report Summary:</strong></p>
+              <p class="summary-text" style="color: #000000;">• Mandatory Tickets: ${mandatoryTickets.length}</p>
+              <p class="summary-text" style="color: #000000;">• Recommended Tickets: ${recommendedTickets.length}</p>
+              <p class="summary-text" style="color: #000000;">• Total: ${mandatoryTickets.length + recommendedTickets.length}</p>
             </div>
-            <p>This report was automatically generated from the Trackity-doo system.</p>
+            <p style="color: #000000;">This report was automatically generated from the Trackity-doo system.</p>
           </div>
         </body>
       </html>
