@@ -93,6 +93,7 @@ export function TicketsAndInsurances() {
     expirationDate: "",
     issueDate: "",
   });
+  const [selectedLetterFilter, setSelectedLetterFilter] = useState<string | null>(null);
 
   const [categoryForm, setCategoryForm] = useState({
     name: "",
@@ -1297,6 +1298,7 @@ export function TicketsAndInsurances() {
           setSelectedCategoryForView(null);
           setQuickAddEmployeeId("");
           setQuickAddDates({ expirationDate: "", issueDate: "" });
+          setSelectedLetterFilter(null);
         }
       }}>
         <DialogContent className="max-w-2xl">
@@ -1315,17 +1317,69 @@ export function TicketsAndInsurances() {
               (t) => t.categoryId === selectedCategoryForView.id
             );
 
+            // Filter by selected letter
+            const filterByLetter = (employees: typeof unassigned) => {
+              if (!selectedLetterFilter) return employees;
+              return employees.filter((emp) =>
+                emp.name.charAt(0).toUpperCase() === selectedLetterFilter
+              );
+            };
+
+            const filteredAssigned = filterByLetter(assigned);
+            const filteredUnassigned = filterByLetter(unassigned);
+
+            // Get unique first letters for A-Z selector
+            const allEmployees = [...assigned, ...unassigned];
+            const availableLetters = Array.from(
+              new Set(
+                allEmployees.map((emp) => emp.name.charAt(0).toUpperCase())
+              )
+            )
+              .sort()
+              .filter((letter) => /^[A-Z]$/.test(letter));
+
             return (
-              <div className="space-y-6 max-h-96 overflow-y-auto">
-                {/* Assigned Employees */}
-                {assigned.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5" />
-                      Assigned ({assigned.length})
-                    </h3>
-                    <div className="space-y-2">
-                      {assigned.map((employee) => {
+              <div className="space-y-6">
+                {/* A-Z Letter Selector */}
+                <div className="flex flex-wrap gap-1 sticky top-0 bg-white pb-2 -mb-2">
+                  <Button
+                    size="sm"
+                    variant={selectedLetterFilter === null ? "default" : "outline"}
+                    onClick={() => setSelectedLetterFilter(null)}
+                    className="h-8 text-xs"
+                  >
+                    All
+                  </Button>
+                  {availableLetters.map((letter) => (
+                    <Button
+                      key={letter}
+                      size="sm"
+                      variant={selectedLetterFilter === letter ? "default" : "outline"}
+                      onClick={() => setSelectedLetterFilter(letter)}
+                      className="h-8 w-8 text-xs p-0"
+                    >
+                      {letter}
+                    </Button>
+                  ))}
+                </div>
+
+                {/* Results summary */}
+                {selectedLetterFilter && (
+                  <div className="text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded border border-blue-200">
+                    Showing employees starting with "<strong>{selectedLetterFilter}</strong>"
+                  </div>
+                )}
+
+                <div className="max-h-96 overflow-y-auto space-y-6">
+                  {/* Assigned Employees */}
+                  {filteredAssigned.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5" />
+                        Assigned ({filteredAssigned.length})
+                      </h3>
+                      <div className="space-y-2">
+                        {filteredAssigned.map((employee) => {
                         const ticket = assignedTickets.find(
                           (t) => t.employeeId === employee.id
                         );
@@ -1350,20 +1404,20 @@ export function TicketsAndInsurances() {
                             <Badge className={status.color}>{status.label}</Badge>
                           </div>
                         );
-                      })}
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Unassigned Employees */}
-                {unassigned.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-orange-700 mb-3 flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5" />
-                      Not Assigned ({unassigned.length})
-                    </h3>
-                    <div className="space-y-3">
-                      {unassigned.map((employee) => (
+                  {/* Unassigned Employees */}
+                  {filteredUnassigned.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-orange-700 mb-3 flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        Not Assigned ({filteredUnassigned.length})
+                      </h3>
+                      <div className="space-y-3">
+                        {filteredUnassigned.map((employee) => (
                         <div
                           key={employee.id}
                           className="p-3 bg-orange-50 border border-orange-200 rounded-lg"
@@ -1448,17 +1502,26 @@ export function TicketsAndInsurances() {
                           )}
                         </div>
                       ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {unassigned.length === 0 && assigned.length > 0 && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
-                    <p className="text-sm font-medium text-blue-900">
-                      ✓ All active employees have this ticket assigned
-                    </p>
-                  </div>
-                )}
+                  {filteredUnassigned.length === 0 && filteredAssigned.length > 0 && !selectedLetterFilter && (
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                      <p className="text-sm font-medium text-blue-900">
+                        ✓ All active employees have this ticket assigned
+                      </p>
+                    </div>
+                  )}
+
+                  {filteredAssigned.length === 0 && filteredUnassigned.length === 0 && selectedLetterFilter && (
+                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                      <p className="text-sm font-medium text-gray-700">
+                        No employees starting with "{selectedLetterFilter}"
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })()}
@@ -1470,6 +1533,7 @@ export function TicketsAndInsurances() {
                 setSelectedCategoryForView(null);
                 setQuickAddEmployeeId("");
                 setQuickAddDates({ expirationDate: "", issueDate: "" });
+                setSelectedLetterFilter(null);
               }}
             >
               Close
