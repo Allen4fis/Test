@@ -213,21 +213,6 @@ const Index = () => {
 
   return (
     <Layout timeTracking={timeTracking}>
-      {/* Performance indicator for large datasets */}
-      {useOptimized && !hasError && (
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-4">
-          <div className="flex items-center">
-            <div className="ml-3">
-              <p className="text-sm text-blue-700">
-                🚀 <strong>Optimized Mode:</strong> Enhanced performance for
-                large dataset detected ({dataMetrics.employeeCount} employees,{" "}
-                {dataMetrics.jobCount} jobs, {dataMetrics.timeEntryCount} time
-                entries)
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
       {renderView()}
     </Layout>
   );
