@@ -206,7 +206,15 @@ export function JobOverviewDialog({
       element.style.backgroundColor = 'white';
       element.style.color = 'black';
 
-      const dateBasedBreakdownHTML = dateBasedBreakdown.map((dayData) => {
+      // Filter data for DSP view if selected
+      const filteredDateBasedBreakdown = viewMode === "dsp"
+        ? dateBasedBreakdown.map(dayData => ({
+            ...dayData,
+            entries: dayData.entries.filter(e => selectedDSPEmployees.includes(e.employeeName))
+          })).filter(dayData => dayData.entries.length > 0)
+        : dateBasedBreakdown;
+
+      const dateBasedBreakdownHTML = filteredDateBasedBreakdown.map((dayData) => {
         // Parse date string as local date, not UTC
         const [year, month, day] = dayData.date.split('-');
         const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
@@ -258,9 +266,15 @@ export function JobOverviewDialog({
         `;
       }).join('');
 
+      const viewLabel = viewMode === "dsp" ? " - DSP Billing Report" : "";
+      const selectedEmployeesText = viewMode === "dsp" && selectedDSPEmployees.length > 0
+        ? `<p style="margin: 0 0 20px 0; font-size: 12px; color: #666666; font-style: italic;">Filtered for: ${selectedDSPEmployees.join(", ")}</p>`
+        : "";
+
       element.innerHTML = `
-        <h1 style="margin-top: 0; font-size: 28px; color: #000000;">Job Overview</h1>
+        <h1 style="margin-top: 0; font-size: 28px; color: #000000;">Job Overview${viewLabel}</h1>
         <p style="margin: 0 0 20px 0; font-size: 14px; color: #000000;"><strong>${job.jobNumber} - ${job.name}</strong></p>
+        ${selectedEmployeesText}
 
         <div style="margin-bottom: 16px; padding: 12px; border: 2px solid #000000; background-color: #ffffff;">
           <p style="margin: 0; font-size: 12px; color: #000000; font-weight: bold;">Total Hours</p>
