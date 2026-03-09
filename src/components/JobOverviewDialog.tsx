@@ -39,7 +39,8 @@ export function JobOverviewDialog({
   onOpenChange,
 }: JobOverviewDialogProps) {
   const [isPrinting, setIsPrinting] = useState(false);
-  const [isClientView, setIsClientView] = useState(false);
+  const [viewMode, setViewMode] = useState<"internal" | "client" | "dsp">("internal");
+  const [selectedDSPEmployees, setSelectedDSPEmployees] = useState<string[]>([]);
 
   if (!job) return null;
 
@@ -427,20 +428,78 @@ export function JobOverviewDialog({
 
           <div className="space-y-6">
             {/* View Toggle */}
-            <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
-              <span className="text-sm font-medium text-gray-700">
-                {isClientView ? "👥 Client View" : "👨‍💼 Internal View"}
-              </span>
-              <button
-                onClick={() => setIsClientView(!isClientView)}
-                className="px-3 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors"
-              >
-                {isClientView ? "Show Internal Data" : "Show Client View"}
-              </button>
+            <div className="bg-gray-100 p-3 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  {viewMode === "internal" && "👨‍💼 Internal View"}
+                  {viewMode === "client" && "👥 Client View"}
+                  {viewMode === "dsp" && "💼 DSP Billing View"}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode("internal")}
+                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                    viewMode === "internal"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 border border-gray-300 hover:border-blue-500"
+                  }`}
+                >
+                  Internal
+                </button>
+                <button
+                  onClick={() => setViewMode("client")}
+                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                    viewMode === "client"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 border border-gray-300 hover:border-blue-500"
+                  }`}
+                >
+                  Client
+                </button>
+                <button
+                  onClick={() => setViewMode("dsp")}
+                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                    viewMode === "dsp"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 border border-gray-300 hover:border-blue-500"
+                  }`}
+                >
+                  DSP Billing
+                </button>
+              </div>
+
+              {/* DSP Employee Selection */}
+              {viewMode === "dsp" && employeeBreakdown.length > 0 && (
+                <div className="bg-white p-3 rounded border border-gray-200">
+                  <p className="text-xs font-medium text-gray-700 mb-2">Select Employees to Display:</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {employeeBreakdown.map((emp) => (
+                      <label key={emp.name} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selectedDSPEmployees.includes(emp.name)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedDSPEmployees([...selectedDSPEmployees, emp.name]);
+                            } else {
+                              setSelectedDSPEmployees(
+                                selectedDSPEmployees.filter((n) => n !== emp.name)
+                              );
+                            }
+                          }}
+                          className="rounded"
+                        />
+                        <span className="text-xs text-gray-700">{emp.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Summary Cards */}
-            {!isClientView && (
+            {viewMode !== "dsp" && viewMode !== "client" && (
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <p className="text-sm text-gray-600 font-medium">Total Hours</p>
@@ -463,12 +522,105 @@ export function JobOverviewDialog({
               </div>
             )}
 
-            {isClientView && (
+            {viewMode === "client" && (
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                 <p className="text-sm text-gray-600 font-medium">Total Hours</p>
                 <p className="text-3xl font-bold text-blue-600 mt-1">
                   {safeNumber(totalHours).toFixed(2)}
                 </p>
+              </div>
+            )}
+
+            {/* DSP Billing View */}
+            {viewMode === "dsp" && (
+              <div>
+                {selectedDSPEmployees.length === 0 ? (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                    <p className="text-gray-700 font-medium">Select employees above to view their daily billing details</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                      <p className="text-xs font-medium text-gray-600">Total Hours (Selected Employees)</p>
+                      <p className="text-2xl font-bold text-blue-600 mt-1">
+                        {safeNumber(
+                          dateBasedBreakdown.reduce((sum, day) => {
+                            const dayTotal = day.entries
+                              .filter((e) => selectedDSPEmployees.includes(e.employeeName))
+                              .reduce((s, e) => s + safeNumber(e.hours), 0);
+                            return sum + dayTotal;
+                          }, 0)
+                        ).toFixed(2)}h
+                      </p>
+                    </div>
+
+                    {/* DSP Daily Breakdown */}
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold">Daily Billing Details</h3>
+                      {dateBasedBreakdown.map((dayData) => {
+                        const [year, month, day] = dayData.date.split('-');
+                        const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                        const formattedDate = dateObj.toLocaleDateString('en-US', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        });
+
+                        const filteredEntries = dayData.entries.filter((e) =>
+                          selectedDSPEmployees.includes(e.employeeName)
+                        );
+
+                        if (filteredEntries.length === 0) return null;
+
+                        const employeesByDate = Array.from(
+                          filteredEntries.reduce((map, entry) => {
+                            const key = entry.employeeName;
+                            if (!map.has(key)) {
+                              map.set(key, { name: entry.employeeName, workHours: 0, travelHours: 0, loaCount: 0 });
+                            }
+                            const data = map.get(key)!;
+                            const isTravelHours = entry.hourTypeName === 'Travel Hours';
+                            if (isTravelHours) {
+                              data.travelHours += safeNumber(entry.hours);
+                            } else {
+                              data.workHours += safeNumber(entry.hours);
+                            }
+                            data.loaCount += safeNumber(entry.loaCount) || 0;
+                            return map;
+                          }, new Map<string, { name: string; workHours: number; travelHours: number; loaCount: number }>()).values()
+                        );
+
+                        const dayTotalHours = filteredEntries.reduce((sum, e) => sum + safeNumber(e.hours), 0);
+
+                        return (
+                          <div key={dayData.date} className="border rounded-lg p-3 bg-white">
+                            <div className="flex items-center justify-between mb-3 pb-2 border-b">
+                              <p className="font-bold text-blue-700">{formattedDate}</p>
+                              <p className="text-sm font-semibold text-blue-600">{dayTotalHours.toFixed(2)}h</p>
+                            </div>
+                            <div className="space-y-2">
+                              {employeesByDate.map((emp) => {
+                                const loaText = emp.loaCount > 0 ? ` • ${emp.loaCount} LoA` : '';
+                                const totalEmpHours = emp.workHours + emp.travelHours;
+                                return (
+                                  <div key={emp.name} className="flex items-center justify-between text-sm pl-3">
+                                    <span className="font-medium text-gray-900">{emp.name}</span>
+                                    <span className="font-semibold text-blue-600">
+                                      {emp.workHours > 0 && `${emp.workHours.toFixed(2)}h`}
+                                      {emp.travelHours > 0 && ` • ${emp.travelHours.toFixed(2)} Travel`}
+                                      {loaText}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -493,7 +645,7 @@ export function JobOverviewDialog({
             </div>
 
             {/* Employee Breakdown */}
-            {employeeBreakdown.length > 0 && (
+            {employeeBreakdown.length > 0 && viewMode !== "dsp" && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Employee Breakdown</h3>
                 <div className="overflow-x-auto">
@@ -501,7 +653,7 @@ export function JobOverviewDialog({
                     <TableHeader>
                       <TableRow>
                         <TableHead>Employee</TableHead>
-                        {isClientView ? (
+                        {viewMode === "client" ? (
                           <TableHead className="text-right">Total Hours</TableHead>
                         ) : (
                           <>
@@ -509,7 +661,7 @@ export function JobOverviewDialog({
                             <TableHead className="text-right">Travel Hours</TableHead>
                           </>
                         )}
-                        {!isClientView && (
+                        {viewMode === "internal" && (
                           <>
                             <TableHead className="text-right">Cost</TableHead>
                             <TableHead className="text-right">Billable</TableHead>
@@ -521,7 +673,7 @@ export function JobOverviewDialog({
                       {employeeBreakdown.map((emp, idx) => (
                         <TableRow key={`emp-${idx}-${emp.name}`}>
                           <TableCell className="font-medium">{emp.name}</TableCell>
-                          {isClientView ? (
+                          {viewMode === "client" ? (
                             <TableCell className="text-right">
                               {safeNumber(emp.hours + emp.travelHours).toFixed(2)}h
                               {emp.travelHours > 0 && (
@@ -540,7 +692,7 @@ export function JobOverviewDialog({
                               </TableCell>
                             </>
                           )}
-                          {!isClientView && (
+                          {viewMode === "internal" && (
                             <>
                               <TableCell className="text-right">
                                 ${safeNumber(emp.cost).toFixed(2)}
@@ -591,7 +743,7 @@ export function JobOverviewDialog({
             )}
 
             {/* Title Breakdown */}
-            {titleBreakdown.length > 0 && (
+            {titleBreakdown.length > 0 && viewMode !== "dsp" && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Title Breakdown</h3>
                 <div className="overflow-x-auto">
@@ -689,7 +841,7 @@ export function JobOverviewDialog({
             )}
 
             {/* Monthly Breakdown */}
-            {monthlyBreakdown.length > 0 && (
+            {monthlyBreakdown.length > 0 && viewMode !== "dsp" && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Monthly Breakdown</h3>
                 <div className="overflow-x-auto">
@@ -787,7 +939,7 @@ export function JobOverviewDialog({
             )}
 
             {/* Weekly Breakdown */}
-            {weeklyBreakdown.length > 0 && (
+            {weeklyBreakdown.length > 0 && viewMode !== "dsp" && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Weekly Breakdown</h3>
                 <div className="overflow-x-auto">
@@ -885,7 +1037,7 @@ export function JobOverviewDialog({
             )}
 
             {/* Time Entry Details */}
-            {dateBasedBreakdown.length > 0 && (
+            {dateBasedBreakdown.length > 0 && viewMode !== "dsp" && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Time Entry Details</h3>
                 <div className="space-y-3">
