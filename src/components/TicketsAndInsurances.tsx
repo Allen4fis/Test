@@ -802,6 +802,29 @@ export function TicketsAndInsurances() {
                           </div>
                         )}
                         <div className="flex items-center gap-2 pt-2 border-t">
+                          <Button
+                            variant={ticket.excludeFromAlert ? "outline" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                              updateEmployeeTicket(ticket.id, {
+                                employeeId: ticket.employeeId,
+                                categoryId: ticket.categoryId,
+                                expirationDate: ticket.expirationDate,
+                                issueDate: ticket.issueDate || undefined,
+                                notes: ticket.notes || undefined,
+                                excludeFromAlert: !ticket.excludeFromAlert,
+                              });
+                              toast({
+                                title: "Success",
+                                description: ticket.excludeFromAlert
+                                  ? "Ticket re-enabled for alerts"
+                                  : "Ticket excluded from alerts",
+                              });
+                            }}
+                            className={ticket.excludeFromAlert ? "text-orange-600 border-orange-600" : "text-gray-600"}
+                          >
+                            {ticket.excludeFromAlert ? "Restore" : "Exclude"}
+                          </Button>
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button
