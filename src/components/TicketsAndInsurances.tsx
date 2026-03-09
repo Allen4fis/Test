@@ -94,6 +94,8 @@ export function TicketsAndInsurances() {
     issueDate: "",
   });
   const [selectedLetterFilter, setSelectedLetterFilter] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
 
   const [categoryForm, setCategoryForm] = useState({
     name: "",
@@ -749,6 +751,15 @@ export function TicketsAndInsurances() {
                 )
               : ticketsWithDetails;
 
+            // Reset to page 1 when filter changes
+            if (currentPage > 1 && currentPage > Math.ceil(filteredTickets.length / itemsPerPage)) {
+              setCurrentPage(1);
+            }
+
+            const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+            const startIdx = (currentPage - 1) * itemsPerPage;
+            const paginatedTickets = filteredTickets.slice(startIdx, startIdx + itemsPerPage);
+
             return filteredTickets.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -764,8 +775,9 @@ export function TicketsAndInsurances() {
                 </p>
               </div>
             ) : (
-              <Accordion type="single" collapsible className="space-y-2">
-                {filteredTickets.map((ticket) => (
+              <>
+                <Accordion type="single" collapsible className="space-y-2">
+                  {paginatedTickets.map((ticket) => (
                   <AccordionItem
                     key={ticket.id}
                     value={ticket.id}
@@ -1027,8 +1039,36 @@ export function TicketsAndInsurances() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-                ))}
-              </Accordion>
+                  ))}
+                </Accordion>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                    <div className="text-sm text-gray-600">
+                      Page {currentPage} of {totalPages} • {filteredTickets.length} total
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
             );
           })()}
         </CardContent>
