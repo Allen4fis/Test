@@ -456,11 +456,11 @@ export function TicketsAndInsurances() {
 
           return `
             <tr>
-              <td style="color: #000000 !important; font-weight: 600;">${ticket.employeeName}</td>
-              <td style="color: #000000 !important; font-weight: 500;">${ticket.categoryName}</td>
-              <td style="color: #000000 !important; font-weight: 500;">${expDate.toLocaleDateString()}</td>
-              <td style="color: #000000 !important; font-weight: 500;">${daysText}</td>
-              <td><span style="background-color: ${statusColor}; color: #ffffff !important; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">${statusBadge}</span></td>
+              <td>${ticket.employeeName}</td>
+              <td>${ticket.categoryName}</td>
+              <td>${expDate.toLocaleDateString()}</td>
+              <td>${daysText}</td>
+              <td><span style="background-color: ${statusColor}; color: white; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">${statusBadge}</span></td>
             </tr>
           `;
         })
@@ -471,19 +471,20 @@ export function TicketsAndInsurances() {
       <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; color: #000000; }
-            h1 { color: #000000; border-bottom: 3px solid #dc2626; padding-bottom: 10px; font-size: 24px; }
-            h2 { color: #000000; margin-top: 25px; margin-bottom: 12px; font-size: 16px; border-left: 4px solid #dc2626; padding-left: 10px; }
-            .report-date { color: #333333; margin-bottom: 20px; font-size: 13px; }
+            * { color: black; }
+            body { font-family: Arial, sans-serif; margin: 20px; color: black; background-color: white; }
+            h1 { color: black; border-bottom: 3px solid #dc2626; padding-bottom: 10px; font-size: 24px; }
+            h2 { color: black; margin-top: 25px; margin-bottom: 12px; font-size: 16px; border-left: 4px solid #dc2626; padding-left: 10px; }
+            .report-date { color: black; margin-bottom: 20px; font-size: 13px; }
             .warning-box { background-color: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
             .warning-text { color: #7f1d1d; font-weight: bold; font-size: 14px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-            th { background-color: #dc2626; color: #ffffff !important; padding: 12px; text-align: left; font-weight: bold; border: 1px solid #991b1b; }
-            td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: #000000 !important; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; color: black; }
+            th { background-color: #dc2626; color: white; padding: 12px; text-align: left; font-weight: bold; border: 1px solid #991b1b; }
+            td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: black; background-color: white; }
             tr:nth-child(even) { background-color: #f9fafb; }
-            .footer { margin-top: 30px; font-size: 12px; color: #333333; border-top: 1px solid #d1d5db; padding-top: 15px; }
-            .summary-box { background-color: #f3f4f6; padding: 12px; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #3b82f6; }
-            .summary-text { color: #000000; font-size: 13px; }
+            .footer { margin-top: 30px; font-size: 12px; color: black; border-top: 1px solid #d1d5db; padding-top: 15px; }
+            .summary-box { background-color: #f3f4f6; padding: 12px; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #3b82f6; color: black; }
+            .summary-text { color: black; font-size: 13px; }
           </style>
         </head>
         <body>
