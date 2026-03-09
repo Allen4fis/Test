@@ -471,20 +471,24 @@ export function TicketsAndInsurances() {
       <html>
         <head>
           <style>
-            * { color: black; }
-            body { font-family: Arial, sans-serif; margin: 20px; color: black; background-color: white; }
-            h1 { color: black; border-bottom: 3px solid #dc2626; padding-bottom: 10px; font-size: 24px; }
-            h2 { color: black; margin-top: 25px; margin-bottom: 12px; font-size: 16px; border-left: 4px solid #dc2626; padding-left: 10px; }
-            .report-date { color: black; margin-bottom: 20px; font-size: 13px; }
+            html, body { color: #000000 !important; }
+            body { font-family: Arial, sans-serif; margin: 20px; background-color: white; }
+            h1 { color: #000000 !important; border-bottom: 3px solid #dc2626; padding-bottom: 10px; font-size: 24px; }
+            h2 { color: #000000 !important; margin-top: 25px; margin-bottom: 12px; font-size: 16px; border-left: 4px solid #dc2626; padding-left: 10px; }
+            .report-date { margin-bottom: 20px; font-size: 13px; }
             .warning-box { background-color: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-            .warning-text { color: #7f1d1d; font-weight: bold; font-size: 14px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 15px; color: black; }
-            th { background-color: #dc2626; color: white; padding: 12px; text-align: left; font-weight: bold; border: 1px solid #991b1b; }
-            td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; color: black; background-color: white; }
-            tr:nth-child(even) { background-color: #f9fafb; }
-            .footer { margin-top: 30px; font-size: 12px; color: black; border-top: 1px solid #d1d5db; padding-top: 15px; }
-            .summary-box { background-color: #f3f4f6; padding: 12px; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #3b82f6; color: black; }
-            .summary-text { color: black; font-size: 13px; }
+            .warning-text { font-weight: bold; font-size: 14px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            thead { background-color: #dc2626; }
+            th { background-color: #dc2626 !important; color: white !important; padding: 12px; text-align: left; font-weight: bold; border: 1px solid #991b1b; }
+            td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; background-color: white; }
+            tbody tr:nth-child(odd) td { background-color: white; color: #000000 !important; }
+            tbody tr:nth-child(even) td { background-color: #f9fafb; color: #000000 !important; }
+            .footer { margin-top: 30px; font-size: 12px; border-top: 1px solid #d1d5db; padding-top: 15px; }
+            .summary-box { background-color: #f3f4f6; padding: 12px; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #3b82f6; }
+            .summary-text { font-size: 13px; }
+            p { color: #000000 !important; }
+            span { color: inherit; }
           </style>
         </head>
         <body>
