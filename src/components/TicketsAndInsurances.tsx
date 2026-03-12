@@ -802,24 +802,50 @@ export function TicketsAndInsurances() {
                   <div className="space-y-2">
                     <Label>Expiration Date *</Label>
                     <Input
-                      type="date"
+                      type="text"
+                      placeholder="YYYY-MM-DD"
                       value={ticketForm.expirationDate}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const value = e.target.value;
                         setTicketForm({
                           ...ticketForm,
-                          expirationDate: e.target.value,
-                        })
-                      }
+                          expirationDate: value,
+                        });
+                      }}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+                        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                        if (value && !dateRegex.test(value)) {
+                          toast({
+                            title: "Invalid date format",
+                            description: "Please use YYYY-MM-DD format",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Issue Date</Label>
                     <Input
-                      type="date"
+                      type="text"
+                      placeholder="YYYY-MM-DD"
                       value={ticketForm.issueDate}
-                      onChange={(e) =>
-                        setTicketForm({ ...ticketForm, issueDate: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setTicketForm({ ...ticketForm, issueDate: value });
+                      }}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+                        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                        if (value && !dateRegex.test(value)) {
+                          toast({
+                            title: "Invalid date format",
+                            description: "Please use YYYY-MM-DD format",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
                     />
                   </div>
                   <div className="space-y-2">
@@ -1053,7 +1079,8 @@ export function TicketsAndInsurances() {
                                 <div className="space-y-2">
                                   <Label>Expiration Date *</Label>
                                   <Input
-                                    type="date"
+                                    type="text"
+                                    placeholder="YYYY-MM-DD"
                                     value={ticketForm.expirationDate}
                                     onChange={(e) =>
                                       setTicketForm({
@@ -1061,12 +1088,24 @@ export function TicketsAndInsurances() {
                                         expirationDate: e.target.value,
                                       })
                                     }
+                                    onBlur={(e) => {
+                                      const value = e.target.value;
+                                      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                      if (value && !dateRegex.test(value)) {
+                                        toast({
+                                          title: "Invalid date format",
+                                          description: "Please use YYYY-MM-DD format",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
                                   />
                                 </div>
                                 <div className="space-y-2">
                                   <Label>Issue Date</Label>
                                   <Input
-                                    type="date"
+                                    type="text"
+                                    placeholder="YYYY-MM-DD"
                                     value={ticketForm.issueDate}
                                     onChange={(e) =>
                                       setTicketForm({
@@ -1074,6 +1113,17 @@ export function TicketsAndInsurances() {
                                         issueDate: e.target.value,
                                       })
                                     }
+                                    onBlur={(e) => {
+                                      const value = e.target.value;
+                                      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                      if (value && !dateRegex.test(value)) {
+                                        toast({
+                                          title: "Invalid date format",
+                                          description: "Please use YYYY-MM-DD format",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
                                   />
                                 </div>
                                 <div className="space-y-2">
@@ -1428,13 +1478,23 @@ export function TicketsAndInsurances() {
                                     <Input
                                       type="number"
                                       min="1"
-                                      value={categoryForm.alertDaysBeforeExpiry}
+                                      value={categoryForm.alertDaysBeforeExpiry || ""}
                                       onChange={(e) => {
                                         const value = e.target.value.trim();
-                                        setCategoryForm({
-                                          ...categoryForm,
-                                          alertDaysBeforeExpiry: value === "" ? 0 : parseInt(value) || 0,
-                                        });
+                                        if (value === "") {
+                                          setCategoryForm({
+                                            ...categoryForm,
+                                            alertDaysBeforeExpiry: "",
+                                          });
+                                        } else {
+                                          const numValue = parseInt(value);
+                                          if (!isNaN(numValue) && numValue > 0) {
+                                            setCategoryForm({
+                                              ...categoryForm,
+                                              alertDaysBeforeExpiry: numValue,
+                                            });
+                                          }
+                                        }
                                       }}
                                       placeholder="30"
                                     />
@@ -1644,7 +1704,8 @@ export function TicketsAndInsurances() {
                                 <div>
                                   <Label className="text-xs">Expiration Date *</Label>
                                   <Input
-                                    type="date"
+                                    type="text"
+                                    placeholder="YYYY-MM-DD"
                                     value={quickAddDates.expirationDate}
                                     onChange={(e) =>
                                       setQuickAddDates({
@@ -1652,13 +1713,25 @@ export function TicketsAndInsurances() {
                                         expirationDate: e.target.value,
                                       })
                                     }
+                                    onBlur={(e) => {
+                                      const value = e.target.value;
+                                      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                      if (value && !dateRegex.test(value)) {
+                                        toast({
+                                          title: "Invalid date format",
+                                          description: "Please use YYYY-MM-DD format",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
                                     className="h-8 text-sm"
                                   />
                                 </div>
                                 <div>
                                   <Label className="text-xs">Certification Date</Label>
                                   <Input
-                                    type="date"
+                                    type="text"
+                                    placeholder="YYYY-MM-DD"
                                     value={quickAddDates.issueDate}
                                     onChange={(e) =>
                                       setQuickAddDates({
@@ -1666,6 +1739,17 @@ export function TicketsAndInsurances() {
                                         issueDate: e.target.value,
                                       })
                                     }
+                                    onBlur={(e) => {
+                                      const value = e.target.value;
+                                      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                                      if (value && !dateRegex.test(value)) {
+                                        toast({
+                                          title: "Invalid date format",
+                                          description: "Please use YYYY-MM-DD format",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
                                     className="h-8 text-sm"
                                   />
                                 </div>
