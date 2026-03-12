@@ -17,8 +17,13 @@ export function DashboardCriticalTicketsAlert({ onViewTickets }: DashboardCritic
 
   // Get critical tickets (expired or expiring based on alert days setting)
   // Exclude optional tickets - only show mandatory and recommended
+  // Exclude tickets from inactive employees
   const criticalTickets = useMemo(() => {
     return employeeTickets
+      .filter((ticket) => {
+        const employee = employees.find((emp) => emp.id === ticket.employeeId);
+        return employee?.isActive !== false;
+      })
       .map((ticket) => {
         const employee = employees.find((emp) => emp.id === ticket.employeeId);
         const category = ticketCategories.find(
