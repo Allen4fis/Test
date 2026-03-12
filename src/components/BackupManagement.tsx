@@ -310,8 +310,26 @@ export function BackupManagement() {
       const existing = storedBackups;
       const updated = [backup, ...existing];
 
-      // Keep only the most recent 20 backups to prevent storage overflow
-      let trimmed = updated.slice(0, 20);
+      // Keep only the most recent 3-5 backups to prevent storage overflow
+      // As data grows, we need fewer backups to stay within localStorage quota
+      let maxBackupsToKeep = 5;
+
+      // If data is getting large, reduce backup count further
+      if (currentDataSummary.dataSize > 2 * 1024 * 1024) { // > 2MB
+        maxBackupsToKeep = 3;
+        console.warn(
+          `Data size is ${formatBytes(currentDataSummary.dataSize)}. Limiting backups to ${maxBackupsToKeep} to prevent storage issues.`
+        );
+      }
+
+      if (currentDataSummary.dataSize > 4 * 1024 * 1024) { // > 4MB
+        maxBackupsToKeep = 2;
+        console.warn(
+          `Data size is ${formatBytes(currentDataSummary.dataSize)}. Limiting backups to ${maxBackupsToKeep} to prevent storage issues. Consider exporting backups to files.`
+        );
+      }
+
+      let trimmed = updated.slice(0, maxBackupsToKeep);
 
       // Save to localStorage with quota handling
       try {
@@ -691,6 +709,65 @@ export function BackupManagement() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Storage Warning Card - Show if approaching limits */}
+      {(() => {
+        const storageStats = getStorageStats();
+        const storageBreakdown = getStorageBreakdown();
+
+        if (storageStats.percentUsed > 70) {
+          return (
+            <Card className={storageStats.percentUsed > 90 ? "border-red-500 border-2" : "border-orange-500"}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-orange-700">
+                  <AlertCircle className="h-5 w-5" />
+                  Storage Usage Warning
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <p className="font-semibold text-orange-900">
+                    {storageStats.percentUsed.toFixed(1)}% of localStorage used ({formatBytes(storageStats.used)} / {formatBytes(storageStats.quota)})
+                  </p>
+                  <p className="text-sm text-orange-700 mt-1">
+                    Breakdown: {formatBytes(storageBreakdown.mainData)} (data) + {formatBytes(storageBreakdown.autosaves)} (autosaves) + {formatBytes(storageBreakdown.backups)} (backups)
+                  </p>
+                </div>
+
+                {storageStats.percentUsed > 90 ? (
+                  <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+                    <p className="font-semibold text-red-900">
+                      🔴 CRITICAL: Storage is nearly full! Data may be lost if you continue adding records.
+                    </p>
+                    <p className="text-sm text-red-700 mt-1">
+                      Take action immediately:
+                    </p>
+                    <ul className="text-sm text-red-700 list-disc list-inside mt-1 space-y-1">
+                      <li>Export old backups to files (download them)</li>
+                      <li>Delete old backups you don't need</li>
+                      <li>Consider moving data to a server (Phase 2 upgrade)</li>
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                    <p className="font-semibold text-yellow-900">
+                      ⚠️ Storage usage is high. Plan ahead:
+                    </p>
+                    <p className="text-sm text-yellow-700 mt-1">
+                      With your current growth rate, storage will be full in approximately{" "}
+                      {Math.ceil((100 - storageStats.percentUsed) / (storageStats.percentUsed - 70) * 30)} days.
+                    </p>
+                    <p className="text-sm text-yellow-700 mt-1">
+                      Recommendation: Export important backups to files now to free up space.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        }
+        return null;
+      })()}
 
       {/* Create Backup Section */}
       <Card>
