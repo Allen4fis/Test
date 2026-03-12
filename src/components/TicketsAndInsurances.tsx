@@ -155,22 +155,27 @@ export function TicketsAndInsurances() {
 
   // Get tickets with employee and category info
   const ticketsWithDetails = useMemo(() => {
-    return employeeTickets.map((ticket) => {
-      const employee = employees.find((emp) => emp.id === ticket.employeeId);
-      const category = ticketCategories.find(
-        (cat) => cat.id === ticket.categoryId,
-      );
-      const alertDaysBeforeExpiry = category?.alertDaysBeforeExpiry || 30;
-      const ticketStatus = getTicketStatus(ticket.expirationDate, alertDaysBeforeExpiry);
+    return employeeTickets
+      .filter((ticket) => {
+        const employee = employees.find((emp) => emp.id === ticket.employeeId);
+        return employee?.isActive !== false;
+      })
+      .map((ticket) => {
+        const employee = employees.find((emp) => emp.id === ticket.employeeId);
+        const category = ticketCategories.find(
+          (cat) => cat.id === ticket.categoryId,
+        );
+        const alertDaysBeforeExpiry = category?.alertDaysBeforeExpiry || 30;
+        const ticketStatus = getTicketStatus(ticket.expirationDate, alertDaysBeforeExpiry);
 
-      return {
-        ...ticket,
-        employeeName: employee?.name || "Unknown",
-        categoryName: category?.name || "Unknown",
-        requirementLevel: category?.requirementLevel || "optional",
-        ...ticketStatus,
-      };
-    });
+        return {
+          ...ticket,
+          employeeName: employee?.name || "Unknown",
+          categoryName: category?.name || "Unknown",
+          requirementLevel: category?.requirementLevel || "optional",
+          ...ticketStatus,
+        };
+      });
   }, [employeeTickets, employees, ticketCategories]);
 
   // Get critical tickets (expired or expiring within 1 month)
