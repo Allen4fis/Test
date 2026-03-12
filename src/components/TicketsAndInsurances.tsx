@@ -959,10 +959,10 @@ export function TicketsAndInsurances() {
                             {ticket.categoryName}
                           </div>
                           <div
-                            className={`text-xs ${
+                            className={`text-xs font-semibold ${
                               ticket.excludeFromAlert
                                 ? "text-orange-600"
-                                : "text-gray-300"
+                                : "text-blue-900"
                             }`}
                           >
                             Exp: {new Date(ticket.expirationDate).toLocaleDateString()}
@@ -978,7 +978,7 @@ export function TicketsAndInsurances() {
                         {ticket.issueDate && (
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Issue Date:</span>
-                            <span className="font-medium">{new Date(ticket.issueDate).toLocaleDateString()}</span>
+                            <span className="font-medium text-gray-900">{new Date(ticket.issueDate).toLocaleDateString()}</span>
                           </div>
                         )}
                         {ticket.notes && (
