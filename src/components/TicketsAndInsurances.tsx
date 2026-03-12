@@ -1707,7 +1707,7 @@ export function TicketsAndInsurances() {
                             <div className="space-y-2 mt-2 pt-2 border-t border-orange-200">
                               <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                  <Label className="text-xs">Expiration Date *</Label>
+                                  <Label className="text-xs font-semibold text-gray-900">Expiration Date *</Label>
                                   <Input
                                     type="text"
                                     placeholder="YYYY-MM-DD"
@@ -1729,11 +1729,11 @@ export function TicketsAndInsurances() {
                                         });
                                       }
                                     }}
-                                    className="h-8 text-sm"
+                                    className="h-8 text-sm bg-white text-gray-900 border border-gray-300"
                                   />
                                 </div>
                                 <div>
-                                  <Label className="text-xs">Certification Date</Label>
+                                  <Label className="text-xs font-semibold text-gray-900">Certification Date</Label>
                                   <Input
                                     type="text"
                                     placeholder="YYYY-MM-DD"
@@ -1755,7 +1755,7 @@ export function TicketsAndInsurances() {
                                         });
                                       }
                                     }}
-                                    className="h-8 text-sm"
+                                    className="h-8 text-sm bg-white text-gray-900 border border-gray-300"
                                   />
                                 </div>
                               </div>
