@@ -637,7 +637,7 @@ export function JobOverviewDialog({
                           }}
                           className="rounded"
                         />
-                        <span className="text-xs text-gray-700">{emp.name}</span>
+                        <span className="text-xs font-semibold text-orange-600">{emp.name}</span>
                       </label>
                     ))}
                   </div>
@@ -752,8 +752,8 @@ export function JobOverviewDialog({
                                 const totalEmpHours = emp.workHours + emp.travelHours;
                                 return (
                                   <div key={emp.name} className="flex items-center justify-between text-sm pl-3">
-                                    <span className="font-medium text-gray-900">{emp.name}</span>
-                                    <span className="font-semibold text-blue-600">
+                                    <span className="font-bold text-orange-600">{emp.name}</span>
+                                    <span className="font-semibold text-orange-600">
                                       {emp.workHours > 0 && `${emp.workHours.toFixed(2)}h`}
                                       {emp.travelHours > 0 && ` • ${emp.travelHours.toFixed(2)} Travel`}
                                       {loaText}
@@ -819,7 +819,7 @@ export function JobOverviewDialog({
                     <TableBody>
                       {employeeBreakdown.map((emp, idx) => (
                         <TableRow key={`emp-${idx}-${emp.name}`}>
-                          <TableCell className="font-medium">{emp.name}</TableCell>
+                          <TableCell className="font-bold text-orange-600">{emp.name}</TableCell>
                           {viewMode === "client" ? (
                             <TableCell className="text-right">
                               {safeNumber(emp.hours + emp.travelHours).toFixed(2)}h
@@ -1232,8 +1232,8 @@ export function JobOverviewDialog({
                               : `${totalEmpHours.toFixed(2)}HR`;
                             return (
                               <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between pl-3">
-                                <span className="font-bold text-blue-600">{emp.name}</span>
-                                <span className="font-semibold text-blue-600">{hoursDisplay}{loaText}</span>
+                                <span className="font-bold text-orange-600">{emp.name}</span>
+                                <span className="font-semibold text-orange-600">{hoursDisplay}{loaText}</span>
                               </div>
                             );
                           })}
