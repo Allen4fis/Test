@@ -1362,14 +1362,14 @@ export function TicketsAndInsurances() {
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent>
+                              <DialogContent onClick={(e) => e.stopPropagation()}>
                                 <DialogHeader>
                                   <DialogTitle>Edit Ticket Category</DialogTitle>
                                   <DialogDescription>
                                     Update the ticket category details
                                   </DialogDescription>
                                 </DialogHeader>
-                                <div className="space-y-4">
+                                <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
                                   <div className="space-y-2">
                                     <Label>Category Name *</Label>
                                     <Input
