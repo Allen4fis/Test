@@ -480,6 +480,7 @@ export function RentalManagement() {
       const avgDaily = totalDays > 0 ? totalRevenue / totalDays : 0;
 
       return {
+        id: item.id,
         rentalItem: item.name,
         category: item.category,
         dailyRate: item.dailyRate,
@@ -1676,7 +1677,7 @@ export function RentalManagement() {
                     </TableHeader>
                     <TableBody>
                       {paginationAnalytics.paginatedData.map((item) => (
-                        <TableRow key={item.rentalItem}>
+                        <TableRow key={item.id}>
                           <TableCell className="font-medium">
                             {item.rentalItem}
                           </TableCell>
