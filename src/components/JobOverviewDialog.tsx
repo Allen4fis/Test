@@ -1232,8 +1232,8 @@ export function JobOverviewDialog({
                               : `${totalEmpHours.toFixed(2)}HR`;
                             return (
                               <div key={`emp-${dateIdx}-${empIdx}`} className="flex items-center justify-between pl-3">
-                                <span className="font-semibold text-pink-500">{emp.name}</span>
-                                <span className="font-semibold text-blue-600">{hoursDisplay}{loaText}</span>
+                                <span className="font-semibold text-pink-300">{emp.name}</span>
+                                <span className="font-semibold text-blue-400">{hoursDisplay}{loaText}</span>
                               </div>
                             );
                           })}
