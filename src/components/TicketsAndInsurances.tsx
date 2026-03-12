@@ -1429,12 +1429,13 @@ export function TicketsAndInsurances() {
                                       type="number"
                                       min="1"
                                       value={categoryForm.alertDaysBeforeExpiry}
-                                      onChange={(e) =>
+                                      onChange={(e) => {
+                                        const value = e.target.value.trim();
                                         setCategoryForm({
                                           ...categoryForm,
-                                          alertDaysBeforeExpiry: parseInt(e.target.value) || 30,
-                                        })
-                                      }
+                                          alertDaysBeforeExpiry: value === "" ? 0 : parseInt(value) || 0,
+                                        });
+                                      }}
                                       placeholder="30"
                                     />
                                     <p className="text-xs text-gray-500">
