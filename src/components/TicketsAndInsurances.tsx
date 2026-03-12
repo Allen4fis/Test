@@ -1393,7 +1393,7 @@ export function TicketsAndInsurances() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <span className="font-medium text-gray-800">
+                          <span className="font-medium text-gray-200">
                             {category.alertDaysBeforeExpiry || 30} days
                           </span>
                         </TableCell>
